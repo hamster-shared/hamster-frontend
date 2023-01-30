@@ -104,6 +104,7 @@ onMounted(async () => {
     symbol: 'ETK',
     burnable: true,
     premint: '1000000',
+    // access: 'ownable',
     // upgradeable: 'uups',
   });
   
@@ -120,6 +121,7 @@ onMounted(async () => {
 
 const setContract = async () => {
   if (activeKey.value === 'ERC20') {
+    console.log("optsERC20.value:",optsERC20.value);
     contractERC20.value = erc20.print(optsERC20.value);
   } else if ( activeKey.value === 'ERC721') {
     contractERC721.value = erc721.print(optsERC721.value);
