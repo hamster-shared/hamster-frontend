@@ -1,7 +1,7 @@
 <template>
   <div class="my-2 flex justify-between items-center">
     <div class="font-bold text-[#818998]">ACCESS CONTROL
-      <input type="checkbox" value="ownable" :checked="opts.access" name="access" @click="checkRadioClick" />
+      <a-checkbox value="ownable" :checked="opts.access" name="access" @click="checkRadioClick"></a-checkbox>
     </div>
     <a-tooltip placement="right">
       <template #title>
