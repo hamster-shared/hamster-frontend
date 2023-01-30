@@ -1,0 +1,90 @@
+html[data-theme='dark'] {
+  .ant-table-empty .ant-table-tbody>tr.ant-table-placeholder,
+  .ant-empty-normal {
+    color: #ffffff;
+  }
+  .ant-table-tbody>tr>td {
+    border-bottom:1px solid #302D2D;
+  }
+  .ant-table-tbody {
+    box-shadow: none;
+    border-radius: 0 0 12px 12px;
+  }
+  .ant-table-tbody,
+  .ant-table-tbody>tr.ant-table-placeholder:hover>td {
+    background-color: #36322D;
+    // background-color: #463F36;
+    color: #E0DBD2;
+  }
+  .ant-table-tbody .ant-table-cell {
+    color: #E0DBD2;
+  }
+
+  .ant-table-tbody .ant-table-cell.ant-table-cell-row-hover {
+    // background-color: #36322D;
+    background-color: #463F36;
+  }
+  .ant-table-tbody>tr.ant-table-row:hover>td, .ant-table-tbody>tr>td.ant-table-cell-row-hover {
+    // background-color: #36322D;
+    background-color: #463F36;
+  }
+}
+
+.ant-table {
+  background-color: transparent;
+}
+.ant-table,
+.ant-table:hover{
+  border-radius: 12px;
+}
+.ant-table-content,
+.ant-table-content:hover {
+  background-color: transparent;
+}
+.ant-table-thead>tr>th {
+  background-color: #E2B578;
+  border-bottom: 1px solid #E2B578;
+  color: #ffffff;
+}
+
+.ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan]):before {
+  width: 0;
+}
+
+.ant-table-tbody .ant-table-cell {
+  color: #73706E;
+}
+
+.ant-table-tbody {
+  box-shadow: 3px 3px 12px rgba(203, 217, 207, 0.2),
+  ;
+}
+.ant-table-tbody>tr:last-child>td {
+  border-bottom: none;
+}
+
+.ant-table-container table>thead>tr:first-child th:first-child {
+  border-top-left-radius: 12px!important;
+}
+
+.ant-table-container table>thead>tr:first-child th:last-child {
+  border-top-right-radius: 12px!important;
+}
+
+.ant-table-empty .ant-table-tbody>tr.ant-table-placeholder {
+  border-radius: 12px;
+}
+
+.ant-table-row:last-child .ant-table-cell:first-child {
+  border-radius: 0 0 0 12px;
+}
+
+.ant-table-row:last-child .ant-table-cell:last-child {
+  border-radius: 0 0 12px 0;
+}
+
+.no-table-data .ant-table-tbody tr>.ant-table-cell:first-child {
+  border-radius: 0 0 12px 12px;
+}
+
+
