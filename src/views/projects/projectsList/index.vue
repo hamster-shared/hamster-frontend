@@ -17,8 +17,19 @@
         </div>
       <a-button type="primary" @click="goCreateProject">Creat by template</a-button>
     </div>
-    <div v-for="(item, index) in projectsList" :key="index">
-      <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
+    <div class="mt-4">
+      <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
+        <a-tab-pane key="1" tab="Contract">
+          <div v-for="(item, index) in projectList" :key="index">
+            <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="FrontEnd">
+          <div v-for="(item, index) in projectList" :key="index">
+            <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
+          </div>
+        </a-tab-pane>
+      </a-tabs>
     </div>
     <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange" @showSizeChange="onShowSizeChange" :current="current" :total="total" size="small" />
   </div>
@@ -29,16 +40,16 @@ import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
-import { message } from 'ant-design-vue';
 const theme = useThemeStore()
 
 const router = useRouter();
 const keyword = ref('');
 const viewType = ref("list");
+const activeKey = ref("1");
 const current = ref(1);
 const total = ref(0);
 const pageSize = ref(10);
-const projectsList = ref([]); //projects列表
+const projectList = ref([]);
 const timer = ref(0)
 
 const onChange = (pageNumber: number) => {
@@ -74,19 +85,28 @@ const goSearch = async () => {
   getProjects();
 }
 
+const handleTabClick = (tab: any) => {
+  if (tab === "1") {
+    goSearch();
+  } else if (tab === "2") {
+    goSearch();
+  }
+}
+
 const getProjects = async () => {
   try {
     const params = {
-      // user: "53070354",
       query: keyword.value,
       page: current.value,
       size: pageSize.value,
+      type: activeKey.value,
     }
     const { data } = await apiGetProjects(params);
-    if (data.data === null || data.data === "[]") {
+    if ((data.data === null || data.data === "[]")) {
       goCreateProject();
     } else {
-      projectsList.value = data.data;
+      projectList.value = data.data;
+      
       total.value = data.total;
     }
   } catch (error: any) {

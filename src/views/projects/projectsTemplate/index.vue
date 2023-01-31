@@ -24,7 +24,19 @@
       <div class="ml-4 text-[24px] font-bold">Select template</div>
     </div>
     <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
-      <div v-for="(items, index) in templatesCategory" :key="index">
+      <div v-if="projectType === '2'" v-for="(items, index2) in templatesCategory" :key="index2">
+        <div class="text-[24px] font-bold" :class="{'mt-[32px]':index2!=0}">{{ items.name }}</div>
+        <div class="text-[#73706E] dark:text-[#E0DBD2] mb-[16px]">{{ items.description }}</div>
+        <div v-if="items.templatesList !== null" class="grid grid-cols-3 gap-4">
+          <div v-for="(item, index2) in items.templatesList" :key="index2" class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer" @click="goDetail(item.id)">
+            <FrontEndTemplate :showItem="item" templateType="list"  />
+          </div>
+        </div>
+        <div v-else>
+          <NoData />
+        </div>
+      </div>
+      <div v-else v-for="(items, index) in templatesCategory" :key="index">
         <div class="text-[24px] font-bold" :class="{'mt-[32px]':index!=0}">{{ items.name }}</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mb-[16px]">{{ items.description }}</div>
         <div v-if="items.templatesList !== null" class="grid grid-cols-3 gap-4">
@@ -58,19 +70,18 @@
         <div v-else>
           <NoData />
         </div>
-      </div>
-    </div>
 
-    <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
-      <div class="text-[24px] font-bold mb-[16px]">
-        Didn't find what you're looking for?<br /> 
-        Choose standard contract to build your own!
-      </div>
-      <div class="grid grid-cols-3 gap-4">
-        <div v-for="(item, index) in templateBuild" :key="index" @click="goStandard(item.name)" class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer">
-          <div class="font-bold text-ellipsis">{{ item.name }}</div>
-          <div class="text-[14px] mt-2 text-[#BBBAB9]">{{ item.description }}</div>
-          
+        <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
+          <div class="text-[24px] font-bold mb-[16px]">
+            Didn't find what you're looking for?<br /> 
+            Choose standard contract to build your own!
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div v-for="(item, index) in templateBuild" :key="index" @click="goStandard(item.name)" class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer">
+              <div class="font-bold text-ellipsis">{{ item.name }}</div>
+              <div class="text-[14px] mt-2 text-[#BBBAB9]">{{ item.description }}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -80,12 +91,14 @@
 import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import NoData from "@/components/NoData.vue"
+import FrontEndTemplate from '../projectsCreat/components/FrontEndTemplate.vue';
 import { apiTemplatesCategory, apiTemplatesCategoryById } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
 const router = useRouter();
-
+const createProjectTemp = localStorage.getItem('createProjectTemp');
+const projectType = JSON.parse(createProjectTemp).type;
 const templatesCategory = ref([{
   id: "",
   name: "",
@@ -100,8 +113,11 @@ const templateBuild = reactive([
 ]);
 
 onMounted(() => {
-  getTemplatesCategory();
-  
+  if (projectType === "2") {
+    console.log('222');
+  } else {
+    getTemplatesCategory();
+  }
 })
 
 const getTemplatesCategory = async () => {

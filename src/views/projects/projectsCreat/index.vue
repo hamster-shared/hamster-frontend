@@ -16,7 +16,7 @@
               <a-radio :style="radioStyle" value="1">Contract
                 <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Contract code.</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2" disabled="true">FrontEnd
+              <a-radio :style="radioStyle" value="2">FrontEnd
                 <div>Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
               </a-radio>
               <a-radio :style="radioStyle" value="3" disabled="true">Blockchain Node（coming soon）
@@ -51,33 +51,10 @@
         <div>
           <div class="font-bold text-[16px]">Popular Template</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]">A collection of our most deployed contracts.</div>
-          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
-            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)" class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
-              <img :src="item.logo" class="h-[40px] w-[40px]" />
-              <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
-              <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
-              <div class="flex mt-4">
-                <div class="flex items-center">
-                  <img
-                    src="@/assets/icons/version-white.svg"
-                    class="h-[20px] dark:hidden"
-                  />
-                  <img
-                    src="@/assets/icons/version-dark.svg"
-                    class="h-[20px] hidden dark:inline-block"
-                  />
-                  {{ item.lastVersion }}</div>
-                <div class="flex items-center ml-4" v-if="item.audited === true">
-                  <img
-                    src="@/assets/icons/audi-white.svg"
-                    class="h-[20px] dark:hidden"
-                  />
-                  <img
-                    src="@/assets/icons/audi-dark.svg"
-                    class="h-[20px] hidden dark:inline-block"
-                  />
-                  Audited</div>
-              </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div v-for="(item, index) in showList" :key="index">
+              <ContractTemplate v-if="formData.type === '1'" :showItem="item" @setCreateProjectValue="setCreateProjectValue" />
+              <FrontEndTemplate v-if="formData.type === '2'" :showItem="item" templateType="create" @setCreateProjectValue="setCreateProjectValue" />
             </div>
           </div>
         </div> 
@@ -90,7 +67,8 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
-import { message } from 'ant-design-vue';
+import ContractTemplate from './components/ContractTemplate.vue';
+import FrontEndTemplate from './components/FrontEndTemplate.vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
