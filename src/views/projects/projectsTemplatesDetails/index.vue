@@ -3,146 +3,118 @@
     <div class="flex justify-between">
       <div class="flex items-center">
         <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-          <img
-            src="@/assets/icons/back-white.svg"
-            class="h-[24px] dark:hidden mr-2"
-          />
-          <img
-            src="@/assets/icons/back-dark.svg"
-            class="h-[24px] hidden dark:inline-block mr-2"
-          />
-          back</div>
+          <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
+          <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
+          back
+        </div>
         <div class="ml-4">
-          <img
-            src="@/assets/icons/Line-white.svg"
-            class="h-[16px] dark:hidden"
-          />
-          <img
-            src="@/assets/icons/Line-dark.svg"
-            class="h-[16px] hidden dark:inline-block"
-          />
+          <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
+          <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
         </div>
         <div class="ml-4 text-[24px] font-bold">{{ templatesDetail.name }}</div>
       </div>
       <div>
-       <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-       <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">Creat by template</a-button>
+        <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
+        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">Creat by template</a-button>
       </div>
     </div>
-    <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
-      <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
-        <div class="text-[24px] font-bold text-[#FFFFFF]">{{ templatesDetail.name }} Contract</div>
-        <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
-      </div>
-      <div class="p-[32px]">
-        <div class="text-[24px] font-bold">Extensions</div>
-        <div class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
-          <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index" v-model:checked="items.checked">{{ items.label }}</a-checkbox>
+
+
+    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" v-if="params.type === '5'"></FrontendTemplateDeatilVue>
+    <div v-if="params.type === '1'">
+      <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
+        <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
+          <div class="text-[24px] font-bold text-[#FFFFFF]">{{ templatesDetail.name }} Contract</div>
+          <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
         </div>
-        <div class="mt-[32px] text-[24px] font-bold flex items-center">
-          <img
-            src="@/assets/icons/example.svg"
-            class="h-[32px] mr-[8px]"
-          />
-          Use Cases & Examples</div>
-        <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
-          <pre>{{ templatesDetail.examples }}</pre>
-        </div>
-        <div class="mt-[32px] text-[24px] font-bold flex items-center">
-          <img
-            src="@/assets/icons/resource.svg"
-            class="h-[32px] mr-[8px]"
-          />
-          Resources</div>
+        <div class="p-[32px]">
+          <div class="text-[24px] font-bold">Extensions</div>
+          <div
+            class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
+            <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index"
+              v-model:checked="items.checked">{{ items.label }}</a-checkbox>
+          </div>
+          <div class="mt-[32px] text-[24px] font-bold flex items-center">
+            <img src="@/assets/icons/example.svg" class="h-[32px] mr-[8px]" />
+            Use Cases & Examples
+          </div>
+          <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
+            <pre>{{ templatesDetail.examples }}</pre>
+          </div>
+          <div class="mt-[32px] text-[24px] font-bold flex items-center">
+            <img src="@/assets/icons/resource.svg" class="h-[32px] mr-[8px]" />
+            Resources
+          </div>
           <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
             <pre>{{ templatesDetail.resources }}</pre>
           </div>
+        </div>
       </div>
-    </div>
-    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
-      <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="1" tab="Functions">
-          <div class="flex">
-            <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
-              <div class=" flex items-center">
-                <img
-                  src="@/assets/icons/send-w.svg"
-                  class="h-[20px] dark:hidden mr-[5px]"
-                />
-                <img
-                  src="@/assets/icons/send-dark.svg"
-                  class="h-[20px] hidden dark:inline-block mr-[5px]"
-                />Send
+      <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
+        class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
+        <a-tabs v-model:activeKey="activeKey">
+          <a-tab-pane key="1" tab="Functions">
+            <div class="flex">
+              <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
+                <div class="flex items-center ">
+                  <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
+                  <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Send
+                </div>
+                <div class="h-[120px] overflow-auto pb-4">
+                  <div @click="setFunctionList(item)" :class="{ '!text-[#E2B578]': item.name === functionName }"
+                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
+                    v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
+                </div>
+                <div class="flex items-center mt-4">
+                  <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
+                  <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
+                </div>
+                <div class="h-[130px] overflow-auto pb-4">
+                  <div @click="setFunctionList(item)"
+                    :class="{ '!bg-[#E2B578] !text-white': item.name === functionName }"
+                    class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
+                    v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
+                </div>
               </div>
-              <div class="h-[120px] overflow-auto pb-4">
-                <div @click="setFunctionList(item)" :class="{'!text-[#E2B578]' : item.name === functionName }" class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
-                v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
-               </div>
-              <div class="mt-4 flex items-center">
-                <img
-                  src="@/assets/icons/send-w.svg"
-                  class="h-[20px] dark:hidden mr-[5px]"
-                />
-                <img
-                  src="@/assets/icons/send-dark.svg"
-                  class="h-[20px] hidden dark:inline-block mr-[5px]"
-                />Call
-              </div>
-              <div class="h-[130px] overflow-auto pb-4">
-                <div @click="setFunctionList(item)" :class="{'!bg-[#E2B578] !text-white' : item.name === functionName }" class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
-                v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
+              <div class="w-3/4 p-4">
+                <div class="flex justify-between">
+                  <div class="text-[16px] font-bold">{{ functionName }}</div>
+                  <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
+                </div>
+                <a-table class="my-4" :columns="tableColumns" :dataSource="functionList" :pagination="false"></a-table>
               </div>
             </div>
-            <div class="p-4  w-3/4">
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="Events">
+            <div class="flex">
+              <div class="p-4 border-r-[#302D2D] border-r border w-1/4 h-[300px] overflow-auto">
+                <div @click="setEventList(item)" :class="{ '!text-[#E2B578]': item.name === eventName }"
+                  class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer"
+                  v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
+              </div>
+              <div class="w-3/4 p-4">
+                <div class="flex justify-between">
+                  <div class="text-[16px] font-bold">{{ eventName }}</div>
+                  <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
+                </div>
+                <a-table class="my-4" :columns="tableColumns" :dataSource="eventList" :pagination="false"></a-table>
+              </div>
+            </div>
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="Sources">
+            <div class="p-4">
               <div class="flex justify-between">
-                <div class="text-[16px] font-bold">{{ functionName }}</div>
-                <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
+                <div>{{ setText(templatesDetail.codeSources) }}</div>
+                <img @click="copyInfo(sourceContent)" src="@/assets/icons/copy.svg" class="h-[19px] cursor-pointer" />
               </div>
-              <a-table
-                class="my-4"
-                :columns="tableColumns"
-                :dataSource="functionList"
-                :pagination="false"
-              ></a-table>
-            </div>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="Events">
-          <div class="flex">
-            <div class="p-4 border-r-[#302D2D] border-r border w-1/4 h-[300px] overflow-auto">
-              <div @click="setEventList(item)" :class="{'!text-[#E2B578]' : item.name === eventName }" class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer" 
-              v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
-            </div>
-            <div class="p-4 w-3/4">
-              <div class="flex justify-between">
-                <div class="text-[16px] font-bold">{{ eventName }}</div>
-                <div class="dark:text-[#E0DBD2] text-[#73706E]">inputs</div>
+              <div class="cursor-pointer"></div>
+              <div class="h-[200px] mt-4">
+                <CodeEditor :readOnly="true" :value="sourceContent"></CodeEditor>
               </div>
-              <a-table
-                class="my-4"
-                :columns="tableColumns"
-                :dataSource="eventList"
-                :pagination="false"
-              ></a-table>
             </div>
-          </div>
-        </a-tab-pane>
-        <a-tab-pane key="3" tab="Sources">
-          <div class="p-4">
-            <div class="flex justify-between">
-              <div>{{  setText(templatesDetail.codeSources) }}</div>
-              <img @click="copyInfo(sourceContent)"
-                src="@/assets/icons/copy.svg"
-                class="h-[19px] cursor-pointer"
-              />
-            </div>
-            <div class="cursor-pointer"></div>
-            <div class="h-[200px] mt-4">
-              <CodeEditor :readOnly="true" :value="sourceContent"></CodeEditor>
-            </div>
-          </div>
-        </a-tab-pane>
-      </a-tabs>
+          </a-tab-pane>
+        </a-tabs>
+      </div>
     </div>
   </div>
 </template>
@@ -151,16 +123,17 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue"
 import { apiAddProjects } from "@/apis/projects";
-import { apiTemplatesDetail } from "@/apis/templates";
+import { apiTemplatesDetail, apiFrontendTemplatesDetail } from "@/apis/templates";
 import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
+import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
 const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
 const loading = ref(false);
-const templateId = ref(params.templateId); 
+const templateId = ref(params.templateId);
 const activeKey = ref("1");
 const functionList = ref([]);
 const functionName = ref();
@@ -171,17 +144,18 @@ const eventName = ref();
 const eventList = ref([]);
 const sourceContent = ref("");
 const templatesDetail = ref([]);
+const frontendTemplatesDetail = ref('');
 const extensionsList = ref([]);
 const checkboxList = ref([
-  { checked: false, label: 'ERC721'},
-  { checked: false, label: 'ERC721Supply'},
-  { checked: false, label: 'ERC721Enumerable'},
-  { checked: false, label: 'ContractMetadata'},
-  { checked: false, label: 'Royalty'},
-  { checked: false, label: 'Permissions'},
-  { checked: false, label: 'PermissionsEnumerable'},
-  { checked: false, label: 'Ownable'},
-  { checked: false, label: 'Gasless'},
+  { checked: false, label: 'ERC721' },
+  { checked: false, label: 'ERC721Supply' },
+  { checked: false, label: 'ERC721Enumerable' },
+  { checked: false, label: 'ContractMetadata' },
+  { checked: false, label: 'Royalty' },
+  { checked: false, label: 'Permissions' },
+  { checked: false, label: 'PermissionsEnumerable' },
+  { checked: false, label: 'Ownable' },
+  { checked: false, label: 'Gasless' },
 ]);
 
 const tableColumns = computed<any[]>(() => [
@@ -216,16 +190,25 @@ const setEventList = (element: { inputs: never[]; name: any; }) => {
 }
 
 const getTemplatesDetail = async () => {
+  if (params.type == '1') {
+    getContractTemplatesDetail()
+  } else {
+    getFrontendTemplatesDetail()
+  }
+
+};
+
+const getContractTemplatesDetail = async () => {
   try {
     const { data } = await apiTemplatesDetail(templateId.value.toString());
     templatesDetail.value = data;
     extensionsList.value = data.extensions.split(',');
-    checkboxList.value.forEach((element,index) => {
+    checkboxList.value.forEach((element, index) => {
       if (extensionsList.value.indexOf(element.label) !== -1) {
         checkboxList.value[index].checked = true;
       }
     });
-    console.log(JSON.parse(data.abiInfo))
+    // console.log(JSON.parse(data.abiInfo))
     JSON.parse(data.abiInfo).forEach((element: any) => {
       if (element.type === 'function') {
         if (element.name === 'approve') {
@@ -254,11 +237,25 @@ const getTemplatesDetail = async () => {
         }
       });
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
-};
+}
+
+const getFrontendTemplatesDetail = async () => {
+  try {
+    const { data } = await apiFrontendTemplatesDetail(templateId.value.toString());
+    frontendTemplatesDetail.value = data.description
+    templatesDetail.value = data;
+  } catch (error: any) {
+    console.log("erro:", error)
+  } finally {
+    // loading.value = false;
+  }
+}
+
+
 
 const getProjectsContract = async () => {
   // try {
@@ -278,9 +275,9 @@ const createProject = async () => {
     const createProjectTemp = localStorage.getItem('createProjectTemp');
     const params = {
       name: JSON.parse(createProjectTemp)?.name,
-      type: JSON.parse(createProjectTemp)?.type-0,
+      type: JSON.parse(createProjectTemp)?.type - 0,
       templateOwner: templatesDetail.value.author,
-      frameType: JSON.parse(createProjectTemp)?.frameType-0,
+      frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       repoOwner: JSON.parse(userInfo)?.username,
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,
@@ -289,7 +286,7 @@ const createProject = async () => {
     message.success(res.message);
     router.push("/projects");
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
   } finally {
     loading.value = false;
@@ -297,11 +294,11 @@ const createProject = async () => {
 }
 
 const setText = (str: String) => {
-  return str.slice(str.lastIndexOf('/')+1);
+  return str.slice(str.lastIndexOf('/') + 1);
 }
 
 const goBack = () => {
-   router.back();
+  router.back();
 }
 const copyInfo = async (_items: any) => {
   // 存储传递过来的数据
@@ -330,27 +327,35 @@ const copyInfo = async (_items: any) => {
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
-:deep(.ant-btn-primary){
+
+:deep(.ant-btn-primary) {
   width: 150px;
   height: 40px;
 }
-:deep(.ant-checkbox-wrapper), :deep(.ant-checkbox-disabled+span){
+
+:deep(.ant-checkbox-wrapper),
+:deep(.ant-checkbox-disabled+span) {
   color: @baseColor;
 }
-:deep(.ant-checkbox-wrapper+.ant-checkbox-wrapper){
+
+:deep(.ant-checkbox-wrapper+.ant-checkbox-wrapper) {
   margin-left: 0px;
 }
-ul{
+
+ul {
   padding-inline-start: 1rem;
 }
-:deep(.dark-css .ant-tabs){
+
+:deep(.dark-css .ant-tabs) {
   color: #E0DBD2;
-} 
-:deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
+}
+
+:deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
   color: #FFFFFF;
 }
-:deep(.ant-tabs-tab-btn){
+
+:deep(.ant-tabs-tab-btn) {
   width: 100px;
   text-align: center;
-} 
+}
 </style>

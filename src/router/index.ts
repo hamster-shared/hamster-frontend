@@ -83,16 +83,16 @@ const router = createRouter({
           component: ProjectsCreat,
         },
         {
-          path: "/projects/template",
-          redirect: "/projects/template",
+          path: "/projects/template/:type",
+          redirect: "/projects/template/:type",
           children: [
             {
-              path: "/projects/template",
+              path: "/projects/template/:type",
               name: "ProjectsTemplate",
               component: ProjectsTemplate,
             },
             {
-              path: "/projects/templates/:templateId/details",
+              path: "/projects/templates/:templateId/details/:type",
               name: "ProjectsTemplatesDetails",
               component: ProjectsTemplatesDetails,
             },
