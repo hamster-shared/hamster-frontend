@@ -56,7 +56,6 @@
             class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer">
             <div class="font-bold text-ellipsis">{{ item.name }}</div>
             <div class="text-[14px] mt-2 text-[#BBBAB9]">{{ item.description }}</div>
-
           </div>
         </div>
       </div>
@@ -74,7 +73,6 @@ const theme = useThemeStore()
 const { params } = useRoute();
 
 const router = useRouter();
-
 const templatesCategory = ref([{
   id: "",
   name: "",
@@ -90,7 +88,6 @@ const templateBuild = reactive([
 
 onMounted(() => {
   getTemplatesCategory();
-
 })
 
 const getTemplatesCategory = async () => {
