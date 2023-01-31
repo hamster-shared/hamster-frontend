@@ -26,6 +26,14 @@ export function apiTemplatesDetail(id: String) {
   });
 }
 
+// 查询前端模板
+export function apiFrontendTemplatesDetail(id: String) {
+  return httpRequest({
+    url: `/api/frontend-templates/${id}`,
+    method: "get",
+  });
+}
+
 //Popular Template
 export function apiTemplatesShow(type: String) {
   return httpRequest({

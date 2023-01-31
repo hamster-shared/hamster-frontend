@@ -3,9 +3,7 @@
     style="top: 0px; margin-right: 0px; padding: 0px" width="800px">
     <div class="px-[24px]">
       <div class="flex justify-between">
-        <span class="text-[24px] text-[#000000] font-semibold mb-[28px]">{{
-    stagesData.title
-}}</span>
+        <span class="text-[24px] text-[#000000] font-semibold mb-[28px]">{{ stagesData.title }}</span>
         <span class="text-[#E2B578] cursor-pointer pt-[6px]" @click="toggle">
           <img src="@/assets/icons/full.svg" class="w-[18px] mr-[10px]" />
           <span class="align-middle"> {{ $t("workFlows.full") }}</span>
@@ -17,14 +15,10 @@
           <div v-if="fullscreen" @click="toggle" class="text-right cursor-pointer pb-[12px]"
             :class="fullscreen ? 'resetoreFixed' : ''">
             <img src="@/assets/icons/flod.svg" class="w-[18px] mr-[10px]" />
-            <span class="text-[#ffffff] align-middle">{{
-    $t("workFlows.restore")
-}}</span>
+            <span class="text-[#ffffff] align-middle">{{ $t("workFlows.restore") }}</span>
           </div>
 
-          <div class="main text-white bg-black bg-[#000000] break-all pt-[30px]" :style="{
-  height: bodyHeight,
-}">
+          <div class="main text-white bg-black bg-[#000000] break-all pt-[30px]" :style="{ height: bodyHeight }">
             <div ref="scrollDom" class="scrollDom pb-[24px]">
               <div class="" v-for="(it, idx) in stagesData.content" :key="idx">{{ it }}</div>
             </div>

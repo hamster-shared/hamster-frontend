@@ -105,7 +105,7 @@ const getStageLogsData = async (val: any, start = 0) => {
 
   if (!data.end && processModalRef.value.visible) {
     stagesTimer.value = setTimeout(() => {
-      getStageLogsData(item, data.lastLine);
+      getStageLogsData(val, data.lastLine);
     }, 3000);
   } else {
     clearTimeout(stagesTimer.value);
