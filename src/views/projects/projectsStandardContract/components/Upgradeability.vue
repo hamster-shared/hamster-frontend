@@ -46,6 +46,9 @@ const { opts } = toRefs(props);
 const emit = defineEmits(["showContract"]);
 
 const setContract = () => {
+  if (opts.value.upgradeable === 'uups') {
+    opts.value.access = 'ownable';
+  }
   emit("showContract");
 }
 const checkRadioClick = (event: any) => {
