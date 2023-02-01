@@ -18,18 +18,21 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
-import { formatDateToLocale  } from '@/utils/dateUtil';
+import { formatDateToLocale } from '@/utils/dateUtil';
+import { apiGetProjectsPackages } from "@/apis/projects";
 
 const props = defineProps({
   detailId: String,
+  pageType: String,
+  packageListData: Array,
 });
-const { detailId } = toRefs(props);
+const { pageType, detailId, packageListData } = toRefs(props);
 
 const tableList = ref([]);
 
 const tableColumns = computed<any[]>(() => [
   {
-    title: 'Report Name',
+    title: 'Package Name',
     dataIndex: 'name',
     align: 'center',
     ellipsis: 'fixed',
@@ -72,7 +75,7 @@ const tableColumns = computed<any[]>(() => [
   },
 ]);
 
-const pagination = reactive({
+const paginationVal = reactive({
   // 分页配置器
   pageSize: 10, // 一页的数据限制
   current: 1, // 当前页
@@ -96,13 +99,32 @@ const pagination = reactive({
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
-
+const pagination = ref();
 onMounted(() => {
-  getProjectsPackage();
+  if (pageType?.value === 'project') {
+    pagination.value = paginationVal;
+    getProjectsPackage()
+  } else {
+    tableList.value = packageListData.value;
+    pagination.value = false;
+  }
 })
 
-const getProjectsPackage = () => {
+const getProjectsPackage = async () => {
+  try {
+    const params = {
+      page: pagination.current,
+      size: pagination.pageSize,
+    }
+    const { data } = await apiGetProjectsPackages(detailId?.value, params);
+    tableList.value = data.data;
+    pagination.total = data.total
 
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    // loading.value = false;
+  }
 }
 
 const goDeploy = () => {
@@ -112,4 +134,8 @@ const goDeploy = () => {
 const goView = () => {
 
 }
+
+defineExpose({
+  getProjectsPackage
+})
 </script>

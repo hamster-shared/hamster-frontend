@@ -1,9 +1,9 @@
 import httpRequest from "@/request";
 
 interface GetWorkflowsDetailParams {
- id: string,
- workflowsId: string,
- workflowDetailId: string,
+  id: string,
+  workflowsId: string,
+  workflowDetailId: string,
 }
 
 interface GetContractDeployDetailParams {
@@ -12,6 +12,11 @@ interface GetContractDeployDetailParams {
 }
 
 interface GetDetailLogsParams {
+  workflowsId: string;
+  workflowDetailId: string;
+}
+
+interface GetDetailPackageParams {
   workflowsId: string;
   workflowDetailId: string;
 }
@@ -104,6 +109,22 @@ export function apiGetDetailStageLogs(params: GetDetailStagelogsParams) {
 export function apiGetDetailLogs(params: GetDetailLogsParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/logs`,
+    method: "get",
+  });
+}
+
+// 获取package 信息
+export function apiGetDetailPackage(params: GetDetailPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package`,
+    method: "get",
+  });
+}
+
+//workflow详情report 
+export function apiGetDetailFrontendReport(params: GetDetailPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/report`,
     method: "get",
   });
 }

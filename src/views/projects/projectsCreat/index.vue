@@ -108,8 +108,6 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
-import ContractTemplate from './components/ContractTemplate.vue';
-import FrontEndTemplate from './components/FrontEndTemplate.vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
@@ -179,7 +177,7 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
   }
 }
 const goDetail = async (id: string) => {
-  setCreateProjectValue("/projects/templates/" + id + "/details" + formData.type)
+  setCreateProjectValue("/projects/templates/" + id + "/details/" + formData.type)
 }
 
 const getTemplatesShow = async (val: any) => {
