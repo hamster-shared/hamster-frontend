@@ -16,9 +16,10 @@ interface GetDetailLogsParams {
   workflowDetailId: string;
 }
 
-interface GetDetailPackageParams {
+interface GetPackageParams {
   workflowsId: string;
   workflowDetailId: string;
+  packageId: string;
 }
 
 interface GetDetailStagelogsParams {
@@ -114,15 +115,24 @@ export function apiGetDetailLogs(params: GetDetailLogsParams) {
 }
 
 // 获取package 信息
-export function apiGetDetailPackage(params: GetDetailPackageParams) {
+export function apiGetPackagesList(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package`,
     method: "get",
   });
 }
 
+// 获取 package 详情 
+export function apiGetPackageDetail(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package/${params.packageId}`,
+    method: "get",
+  });
+}
+
+
 //workflow详情report 
-export function apiGetDetailFrontendReport(params: GetDetailPackageParams) {
+export function apiGetDetailFrontendReport(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/report`,
     method: "get",
