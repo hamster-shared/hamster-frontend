@@ -55,7 +55,7 @@
           <div class="font-bold text-[16px]">Popular Template</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1'">A collection of our most
             deployed contracts.</div>
-          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '5'">A collection of our
             most deployed FrontEnd.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)"
@@ -108,7 +108,8 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
-import { message } from 'ant-design-vue';
+import ContractTemplate from './components/ContractTemplate.vue';
+import FrontEndTemplate from './components/FrontEndTemplate.vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
