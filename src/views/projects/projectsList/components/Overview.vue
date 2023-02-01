@@ -4,7 +4,7 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]" @click="goDetail(viewInfo.id)">{{ viewInfo.name }}</div>
+          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]" @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
         </div>
       </div>
@@ -153,14 +153,15 @@ const router = useRouter();
 const props = defineProps({
   viewType: String,
   viewInfo: Object,
+  projectType: String,
 });
-const { viewType, viewInfo } = toRefs(props);
+const { viewType, viewInfo, projectType } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
 
-const goDetail = (id: string) => {
+const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/"+id+"/details");
+  router.push("/projects/"+id+"/details/"+type);
 }
 
 const projectsCheck = async (id: String, status: Number) => {
@@ -217,12 +218,12 @@ const loadView = async () => {
 const goContractCheck = async (id: String, workflowId: String, detailId: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/1");
+  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/1/"+projectType?.value);
 };
 const goContractBuild = async (id: String, workflowId: String, detailId: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2");
+  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2/"+projectType?.value);
 };
 const goContractDeploy = async (id: String, version: String) => {
   if (version === "") {

@@ -31,9 +31,9 @@
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length!==0">
-      <Overview :viewType="viewType" :viewInfo="projectsDetail"  @loadProjects="loadProjects" />
+      <Overview :viewType="viewType" :projectType="projectType" :viewInfo="projectsDetail"  @loadProjects="loadProjects" />
     </div>
-    <Workflows :detailId="detailId" />
+    <Workflows :detailId="detailId" :projectType="projectType" />
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
@@ -44,7 +44,7 @@
           <Package ref="packageRef" pageType="project" :detailId="detailId"  />
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report">
-          <Report ref="reportRef" :detailId="detailId"  />
+          <Report ref="reportRef" :detailId="detailId" :projectType="projectType"  />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -90,6 +90,7 @@ const theme = useThemeStore()
 const router = useRouter();
 const { params } = useRoute();
 const timer = ref(0)
+const projectType = ref(params.type);
 const activeKey = ref(params.type);
 const loading = ref(false)
 const detailId = ref(params.id);
