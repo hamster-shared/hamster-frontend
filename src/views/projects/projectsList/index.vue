@@ -21,12 +21,12 @@
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
           <div v-for="(item, index) in projectList" :key="index">
-            <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
+            <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"  />
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="FrontEnd">
           <div v-for="(item, index) in projectList" :key="index">
-            <Overview :viewType="viewType" :viewInfo="item" @loadProjects="getProjects"  />
+            <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"  />
           </div>
         </a-tab-pane>
       </a-tabs>

@@ -67,8 +67,9 @@ const router = useRouter();
 
 const props = defineProps({
   detailId: String,
+  projectType: String,
 });
-const { detailId } = toRefs(props);
+const { detailId, projectType } = toRefs(props);
 
 const timer = ref(0)
 const loading = ref(false);
@@ -191,7 +192,7 @@ const getProjectsWorkflows = async () => {
   }
 };
 const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
-  router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type);
+  router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type+"/"+projectType?.value);
 }
 const deleteWorkflow = (workflowId: string) => {
   delWorkflowId.value = workflowId;
