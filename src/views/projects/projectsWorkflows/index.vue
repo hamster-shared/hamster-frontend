@@ -8,6 +8,7 @@
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
+    <Deployment :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData"></Deployment>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
     <ContractList v-show="queryJson.type === '2' && projectType === '1'" :contractListData="contractListData"></ContractList>
@@ -24,8 +25,9 @@ import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
+import Deployment from './components/Deployment.vue';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport,apiGetDetailPackage } from "@/apis/workFlows";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport,apiGetPackagesList,apiGetPackageDetail } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -47,6 +49,7 @@ const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
 const contractListData = reactive([]);
 const artifactListData = reactive([]);
+const packageInfo = reactive({});
 const workflowsDetailsData = reactive({
   startTime: '',
   endTime: '',
@@ -56,6 +59,7 @@ const workflowsDetailsData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
+  console.log("workflowsDetailsData:",data);
   Object.assign(workflowsDetailsData, data);
   const stageInfo = YAML.parse(data.stageInfo);
   processData.value = stageInfo;
@@ -70,11 +74,16 @@ const getWorkflowsDetails = async () => {
     }, 5000);
   } else {
     clearTimeout(detailTimer.value);
-    if (projectType === '2') {
-      queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
-    } else {
-      queryJson.type === '1' ? getCheckReport() : getContractList();
-    }
+    loadInfo();
+  }
+}
+
+const loadInfo = () => {
+  if (projectType === '2') {
+    queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
+    // getPackageDetail(); //@todo 待确认加载状态
+  } else {
+    queryJson.type === '1' ? getCheckReport() : getContractList();
   }
 }
 
@@ -136,7 +145,7 @@ const getWorkflowPackage = async () => {
       workflowsId: queryJson.workflowsId,
       workflowDetailId: queryJson.workflowDetailId,
     }
-    const { data } = await apiGetDetailPackage(params);
+    const { data } = await apiGetPackagesList(params);
     Object.assign(artifactListData, data)
 
   } catch (error: any) {
@@ -144,6 +153,20 @@ const getWorkflowPackage = async () => {
   }
 }
 
+const getPackageDetail = async () => {
+  try {
+    const params = {
+      workflowsId: queryJson?.value.workflowsId,
+      workflowDetailId: queryJson?.value.workflowDetailId,
+      packageId: 1,
+    }
+    const { data } = await apiGetPackageDetail(params);
+    Object.assign(packageInfo, data);
+
+  } catch (error: any) {
+    console.log("erro:",error)
+  }
+}
 const stopBtn = async () => {
   if (inRunning.value) {
     try {
@@ -167,12 +190,7 @@ onMounted(() => {
   getProjectsDetailData();
   title.value = queryJson.type === '1' ? 'Check' : 'Build';
   currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
-  console.log("workflowsDetailsData:",workflowsDetailsData);
-  if (projectType === '2') {
-    queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
-  } else {
-    queryJson.type === '1' ? getCheckReport() : getContractList();
-  }
+  loadInfo();
 })
 
 
