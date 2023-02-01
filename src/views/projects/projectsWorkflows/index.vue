@@ -9,7 +9,9 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
-    <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
+    <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
+    <ContractList v-show="queryJson.type === '2' && projectType === '1'" :contractListData="contractListData"></ContractList>
+    <ArtifactList v-show="queryJson.type === '2' && projectType === '2'" :artifactListData="artifactListData"></ArtifactList>
   </div>
 </template>
 <script lang='ts' setup>
@@ -21,8 +23,9 @@ import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
+import ArtifactList from './components/ArtifactList.vue';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport } from "@/apis/workFlows";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport,apiGetDetailPackage } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -34,13 +37,16 @@ const queryJson = reactive({
   workflowsId: router.currentRoute.value.params?.workflowsId,
   type: router.currentRoute.value.params?.type,
 })
+const projectType = router.currentRoute.value.params?.projectType;
 const detailTimer = ref(null);
 const title = ref('');
 const currentName = ref('');
 const inRunning = ref(false);
 const processData = ref([]);
+const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
 const contractListData = reactive([]);
+const artifactListData = reactive([]);
 const workflowsDetailsData = reactive({
   startTime: '',
   endTime: '',
@@ -64,7 +70,11 @@ const getWorkflowsDetails = async () => {
     }, 5000);
   } else {
     clearTimeout(detailTimer.value);
-    queryJson.type === '1' ? getCheckReport() : getContractList();
+    if (projectType === '2') {
+      queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
+    } else {
+      queryJson.type === '1' ? getCheckReport() : getContractList();
+    }
   }
 }
 
@@ -93,7 +103,45 @@ const getCheckReport = async () => {
   // console.log(errop, 'errop')
   workflowsDetailsData.errorNumber = issue;
   // Object.assign(workflowsDetailsData, { errorNumber, issue })
-  Object.assign(checkReportData, list)
+  Object.assign(checkReportData, list);
+}
+
+const getDetailFrontendReport = async () => {
+  
+  try {
+    let issue = 0;
+    const params = {
+      workflowsId: queryJson.workflowsId,
+      workflowDetailId: queryJson.workflowDetailId,
+    }
+    const { data } = await apiGetDetailFrontendReport(params);
+    data.map((item: any) => {
+    item.reportFileData = YAML.parse(item.reportFile);
+    item.reportFileData.map((val: any) => {
+      issue += val.issue
+    })
+  })
+
+  workflowsDetailsData.errorNumber = issue;
+  Object.assign(frontendReportData, data)
+
+  } catch (error: any) {
+    console.log("erro:",error)
+  }
+}
+
+const getWorkflowPackage = async () => {
+  try {
+    const params = {
+      workflowsId: queryJson.workflowsId,
+      workflowDetailId: queryJson.workflowDetailId,
+    }
+    const { data } = await apiGetDetailPackage(params);
+    Object.assign(artifactListData, data)
+
+  } catch (error: any) {
+    console.log("erro:",error)
+  }
 }
 
 const stopBtn = async () => {
@@ -119,7 +167,12 @@ onMounted(() => {
   getProjectsDetailData();
   title.value = queryJson.type === '1' ? 'Check' : 'Build';
   currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
-  queryJson.type === '1' ? getCheckReport() : getContractList();
+  console.log("workflowsDetailsData:",workflowsDetailsData);
+  if (projectType === '2') {
+    queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
+  } else {
+    queryJson.type === '1' ? getCheckReport() : getContractList();
+  }
 })
 
 

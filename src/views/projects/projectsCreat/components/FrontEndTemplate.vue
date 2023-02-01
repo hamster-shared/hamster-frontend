@@ -30,11 +30,11 @@ const props = defineProps({
   showItem: Object,
   templateType: String,
 });
-const { showItem } = toRefs(props);
+const { showItem, templateType } = toRefs(props);
 const emit = defineEmits(["setCreateProjectValue"]);
 
 const goDetail = async (id: string) => {
-  if (templateType === 'create') {
+  if (templateType?.value === 'create') {
     emit("setCreateProjectValue", "/projects/templates/" + id + "/details");
   }
 }

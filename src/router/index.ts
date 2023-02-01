@@ -71,7 +71,7 @@ const router = createRouter({
               component: ProjectsList,
             },
             {
-              path: "/projects/:id/details",
+              path: "/projects/:id/details/:type",
               name: "ProjectsListDetails",
               component: ProjectsListDetails,
             }
@@ -104,11 +104,11 @@ const router = createRouter({
           ]
         },
         {
-          path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type",
-          redirect: "/projects/:id/workflows/:workflowDetailId/:type",
+          path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type/:projectType",
+          redirect: "/projects/:id/workflows/:workflowDetailId/:type/:projectType",
           children: [
             {
-              path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type",
+              path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type/:projectType",
               name: "ProjectsWorkflows",
               component: ProjectsWorkflows,
             },

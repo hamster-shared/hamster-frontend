@@ -37,13 +37,13 @@
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
-        <a-tab-pane key="1" tab="Contract">
+        <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
           <Contract ref="contractRef" :detailId="detailId"  />
         </a-tab-pane>
-        <a-tab-pane v-if="false" key="1" tab="Package">
-          <Package ref="packageRef" :detailId="detailId"  />
+        <a-tab-pane v-if="params.type === '2'" key="2" tab="Package">
+          <Package ref="packageRef" pageType="project" :detailId="detailId"  />
         </a-tab-pane>
-        <a-tab-pane key="2" tab="Report">
+        <a-tab-pane key="3" tab="Report">
           <Report ref="reportRef" :detailId="detailId"  />
         </a-tab-pane>
       </a-tabs>
@@ -90,7 +90,7 @@ const theme = useThemeStore()
 const router = useRouter();
 const { params } = useRoute();
 const timer = ref(0)
-const activeKey = ref("2");
+const activeKey = ref(params.type);
 const loading = ref(false)
 const detailId = ref(params.id);
 const viewType = ref("detail");
@@ -98,6 +98,7 @@ const visibleModal = ref(false);
 const deleteModal = ref(false);
 const contractRef = ref();
 const reportRef = ref();
+const packageRef = ref();
 const formRef = ref();
 const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
@@ -152,16 +153,18 @@ const loadProjects = () => {
 }
 
 const handleTabClick = (tab: any) => {
-  if (tab === "1") {
-    setTimeout(function () {
+  setTimeout(function () {
+    if (tab === "1") {
       contractRef.value.getProjectsContract();
-    }, 1)
-  } else if (tab === "2") {
-    setTimeout(function () {
-      reportRef.value.getProjectsReports();
-    }, 1)
-    
-  }
+      
+    } else if (tab === "2") {
+        packageRef.value.getProjectsPackage();
+      
+    } else if (tab === "3") {
+        reportRef.value.getProjectsReports();
+    }
+  }, 1)
+  
 }
 
 const getProjectsDetail = async () => {

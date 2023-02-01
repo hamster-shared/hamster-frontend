@@ -56,6 +56,16 @@ interface apiDupProjectNameParams {
   owner: string;
   name: string;
 }
+interface GetWorkflowsParams {
+  type: string;
+  page: number;
+  size: number;
+}
+
+interface GetPackageParams {
+  page: number;
+  size: number;
+}
 
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
@@ -212,3 +222,12 @@ export function apiDupProjectName(params: apiDupProjectNameParams) {
     data: params,
   });
 }
+
+// 获取 package 列表
+export function apiGetProjectsPackages(id: String, params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/projects/${id}/packages`,
+    method: "get",
+    params: params,
+  });
+} 
