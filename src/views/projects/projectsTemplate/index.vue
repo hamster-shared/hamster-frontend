@@ -13,7 +13,7 @@
       <div class="ml-4 text-[24px] font-bold">Select template</div>
     </div>
 
-    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '5'">
+    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2'">
     </FrontendTemplate>
     <div v-if="params.type === '1'">
       <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">

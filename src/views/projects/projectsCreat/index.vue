@@ -18,7 +18,7 @@
               <a-radio :style="radioStyle" value="1">Contract
                 <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Contract code.</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="5">FrontEnd
+              <a-radio :style="radioStyle" value="2">FrontEnd
                 <div>Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
               </a-radio>
               <a-radio :style="radioStyle" value="3" disabled="true">Blockchain Node（coming soon）
@@ -55,7 +55,7 @@
           <div class="font-bold text-[16px]">Popular Template</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1'">A collection of our most
             deployed contracts.</div>
-          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '5'">A collection of our
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)"
@@ -77,7 +77,7 @@
               </div>
             </div>
           </div>
-          <div v-if="formData.type === '5'" class="grid grid-cols-2 gap-4">
+          <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px]">
               <img :src="item.image" class="w-full rounded-t-[12px]" />

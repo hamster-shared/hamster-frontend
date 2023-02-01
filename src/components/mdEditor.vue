@@ -24,5 +24,9 @@ const { text } = toRefs(props);
 #md-editor-v3 {
   padding: 24px;
   border-radius: 12px;
+
+  h3 {
+    font-weight: 700 !important;
+  }
 }
 </style>

@@ -20,7 +20,7 @@
     </div>
 
 
-    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" v-if="params.type === '5'"></FrontendTemplateDeatilVue>
+    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" v-if="params.type === '2'"></FrontendTemplateDeatilVue>
     <div v-if="params.type === '1'">
       <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
         <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
