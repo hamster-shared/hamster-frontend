@@ -35,9 +35,8 @@
             <div class="title-text title-m">Created</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{
               fromNowexecutionTime(workflowsDetailsData.startTime, "noThing")
-            }} by {{
-  workflowsDetailsData.triggerUser
-}}</div>
+            }} by {{ workflowsDetailsData.triggerUser }}
+            </div>
             <div class="title-text title-m">Version</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.version }}</div>
           </div>

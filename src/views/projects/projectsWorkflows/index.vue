@@ -16,14 +16,9 @@
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'"></Deployment>
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
+        :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
-    <!-- <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
-    <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
-    <ContractList v-show="queryJson.type === '2' && projectType === '1'" :contractListData="contractListData">
-    </ContractList>
-    <ArtifactList v-show="queryJson.type === '2' && projectType === '2'" :artifactListData="artifactListData">
-    </ArtifactList> -->
   </div>
 </template>
 <script lang='ts' setup>
@@ -38,7 +33,7 @@ import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport,apiGetPackagesList,apiGetPackageDetail } from "@/apis/workFlows";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetPackageDetail } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -70,7 +65,7 @@ const workflowsDetailsData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  console.log("workflowsDetailsData:",data);
+  console.log("workflowsDetailsData:", data);
   Object.assign(workflowsDetailsData, data);
   const stageInfo = YAML.parse(data.stageInfo);
   processData.value = stageInfo;
@@ -172,7 +167,7 @@ const getPackageDetail = async () => {
     Object.assign(packageInfo, data);
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   }
 }
 const stopBtn = async () => {
