@@ -58,7 +58,7 @@
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
-            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)"
+            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <img :src="item.logo" class="h-[40px] w-[40px]" />
               <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
@@ -78,7 +78,7 @@
             </div>
           </div>
           <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
-            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item.id)"
+            <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px]">
               <img :src="item.image" class="w-full rounded-t-[12px]" />
               <div class="border border-solid dark:border-[#434343] border-[#EBEBEB] border-b-0"></div>
@@ -176,8 +176,9 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
     loading.value = false;
   }
 }
-const goDetail = async (id: string) => {
-  setCreateProjectValue("/projects/templates/" + id + "/details/" + formData.type)
+const goDetail = async (val: any) => {
+  localStorage.setItem('frontendTemplateDetail', JSON.stringify(val));
+  setCreateProjectValue("/projects/templates/" + val.id + "/details/" + formData.type)
 }
 
 const getTemplatesShow = async (val: any) => {

@@ -109,6 +109,7 @@ const getTemplatesCategory = async () => {
 const goDetail = (id: string) => {
   router.push("/projects/templates/" + id + "/details/" + params.type);
 }
+
 const goStandard = (name: string) => {
   router.push("/projects/templates/" + name + "/standard");
 }
