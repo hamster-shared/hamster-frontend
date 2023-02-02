@@ -51,23 +51,21 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 
 const props = defineProps({
   packageInfo: Object,
-  workflowsDetailsData: { type: Object }
-});
-
-const props = defineProps({
+  workflowsDetailsData: { type: Object },
   showBth: {
     type: Boolean,
     default: true,
   },
-})
+});
 
 </script>
 <style lang="less" scoped>
-.title-text{
+.title-text {
   font-weight: bold;
   font-size: 16px;
 }
-.title-m{
+
+.title-m {
   margin-top: 24px;
 }
 </style>
