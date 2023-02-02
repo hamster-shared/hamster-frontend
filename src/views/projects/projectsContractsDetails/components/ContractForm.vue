@@ -62,7 +62,7 @@ const formData = reactive({});
 
 const { checkValue, contractAddress, abiInfo, inputs } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
-console.log(formState, 'formState')
+// console.log(formState, 'formState')
 
 
 const submit = async () => {

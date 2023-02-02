@@ -14,6 +14,7 @@ import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs
 import projectsArtifactsContractDeploy from "../views/projects/projectsArtifactsContractDeploy/index.vue";
 import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 import ProjectsStandardContract from "../views/projects/projectsStandardContract/index.vue";
+import ProjectsFrontendDetails from "../views/projects/projectsFrontendDetails/index.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -119,7 +120,7 @@ const router = createRouter({
               meta: {
                 layout: 'null',
               }
-            }
+            } 
           ],
         },
         {
@@ -131,6 +132,11 @@ const router = createRouter({
           path: "/projects/:id/contracts-details/:version",
           name: "ProjectsContractsDetails",
           component: ProjectsContractsDetails,
+        },
+        {
+          path: "/projects/:id/frontend-details",
+          name: "projectsFrontendDetails",
+          component: ProjectsFrontendDetails,
         }
       ]
     },

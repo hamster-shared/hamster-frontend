@@ -64,7 +64,7 @@ const inputs = ref([]);
 const contractForm = ref();
 
 const abiInfoData = YAML.parse(abiInfo.value)
-console.log(abiInfoData, 'abiInfoData')
+// console.log(abiInfoData, 'abiInfoData')
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
     if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {

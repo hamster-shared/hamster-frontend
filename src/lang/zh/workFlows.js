@@ -21,4 +21,5 @@ export default {
   passed: "成功",
   stop: "终止",
   workflowStopped: '该构建已结束',
+  copySuccess: "复制成功",
 };

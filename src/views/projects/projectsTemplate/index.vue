@@ -23,7 +23,7 @@
           <div v-if="items.templatesList !== null" class="grid grid-cols-3 gap-4">
             <div v-for="(item, index2) in items.templatesList" :key="index2"
               class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer"
-              @click="goDetail(item)">
+              @click="goDetail(item.id)">
               <div class="font-bold text-ellipsis">{{ item.name }}</div>
               <div class="text-[14px] mt-2 text-[#BBBAB9]">{{ item.description }}</div>
               <div class="flex mt-4">

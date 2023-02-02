@@ -21,4 +21,5 @@ export default {
   passed: "Successful",
   stop: "Stop",
   workflowStopped: 'Workflow Stopped',
+  copySuccess: "copy success",
 };

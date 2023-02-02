@@ -56,7 +56,7 @@ const props = defineProps({
   checkReportData: Array,
 })
 
-console.log(props.checkReportData)
+// console.log(props.checkReportData)
 const getImageUrl = (iconName: string) => {
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;

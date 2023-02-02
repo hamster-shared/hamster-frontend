@@ -8,10 +8,22 @@
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
-    <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
+    <div v-if="projectType === '1'">
+      <!-- contract -->
+      <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
+      <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
+    </div>
+    <div v-else>
+      <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
+      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
+      <Deployment v-show="queryJson.type === '3'"></Deployment>
+    </div>
+    <!-- <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
     <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
-    <ContractList v-show="queryJson.type === '2' && projectType === '1'" :contractListData="contractListData"></ContractList>
-    <ArtifactList v-show="queryJson.type === '2' && projectType === '2'" :artifactListData="artifactListData"></ArtifactList>
+    <ContractList v-show="queryJson.type === '2' && projectType === '1'" :contractListData="contractListData">
+    </ContractList>
+    <ArtifactList v-show="queryJson.type === '2' && projectType === '2'" :artifactListData="artifactListData">
+    </ArtifactList> -->
   </div>
 </template>
 <script lang='ts' setup>
@@ -24,8 +36,9 @@ import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
+import Deployment from './components/Deployment.vue';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport,apiGetDetailPackage } from "@/apis/workFlows";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetDetailPackage } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -99,15 +112,12 @@ const getCheckReport = async () => {
       issue += val.issue
     })
   })
-
-  // console.log(errop, 'errop')
   workflowsDetailsData.errorNumber = issue;
-  // Object.assign(workflowsDetailsData, { errorNumber, issue })
   Object.assign(checkReportData, list);
 }
 
 const getDetailFrontendReport = async () => {
-  
+
   try {
     let issue = 0;
     const params = {
@@ -116,17 +126,17 @@ const getDetailFrontendReport = async () => {
     }
     const { data } = await apiGetDetailFrontendReport(params);
     data.map((item: any) => {
-    item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any) => {
-      issue += val.issue
+      item.reportFileData = YAML.parse(item.reportFile);
+      item.reportFileData.map((val: any) => {
+        issue += val.issue
+      })
     })
-  })
 
-  workflowsDetailsData.errorNumber = issue;
-  Object.assign(frontendReportData, data)
+    workflowsDetailsData.errorNumber = issue;
+    Object.assign(frontendReportData, data)
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   }
 }
 
@@ -140,7 +150,7 @@ const getWorkflowPackage = async () => {
     Object.assign(artifactListData, data)
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   }
 }
 
@@ -165,9 +175,22 @@ const getProjectsDetailData = async () => {
 onMounted(() => {
   getWorkflowsDetails();
   getProjectsDetailData();
-  title.value = queryJson.type === '1' ? 'Check' : 'Build';
-  currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
-  console.log("workflowsDetailsData:",workflowsDetailsData);
+  if (projectType === '1') {
+    // projectType === '1' === contract
+    title.value = queryJson.type === '1' ? 'Check' : 'Build';
+    currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
+  } else {
+    // projectType === '2' === frontend
+    if (queryJson.type === '1') {
+      title.value = 'Check'
+    } else if (queryJson.type === '2') {
+      title.value = 'Build'
+    } else {
+      title.value = 'Deploy'
+    }
+    currentName.value = `Frontend ${title.value}_#${queryJson.workflowsId}`
+  }
+
   if (projectType === '2') {
     queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
   } else {
