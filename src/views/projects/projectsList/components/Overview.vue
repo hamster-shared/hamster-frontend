@@ -138,7 +138,7 @@
       </div>
     </div>
   </div>
-  <CustomMsg :showMsg="showMsg"></CustomMsg>
+  <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs } from 'vue';
@@ -160,6 +160,12 @@ const props = defineProps({
 const { viewType, viewInfo, projectType } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
 const showMsg = ref(false);
+const msgParam = ref({
+  id: viewInfo?.value.id,
+  workflowsId: viewInfo?.value.recentDeploy.workflowId,
+  workflowDetailId: viewInfo?.value.recentDeploy.id,
+  projectType: projectType?.value
+});
 
 const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)

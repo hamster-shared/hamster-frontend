@@ -20,48 +20,63 @@
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
-          <div v-for="(item, index) in projectList" :key="index">
-            <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"  />
+          <div v-if="contractList.length > 0">
+            <div v-for="(item, index) in contractList" :key="index">
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"  />
+            </div>
+            <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange" @showSizeChange="onShowSizeChange" :current="currentContract" :total="totalContract" size="small" />
+          </div>
+          <div v-else>
+            <NoData></NoData>
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="FrontEnd">
-          <div v-for="(item, index) in projectList" :key="index">
-            <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"  />
+          <div v-if="frontentList.length > 0">
+            <div v-for="(item, index) in frontentList" :key="index">
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"  />
+            </div>
+            <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange" @showSizeChange="onShowSizeChange" :current="currentFrontend" :total="totalFrontend" size="small" />
+          </div>
+          <div v-else>
+            <NoData></NoData>
           </div>
         </a-tab-pane>
       </a-tabs>
     </div>
-    <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange" @showSizeChange="onShowSizeChange" :current="current" :total="total" size="small" />
   </div>
 </template>
 <script lang='ts' setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
+import NoData from "@/components/NoData.vue"
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
+import { ta } from 'date-fns/locale';
 const theme = useThemeStore()
 
 const router = useRouter();
 const keyword = ref('');
 const viewType = ref("list");
 const activeKey = ref("1");
-const current = ref(1);
-const total = ref(0);
+const currentContract = ref(1);
+const currentFrontend = ref(1);
+const totalContract = ref(0);
+const totalFrontend = ref(0);
 const pageSize = ref(10);
-const projectList = ref([]);
+const contractList = ref([]);
+const frontentList = ref([]);
 const timer = ref(0)
 
 const onChange = (pageNumber: number) => {
-  console.log("onchange...", pageNumber);
-  current.value = pageNumber;
-  getProjects();
+  activeKey.value === "1" ? currentContract.value = pageNumber : currentFrontend.value = pageNumber;
+  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 }
 const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
-  current.value = currentVal;
   pageSize.value = pageSizeVal;
-  getProjects();
-  console.log("onShowSizeChange...");
+  activeKey.value === "1" ? currentContract.value = currentVal : currentFrontend.value = currentVal;
+  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+
 }
 
 const goCreateProject = () => {
@@ -69,45 +84,75 @@ const goCreateProject = () => {
 }
     
 onMounted(() => {
-  getProjects();
+  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
   timer.value = window.setInterval(() => {
     // 其他定时执行的方法
-    getProjects();
+    activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
   }, 5000);
 })
 
 onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
-    window.clearInterval(timer.value);
+  window.clearInterval(timer.value);
 })
 
 const goSearch = async () => {
-  current.value = 1;
-  getProjects();
+  currentContract.value = 1;
+  currentFrontend.value = 1;
+  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 }
 
 const handleTabClick = (tab: any) => {
   if (tab === "1") {
-    goSearch();
-  } else if (tab === "2") {
-    goSearch();
+    getProjectsContract('1') 
+  } else {
+    getProjectsFrontend('2')
   }
 }
-
-const getProjects = async () => {
+const getProjectsContract = async (type: string | undefined) => {
   try {
     const params = {
       query: keyword.value,
-      page: current.value,
       size: pageSize.value,
-      type: activeKey.value,
+      type: type,
+      page: currentContract.value,
     }
     const { data } = await apiGetProjects(params);
+    console.log("getProjectsContract:",data);
     if ((data.data === null || data.data === "[]")) {
-      goCreateProject();
+    console.log("activeKey:",activeKey.value);
+      if (activeKey.value === "2") {
+        goCreateProject();
+      } else {
+        getProjectsFrontend('2'); 
+      }
     } else {
-      projectList.value = data.data;
-      
-      total.value = data.total;
+      contractList.value = data.data;
+      totalContract.value = data.total;
+    }
+  } catch (error: any) {
+    console.log("erro:",error)
+  }
+}
+const getProjectsFrontend = async (type: string | undefined) => {
+  try {
+    const params = {
+      query: keyword.value,
+      size: pageSize.value,
+      type: type,
+      page: currentFrontend.value,
+    }
+    const { data } = await apiGetProjects(params);
+    console.log("getProjectsFrontend:",data);
+    if ((data.data === null || data.data === "[]")) {
+    console.log("activeKey:",activeKey.value);
+      if (activeKey.value === "1") {
+        goCreateProject();
+      } else {
+        getProjectsContract('1'); 
+      }
+    } else {
+      frontentList.value = data.data;
+      totalFrontend.value = data.total;
     }
   } catch (error: any) {
     console.log("erro:",error)

@@ -16,6 +16,7 @@ interface GetProjectsParams {
   query: string;
   page: number;
   size: number;
+  type: string;
 }
 
 interface GetWorkflowsParams {
