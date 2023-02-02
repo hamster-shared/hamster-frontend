@@ -4,7 +4,7 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]" @click="goDetail(viewInfo.id)">{{ viewInfo.name }}</div>
+          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]" @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
         </div>
       </div>
@@ -138,13 +138,15 @@
       </div>
     </div>
   </div>
+  <CustomMsg :showMsg="showMsg"></CustomMsg>
 </template>
 <script lang='ts' setup>
-import { toRefs } from 'vue';
+import { ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild,apiProjectsDeploy } from "@/apis/projects";
+import CustomMsg from '@/components/CustomMsg.vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
@@ -153,14 +155,16 @@ const router = useRouter();
 const props = defineProps({
   viewType: String,
   viewInfo: Object,
+  projectType: String,
 });
-const { viewType, viewInfo } = toRefs(props);
+const { viewType, viewInfo, projectType } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
+const showMsg = ref(false);
 
-const goDetail = (id: string) => {
+const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/"+id+"/details");
+  router.push("/projects/"+id+"/details/"+type);
 }
 
 const projectsCheck = async (id: String, status: Number) => {
@@ -197,10 +201,14 @@ const projectsBuild = async (id: String, status: Number) => {
   }
 };
 const projectsDeploy = async (id: String, version: String, status: Number) => {
-  if (status === 0 || status === 1 || version === "") {
-    message.info("Smart contract not avaliable.");
+  if (projectType?.value === '2') {
+    goFrontendDeploy(id);
   } else {
-    goContractDeploy(id, version);
+    if (status === 0 || status === 1 || version === "") {
+      message.info("Smart contract not avaliable.");
+    } else {
+      goContractDeploy(id, version);
+    }
   }
 };
 const projectsOps = async (id: String, version: String) => {
@@ -217,12 +225,12 @@ const loadView = async () => {
 const goContractCheck = async (id: String, workflowId: String, detailId: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/1");
+  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/1/"+projectType?.value);
 };
 const goContractBuild = async (id: String, workflowId: String, detailId: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2");
+  router.push("/projects/"+id+"/"+workflowId+"/workflows/"+detailId+"/2/"+projectType?.value);
 };
 const goContractDeploy = async (id: String, version: String) => {
   if (version === "") {
@@ -237,6 +245,19 @@ const goContractDetail = async (id: String, version: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/contracts-details/"+version);
+}
+const goFrontendDeploy = async (id: String) => {
+  try {
+    const res = await apiProjectsDeploy(id);
+    console.log("res;",res);
+    showMsg.value = true;
+    setTimeout(function () {
+      showMsg.value = false;
+    }, 3000)  
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+  }
 }
 </script>
 <style lang='less' scoped>

@@ -230,4 +230,12 @@ export function apiGetProjectsPackages(id: String, params: GetPackageParams) {
     method: "get",
     params: params,
   });
-} 
+}
+
+// package里得deploy 操作 
+export function apiProjectsDeploy(projectId: String) {
+  return httpRequest({
+    url: `/api/projects/${projectId}/deploy`,
+    method: "post",
+  });
+}
