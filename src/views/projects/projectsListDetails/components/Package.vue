@@ -7,12 +7,12 @@
   >
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'action'">
-        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''" @click="goDeploy()">Deploy</label>
+        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''" @click="goDeploy(record.workflowId, record.workflowDetailId)">Deploy</label>
         <label class="text-[#E2B578] cursor-pointer ml-2" v-else @click="goView()">View</label>
       </template>
     </template>
   </a-table>
-  <CustomMsg :showMsg="showMsg"></CustomMsg>
+  <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
@@ -28,6 +28,12 @@ const props = defineProps({
 const { pageType, detailId, packageListData } = toRefs(props);
 
 const showMsg = ref(false);
+const msgParam = ref({
+  id: detailId?.value,
+  workflowsId: 0,
+  workflowDetailId: 0,
+  projectType: 2,
+});
 const tableList = ref([]);
 const pagination = ref();
 
@@ -127,12 +133,14 @@ const getProjectsPackage = async () => {
   }
 }
 
-const goDeploy = async () => {
+const goDeploy = async (workflowId,workflowDetailId) => {
   
   try {
     const res = await apiProjectsDeploy(detailId?.value);
     console.log("res;",res);
     showMsg.value = true;
+    msgParam.value.workflowsId = workflowId;
+    msgParam.value.workflowDetailId = workflowDetailId;
     setTimeout(function () {
       showMsg.value = false;
     }, 3000)  
