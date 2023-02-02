@@ -6,20 +6,19 @@
     :pagination="pagination"
   >
     <template #bodyCell="{ column, record, index }">
-      <template v-if="column.dataIndex === 'branch'">
-        branch
-      </template>
       <template v-if="column.dataIndex === 'action'">
-        <label class="text-[#E2B578] cursor-pointer" @click="goDeploy()">Deploy</label>
-        <label class="text-[#E2B578] cursor-pointer" @click="goView()">View</label>
+        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''" @click="goDeploy()">Deploy</label>
+        <label class="text-[#E2B578] cursor-pointer ml-2" v-else @click="goView()">View</label>
       </template>
     </template>
   </a-table>
+  <CustomMsg :showMsg="showMsg"></CustomMsg>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
-import { apiGetProjectsPackages } from "@/apis/projects";
+import { apiGetProjectsPackages, apiProjectsDeploy } from "@/apis/projects";
+import CustomMsg from '@/components/CustomMsg.vue';
 
 const props = defineProps({
   detailId: String,
@@ -28,7 +27,9 @@ const props = defineProps({
 });
 const { pageType, detailId, packageListData } = toRefs(props);
 
+const showMsg = ref(false);
 const tableList = ref([]);
+const pagination = ref();
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -99,7 +100,6 @@ const paginationVal = reactive({
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
-const pagination = ref();
 onMounted(() => {
   if (pageType?.value === 'project') {
     pagination.value = paginationVal;
@@ -127,8 +127,19 @@ const getProjectsPackage = async () => {
   }
 }
 
-const goDeploy = () => {
-
+const goDeploy = async () => {
+  
+  try {
+    const res = await apiProjectsDeploy(detailId?.value);
+    console.log("res;",res);
+    showMsg.value = true;
+    setTimeout(function () {
+      showMsg.value = false;
+    }, 3000)  
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+  } 
 }
 
 const goView = () => {

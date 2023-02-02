@@ -138,13 +138,15 @@
       </div>
     </div>
   </div>
+  <CustomMsg :showMsg="showMsg"></CustomMsg>
 </template>
 <script lang='ts' setup>
-import { toRefs } from 'vue';
+import { ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild,apiProjectsDeploy } from "@/apis/projects";
+import CustomMsg from '@/components/CustomMsg.vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
@@ -157,6 +159,7 @@ const props = defineProps({
 });
 const { viewType, viewInfo, projectType } = toRefs(props);
 const emit = defineEmits(["loadProjects"]);
+const showMsg = ref(false);
 
 const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
@@ -198,10 +201,14 @@ const projectsBuild = async (id: String, status: Number) => {
   }
 };
 const projectsDeploy = async (id: String, version: String, status: Number) => {
-  if (status === 0 || status === 1 || version === "") {
-    message.info("Smart contract not avaliable.");
+  if (projectType?.value === '2') {
+    goFrontendDeploy(id);
   } else {
-    goContractDeploy(id, version);
+    if (status === 0 || status === 1 || version === "") {
+      message.info("Smart contract not avaliable.");
+    } else {
+      goContractDeploy(id, version);
+    }
   }
 };
 const projectsOps = async (id: String, version: String) => {
@@ -238,6 +245,19 @@ const goContractDetail = async (id: String, version: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/"+id+"/contracts-details/"+version);
+}
+const goFrontendDeploy = async (id: String) => {
+  try {
+    const res = await apiProjectsDeploy(id);
+    console.log("res;",res);
+    showMsg.value = true;
+    setTimeout(function () {
+      showMsg.value = false;
+    }, 3000)  
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+  }
 }
 </script>
 <style lang='less' scoped>
