@@ -81,10 +81,10 @@ const goCreateProject = () => {
 
 onMounted(() => {
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-  
+
 })
 
-onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
+onBeforeUnmount(() => { //离开当前组件的生命周期执行的方法
   window.clearInterval(timer.value);
 })
 
@@ -93,6 +93,7 @@ const setTimer = () => {
     // 其他定时执行的方法
     activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
   }, 5000);
+}
 
 const goSearch = async () => {
   currentContract.value = 1;
