@@ -19,6 +19,7 @@ export default {
   running: "Running",
   failed: "Failed",
   passed: "Successful",
+  ready: "Ready",
   stop: "Stop",
   workflowStopped: 'Workflow Stopped',
   copySuccess: "copy success",

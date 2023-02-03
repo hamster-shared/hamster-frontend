@@ -25,7 +25,7 @@
       </div>
     </div>
     <div>
-      <Deployment :showBth="false"></Deployment>
+      <Deployment :showBth="false" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
     <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[12px] mt-[24px]">
       <div class="flex justify-between mb-[32px]">
@@ -44,40 +44,76 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import Breadcrumb from '../components/Breadcrumb.vue';
-import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
+import { ref, onMounted, reactive } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
 import { message } from "ant-design-vue";
+import { apiGetPackagesList, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
+import Breadcrumb from '../components/Breadcrumb.vue';
+import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 
 const { t } = useI18n();
 const router = useRouter();
+const { params } = useRoute();
 const currentName = ref('Deployment Detail');
-
-
-const visitBtn = () => {
-
-}
+const packageInfo = reactive({});
+const workflowsDetailsData = reactive({});
 
 const viewLogs = () => {
   // 回到workFlows详情页
-  router.push(`/projects/3b0771b3-bdf3-4b79-965e-214530f5194b/69/workflows/99/3/2`)
+  router.push(`/projects/${packageInfo?.projectId}/${packageInfo?.workflowId}/workflows/${packageInfo?.workflowDetailId}/3/2`)
+}
+
+const getPackageDetail = async () => {
+  try {
+    const queryParams = {
+      workflowsId: params.workflowsId,
+      workflowDetailId: params.workflowDetailId,
+    }
+    const { data } = await apiGetPackagesList(queryParams)
+    Object.assign(packageInfo, data)
+  } catch (err: any) {
+    console.info(err)
+  }
+}
+
+const getWorkflowsDetail = async () => {
+  try {
+    const queryParams = {
+      workflowsId: params.workflowsId,
+      workflowDetailId: params.workflowDetailId,
+    }
+    const { data } = await apiGetWorkflowsDetail(queryParams);
+    Object.assign(workflowsDetailsData, data)
+  } catch (err: any) {
+    console.info(err)
+  }
+
 }
 
 const copyUrl = () => {
   let inp = document.createElement("input");
   document.body.appendChild(inp);
-  inp.value = '哈哈';
+  inp.value = packageInfo?.domain;
   inp.select();
   document.execCommand("copy", false);
   inp.remove();
   message.success(t('workFlows.copySuccess'))
 }
 
+const visitBtn = () => {
+
+}
+
 const deleteBtn = () => {
 
 }
+
+
+onMounted(() => {
+  getPackageDetail();
+  getWorkflowsDetail();
+})
 
 </script>
 

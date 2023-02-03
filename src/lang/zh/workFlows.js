@@ -19,6 +19,7 @@ export default {
   running: "运行中",
   failed: "失败",
   passed: "成功",
+  ready: "成功",
   stop: "终止",
   workflowStopped: '该构建已结束',
   copySuccess: "复制成功",

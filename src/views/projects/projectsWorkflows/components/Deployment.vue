@@ -2,7 +2,7 @@
   <div class="p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">Deployment</span>
-      <a-button v-if="showBth">Ops</a-button>
+      <a-button v-if="showBth" @click="toDetail">Ops</a-button>
     </div>
     <div class="flex">
       <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
@@ -19,7 +19,7 @@
           <div class="w-1/2">
             <div class="title-text title-m">Status</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">
-              <label v-if="workflowsDetailsData.status === 3">Ready</label>
+              {{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status] }`) }}
             </div>
             <div class="title-text title-m">Package</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
@@ -34,11 +34,11 @@
           <div class="w-1/2">
             <div class="title-text title-m">Created</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{
-              fromNowexecutionTime(workflowsDetailsData.startTime, "noThing")
+            fromNowexecutionTime(workflowsDetailsData.startTime, "noThing")
             }} by {{ workflowsDetailsData.triggerUser }}
             </div>
             <div class="title-text title-m">Version</div>
-            <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.version }}</div>
+            <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ '#'+packageInfo.version }}</div>
           </div>
         </div>
       </div>
@@ -47,7 +47,8 @@
 </template>
 <script setup lang="ts">
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
   packageInfo: Object,
   workflowsDetailsData: { type: Object },
@@ -56,6 +57,17 @@ const props = defineProps({
     default: true,
   },
 });
+
+const enum StatusEnum {
+  "nonExecution",
+  "running",
+  "failed",
+  "ready",
+  "stop",
+}
+const toDetail = () => {
+  router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}`)
+}
 
 </script>
 <style lang="less" scoped>

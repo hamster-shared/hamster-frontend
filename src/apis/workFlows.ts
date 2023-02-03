@@ -114,7 +114,7 @@ export function apiGetDetailLogs(params: GetDetailLogsParams) {
   });
 }
 
-// 获取package 信息
+// 获取workflow下的package 信息====Deployment/Artifact
 export function apiGetPackagesList(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package`,
@@ -122,14 +122,13 @@ export function apiGetPackagesList(params: GetPackageParams) {
   });
 }
 
-// 获取 package 详情 
-export function apiGetPackageDetail(params: GetPackageParams) {
-  return httpRequest({
-    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package/${params.packageId}`,
-    method: "get",
-  });
-}
-
+// // 获取 package 详情 
+// export function apiGetPackageDetail(params: GetPackageParams) {
+//   return httpRequest({
+//     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package/${params.packageId}`,
+//     method: "get",
+//   });
+// }
 
 //workflow详情report 
 export function apiGetDetailFrontendReport(params: GetPackageParams) {

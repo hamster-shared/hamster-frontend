@@ -134,7 +134,7 @@ const router = createRouter({
           component: ProjectsContractsDetails,
         },
         {
-          path: "/projects/:id/frontend-details",
+          path: "/projects/:workflowsId/frontend-details/:workflowDetailId",
           name: "projectsFrontendDetails",
           component: ProjectsFrontendDetails,
         }
