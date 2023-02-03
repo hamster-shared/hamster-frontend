@@ -23,7 +23,10 @@
           />
         </div>
         <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
-        <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
+        <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
+          <label v-if="projectType === '1'">Contract</label>
+          <label v-else-if="projectType === '2'">FrontEnd</label>
+        </div>
       </div>
       <div>
        <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
