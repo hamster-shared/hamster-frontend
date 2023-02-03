@@ -5,7 +5,10 @@
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
           <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]" @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
-          <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">Contract</div>
+          <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
+            <label v-if="projectType === '1'">Contract</label>
+            <label v-else-if="projectType === '2'">FrontEnd</label>
+          </div>
         </div>
       </div>
       <div>
@@ -33,7 +36,7 @@
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group text-center w-[100px]" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">
+        <label class="cursor-pointer group text-center w-[100px]" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy)">
           <img src="@/assets/icons/ops.svg" class="h-[16px] dark:hidden group-hover:hidden" />
           <img src="@/assets/icons/ops-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
           <img src="@/assets/icons/ops-color.svg" class="h-[16px] hidden group-hover:inline-block" />
@@ -131,9 +134,15 @@
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            {{ viewInfo.recentDeploy.version }}｜{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</div>
+            {{ viewInfo.recentDeploy.version }}｜
+            <label v-if="projectType === '1'">{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</label>
+            <label v-else-if="projectType === '2'">{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}</label>
+          </div>
           <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-else>View Contract</div>
+          <div v-else>
+            <div class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-if="projectType === '1'">View Contract</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" v-else>View FrontEnds</div>
+          </div>
         </div>
       </div>
     </div>
@@ -207,21 +216,29 @@ const projectsBuild = async (id: String, status: Number) => {
   }
 };
 const projectsDeploy = async (id: String, version: String, status: Number) => {
-  if (projectType?.value === '2') {
-    goFrontendDeploy(id);
-  } else {
-    if (status === 0 || status === 1 || version === "") {
+  if (status === 0 || status === 1 || version === "") {
+    if (projectType?.value === '1') {
       message.info("Smart contract not avaliable.");
     } else {
+      message.info("FrontEnd package not avaliable.");
+    }
+  } else {
+    if (projectType?.value === '1') {
       goContractDeploy(id, version);
+    } else {
+      goFrontendDeploy(id);
     }
   }
 };
-const projectsOps = async (id: String, version: String) => {
-  if (version === "") {
-    message.info("Smart contract not avaliable.");
+const projectsOps = async (id: String, recentDeploy: Object) => {
+  if (projectType?.value === "1") {
+    if (recentDeploy.version === "") {
+      message.info("Smart contract not avaliable.");
+    } else {
+      goContractDetail(id, recentDeploy.version);
+    }
   } else {
-    goContractDetail(id, version);
+    router.push("/projects/"+recentDeploy.workflowId+"/frontend-details/"+recentDeploy.id);
   }
 };
 const loadView = async () => {
@@ -263,6 +280,14 @@ const goFrontendDeploy = async (id: String) => {
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
+  }
+}
+
+const goFrontEndDetail = (id: string, recentDeploy: Object) => {
+  if (recentDeploy.status === 3) { //success
+    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}`);
+  } else {
+    router.push(`/projects/${id}/${recentDeploy.workflowId}/workflows/${recentDeploy.id}/3/${projectType?.value}`);
   }
 }
 </script>

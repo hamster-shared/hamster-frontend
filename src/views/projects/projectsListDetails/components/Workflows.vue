@@ -16,8 +16,16 @@
     >
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'type'">
-          <label v-if="record.type === 1">Contract Check_#{{ record.execNumber}}</label>
-          <label v-if="record.type === 2">Contract Build_#{{ record.execNumber}}</label>
+          <div v-if="projectType === '1'">
+            <label v-if="record.type === 1">Contract Check_#{{ record.id}}</label>
+            <label v-if="record.type === 2">Contract Build_#{{ record.id}}</label>
+            <label v-if="record.type === 3">Contract Deploy_#{{ record.id}}</label>
+          </div>
+          <div v-else>
+            <label v-if="record.type === 1">FrontEnd Check_#{{ record.id}}</label>
+            <label v-if="record.type === 2">FrontEnd Build_#{{ record.id}}</label>
+            <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.id}}</label>
+          </div>
         </template>
         <template v-if="column.dataIndex === 'triggerMode'">
           <div v-if="record.triggerMode === 1">manual trigger</div>
@@ -34,7 +42,7 @@
           <div v-else></div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <label class="cursor-pointer" @click="goContractWorkflows(record.type,record.id, record.detailId)">Details</label>
+          <label class="cursor-pointer" @click="goWorkflowsDetail(record.type,record.id, record.detailId)">Details</label>
           <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
           <label v-if="record.status !== 1" @click="deleteWorkflow(record.id)" class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
         </template>
@@ -158,16 +166,18 @@ const pagination = reactive({
 
 onMounted(() => {
   getProjectsWorkflows();
-
-  timer.value = window.setInterval(() => {
-      // 其他定时执行的方法
-    getProjectsWorkflows();
-  }, 5000);
 })
 
 onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
     window.clearInterval(timer.value);
 })
+
+const setTimer = () => {
+  timer.value = window.setInterval(() => {
+      // 其他定时执行的方法
+    getProjectsWorkflows();
+  }, 5000);
+}
 
 const changeAction = async () => {
   pagination.current = 1;
@@ -185,13 +195,24 @@ const getProjectsWorkflows = async () => {
     workflowList.value = data.data;
     pagination.total = data.total
 
+    const isRunning = ref(false);
+    workflowList.value.forEach(element => {
+      if (element.status === 1) {
+        isRunning.value = true;
+      }
+    });
+    if (isRunning.value === true) {
+      setTimer();
+    } else {
+      window.clearInterval(timer.value);
+    }
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
     // loading.value = false;
   }
 };
-const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
+const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
   router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type+"/"+projectType?.value);
 }
 const deleteWorkflow = (workflowId: string) => {

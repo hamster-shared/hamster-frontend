@@ -16,7 +16,7 @@
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="artifactListData"
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
   </div>
