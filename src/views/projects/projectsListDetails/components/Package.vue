@@ -8,7 +8,7 @@
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'action'">
         <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''" @click="goDeploy(record.workflowId, record.workflowDetailId)">Deploy</label>
-        <label class="text-[#E2B578] cursor-pointer ml-2" v-else @click="goView()">View</label>
+        <label class="text-[#E2B578] cursor-pointer ml-2" v-else @click="goView(record.workflowId, record.workflowDetailId)">View</label>
       </template>
     </template>
   </a-table>
@@ -17,8 +17,10 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
+import { useRouter } from "vue-router";
 import { apiGetProjectsPackages, apiProjectsDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
+import { message } from 'ant-design-vue';
 
 const props = defineProps({
   detailId: String,
@@ -27,6 +29,7 @@ const props = defineProps({
 });
 const { pageType, detailId, packageListData } = toRefs(props);
 
+const router = useRouter();
 const showMsg = ref(false);
 const msgParam = ref({
   id: detailId?.value,
@@ -133,7 +136,7 @@ const getProjectsPackage = async () => {
   }
 }
 
-const goDeploy = async (workflowId,workflowDetailId) => {
+const goDeploy = async (workflowId: number,workflowDetailId: number) => {
   
   try {
     const res = await apiProjectsDeploy(detailId?.value);
@@ -150,8 +153,8 @@ const goDeploy = async (workflowId,workflowDetailId) => {
   } 
 }
 
-const goView = () => {
-
+const goView = (workflowId: number,workflowDetailId: number) => {
+  router.push("/projects/"+workflowId+"/frontend-details/"+workflowDetailId);
 }
 
 defineExpose({
