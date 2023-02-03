@@ -271,7 +271,12 @@ const goContractDetail = async (id: String, version: String) => {
 }
 const goFrontendDeploy = async (id: String) => {
   try {
-    const res = await apiProjectsDeploy(id);
+    const params = ref({
+      id: id,
+      workflowsId: viewInfo?.value.recentDeploy.workflowId,
+      workflowDetailId: viewInfo?.value.recentDeploy.id,
+    });
+    const res = await apiProjectsDeploy(params.value);
     console.log("res;",res);
     showMsg.value = true;
     setTimeout(function () {
