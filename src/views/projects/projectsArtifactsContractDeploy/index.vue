@@ -21,7 +21,6 @@
         <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData">
         </a-checkbox-group>
-        <!-- <Checkbox></Checkbox> -->
       </a-form-item>
       <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
       <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">

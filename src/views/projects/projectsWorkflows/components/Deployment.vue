@@ -12,8 +12,10 @@
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex items-center">
           {{ packageInfo.domain }}
-          <img src="@/assets/icons/link-white.svg" class="h-[18px] ml-1 dark:hidden" />
-          <img src="@/assets/icons/link-dark.svg" class="h-[18px] ml-1 hidden dark:inline-block" />
+          <img src="@/assets/icons/link-white.svg" class="h-[18px] cursor-pointer ml-1 dark:hidden"
+            @click="openDomain" />
+          <img src="@/assets/icons/link-dark.svg" class="h-[18px] cursor-pointer ml-1 hidden dark:inline-block"
+            @click="openDomain" />
         </div>
         <div class="flex w-full">
           <div class="w-1/2">
@@ -67,6 +69,10 @@ const enum StatusEnum {
 }
 const toDetail = () => {
   router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}`)
+}
+
+const openDomain = () => {
+  window.open(props.packageInfo?.domain)
 }
 
 </script>

@@ -102,7 +102,7 @@ const copyUrl = () => {
 }
 
 const visitBtn = () => {
-
+  window.open(packageInfo?.domain)
 }
 
 const deleteBtn = () => {
@@ -119,7 +119,7 @@ onMounted(() => {
 
 <style lang='less' scoped>
 .btn,
-.an-btn {
+.ant-btn {
   width: 131px;
   height: 43px;
 }

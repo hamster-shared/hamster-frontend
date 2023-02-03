@@ -73,7 +73,7 @@ const stagesData = reactive({
   content: [],
 });
 
-const stagesTimer = ref(null);
+const stagesTimer = ref();
 const wrapper = ref();
 const processModalRef = ref();
 
