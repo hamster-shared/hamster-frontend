@@ -85,15 +85,19 @@ const goCreateProject = () => {
     
 onMounted(() => {
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-  timer.value = window.setInterval(() => {
-    // 其他定时执行的方法
-    activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-  }, 5000);
+  
 })
 
 onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
   window.clearInterval(timer.value);
 })
+
+const setTimer = () => {
+  timer.value = window.setInterval(() => {
+    // 其他定时执行的方法
+    activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+  }, 5000);
+}
 
 const goSearch = async () => {
   currentContract.value = 1;
@@ -117,9 +121,7 @@ const getProjectsContract = async (type: string | undefined) => {
       page: currentContract.value,
     }
     const { data } = await apiGetProjects(params);
-    console.log("getProjectsContract:",data);
     if ((data.data === null || data.data === "[]")) {
-    console.log("activeKey:",activeKey.value);
       if (activeKey.value === "2") {
         goCreateProject();
       } else {
@@ -128,6 +130,19 @@ const getProjectsContract = async (type: string | undefined) => {
     } else {
       contractList.value = data.data;
       totalContract.value = data.total;
+    }
+
+    const isRunning = ref(false);
+    contractList.value.forEach(element => {
+      if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
+        || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
+        isRunning.value = true;
+      }
+    });
+    if (isRunning.value === true) {
+      setTimer();
+    } else {
+      window.clearInterval(timer.value);
     }
   } catch (error: any) {
     console.log("erro:",error)
@@ -142,9 +157,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       page: currentFrontend.value,
     }
     const { data } = await apiGetProjects(params);
-    console.log("getProjectsFrontend:",data);
     if ((data.data === null || data.data === "[]")) {
-    console.log("activeKey:",activeKey.value);
       if (activeKey.value === "1") {
         goCreateProject();
       } else {
