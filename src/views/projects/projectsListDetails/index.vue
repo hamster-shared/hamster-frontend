@@ -141,15 +141,10 @@ const formRules = computed(() => {
 
 onMounted(() => {
   getProjectsDetail();
-
-  timer.value = window.setInterval(() => {
-      // 其他定时执行的方法
-    getProjectsDetail();
-  }, 5000);
 })
 
 onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
-    window.clearInterval(timer.value);
+  window.clearInterval(timer.value);
 })
 
 const loadProjects = () => {
@@ -181,8 +176,11 @@ const getProjectsDetail = async () => {
       // running - success
       if (JSON.parse(recentStatusOld)?.checkStatus === 1 && data.recentCheck.status === 3
         || JSON.parse(recentStatusOld)?.buildStatus === 1 && data.recentBuild.status === 3) {
-        
-        contractRef.value.getProjectsContract();
+        if (projectType.value === '1') {
+          contractRef.value.getProjectsContract();
+        } else {
+          packageRef.value.getProjectsPackage();
+        }
         reportRef.value.getProjectsReports();
       }
     }
@@ -194,7 +192,16 @@ const getProjectsDetail = async () => {
 
     localStorage.setItem("projectName", data.name)
     localStorage.setItem("projectId", data.id)
-    
+
+    if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1)
+      || projectType.value === '2' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.recentDeploy.status === 1)) {
+      timer.value = window.setInterval(() => {
+          // 其他定时执行的方法
+        getProjectsDetail();
+      }, 5000);
+    } else {
+      window.clearInterval(timer.value);
+    }
   } catch (error: any) {
     console.log("erro:",error)
   } finally {

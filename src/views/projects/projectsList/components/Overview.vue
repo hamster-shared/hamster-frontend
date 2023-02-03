@@ -134,9 +134,15 @@
               src="@/assets/icons/success.svg"
               class="h-[16px] mr-1"
             />
-            {{ viewInfo.recentDeploy.version }}｜{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</div>
+            {{ viewInfo.recentDeploy.version }}｜
+            <label v-if="projectType === '1'">{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</label>
+            <label v-else-if="projectType === '2'">{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}</label>
+          </div>
           <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-else>View Contract</div>
+          <div v-else>
+            <div class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-if="projectType === '1'">View Contract</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" v-else>View FrontEnds</div>
+          </div>
         </div>
       </div>
     </div>
@@ -274,6 +280,14 @@ const goFrontendDeploy = async (id: String) => {
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
+  }
+}
+
+const goFrontEndDetail = (id: string, recentDeploy: Object) => {
+  if (recentDeploy.status === 3) { //success
+    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}`);
+  } else {
+    router.push(`/projects/${id}/${recentDeploy.workflowId}/workflows/${recentDeploy.id}/3/${projectType?.value}`);
   }
 }
 </script>

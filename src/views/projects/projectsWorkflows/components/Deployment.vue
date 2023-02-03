@@ -6,7 +6,7 @@
     </div>
     <div class="flex">
       <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
-        <iframe src="http://wwww.baidu.com" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
+        <iframe :src="packageInfo.domain" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
       </div>
       <div class="ml-[64px] w-3/5">
         <div class="title-text">Domains</div>
