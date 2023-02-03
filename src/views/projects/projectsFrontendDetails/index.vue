@@ -16,9 +16,9 @@
               <a-menu-item>
                 <a href="javascript:;" @click="copyUrl">Copy URL</a>
               </a-menu-item>
-              <a-menu-item>
+              <!-- <a-menu-item>
                 <a href="javascript:;" @click="deleteBtn">Delete</a>
-              </a-menu-item>
+              </a-menu-item> -->
             </a-menu>
           </template>
         </a-dropdown>
@@ -105,9 +105,9 @@ const visitBtn = () => {
   window.open(packageInfo?.domain)
 }
 
-const deleteBtn = () => {
+// const deleteBtn = () => {
 
-}
+// }
 
 
 onMounted(() => {

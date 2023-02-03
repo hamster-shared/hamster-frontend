@@ -6,8 +6,13 @@
     </div>
     <div class="flex">
       <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
-        <iframe src="http://wwww.baidu.com" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
+        <iframe src="https://wwww.baidu.com" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
+        <!-- <div class="w-full h-full">
+          <iframe src="https://develop.test.hamsternet.io/login" frameborder="0" width="100%" height="100%"
+            scrolling="no"></iframe>
+        </div> -->
       </div>
+
       <div class="ml-[64px] w-3/5">
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex items-center">
