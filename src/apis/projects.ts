@@ -73,6 +73,14 @@ interface apiProjectsDeployParams {
   workflowDetailId: string,
 }
 
+interface apiProjectsCodeParams {
+  name: string,
+  type: number,
+  frameType: number,
+  fileName: string,
+  content: string,
+}
+
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
@@ -243,5 +251,14 @@ export function apiProjectsDeploy(params: apiProjectsDeployParams) {
   return httpRequest({
     url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
     method: "post",
+  });
+}
+
+// create project by code
+export function apiProjectsCode(params: apiProjectsCodeParams) {
+  return httpRequest({
+    url: `/api/projects/code`,
+    method: "post",
+    data: params,
   });
 }
