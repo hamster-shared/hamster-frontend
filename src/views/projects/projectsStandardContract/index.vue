@@ -169,7 +169,7 @@ const createProject = async () => {
       params.content = contractERC1155.value;
     }
     const res = await apiProjectsCode(params);
-    message.error(res.message);
+    message.success(res.message);
     router.push("/projects");
   } catch (error: any) {
     console.log("erro:",error)
