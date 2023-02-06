@@ -106,6 +106,8 @@ onMounted(async () => {
     premint: '1000000',
     // access: 'ownable',
     // upgradeable: 'uups',
+    // ...erc20.defaults,
+    // upgradeable: 'uups',
   });
   
   contractERC721.value = erc721.print({

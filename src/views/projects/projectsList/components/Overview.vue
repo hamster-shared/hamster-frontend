@@ -128,20 +128,46 @@
         </div>
         <div>
           <div class="text-[16px] font-bold">Recent Deploy</div>
-          <div class="my-2" v-if="viewInfo.recentDeploy.version === ''">No Data</div>
-          <div class="my-2 flex items-center" v-else>
-            <img
-              src="@/assets/icons/success.svg"
-              class="h-[16px] mr-1"
-            />
-            {{ viewInfo.recentDeploy.version }}｜
-            <label v-if="projectType === '1'">{{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}</label>
-            <label v-else-if="projectType === '2'">{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}</label>
+          <div v-if="projectType === '1'">
+            <div class="my-2" v-if="viewInfo.recentDeploy.version === ''">No Data</div>
+            <div class="my-2 flex items-center" v-else>
+              <img
+                src="@/assets/icons/success.svg"
+                class="h-[16px] mr-1"
+              />
+              {{ viewInfo.recentDeploy.version }}｜
+              {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
+            </div>
+            <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
+            <div v-else class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Contract</div>
           </div>
-          <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
           <div v-else>
-            <div class="text-[#E2B578] cursor-pointer" @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)" v-if="projectType === '1'">View Contract</div>
-            <div class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" v-else>View FrontEnds</div>
+            <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">No Data</div>
+            <div class="my-2 flex items-center" v-else-if="viewInfo.recentDeploy.status === 1">
+              <img
+                src="@/assets/icons/running.svg"
+                class="h-[16px] mr-1"
+              />
+              <div class="text-ellipsis">Running｜{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
+            </div>
+            </div>
+            <div class="my-2 flex items-center" v-else-if="viewInfo.recentDeploy.status === 2">
+              <img
+                src="@/assets/icons/failed.svg"
+                class="h-[16px] mr-1"
+              />
+              <div class="text-ellipsis">Failed｜{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}</div>
+            </div>
+            <div class="my-2 flex items-center " v-else-if="viewInfo.recentDeploy.status === 3">
+              <img
+                src="@/assets/icons/success.svg"
+                class="h-[16px] mr-1"
+              />
+              <div class="text-ellipsis">Success｜{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}</div>
+            </div>
+            <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentDeploy.status === 4">Stop｜{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}</div>
+          <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
+          <div class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">View FrontEnds</div>
           </div>
         </div>
       </div>
