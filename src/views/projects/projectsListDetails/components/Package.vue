@@ -137,8 +137,13 @@ const getProjectsPackage = async () => {
 const goDeploy = async (workflowId: number, workflowDetailId: number) => {
 
   try {
-    const res = await apiProjectsDeploy(detailId?.value);
-    console.log("res;", res);
+    const params = ref({
+      id: detailId?.value,
+      workflowsId: workflowId,
+      workflowDetailId: workflowDetailId,
+    });
+    const res = await apiProjectsDeploy(params.value);
+    console.log("res;",res);
     showMsg.value = true;
     msgParam.value.workflowsId = workflowId;
     msgParam.value.workflowDetailId = workflowDetailId;

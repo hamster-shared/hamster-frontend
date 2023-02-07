@@ -52,7 +52,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import { erc20, erc721, erc1155, infoDefaults } from '@openzeppelin/wizard';
 import InfoSection from './components/InfoSection.vue';
@@ -66,7 +66,10 @@ import FeaturesERC1155 from './components/FeaturesERC1155.vue';
 import SettingsERC1155 from './components/SettingsERC1155.vue';
 import CodeEditor from '@/components/CodeEditor.vue';
 import { useThemeStore } from "@/stores/useTheme";
+import { apiProjectsCode } from "@/apis/projects";
+import { message } from "ant-design-vue";
 const theme = useThemeStore()
+const router = useRouter();
 
 const optsERC20 = ref({
   kind: 'ERC20',
@@ -105,6 +108,8 @@ onMounted(async () => {
     burnable: true,
     premint: '1000000',
     // access: 'ownable',
+    // upgradeable: 'uups',
+    // ...erc20.defaults,
     // upgradeable: 'uups',
   });
   
@@ -145,12 +150,33 @@ const checkboxClick = async (event: any) => {
 }
 
 const createProject = async () => {
-  if (activeKey.value === 'ERC20') {
-    console.log(contractERC20.value)
-  } else if ( activeKey.value === 'ERC721') {
-    console.log(contractERC721.value)
-  } else if ( activeKey.value === 'ERC1155') {
-    console.log(contractERC1155.value)
+  
+  try {
+    loading.value = true;
+    const createProjectTemp = localStorage.getItem('createProjectTemp');
+    const params = {
+      name: JSON.parse(createProjectTemp)?.name,
+      type: JSON.parse(createProjectTemp)?.type - 0,
+      frameType: JSON.parse(createProjectTemp)?.frameType - 0,
+      fileName: optsERC20.value.name,
+      content: contractERC20.value,
+    }
+    if (activeKey.value === 'ERC721') {
+      params.fileName = optsERC721.value.name
+      params.content = contractERC721.value;
+    } else if (activeKey.value === 'ERC1155') {
+      params.fileName = optsERC1155.value.name;
+      params.content = contractERC1155.value;
+    }
+    const res = await apiProjectsCode(params);
+    message.success(res.message);
+    router.push("/projects");
+  } catch (error: any) {
+    console.log("erro:",error)
+    message.error(error.response.data.message);
+    loading.value = false;
+  } finally {
+    loading.value = false;
   }
 }
 </script>
