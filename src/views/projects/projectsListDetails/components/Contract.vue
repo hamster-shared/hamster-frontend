@@ -2,36 +2,35 @@
   <div class="flex">
     <div>
       <a-select @change="changeContract" v-model:value="contract"
-      :options="contractList.map(item => ({ value: item }))">
+        :options="contractList.map(item => ({ value: item }))">
       </a-select>
     </div>
     <div class="ml-4">
-      <a-select @change="changeContract" v-model:value="version"
-      :options="versionList.map(item => ({ value: item }))">
+      <a-select @change="changeContract" v-model:value="version" :options="versionList.map(item => ({ value: item }))">
       </a-select>
     </div>
     <div class="ml-4">
-      <a-select @change="changeContract" v-model:value="network"
-      :options="networkList.map(item => ({ value: item }))">
+      <a-select @change="changeContract" v-model:value="network" :options="networkList.map(item => ({ value: item }))">
       </a-select>
     </div>
   </div>
-  <a-table
-    class="my-4"
-    :columns="contractTableColumns"
-    :dataSource="contractTableList"
-    :pagination="contractPagination"
-  >
+  <a-table class="my-4" :columns="contractTableColumns" :dataSource="contractTableList"
+    :pagination="contractPagination">
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'version'">
         <label class="text-[#E2B578]">{{ record.version }}</label>
       </template>
       <template v-if="column.dataIndex === 'network'">
-        <label v-if="record.network.String !== '' " v-for="(item, indexF) in record.network.String.split(',')" :key="indexF" :class="{ 'ml-2' : indexF !== 0}" class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+        <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
+          :key="indexF" :class="{ 'ml-2': indexF !== 0 }"
+          class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
       </template>
       <template v-if="column.dataIndex === 'action'">
-        <label class="cursor-pointer" v-if="record.network.String !== '' " @click="goContractDetail(record.version)">Details</label>
-        <label class="text-[#E2B578] ml-2 cursor-pointer" @click="goContractDeploy(record.name, record.version)">Deploy</label>
+        <label class="cursor-pointer" v-if="record.network.String !== ''"
+          @click="goContractDetail(record.version)">Details</label>
+        <label class="text-[#E2B578] ml-2 cursor-pointer"
+          @click="goContractDeploy(record.name, record.version)">Deploy</label>
+        <!-- <label @click="downloadAbi(record)" class="text-[#E2B578] ml-2 cursor-pointer">abiInfo</label> -->
       </template>
     </template>
   </a-table>
@@ -39,7 +38,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
-import { formatDateToLocale  } from '@/utils/dateUtil';
+import { formatDateToLocale } from '@/utils/dateUtil';
 import {
   apiGetProjectsContract,
   apiProjectsContractName,
@@ -148,7 +147,7 @@ const getProjectsContract = async () => {
     contractPagination.total = data.total
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
@@ -162,7 +161,7 @@ const getProjectsVersion = async () => {
     versionList.value = versionList.value.concat(data);
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
@@ -174,7 +173,7 @@ const getProjectsContractNetwork = async () => {
     networkList.value = networkList.value.concat(data);
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
@@ -187,16 +186,28 @@ const getProjectsContractName = async () => {
     contractList.value = contractList.value.concat(data);
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
 };
+
+// const downloadAbi = (val: any) => {
+//   const str = val.abiInfo;
+//   const url = `data:,${str}`;
+//   const a = document.createElement('a');
+//   a.href = url;
+//   a.download = `${val.name}.json`;
+//   a.click();
+//   a.remove();
+// };
+
 const goContractDetail = async (version: String) => {
-  router.push("/projects/"+detailId.value+"/contracts-details/"+version);
-}
+  router.push("/projects/" + detailId.value + "/contracts-details/" + version);
+};
+
 const goContractDeploy = async (contract: String, version: String) => {
-  router.push("/projects/"+detailId.value+"/artifacts-contract/"+version+"/deploy/"+contract);
+  router.push("/projects/" + detailId.value + "/artifacts-contract/" + version + "/deploy/" + contract);
 };
 
 defineExpose({

@@ -1,14 +1,12 @@
 <template>
-  <a-table
-    class="my-4"
-    :columns="tableColumns"
-    :dataSource="tableList"
-    :pagination="pagination"
-  >
+  <a-table class="my-4" :columns="tableColumns" :dataSource="tableList" :pagination="pagination">
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'action'">
-        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''" @click="goDeploy(record.workflowId, record.workflowDetailId)">Deploy</label>
-        <label class="text-[#E2B578] cursor-pointer ml-2" v-else @click="goView(record.workflowId, record.workflowDetailId)">View</label>
+        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''"
+          @click="goDeploy(record.workflowId, record.workflowDetailId)">Deploy</label>
+        <label class="text-[#E2B578] cursor-pointer ml-2" v-else
+          @click="goView(record.workflowId, record.workflowDetailId)">View</label>
+
       </template>
     </template>
   </a-table>
@@ -130,32 +128,36 @@ const getProjectsPackage = async () => {
     pagination.total = data.total
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
 }
 
-const goDeploy = async (workflowId: number,workflowDetailId: number) => {
-  
+const goDeploy = async (workflowId: number, workflowDetailId: number) => {
+
   try {
     const res = await apiProjectsDeploy(detailId?.value);
-    console.log("res;",res);
+    console.log("res;", res);
     showMsg.value = true;
     msgParam.value.workflowsId = workflowId;
     msgParam.value.workflowDetailId = workflowDetailId;
     setTimeout(function () {
       showMsg.value = false;
-    }, 3000)  
+    }, 3000)
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
-  } 
+  }
 }
 
-const goView = (workflowId: number,workflowDetailId: number) => {
-  router.push("/projects/"+workflowId+"/frontend-details/"+workflowDetailId);
+const goView = (workflowId: number, workflowDetailId: number) => {
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId);
 }
+
+// const downloadAbi = (val: any) => {
+//   console.log(val, 'val')
+// }
 
 defineExpose({
   getProjectsPackage

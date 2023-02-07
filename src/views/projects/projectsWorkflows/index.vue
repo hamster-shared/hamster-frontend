@@ -138,6 +138,8 @@ const getDetailFrontendReport = async () => {
     workflowsDetailsData.errorNumber = issue;
     Object.assign(frontendReportData, data)
 
+    console.log(frontendReportData, 'frontendReportData')
+
   } catch (error: any) {
     console.log("erro:", error)
   }

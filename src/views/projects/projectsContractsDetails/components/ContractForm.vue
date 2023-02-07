@@ -4,7 +4,7 @@
     <a-form-item>
       <div class="flex justify-between mb-[32px]">
         <span class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
-        <a-button class="btn" :disabled="isSend" type="primary" html-type="submit">{{
+        <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
           isSend? buttonInfo + 'ing': buttonInfo
         }}</a-button>
       </div>
@@ -79,24 +79,40 @@ const submit = async () => {
     if (JSON.stringify(formData) == "{}") {
 
       contract[formState.checkValue]().then((tx: any) => {
-        // console.log(tx, tx.hash, 'tx')
+        console.log(tx, 'tx')
+
+        // tx.wait().then((result: any) => {
+        isSend.value = false;
         hashValue.value = tx;
-        tx.wait().then((result: any) => {
-          isSend.value = false;
-          // console.log(result, 'tx send success!')
-        })
+        //   // console.log(result, 'tx send success!')
+        // }).catch((err: any) => {
+        //   message.error('调用失败')
+        //   hashValue.value = 'No Data';
+        //   console.log(err, 'err1')
+        // })
       }).catch((err: any) => {
+        message.error('调用失败')
+        hashValue.value = 'No Data';
+        console.log(err, 'err2')
         isSend.value = false;
       })
     } else {
       contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
         // console.log(tx, tx.hash, 'tx')
-        hashValue.value = tx.hash;
+
         tx.wait().then((result: any) => {
           isSend.value = false;
+          hashValue.value = tx.hash;
           // console.log(result, 'tx send success!')
+        }).catch((err: any) => {
+          message.error('调用失败')
+          hashValue.value = 'No Data';
+          console.log(err, 'err3')
         })
       }).catch((err: any) => {
+        message.error('调用失败')
+        hashValue.value = 'No Data';
+        console.log(err.reason, 'err4')
         isSend.value = false;
       })
     }
@@ -122,10 +138,18 @@ watch(
   (oldV, newV) => {
     if (newV) {
       let name = [...(Object.keys(formData))]
-      name.forEach((it: any) => {
-        delete formData[it]
-      })
-      hashValue.value = ''
+      // name.forEach((it: any) => {
+      //   delete formData[it]
+      // })
+      let value = [...(Object.values(formData))]
+
+      if (!isSend.value) {
+        name.forEach((it: any) => {
+          delete formData[it]
+        })
+        hashValue.value = ''
+      }
+
       Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
     }
   }, { deep: true }

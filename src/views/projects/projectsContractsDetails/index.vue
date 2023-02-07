@@ -51,6 +51,7 @@ const queryJson = reactive({
 })
 const activeKey = ref('');
 const activeKeyId = ref('');
+const projectName = ref('');
 const hasData = ref(true);
 const versionData = reactive([]);
 const dataSource = ref([]);
@@ -142,10 +143,8 @@ const setRowClassName = (record: any, index: number) => {
   }
 }
 
-const projectName = ref('')
-
 onMounted(() => {
-  projectName.value = localStorage.getItem("projectName")
+  projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   getContractDeployDetail()
 })
