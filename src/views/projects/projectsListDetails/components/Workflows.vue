@@ -59,7 +59,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useThemeStore } from "@/stores/useTheme";
@@ -79,7 +79,7 @@ const props = defineProps({
 });
 const { detailId, projectType } = toRefs(props);
 
-const timer = ref(0)
+const timer = ref();
 const loading = ref(false);
 const statusList = reactive(["Notrun","Running","Fail","Success","Stop"]);
 const actionList = reactive([
@@ -168,16 +168,10 @@ onMounted(() => {
   getProjectsWorkflows();
 })
 
-onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
-    window.clearInterval(timer.value);
+onUnmounted(() => {
+  clearTimeout(timer.value);
 })
 
-const setTimer = () => {
-  timer.value = window.setInterval(() => {
-      // 其他定时执行的方法
-    getProjectsWorkflows();
-  }, 5000);
-}
 
 const changeAction = async () => {
   pagination.current = 1;
@@ -202,9 +196,13 @@ const getProjectsWorkflows = async () => {
       }
     });
     if (isRunning.value === true) {
-      setTimer();
+      
+      timer.value = setTimeout(() => {
+        //需要定时执行的代码
+        getProjectsWorkflows();
+      }, 5000)
     } else {
-      window.clearInterval(timer.value);
+      clearTimeout(timer.value);
     }
   } catch (error: any) {
     console.log("erro:",error)

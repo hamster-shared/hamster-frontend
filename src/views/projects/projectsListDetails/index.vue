@@ -73,7 +73,7 @@
   </a-modal>
 </template>
 <script lang='ts' setup>
-import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { reactive, ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Overview from "../projectsList/components/Overview.vue";
 import Workflows from "./components/Workflows.vue";
@@ -92,7 +92,7 @@ const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
-const timer = ref(0)
+const timer = ref();
 const projectType = ref(params.type);
 const activeKey = ref(params.type);
 const loading = ref(false)
@@ -143,8 +143,8 @@ onMounted(() => {
   getProjectsDetail();
 })
 
-onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
-  window.clearInterval(timer.value);
+onUnmounted(() => {
+  clearTimeout(timer.value);
 })
 
 const loadProjects = () => {
@@ -176,12 +176,16 @@ const getProjectsDetail = async () => {
       // running - success
       if (JSON.parse(recentStatusOld)?.checkStatus === 1 && data.recentCheck.status === 3
         || JSON.parse(recentStatusOld)?.buildStatus === 1 && data.recentBuild.status === 3) {
-        if (projectType.value === '1') {
+        
+        if (activeKey.value === "1") {
           contractRef.value.getProjectsContract();
-        } else {
-          packageRef.value.getProjectsPackage();
+          
+        } else if (activeKey.value === "2") {
+            packageRef.value.getProjectsPackage();
+          
+        } else if (activeKey.value === "3") {
+            reportRef.value.getProjectsReports();
         }
-        reportRef.value.getProjectsReports();
       }
     }
     const recentStatus = {
@@ -192,15 +196,15 @@ const getProjectsDetail = async () => {
 
     localStorage.setItem("projectName", data.name)
     localStorage.setItem("projectId", data.id)
-
     if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1)
       || projectType.value === '2' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.recentDeploy.status === 1)) {
-      timer.value = window.setInterval(() => {
-          // 其他定时执行的方法
+      
+      timer.value = setTimeout(() => {
+        //需要定时执行的代码
         getProjectsDetail();
-      }, 5000);
+      }, 5000)
     } else {
-      window.clearInterval(timer.value);
+      clearTimeout(timer.value);
     }
   } catch (error: any) {
     console.log("erro:",error)

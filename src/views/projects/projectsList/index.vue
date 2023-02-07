@@ -42,7 +42,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
@@ -51,6 +51,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import { ta } from 'date-fns/locale';
 const theme = useThemeStore()
 
+const timer = ref();
 const router = useRouter();
 const keyword = ref('');
 const viewType = ref("list");
@@ -62,7 +63,6 @@ const totalFrontend = ref(0);
 const pageSize = ref(10);
 const contractList = ref([]);
 const frontentList = ref([]);
-const timer = ref(0)
 
 const onChange = (pageNumber: number) => {
   activeKey.value === "1" ? currentContract.value = pageNumber : currentFrontend.value = pageNumber;
@@ -81,19 +81,11 @@ const goCreateProject = () => {
 
 onMounted(() => {
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-
 })
 
-onBeforeUnmount(() => { //离开当前组件的生命周期执行的方法
-  window.clearInterval(timer.value);
+onUnmounted(() => {
+  clearTimeout(timer.value);
 })
-
-const setTimer = () => {
-  timer.value = window.setInterval(() => {
-    // 其他定时执行的方法
-    activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-  }, 5000);
-}
 
 const goSearch = async () => {
   currentContract.value = 1;
@@ -136,9 +128,12 @@ const getProjectsContract = async (type: string | undefined) => {
       }
     });
     if (isRunning.value === true) {
-      setTimer();
+      timer.value = setTimeout(() => {
+        // 其他定时执行的方法
+        activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+      }, 5000)
     } else {
-      window.clearInterval(timer.value);
+      clearTimeout(timer.value);
     }
   } catch (error: any) {
     console.log("erro:", error)
