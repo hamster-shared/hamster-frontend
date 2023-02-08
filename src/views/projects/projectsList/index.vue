@@ -48,7 +48,6 @@ import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
-import { ta } from 'date-fns/locale';
 const theme = useThemeStore()
 
 const timer = ref();
@@ -90,6 +89,10 @@ onBeforeUnmount(() => {
 const goSearch = async () => {
   currentContract.value = 1;
   currentFrontend.value = 1;
+  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+}
+
+const getProjects = () => {
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 }
 
