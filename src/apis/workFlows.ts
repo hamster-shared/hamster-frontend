@@ -137,3 +137,11 @@ export function apiGetDetailFrontendReport(params: GetPackageParams) {
     method: "get",
   });
 }
+
+// 删除 
+export function apiGetDetailDelete(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
+    method: "delete",
+  });
+}

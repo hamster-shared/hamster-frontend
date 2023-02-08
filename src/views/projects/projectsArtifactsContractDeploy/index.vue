@@ -222,7 +222,7 @@ const setContractFactory = async (name: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
-  console.log(selectItem)
+  // console.log(selectItem)
   selectItem.abiInfoData.map((item: any) => {
     if (item.type === 'constructor') {
       abiInputData.value = item.inputs

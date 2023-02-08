@@ -18,7 +18,7 @@
     :pagination="contractPagination">
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'version'">
-        <label class="text-[#E2B578]">{{ record.version }}</label>
+        <label class="text-[#E2B578]">{{ '#'+record.version }}</label>
       </template>
       <template v-if="column.dataIndex === 'network'">
         <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
@@ -26,11 +26,22 @@
           class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
       </template>
       <template v-if="column.dataIndex === 'action'">
-        <label class="cursor-pointer" v-if="record.network.String !== ''"
-          @click="goContractDetail(record.version)">Details</label>
-        <label class="text-[#E2B578] ml-2 cursor-pointer"
+        <!-- <label class="cursor-pointer" v-if="record.network.String !== ''"
+          @click="goContractDetail(record.version)">Details</label> -->
+        <label class="dark:text-[#E0DBD2] text-[#151210] ml-2 cursor-pointer hoverColor"
           @click="goContractDeploy(record.name, record.version)">Deploy</label>
-        <!-- <label @click="downloadAbi(record)" class="text-[#E2B578] ml-2 cursor-pointer">abiInfo</label> -->
+        <a-tooltip placement="bottomRight" trigger="click" overlayClassName="contract-tooltip">
+          <template #title>
+            <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
+              Download ABI
+            </div>
+            <div v-if="record.network.String !== ''" @click="goContractDetail(record.version)"
+              class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">View
+              Dashboard
+            </div>
+          </template>
+          <label class="dark:text-[#E0DBD2] text-[#151210] ml-2 cursor-pointer hoverColor">More</label>
+        </a-tooltip>
       </template>
     </template>
   </a-table>
@@ -192,15 +203,15 @@ const getProjectsContractName = async () => {
   }
 };
 
-// const downloadAbi = (val: any) => {
-//   const str = val.abiInfo;
-//   const url = `data:,${str}`;
-//   const a = document.createElement('a');
-//   a.href = url;
-//   a.download = `${val.name}.json`;
-//   a.click();
-//   a.remove();
-// };
+const downloadAbi = (val: any) => {
+  const str = val.abiInfo;
+  const url = `data:,${str}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${val.name}.json`;
+  a.click();
+  a.remove();
+};
 
 const goContractDetail = async (version: String) => {
   router.push("/projects/" + detailId.value + "/contracts-details/" + version);
@@ -214,3 +225,10 @@ defineExpose({
   getProjectsContract
 })
 </script>
+<style lang="less" scoped>
+.hoverColor {
+  &:hover {
+    color: #E2B578;
+  }
+}
+</style>
