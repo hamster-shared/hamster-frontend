@@ -256,17 +256,17 @@ const projectsBuild = async (id: String, status: Number) => {
   }
 };
 const projectsDeploy = async (id: String, version: String, status: Number) => {
-  if (status === 0 || status === 1 || version === "") {
-    if (projectType?.value === '1') {
+  if (projectType?.value === '1') {
+    if (status === 0 || status === 1 || version === "") {
       message.info("Smart contract not avaliable.");
     } else {
-      message.info("FrontEnd package not avaliable.");
+      goContractDeploy(id, version);
     }
   } else {
-    if (projectType?.value === '1') {
-      goContractDeploy(id, version);
-    } else {
+    if (status === 3) {
       goFrontendDeploy(id);
+    } else {
+      message.info("FrontEnd package not avaliable.");
     }
   }
 };
