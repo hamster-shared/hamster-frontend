@@ -64,6 +64,7 @@ const workflowsDetailsData = reactive({
   errorNumber: 0,
   workflowDetailId: params.workflowDetailId,
   workflowsId: params.workflowsId,
+  packageId: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -155,7 +156,7 @@ const getWorkflowPackage = async () => {
       const { data } = await apiGetPackagesList(params);
       Object.assign(artifactListData, data)
     } else {
-      const { data } = await apiGetPackageDetail(params);
+      const { data } = await apiGetPackageDetail(workflowsDetailsData.packageId);
       Object.assign(packageInfo, data)
     }
 
@@ -180,7 +181,7 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl })
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId })
   } catch (err: any) {
     console.info(err)
   }

@@ -57,7 +57,9 @@ const router = useRouter();
 const { params } = useRoute();
 const currentName = ref('Deployment Detail');
 const packageInfo = reactive({});
-const workflowsDetailsData = reactive({});
+const workflowsDetailsData = reactive({
+  packageId: params.packageId,
+});
 
 const viewLogs = () => {
   // 回到workFlows详情页
@@ -66,11 +68,7 @@ const viewLogs = () => {
 
 const getPackageDetail = async () => {
   try {
-    const queryParams = {
-      workflowsId: params.workflowsId,
-      workflowDetailId: params.workflowDetailId,
-    }
-    const { data } = await apiGetPackageDetail(queryParams)
+    const { data } = await apiGetPackageDetail(params.packageId)
     Object.assign(packageInfo, data)
   } catch (err: any) {
     console.info(err)

@@ -278,7 +278,7 @@ const projectsOps = async (id: String, recentDeploy: Object) => {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id);
+    router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id +"/" + recentDeploy.packageId);
   }
 };
 const loadView = async () => {
@@ -330,7 +330,7 @@ const goFrontendDeploy = async (id: String) => {
 
 const goFrontEndDetail = (id: string, recentDeploy: Object) => {
   if (recentDeploy.status === 3) { //success
-    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}`);
+    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
   } else {
     router.push(`/projects/${id}/${recentDeploy.workflowId}/workflows/${recentDeploy.id}/3/${projectType?.value}`);
   }
