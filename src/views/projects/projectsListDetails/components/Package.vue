@@ -5,7 +5,7 @@
         <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''"
           @click="goDeploy(record.projectId ,record.workflowId, record.workflowDetailId)">Deploy</label>
         <label class="text-[#E2B578] cursor-pointer ml-2" v-else
-          @click="goView(record.workflowId, record.workflowDetailId)">View</label>
+          @click="goView(record.workflowId, record.workflowDetailId, record.id)">View</label>
 
       </template>
     </template>
@@ -156,8 +156,8 @@ const goDeploy = async (projectId:number, workflowId: number, workflowDetailId: 
   }
 }
 
-const goView = (workflowId: number, workflowDetailId: number) => {
-  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId);
+const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId);
 }
 
 // const downloadAbi = (val: any) => {

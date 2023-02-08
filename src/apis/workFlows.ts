@@ -123,9 +123,10 @@ export function apiGetPackagesList(params: GetPackageParams) {
 }
 
 // 获取 package 详情 
-export function apiGetPackageDetail(params: GetPackageParams) {
+export function apiGetPackageDetail(packageId: string) {
   return httpRequest({
-    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/deploy/detail`,
+    // url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/deploy/detail`,
+    url: `/api/package/${packageId}/deploy/detail`,
     method: "get",
   });
 }
