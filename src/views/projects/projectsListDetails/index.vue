@@ -73,7 +73,7 @@
   </a-modal>
 </template>
 <script lang='ts' setup>
-import { reactive, ref, computed, onMounted, onUnmounted } from "vue";
+import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Overview from "../projectsList/components/Overview.vue";
 import Workflows from "./components/Workflows.vue";
@@ -143,7 +143,7 @@ onMounted(() => {
   getProjectsDetail();
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   clearTimeout(timer.value);
 })
 

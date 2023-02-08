@@ -42,7 +42,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
@@ -83,7 +83,7 @@ onMounted(() => {
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   clearTimeout(timer.value);
 })
 
