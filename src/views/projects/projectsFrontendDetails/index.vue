@@ -48,7 +48,7 @@ import { ref, onMounted, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
 import { message } from "ant-design-vue";
-import { apiGetPackagesList, apiGetWorkflowsDetail, apiGetDetailDelete } from "@/apis/workFlows.ts";
+import { apiGetPackageDetail, apiGetWorkflowsDetail, apiGetDetailDelete } from "@/apis/workFlows.ts";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 
@@ -70,7 +70,7 @@ const getPackageDetail = async () => {
       workflowsId: params.workflowsId,
       workflowDetailId: params.workflowDetailId,
     }
-    const { data } = await apiGetPackagesList(queryParams)
+    const { data } = await apiGetPackageDetail(queryParams)
     Object.assign(packageInfo, data)
   } catch (err: any) {
     console.info(err)

@@ -25,7 +25,7 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList } from "@/apis/workFlows";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetPackageDetail } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 import YAML from "yaml";
@@ -151,10 +151,11 @@ const getWorkflowPackage = async () => {
       workflowsId: queryJson.workflowsId,
       workflowDetailId: queryJson.workflowDetailId,
     }
-    const { data } = await apiGetPackagesList(params);
     if (queryJson.type === '2') {
-      Object.assign(artifactListData, [data])
+      const { data } = await apiGetPackagesList(params);
+      Object.assign(artifactListData, data)
     } else {
+      const { data } = await apiGetPackageDetail(params);
       Object.assign(packageInfo, data)
     }
 
