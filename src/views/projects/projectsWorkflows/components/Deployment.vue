@@ -6,21 +6,23 @@
     </div>
     <div class="flex">
       <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
-        <iframe src="https://wwww.baidu.com" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
-        <!-- <div class="w-full h-full">
-          <iframe src="https://develop.test.hamsternet.io/login" frameborder="0" width="100%" height="100%"
-            scrolling="no"></iframe>
-        </div> -->
+        <div class="w-full h-full overflow-hidden">
+          <iframe :src="packageInfo.domain" frameborder="0" width="105%" height="100%" scrolling="auto"></iframe>
+        </div>
       </div>
 
       <div class="ml-[64px] w-3/5">
         <div class="title-text">Domains</div>
-        <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex items-center">
-          {{ packageInfo.domain }}
-          <img src="@/assets/icons/link-white.svg" class="h-[18px] cursor-pointer ml-1 dark:hidden"
-            @click="openDomain" />
-          <img src="@/assets/icons/link-dark.svg" class="h-[18px] cursor-pointer ml-1 hidden dark:inline-block"
-            @click="openDomain" />
+        <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex">
+          <div class="text-ellipsis">
+            {{ packageInfo.domain }}
+          </div>
+          <div class="w-[20px] flex items-center">
+            <img src="@/assets/icons/link-white.svg" class="h-[18px] cursor-pointer dark:hidden"
+              @click="openDomain" />
+            <img src="@/assets/icons/link-dark.svg" class="h-[18px] cursor-pointer hidden dark:inline-block"
+              @click="openDomain" />
+          </div>
         </div>
         <div class="flex w-full">
           <div class="w-1/2">
@@ -95,5 +97,10 @@ const openDomain = () => {
 .ant-btn {
   width: 131px;
   height: 43px;
+}
+.text-ellipsis{
+  text-overflow:ellipsis;/*文字溢出的部分隐藏并用省略号代替*/
+  white-space:nowrap;/*文本不自动换行*/
+  overflow: hidden;
 }
 </style>

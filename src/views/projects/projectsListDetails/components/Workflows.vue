@@ -13,14 +13,14 @@
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'type'">
           <div v-if="projectType === '1'">
-            <label v-if="record.type === 1">Contract Check_#{{ record.id }}</label>
-            <label v-if="record.type === 2">Contract Build_#{{ record.id }}</label>
-            <label v-if="record.type === 3">Contract Deploy_#{{ record.id }}</label>
+            <label v-if="record.type === 1">Contract Check_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 2">Contract Build_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 3">Contract Deploy_#{{ record.execNumber }}</label>
           </div>
           <div v-else>
-            <label v-if="record.type === 1">FrontEnd Check_#{{ record.id }}</label>
-            <label v-if="record.type === 2">FrontEnd Build_#{{ record.id }}</label>
-            <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.id }}</label>
+            <label v-if="record.type === 1">FrontEnd Check_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 2">FrontEnd Build_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.execNumber }}</label>
           </div>
         </template>
         <template v-if="column.dataIndex === 'triggerMode'">
@@ -58,7 +58,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, reactive, ref, toRefs } from "vue";
+import { computed, onMounted, onBeforeUnmount, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useThemeStore } from "@/stores/useTheme";
@@ -167,7 +167,7 @@ onMounted(() => {
   getProjectsWorkflows();
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   clearTimeout(timer.value);
 })
 
