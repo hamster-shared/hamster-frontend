@@ -42,7 +42,7 @@
             @click="goWorkflowsDetail(record.type, record.id, record.detailId)">Details</label>
           <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer"
             @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
-          <label v-if="record.status !== 1" @click="deleteWorkflow(record.id)"
+          <label v-if="record.status !== 1" @click="deleteWorkflow(record.id, record.detailId)"
             class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
         </template>
       </template>
@@ -90,6 +90,7 @@ const action = ref("0");
 const workflowList = ref([]);
 const delWorkflowModal = ref(false);
 const delWorkflowId = ref("");
+const delWorkflowDetailId = ref();
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -212,14 +213,15 @@ const getProjectsWorkflows = async () => {
 const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
   router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
 }
-const deleteWorkflow = (workflowId: string) => {
+const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
   delWorkflowId.value = workflowId;
+  delWorkflowDetailId.value = workflowDetailId;
   delWorkflowModal.value = true;
 }
 const deleteWorkflowContent = async () => {
   try {
     loading.value = true;
-    const data = await apiDeleteWorkflows(detailId.value.toString(), delWorkflowId.value);
+    const data = await apiDeleteWorkflows(delWorkflowId.value, delWorkflowDetailId.value);
     message.success(data.message);
     getProjectsWorkflows();
   } catch (error: any) {
