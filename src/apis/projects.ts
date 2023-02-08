@@ -220,10 +220,11 @@ export function apiDeleteProjects(id: String) {
   });
 }
 
-//删除workflows
-export function apiDeleteWorkflows(id: String, workflowId: String) {
+//删除workflows 
+export function apiDeleteWorkflows(workflowId: String, workflowDetailId: String) {
   return httpRequest({
-    url: `/api/projects/${id}/workflows/${workflowId}`,
+    // url: `/api/projects/${id}/workflows/${workflowId}`,
+    url: `/api/workflows/${workflowId}/detail/${workflowDetailId}`,
     method: "delete",
   });
 }
