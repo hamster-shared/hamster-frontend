@@ -180,7 +180,7 @@
               fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing")
             }}</div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
-            <div class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
+            <div v-else class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
               View FrontEnd</div>
           </div>
         </div>
