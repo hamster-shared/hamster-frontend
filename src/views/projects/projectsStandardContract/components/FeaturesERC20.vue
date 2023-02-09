@@ -55,6 +55,7 @@ const featuresList = ref([
 ]);
 
 const checkboxClick = async (event: any) => {
+  console.log("event:",event);
   emit("checkboxClick", event);
 }
 </script>

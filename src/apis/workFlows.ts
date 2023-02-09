@@ -131,7 +131,15 @@ export function apiGetPackageDetail(packageId: string) {
   });
 }
 
-//workflow详情report 
+// 获取 package 详情 
+export function apiGetDeployInfo(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy-info`,
+    method: "get",
+  });
+}
+
+//workflow详情report  
 export function apiGetDetailFrontendReport(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/report`,

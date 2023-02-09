@@ -284,6 +284,8 @@ const createProject = async () => {
     }
     const res = await apiAddProjects(params);
     message.success(res.message);
+    
+    window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
     router.push("/projects");
   } catch (error: any) {
     console.log("erro:", error)
