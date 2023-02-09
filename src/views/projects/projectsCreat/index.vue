@@ -19,7 +19,7 @@
                 <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Contract code.</div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">FrontEnd
-                <div>Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
+                <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
               </a-radio>
               <a-radio :style="radioStyle" value="3" disabled="true">Blockchain Node（coming soon）
                 <div>Please pay attention to Hamster</div>
@@ -37,47 +37,65 @@
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item label="Contract Programming Language " name="frameType">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1'">
             <a-radio-group v-model:value="formData.frameType" name="frameType">
-              <a-radio value="1">Solidity</a-radio>
+              <a-radio :style="radioStyle" value="1">EVM
+                <div class="radio-sub">Build application based on EVM and Solidity language</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="2">Aptos
+                <div class="radio-sub">Build application based on Aptos  and Move language</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="3">Ton
+                <div class="radio-sub">Build application based on Ton and FunC language</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="4">StarkWare
+                <div class="radio-sub">Build application based on Starkware and Cairo language</div>
+              </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
-              <a-radio value="4">vue.js</a-radio>
-              <a-radio value="5">nuxt.js</a-radio>
-              <a-radio value="6">next.js</a-radio>
-              <a-radio value="7">vite</a-radio>
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
-          <a-button type="primary" :loading="loading" @click="goNext">Explore all template</a-button>
         </a-form>
         <div>
-          <div class="font-bold text-[16px]">Popular Template</div>
+          <div class="flex justify-between">
+            <div class="font-bold text-[16px]">Popular Template</div>
+            <div class="cursor-pointer" @click="goNext">
+              <img src="@/assets/icons/explore-template.svg" class="h-[20px]"/>
+              <span class="text-[#E2B578] align-middle text-[16px]"> Explore all template</span>
+            </div>
+          </div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1'">A collection of our most
             deployed contracts.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
-          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4">
+          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4 template-height">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
-              <img :src="item.logo" class="h-[40px] w-[40px]" />
-              <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
-              <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
-              <div class="flex mt-4">
-                <div class="flex items-center">
-                  <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
-                  <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
-                  {{ item.lastVersion }}
+              <div class="flex flex-col h-[100%]">
+                <div class="relative flex-1">
+                  <img :src="item.logo" class="h-[40px] w-[40px]" />
+                  <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
+                  <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
+                  <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]"/>
+                  <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]"/>
                 </div>
-                <div class="flex items-center ml-4" v-if="item.audited === true">
-                  <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
-                  <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
-                  Audited
+                <div class="flex">
+                  <div class="flex items-center">
+                    <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
+                    <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                    {{ item.lastVersion }}
+                  </div>
+                  <div class="flex items-center ml-4" v-if="item.audited === true">
+                    <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
+                    <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                    Audited
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
+          <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4 template-height">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px]">
               <img :src="item.image" class="w-full rounded-t-[12px]" />
@@ -100,11 +118,14 @@
           </div>
         </div>
       </div>
+      <div class="w-full mt-8 text-center">
+        <a-button type="primary" :loading="loading" @click="goNext" class="w-[440px]">Next</a-button>
+      </div>
     </div>
   </div>
 </template>
 <script lang='ts' setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watchEffect } from 'vue';
 import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
@@ -122,6 +143,131 @@ const formData = reactive({
   frameType: '1',
 });
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
+
+const fixedPopularTemplate = {
+  aptos:[
+    {
+      audited: false,
+      description: 'Token vesting Smart Contract for Aptos Blockchain.',
+      id: 1,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '111',
+      name: 'aptos-token-vesting',
+      templateTypeId: 2
+    },
+    {
+      audited: false,
+      description: 'The smart contract provides staking for Tokens and NFTs. The creators can decide the APR and way to distribute the gains.',
+      id: 2,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '211',
+      name: 'aptos-token-staking',
+      templateTypeId: 2
+    },
+    {
+      audited: false,
+      description: 'Aptos Code for NFT borrow and lend',
+      id: 3,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '311',
+      name: 'nft-borrowing-lendin...',
+      templateTypeId: 3
+    },
+    {
+      audited: false,
+      description: 'Raffle in Aptos blockchain by Mokshya Protocol',
+      id: 4,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '411',
+      name: 'aptos-raffle',
+      templateTypeId: 4
+    },
+  ],
+  ton:[
+    {
+      audited: false,
+      description: 'Basic implementation of smart contracts for NFT tokens and NFT collections in accordance with the Standard',
+      id: 1,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '111',
+      name: 'Non-Fungible tokens',
+      templateTypeId: 2
+    },
+    {
+      audited: false,
+      description: 'Basic implementation of smart contracts for Jetton wallet and Jetton minter in accordance with the Standard',
+      id: 2,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '211',
+      name: 'Fungible tokens',
+      templateTypeId: 2
+    },
+    {
+      audited: false,
+      description: 'Smart contracts of ".ton" zone',
+      id: 3,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '311',
+      name: 'TON DNS Smart Contr...',
+      templateTypeId: 3
+    },
+  ],
+  StarkWare: [
+    {
+      audited: false,
+      description: 'The ERC20 preset offers a quick and easy setup for deploying a basic ERC20 token.',
+      id: 1,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '111',
+      name: 'ERC20',
+      templateTypeId: 2
+    },
+    {
+      audited: false,
+      description: 'The ERC721 token standard is a specification for non-fungible tokens, or more colloquially: NFTs.',
+      id: 2,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '211',
+      name: 'ERC721',
+      templateTypeId: 2
+    },
+    {
+      audited: false,
+      description: 'The ERC1155 multi token standard is a specification for fungibility-agnostic token contracts.',
+      id: 3,
+      image: '',
+      lastVersion: 'Coming soon',
+      logo: '311',
+      name: 'ERC1155',
+      templateTypeId: 3
+    },
+  ]
+}
+
+watchEffect( async() => {
+  if (formData.frameType == '1') {
+    await getInitTemplates()
+    console.log('formData.frameType=1:',formData.frameType)
+  } else if(formData.frameType == '2') {
+    showList.value = fixedPopularTemplate.aptos
+    console.log('formData.frameType:',formData.frameType)
+  } else if(formData.frameType == '3') {
+    showList.value = fixedPopularTemplate.ton
+    console.log('formData.frameType:',formData.frameType)
+  } else if(formData.frameType == '4') {
+    showList.value = fixedPopularTemplate.StarkWare
+    console.log('formData.frameType:',formData.frameType)
+  }
+})
 
 // Form rules
 const formRules = computed(() => {
@@ -177,8 +323,10 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
   }
 }
 const goDetail = async (val: any) => {
-  localStorage.setItem('frontendTemplateDetail', JSON.stringify(val));
-  setCreateProjectValue("/projects/templates/" + val.id + "/details/" + formData.type)
+  if(val.lastVersion !== 'Coming soon'){
+    localStorage.setItem('frontendTemplateDetail', JSON.stringify(val));
+    setCreateProjectValue("/projects/templates/" + val.id + "/details/" + formData.type)
+  }
 }
 
 const getTemplatesShow = async (val: any) => {
@@ -247,6 +395,10 @@ onMounted(() => {
 
 :deep(.ant-btn-primary) {
   height: 40px;
+}
+
+.template-height{
+  height: calc(100% - 100px);
 }
 
 .text-ellipsis {
