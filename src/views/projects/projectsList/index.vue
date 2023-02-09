@@ -79,6 +79,10 @@ const goCreateProject = () => {
 }
 
 onMounted(() => {
+  
+  if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
+    activeKey.value = window.localStorage.getItem("projectActiveKey");
+  }
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 })
 
@@ -102,6 +106,7 @@ const handleTabClick = (tab: any) => {
   } else {
     getProjectsFrontend('2')
   }
+  window.localStorage.setItem("projectActiveKey", tab);
 }
 const getProjectsContract = async (type: string | undefined) => {
   try {
