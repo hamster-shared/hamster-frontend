@@ -25,7 +25,7 @@
 import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
-import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList } from "@/apis/workFlows";
+import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetPackageDetail } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 import YAML from "yaml";
@@ -64,6 +64,7 @@ const workflowsDetailsData = reactive({
   errorNumber: 0,
   workflowDetailId: params.workflowDetailId,
   workflowsId: params.workflowsId,
+  packageId: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -138,6 +139,8 @@ const getDetailFrontendReport = async () => {
     workflowsDetailsData.errorNumber = issue;
     Object.assign(frontendReportData, data)
 
+    console.log(frontendReportData, 'frontendReportData')
+
   } catch (error: any) {
     console.log("erro:", error)
   }
@@ -149,10 +152,11 @@ const getWorkflowPackage = async () => {
       workflowsId: queryJson.workflowsId,
       workflowDetailId: queryJson.workflowDetailId,
     }
-    const { data } = await apiGetPackagesList(params);
     if (queryJson.type === '2') {
-      Object.assign(artifactListData, [data])
+      const { data } = await apiGetPackagesList(params);
+      Object.assign(artifactListData, data)
     } else {
+      const { data } = await apiGetPackageDetail(workflowsDetailsData.packageId);
       Object.assign(packageInfo, data)
     }
 
@@ -177,7 +181,7 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl })
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId })
   } catch (err: any) {
     console.info(err)
   }

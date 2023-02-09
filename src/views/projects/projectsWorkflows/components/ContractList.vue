@@ -10,10 +10,32 @@
     <a-table :dataSource="contractListData" :columns="columns" :pagination="false"
       :class="contractListData.length <= 0 ? 'no-table-data' : ''">
       <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'network'">
+          <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
+            :key="indexF" :class="{ 'ml-2': indexF !== 0 }"
+            class="border border-solid rounded-[32px] dark:border-[#E0DBD2] border-[#73706E]  px-3 py-1">{{
+              item
+            }}</label>
+        </template>
         <template v-if="column.key === 'action'">
-          <a class="dark:text-[#E0DBD2] text-[#151210]" @click="toDeployUrl(record)">{{ $t('common.deploy') }}</a>
+          <label class="dark:text-[#E0DBD2] text-[#151210] hoverColor" @click="toDeployUrl(record)">{{
+            $t('common.deploy')
+          }}</label>
           <a-divider type="vertical" />
-          <a class="dark:text-[#E0DBD2] text-[#151210]" @click="toDetailUrl(record)">{{ $t('common.detail') }}</a>
+          <!-- <a class="dark:text-[#E0DBD2] text-[#151210]" @click="toDetailUrl(record)">{{ $t('common.detail') }}</a> -->
+          <a-tooltip placement="bottomRight" trigger="click" overlayClassName="contract-tooltip">
+            <template #title>
+              <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
+                Download ABI
+              </div>
+              <div v-if="record.network.String !== ''"
+                class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
+                @click="toDetailUrl(record)">Detail
+              </div>
+            </template>
+            <label class="dark:text-[#E0DBD2] text-[#151210] cursor-pointer hoverColor">More</label>
+          </a-tooltip>
+
         </template>
       </template>
     </a-table>
@@ -37,17 +59,17 @@ const columns = [{
   title: 'Version',
   dataIndex: 'version',
   align: "center",
+  customRender: ({ text }) => {
+    if (text) {
+      return '#' + text
+    }
+  },
   key: 'version',
 },
 {
   title: 'Network',
   dataIndex: 'network',
   align: "center",
-  customRender: ({ text }) => {
-    if (!text) {
-      return '-'
-    }
-  },
   key: 'network',
 },
 {
@@ -85,6 +107,16 @@ const toDetailUrl = (val: any) => {
   router.push(`/projects/${val.projectId}/contracts-details/${val.version}`)
 }
 
+const downloadAbi = (val: any) => {
+  const str = val.abiInfo;
+  const url = `data:,${str}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${val.name}.json`;
+  a.click();
+  a.remove();
+};
+
 </script>
 
 <style lang="less" scoped>
@@ -103,5 +135,11 @@ const toDetailUrl = (val: any) => {
   color: #fff;
   border-color: #E2B578;
   background-color: #E2B578;
+}
+
+.hoverColor {
+  &:hover {
+    color: #E2B578;
+  }
 }
 </style>

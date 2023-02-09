@@ -16,22 +16,30 @@
           <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item name="name" class="mb-[16px]" :rules="[{ required: true, message: 'Please input your Name!' }]">
+      <a-form-item name="name" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
         <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData">
         </a-checkbox-group>
       </a-form-item>
+      <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="modalFormState" name="userForm"
+        :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
+        <a-form-item :name="item.name" :rules="[{ required: true }]" v-for="item in abiInputData" class="">
+          <a-input v-model:value="modalFormState[item.name]" :placeholder="'Please input ' + item.name" allowClear
+            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" />
+        </a-form-item>
+      </a-form>
       <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
       <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-        <a-select v-model:value="formState.chain" style="width: 100%" placeholder="请选择">
+        <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select">
           <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
         <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select v-model:value="formState.network" style="width: 100%" placeholder="请选择" @change="changeNetwork">
+        <a-select v-model:value="formState.network" style="width: 100%" placeholder="Please select"
+          @change="changeNetwork">
           <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
             {{ item.name }}
           </a-select-option>
@@ -59,9 +67,10 @@ import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows
 import { apiProjectsContractDeploy } from "@/apis/projects";
 
 const formRef = ref<FormInstance>();
+const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
 const router = useRouter();
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 const { t } = useI18n()
 
 
@@ -78,14 +87,17 @@ const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
 const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
 const projectsContractData = reactive([]);
-const projectName = ref('')
+const projectName = ref('');
+const abiInputData = ref([]);
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
   name: [],
-  chain: '',
-  network: '',
+  chain: undefined,
+  network: undefined,
 });
+
+const modalFormState = ref({});
 
 // 查询版本号
 const getVersion = async () => {
@@ -98,7 +110,8 @@ const getProjectsContract = async () => {
   data.map((item: any) => {
     item.label = item.name;
     item.value = item.id;
-    item.abiInfoData = YAML.parse(item.abiInfo)
+    item.abiInfoData = YAML.parse(item.abiInfo);
+    setAbiInfo(item);
   })
   Object.assign(projectsContractData, data)
   if (queryParams.contract === '00') {
@@ -109,6 +122,7 @@ const getProjectsContract = async () => {
     formState.name.push(Number(queryParams?.contract))
   }
 }
+
 
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
@@ -122,7 +136,9 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
     provider.getSigner()
   );
   try {
-    const contract = await factory.deploy();
+    // ...(Object.values(modalFormState.value))  参数值
+    const values: any = modalFormState.value || {};
+    const contract = await factory.deploy(...Object.values(values));
     await contract.deployed();
     // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
@@ -138,9 +154,11 @@ const switchToChain = (chainId: string) => {
     method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId}` }],
   }).then((res: any) => {
-    console.log(res, '成功')
+    message.success('success')
+    console.info(res, '成功')
   }).catch((err: any) => {
-    console.log(err, 'err')
+    message.success('faild')
+    console.info(err, 'err')
   })
 }
 
@@ -170,6 +188,7 @@ const deployClick = async () => {
     // 连接钱包后再创建合约
     try {
       const values = await formRef?.value.validateFields();
+      const modalValues = await modalFormRef?.value.validateFields();
       const { name } = formState;
       const { ethereum } = window;
       const network = `0x${formState.network}`
@@ -187,12 +206,12 @@ const deployClick = async () => {
 
 
 const setContractFactory = async (name: any) => {
-  console.log(name, 'name')
+  // console.log(name, 'name')
   let promise: any = [];
   name.map((item: number) => {
     let selectItem: any = projectsContractData.find(val => { return val.id === item });
     // const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
-    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item))
+    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item));
   })
   const res = await Promise.all(promise)
   loading.value = false;
@@ -202,18 +221,27 @@ const setContractFactory = async (name: any) => {
   result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : loading.value = false
 }
 
+const setAbiInfo = (selectItem: any) => {
+  // console.log(selectItem)
+  selectItem.abiInfoData.map((item: any) => {
+    if (item.type === 'constructor') {
+      abiInputData.value = item.inputs
+    }
+  })
+}
+
 const cancelModal = (val: boolean) => {
   visible.value = val
 }
 
 const changeVersion = (val: string) => {
-  console.log(val, 'val')
+  // console.log(val, 'val')
   queryParams.version = val
   getProjectsContract()
 }
 
 onMounted(async () => {
-  projectName.value = localStorage.getItem("projectName")
+  projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   await getProjectsContract()
 })
@@ -231,6 +259,18 @@ onMounted(async () => {
 
 .artifactsDeploy {
   font-size: 14px;
+}
+
+.name-item {
+  margin-bottom: 0px !important;
+}
+
+.modalFormRef {
+  .ant-form-item {
+    &:last-child {
+      margin-bottom: 20px;
+    }
+  }
 }
 
 :deep(.ant-form label) {
@@ -288,10 +328,34 @@ input::-webkit-input-placeholder,
 input:-moz-placeholder,
 input::-moz-placeholder,
 input:-ms-input-placeholder {
-  color: #bcbebc;
+  color: #E0DBD2;
 }
 
 :deep(.ant-form-item-has-error .ant-select:not(.ant-select-disabled):not(.ant-select-customize-input) .ant-select-selector) {
   background-color: transparent;
+}
+
+html[data-theme="dark"] {
+  .ant-input-affix-wrapper {
+    border: 1px solid #434343;
+    color: #ffffff;
+  }
+}
+
+.dark-css {
+  :deep(.ant-input) {
+    color: #ffffff;
+  }
+}
+
+.ant-input-affix-wrapper {
+  background: transparent;
+  border-radius: 8px;
+  border: 1px solid #EBEBEB;
+}
+
+:deep(.ant-input) {
+  background: transparent;
+  color: #121211;
 }
 </style>

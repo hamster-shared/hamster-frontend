@@ -122,18 +122,27 @@ export function apiGetPackagesList(params: GetPackageParams) {
   });
 }
 
-// // 获取 package 详情 
-// export function apiGetPackageDetail(params: GetPackageParams) {
-//   return httpRequest({
-//     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package/${params.packageId}`,
-//     method: "get",
-//   });
-// }
+// 获取 package 详情 
+export function apiGetPackageDetail(packageId: string) {
+  return httpRequest({
+    // url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/deploy/detail`,
+    url: `/api/package/${packageId}/deploy/detail`,
+    method: "get",
+  });
+}
 
 //workflow详情report 
 export function apiGetDetailFrontendReport(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/report`,
     method: "get",
+  });
+}
+
+// 删除 
+export function apiGetDetailDelete(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
+    method: "delete",
   });
 }

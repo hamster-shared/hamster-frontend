@@ -120,7 +120,7 @@ const router = createRouter({
               meta: {
                 layout: 'null',
               }
-            } 
+            }
           ],
         },
         {
@@ -134,7 +134,7 @@ const router = createRouter({
           component: ProjectsContractsDetails,
         },
         {
-          path: "/projects/:workflowsId/frontend-details/:workflowDetailId",
+          path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
           name: "projectsFrontendDetails",
           component: ProjectsFrontendDetails,
         }

@@ -1,22 +1,17 @@
 <template>
   <div>
-    <a-select @change="changeReport" v-model:value="checkTool"
-      :options="checkToolList.map(item => ({ value: item }))">
-      </a-select>
+    <a-select @change="changeReport" v-model:value="checkTool" :options="checkToolList.map(item => ({ value: item }))">
+    </a-select>
   </div>
-  <a-table
-    class="my-4"
-    :columns="reportTableColumns"
-    :dataSource="reportTableList"
-    :pagination="reportPagination"
-  >
+  <a-table class="my-4" :columns="reportTableColumns" :dataSource="reportTableList" :pagination="reportPagination">
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'type'">
         <label v-if="record.type === 1">Contract Check</label>
         <label v-if="record.type === 2">Contract Build</label>
       </template>
       <template v-if="column.dataIndex === 'action'">
-        <label class="text-[#E2B578] cursor-pointer" @click="goContractWorkflows(record.type,record.workflowId, record.workflowDetailId)">View Report</label>
+        <label class="text-[#E2B578] cursor-pointer"
+          @click="goContractWorkflows(record.type, record.workflowId, record.workflowDetailId)">View Report</label>
       </template>
     </template>
   </a-table>
@@ -24,7 +19,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
-import { formatDateToLocale  } from '@/utils/dateUtil';
+import { formatDateToLocale } from '@/utils/dateUtil';
 import {
   apiGetProjectsReports,
   apiProjectsCheckTools,
@@ -134,7 +129,7 @@ const getProjectsReports = async () => {
     reportPagination.total = data.total
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
@@ -147,13 +142,13 @@ const getProjectsCheckTools = async () => {
     checkToolList.value = checkToolList.value.concat(data);
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
 }
 const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
-  router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type+"/"+projectType?.value);
+  router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
 }
 
 defineExpose({

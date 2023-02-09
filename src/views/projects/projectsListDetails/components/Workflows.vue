@@ -1,30 +1,26 @@
 <template>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
+    class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
     <div class="flex justify-between">
       <div class="mb-2 items-center text-[24px] font-bold">Workflows</div>
       <div class="select-color">
         <a-select @change="changeAction" v-model:value="action" placeholder="Please enter Network"
-        :options="actionList.map(item => ({ value: item.value, label: item.label }))">
+          :options="actionList.map(item => ({ value: item.value, label: item.label }))">
         </a-select>
       </div>
     </div>
-    <a-table
-      class="my-4"
-      :columns="tableColumns"
-      :dataSource="workflowList"
-      :pagination="pagination"
-    >
+    <a-table class="my-4" :columns="tableColumns" :dataSource="workflowList" :pagination="pagination">
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'type'">
           <div v-if="projectType === '1'">
-            <label v-if="record.type === 1">Contract Check_#{{ record.id}}</label>
-            <label v-if="record.type === 2">Contract Build_#{{ record.id}}</label>
-            <label v-if="record.type === 3">Contract Deploy_#{{ record.id}}</label>
+            <label v-if="record.type === 1">Contract Check_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 2">Contract Build_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 3">Contract Deploy_#{{ record.execNumber }}</label>
           </div>
           <div v-else>
-            <label v-if="record.type === 1">FrontEnd Check_#{{ record.id}}</label>
-            <label v-if="record.type === 2">FrontEnd Build_#{{ record.id}}</label>
-            <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.id}}</label>
+            <label v-if="record.type === 1">FrontEnd Check_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 2">FrontEnd Build_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.execNumber }}</label>
           </div>
         </template>
         <template v-if="column.dataIndex === 'triggerMode'">
@@ -42,9 +38,12 @@
           <div v-else></div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <label class="cursor-pointer" @click="goWorkflowsDetail(record.type,record.id, record.detailId)">Details</label>
-          <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer" @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
-          <label v-if="record.status !== 1" @click="deleteWorkflow(record.id)" class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
+          <label class="cursor-pointer"
+            @click="goWorkflowsDetail(record.type, record.id, record.detailId)">Details</label>
+          <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer"
+            @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
+          <label v-if="record.status !== 1" @click="deleteWorkflow(record.id, record.detailId)"
+            class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
         </template>
       </template>
     </a-table>
@@ -52,14 +51,14 @@
   <a-modal v-model:visible="delWorkflowModal" :footer="null">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Delete</div>
     <div>Are you sure delete this workflows?</div>
-    <div class="text-center mt-8">
+    <div class="mt-8 text-center">
       <a-button type="primary" @click="delWorkflowModal = false">NO</a-button>
       <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteWorkflowContent">YES</a-button>
     </div>
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
+import { computed, onMounted, onBeforeUnmount, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useThemeStore } from "@/stores/useTheme";
@@ -79,18 +78,19 @@ const props = defineProps({
 });
 const { detailId, projectType } = toRefs(props);
 
-const timer = ref(0)
+const timer = ref();
 const loading = ref(false);
-const statusList = reactive(["Notrun","Running","Fail","Success","Stop"]);
+const statusList = reactive(["Notrun", "Running", "Fail", "Success", "Stop"]);
 const actionList = reactive([
-  {label:"All Action",value: "0"},
-  {label:"Check",value: "1"},
+  { label: "All Action", value: "0" },
+  { label: "Check", value: "1" },
   { label: "Build", value: "2" }
 ]);
 const action = ref("0");
 const workflowList = ref([]);
 const delWorkflowModal = ref(false);
 const delWorkflowId = ref("");
+const delWorkflowDetailId = ref();
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -132,7 +132,7 @@ const tableColumns = computed<any[]>(() => [
     width: '150px'
   },
   {
-    title: '操作',
+    title: 'Action',
     dataIndex: 'action',
     align: 'center',
     width: '150px',
@@ -168,16 +168,10 @@ onMounted(() => {
   getProjectsWorkflows();
 })
 
-onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
-    window.clearInterval(timer.value);
+onBeforeUnmount(() => {
+  clearTimeout(timer.value);
 })
 
-const setTimer = () => {
-  timer.value = window.setInterval(() => {
-      // 其他定时执行的方法
-    getProjectsWorkflows();
-  }, 5000);
-}
 
 const changeAction = async () => {
   pagination.current = 1;
@@ -202,38 +196,43 @@ const getProjectsWorkflows = async () => {
       }
     });
     if (isRunning.value === true) {
-      setTimer();
+      
+      timer.value = setTimeout(() => {
+        //需要定时执行的代码
+        getProjectsWorkflows();
+      }, 5000)
     } else {
-      window.clearInterval(timer.value);
+      clearTimeout(timer.value);
     }
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
 };
 const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
-  router.push("/projects/"+detailId.value+"/"+workflowId+"/workflows/"+workflowDetailId+"/"+type+"/"+projectType?.value);
+  router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
 }
-const deleteWorkflow = (workflowId: string) => {
+const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
   delWorkflowId.value = workflowId;
+  delWorkflowDetailId.value = workflowDetailId;
   delWorkflowModal.value = true;
 }
 const deleteWorkflowContent = async () => {
   try {
     loading.value = true;
-    const data = await apiDeleteWorkflows(detailId.value.toString(), delWorkflowId.value);
+    const data = await apiDeleteWorkflows(delWorkflowId.value, delWorkflowDetailId.value);
     message.success(data.message);
     getProjectsWorkflows();
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
   } finally {
     delWorkflowModal.value = false;
     loading.value = false;
   }
 }
-const stopWorkflow = async (projectId: String,workflowId: number, detailId: number) => {
+const stopWorkflow = async (projectId: String, workflowId: number, detailId: number) => {
   try {
     const params = reactive({
       id: projectId,
@@ -243,7 +242,7 @@ const stopWorkflow = async (projectId: String,workflowId: number, detailId: numb
     const data = await apiProjectsWorkflowsStop(params);
     message.success(data.message);
   } catch (error: any) {
-    console.log("error:",error)
+    console.log("error:", error)
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;

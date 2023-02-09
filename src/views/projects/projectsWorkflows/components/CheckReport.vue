@@ -7,8 +7,8 @@
       <a-collapse v-model:activeKey="activeKey" accordion v-for="val in item.reportFileData" :key="val.Name">
         <a-collapse-panel :key="val.name + item.id" :header="val.name" :showArrow="false">
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="item.checkTool === 'mythril' && val.message" :dataSource="val.message" :columns="SolhintColumns"
-            :pagination="false" :showHeader="false">
+            v-if="(item.checkTool === 'mythril' || item.checkTool === 'ESLint') && val.message"
+            :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
           </a-table>
 
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
@@ -51,12 +51,11 @@ import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
 
 const activeKey = ref(['1']);
-const text = ref('qwertyuiqwertyu')
 const props = defineProps({
   checkReportData: Array,
 })
 
-// console.log(props.checkReportData)
+console.log(props.checkReportData)
 const getImageUrl = (iconName: string) => {
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;

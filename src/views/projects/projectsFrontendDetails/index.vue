@@ -16,9 +16,9 @@
               <a-menu-item>
                 <a href="javascript:;" @click="copyUrl">Copy URL</a>
               </a-menu-item>
-              <!-- <a-menu-item>
+              <a-menu-item>
                 <a href="javascript:;" @click="deleteBtn">Delete</a>
-              </a-menu-item> -->
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -48,7 +48,7 @@ import { ref, onMounted, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
 import { message } from "ant-design-vue";
-import { apiGetPackagesList, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
+import { apiGetPackageDetail, apiGetWorkflowsDetail, apiGetDetailDelete } from "@/apis/workFlows.ts";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 
@@ -57,7 +57,9 @@ const router = useRouter();
 const { params } = useRoute();
 const currentName = ref('Deployment Detail');
 const packageInfo = reactive({});
-const workflowsDetailsData = reactive({});
+const workflowsDetailsData = reactive({
+  packageId: params.packageId,
+});
 
 const viewLogs = () => {
   // 回到workFlows详情页
@@ -66,11 +68,7 @@ const viewLogs = () => {
 
 const getPackageDetail = async () => {
   try {
-    const queryParams = {
-      workflowsId: params.workflowsId,
-      workflowDetailId: params.workflowDetailId,
-    }
-    const { data } = await apiGetPackagesList(queryParams)
+    const { data } = await apiGetPackageDetail(params.packageId)
     Object.assign(packageInfo, data)
   } catch (err: any) {
     console.info(err)
@@ -105,9 +103,18 @@ const visitBtn = () => {
   window.open(packageInfo?.domain)
 }
 
-// const deleteBtn = () => {
-
-// }
+const deleteBtn = async () => {
+  const queryParams = {
+    workflowsId: params.workflowsId,
+    workflowDetailId: params.workflowDetailId,
+  }
+  try {
+    const { data } = await apiGetDetailDelete(queryParams);
+    router.back();
+  } catch (err: any) {
+    console.info(err)
+  }
+}
 
 
 onMounted(() => {

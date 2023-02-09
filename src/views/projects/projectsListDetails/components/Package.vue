@@ -1,14 +1,12 @@
 <template>
-  <a-table
-    class="my-4"
-    :columns="tableColumns"
-    :dataSource="tableList"
-    :pagination="pagination"
-  >
+  <a-table class="my-4" :columns="tableColumns" :dataSource="tableList" :pagination="pagination">
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'action'">
-        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''" @click="goDeploy(record.workflowId, record.workflowDetailId)">Deploy</label>
-        <label class="text-[#E2B578] cursor-pointer ml-2" v-else @click="goView(record.workflowId, record.workflowDetailId)">View</label>
+        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''"
+          @click="goDeploy(record.projectId ,record.workflowId, record.workflowDetailId)">Deploy</label>
+        <label class="text-[#E2B578] cursor-pointer ml-2" v-else
+          @click="goView(record.workflowId, record.workflowDetailId, record.id)">View</label>
+
       </template>
     </template>
   </a-table>
@@ -32,7 +30,7 @@ const { pageType, detailId, packageListData } = toRefs(props);
 const router = useRouter();
 const showMsg = ref(false);
 const msgParam = ref({
-  id: detailId?.value,
+  id: 0,
   workflowsId: 0,
   workflowDetailId: 0,
   projectType: 2,
@@ -67,13 +65,13 @@ const tableColumns = computed<any[]>(() => [
     dataIndex: 'buildTime',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'checkTime',
+    key: 'buildTime',
     customRender: ({ text: date }) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Domains',
-    dataIndex: 'domains',
-    key: 'domains',
+    dataIndex: 'domain',
+    key: 'domain',
     ellipsis: 'fixed',
     align: 'center',
   },
@@ -130,37 +128,41 @@ const getProjectsPackage = async () => {
     pagination.total = data.total
 
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
 }
 
-const goDeploy = async (workflowId: number,workflowDetailId: number) => {
-  
+const goDeploy = async (projectId:number, workflowId: number, workflowDetailId: number) => {
+
   try {
     const params = ref({
-      id: detailId?.value,
+      id: projectId,
       workflowsId: workflowId,
       workflowDetailId: workflowDetailId,
     });
-    const res = await apiProjectsDeploy(params.value);
-    console.log("res;",res);
+    const res = await apiProjectsDeploy(params.value); 
     showMsg.value = true;
+    msgParam.value.id = projectId;
     msgParam.value.workflowsId = workflowId;
     msgParam.value.workflowDetailId = workflowDetailId;
     setTimeout(function () {
       showMsg.value = false;
-    }, 3000)  
+    }, 3000)
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
-  } 
+  }
 }
 
-const goView = (workflowId: number,workflowDetailId: number) => {
-  router.push("/projects/"+workflowId+"/frontend-details/"+workflowDetailId);
+const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId);
 }
+
+// const downloadAbi = (val: any) => {
+//   console.log(val, 'val')
+// }
 
 defineExpose({
   getProjectsPackage
