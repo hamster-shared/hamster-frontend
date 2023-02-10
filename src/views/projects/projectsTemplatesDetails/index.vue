@@ -20,7 +20,8 @@
     </div>
 
 
-    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" v-if="params.type === '2'"></FrontendTemplateDeatilVue>
+    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" :showUrl="showUrl" v-if="params.type === '2'">
+    </FrontendTemplateDeatilVue>
     <div v-if="params.type === '1'">
       <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
         <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
@@ -29,7 +30,7 @@
         </div>
         <div class="p-[32px]">
           <div class="text-[24px] font-bold">Extensions</div>
-          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" 
+          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
             class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
             <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index"
               v-model:checked="items.checked">{{ items.label }}</a-checkbox>
@@ -64,7 +65,7 @@
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Send
                 </div>
-                <div class=" pb-4"><!-- h-[120px] overflow-auto -->
+                <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionList(item)" :class="{ '!text-[#E2B578]': item.name === functionName }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
@@ -73,7 +74,7 @@
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
-                <div class=" pb-4"><!-- h-[130px] overflow-auto -->
+                <div class="pb-4 "><!-- h-[130px] overflow-auto -->
                   <div @click="setFunctionList(item)"
                     :class="{ '!bg-[#E2B578] !text-white': item.name === functionName }"
                     class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
@@ -150,6 +151,7 @@ const sourceContent = ref("");
 const editHeight = ref("height: 220px");
 const templatesDetail = ref([]);
 const frontendTemplatesDetail = ref('');
+const showUrl = ref('');
 const extensionsList = ref([]);
 const checkboxList = ref([
   { checked: false, label: 'ERC721' },
@@ -257,7 +259,8 @@ const setCodeHeight = (content: string) => {
 const getFrontendTemplatesDetail = async () => {
   try {
     const { data } = await apiFrontendTemplatesDetail(templateId.value.toString());
-    frontendTemplatesDetail.value = data.description
+    frontendTemplatesDetail.value = data.description;
+    showUrl.value = data.showUrl;
     templatesDetail.value = data;
   } catch (error: any) {
     console.log("erro:", error)
@@ -295,7 +298,7 @@ const createProject = async () => {
     }
     const res = await apiAddProjects(params);
     message.success(res.message);
-    
+
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
     router.push("/projects");
   } catch (error: any) {
@@ -356,14 +359,16 @@ const copyInfo = async (_items: any) => {
   margin-left: 0px;
 }
 
-:deep(.ant-checkbox-checked .ant-checkbox-inner){
+:deep(.ant-checkbox-checked .ant-checkbox-inner) {
   background-color: var(--ant-primary-color);
 }
+
 :deep(.ant-checkbox-disabled .ant-checkbox-inner),
-:deep(.dark-css .ant-checkbox-disabled .ant-checkbox-inner){
+:deep(.dark-css .ant-checkbox-disabled .ant-checkbox-inner) {
   border-color: var(--ant-primary-color) !important;
 }
-:deep(.ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner:after){
+
+:deep(.ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner:after) {
   border-color: #FFFFFF;
 }
 

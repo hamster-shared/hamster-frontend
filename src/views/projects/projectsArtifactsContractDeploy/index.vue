@@ -77,12 +77,13 @@
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
 
-  <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null" @cancel="handleCancel">
+  <!-- <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null" @cancel="handleCancel">
     <template #closeIcon>
       <img class="" src="@/assets/icons/closeIcon.svg" />
     </template>
-    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="modalFormState" name="userForm"
-      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
+    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]"
+      :model="projectsContractData[selectedIndex].modalFormData" name="userForm" :label-col="{ span: 0 }"
+      :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item class="mb-[32px]" :name="item.name" v-for="item in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
         <a-input v-model:value="projectsContractData[selectedIndex].modalFormData[item.name]"
@@ -92,23 +93,23 @@
     <div class="text-center">
       <a-button class="done-btn" @click="getModalData">Done</a-button>
     </div>
-  </a-modal>
-  <!-- 
+  </a-modal> -->
+
   <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null">
     <template #closeIcon>
       <img class="" src="@/assets/icons/closeIcon.svg" />
     </template>
-    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="modalFormState" name="userForm"
-      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
-      <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="item in abiInputData">
+    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="testData" name="userForm"
+      :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
+      <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="(item, _) in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
-        <a-input v-model:value="modalFormState[item.name]" :placeholder="'Please input ' + item.name" allowClear />
+        <a-input v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
       </a-form-item>
     </a-form>
     <div class="text-center">
       <a-button class="done-btn" @click="getModalData">Done</a-button>
     </div>
-  </a-modal> -->
+  </a-modal>
 
 
 </template>
@@ -133,7 +134,8 @@ const router = useRouter();
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n()
 
-
+const argsMap = new Map();
+const testData = ref({});
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
   version: router.currentRoute.value.params?.version,
@@ -144,6 +146,7 @@ const loading = ref(false);
 const visible = ref(false);
 const margumentVisible = ref(false);
 const selectedIndex = ref(0);
+const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
@@ -184,7 +187,7 @@ const getProjectsContract = async () => {
   data.map((item: any) => {
     item.label = item.name;
     item.value = item.id;
-    item.modalFormData = {};
+    item.modalFormData = reactive({});
     item.abiInfoData = YAML.parse(item.abiInfo);
     setAbiInfo(item);
   })
@@ -201,8 +204,7 @@ const getProjectsContract = async () => {
 
 
 //  创建合约
-const contractFactory = async (abi: any, bytecode: any, modalFormData: any, contractId: number) => {
-  // console.log(modalFormData, 'modalFormData')
+const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contractId: number) => {
   loading.value = true
   const { ethereum } = window;
   const provider = new ethers.providers.Web3Provider(ethereum);
@@ -213,7 +215,7 @@ const contractFactory = async (abi: any, bytecode: any, modalFormData: any, cont
     provider.getSigner()
   );
   try {
-    const contract = await factory.deploy(...Object.values(modalFormData));
+    const contract = await factory.deploy(...Object.values(argsMapData));
     await contract.deployed();
     // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
@@ -280,14 +282,13 @@ const deployClick = async () => {
 
 
 const setContractFactory = async (nameData: any) => {
-  // console.log(name, 'name')
   let promise: any = [];
   nameData.map((item: number) => {
     formState.name.push(item.id);
     let selectItem: any = projectsContractData.find(val => { return val.id === item.id });
-    console.log(selectItem, 'selectItem')
+    // console.log(selectItem, 'selectItem')
     // const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
-    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, selectItem.modalFormData, item.id));
+    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, argsMap.get(selectId.value), item.id));
     // console.log(abiInputData.value, '000')
   })
   const res = await Promise.all(promise)
@@ -315,29 +316,43 @@ const getModalData = async () => {
     const modalValues = await modalFormRef?.value.validateFields();
 
     // console.log(projectsContractData, 'pop')
+    // projectsContractData[selectedIndex.value].data = projectsContractData[selectedIndex.value].modalFormData
+    const value = Object.values(testData.value);
+    formState.nameData.push(projectsContractData[selectedIndex.value]);
+    projectsContractData[selectedIndex.value].hasModalFormData = false;
+    // console.log(projectsContractData[selectedIndex.value].modalFormData, projectsContractData[selectedIndex.value], modalFormState.value)
 
-    const value = Object.values(projectsContractData[selectedIndex.value].modalFormData);
-    let result = false
-    if (value.length > 0) {
-      value.map((val: any) => {
-        val != '' ? result = true : result = false;
-      })
-    } else {
-      result = false
-    }
 
-    if (result) {
-      formState.nameData.push(projectsContractData[selectedIndex.value]);
-      projectsContractData[selectedIndex.value].hasModalFormData = false;
-      modalFormRef?.value.resetFields();
-    } else {
-      projectsContractData[selectedIndex.value].hasModalFormData = true;
-    }
+    // let result = false
+    // if (value.length > 0) {
+    //   value.map((val: any) => {
+    //     if (val && val != '') {
+    //       result = true
+    //     } else {
+    //       result = false
+    //     }
 
-    
+    //   })
+    // } else {
+    //   result = false
+    // }
+
+    // if (result) {
+    //   formState.nameData.push(projectsContractData[selectedIndex.value]);
+    //   projectsContractData[selectedIndex.value].hasModalFormData = false;
+    //   // modalFormRef?.value.resetFields();
+    // } else {
+    //   projectsContractData[selectedIndex.value].hasModalFormData = true;
+    // }
+
+
     margumentVisible.value = false;
-
+    // console.log("testData2", testData.value);
+    let data = Object.assign({}, testData.value)
+    // console.log("DATA", data)
+    argsMap.set(selectId.value, data)
   } catch (err: any) {
+    projectsContractData[selectedIndex.value].hasModalFormData = true;
     console.info(err)
   }
 
@@ -354,11 +369,23 @@ const getModalData = async () => {
 
 
 const selectAargumentName = (val: any, index: number) => {
+  // console.log(testData, 'testData')
   selectedIndex.value = index;
+  selectId.value = val.id;
+  testData.value = argsMap.get(val.id);
   margumentVisible.value = true;
   val.abiInfoData.map((item: any) => {
     if (item.type === 'constructor' && item.inputs.length > 0) {
       abiInputData.value = item.inputs;
+      if (!testData.value) {
+        let param = {};
+        item.inputs.forEach((it: any) => {
+          param[it.name] = "";
+        })
+        testData.value = param
+      }
+
+      // testData["abiInputData.value"] = null;
     }
   })
 }
@@ -397,10 +424,6 @@ onMounted(async () => {
   margin-bottom: 0px !important;
 }
 
-// .btn {
-//   width: 440px !important;
-// }
-
 .modalFormRef {
   .ant-form-item {
     &:last-child {
@@ -408,11 +431,6 @@ onMounted(async () => {
     }
   }
 }
-
-// :deep(.ant-form label) {
-//   color: #121211;
-//   margin-bottom: 16px;
-// }
 
 :deep(.ant-form-item) {
   margin-bottom: 16px;
@@ -486,13 +504,6 @@ html[data-theme="dark"] {
 .dark-css {
   :deep(.ant-input) {
     color: #ffffff;
-  }
-
-  :deep(.ant-modal) {
-    :deep(.ant-input) {
-      color: #000;
-    }
-
   }
 }
 
