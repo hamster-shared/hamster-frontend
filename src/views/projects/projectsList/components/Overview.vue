@@ -137,7 +137,7 @@
               </div>
             </div>
             <div class="text-[#E2B578] cursor-pointer"
-              @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.version)" v-else>Deploy Now</div>
+              @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)" v-else>Deploy Now</div>
           </div>
         </div>
         <div>
@@ -295,14 +295,17 @@ const goContractBuild = async (id: String, workflowId: String, detailId: String)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
 };
-const goContractDeploy = async (id: String, version: String) => {
-  if (version === "") {
-    message.error("version is empty.");
-  } else {
-    localStorage.setItem("projectName", viewInfo.value.name)
-    localStorage.setItem("projectId", id)
-    router.push("/projects/" + id + "/artifacts-contract/" + version + "/deploy/00");
-  }
+const goContractDeploy = async (id: String, status: number | String) => {
+  // if (version === "") {
+  //   message.error("version is empty.");
+  // } else {
+  //   localStorage.setItem("projectName", viewInfo.value.name)
+  //   localStorage.setItem("projectId", id)
+  //   router.push("/projects/" + id + "/artifacts-contract/" + version + "/deploy/00");
+  // }
+  if (status === 3) {
+      goFrontendDeploy(id);
+    }
 };
 const goContractDetail = async (id: String, version: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
@@ -313,12 +316,13 @@ const goFrontendDeploy = async (id: String) => {
   try {
     const params = ref({
       id: id,
-      workflowsId: viewInfo?.value.recentDeploy.workflowId,
-      workflowDetailId: viewInfo?.value.recentDeploy.id,
+      workflowsId: viewInfo?.value.recentBuild.workflowId,
+      workflowDetailId: viewInfo?.value.recentBuild.id,
     });
-    const res = await apiProjectsDeploy(params.value);
-    console.log("res;", res);
+    const { data } = await apiProjectsDeploy(params.value);
     showMsg.value = true;
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
     setTimeout(function () {
       showMsg.value = false;
     }, 3000)

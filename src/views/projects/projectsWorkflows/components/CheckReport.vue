@@ -27,6 +27,7 @@
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
             <div class="text-[#73706E]">No issues were detected.</div>
           </div>
+          <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}</div>
 
           <template #extra>
             <div>
@@ -38,7 +39,6 @@
             </div>
           </template>
         </a-collapse-panel>
-        <div class="text-[#73706E] ml-[12px]">{{ 'Support by '+ item.checkTool }}</div>
       </a-collapse>
     </div>
   </div>
