@@ -6,8 +6,19 @@
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
       <a-collapse v-model:activeKey="activeKey" accordion v-for="val in item.reportFileData" :key="val.Name">
         <a-collapse-panel :key="val.name + item.id" :header="val.name" :showArrow="false">
+          
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="(item.checkTool === 'mythril' || item.checkTool === 'ESLint') && val.message"
+            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message"
+            :dataSource="val.message" :columns="ESLintColumns" :pagination="false" :showHeader="false">
+            <template #bodyCell="{ column, record, index }">
+              <template v-if="column.dataIndex === 'columnLine'">
+                line {{ record.line }},col {{ record.column }},
+              </template>
+            </template>
+          </a-table>
+
+          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
+            v-if="projectType === '1' && (item.checkTool === 'mythril' || item.checkTool === 'ESLint') && val.message"
             :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
           </a-table>
 
@@ -52,10 +63,10 @@ const theme = useThemeStore();
 
 const activeKey = ref(['1']);
 const props = defineProps({
+  projectType: String,
   checkReportData: Array,
 })
 
-console.log(props.checkReportData)
 const getImageUrl = (iconName: string) => {
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
@@ -104,6 +115,27 @@ const SolhintColumns = [
     title: 'tool',
     dataIndex: 'tool',
     align: "center",
+    key: 'tool',
+  },
+]
+
+const ESLintColumns = [
+  {
+    title: 'column',
+    dataIndex: 'columnLine',
+    align: "left",
+    key: 'column',
+  },
+  {
+    title: 'note',
+    dataIndex: 'note',
+    align: "center",
+    key: 'note',
+  },
+  {
+    title: 'tool',
+    dataIndex: 'tool',
+    align: "right",
     key: 'tool',
   },
 ]
@@ -160,7 +192,8 @@ const columns = [
   }
 ];
 
-const { checkReportData } = toRefs(props)
+const { checkReportData, projectType } = toRefs(props)
+console.log("checkReportData：",checkReportData?.value)
 
 </script>
 
