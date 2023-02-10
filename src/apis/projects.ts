@@ -263,3 +263,12 @@ export function apiProjectsCode(params: apiProjectsCodeParams) {
     data: params,
   });
 }
+
+// 删除部署
+export function apiDeleteDeployInfo(packageId:string) {
+  return httpRequest({
+    // url: `/api/projects/${id}/workflows/${workflowId}`,
+    url: `/api/projects/${packageId}/deploy-info`,
+    method: "delete",
+  });
+}

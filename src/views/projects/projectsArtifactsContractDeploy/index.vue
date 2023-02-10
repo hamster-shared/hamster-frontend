@@ -17,16 +17,33 @@
             <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item name="name" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
+        <a-form-item name="nameData" class="name-item"
+          :rules="[{ required: true, message: 'Please input your Name!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
-          <div
-            class="flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px]">
-            <a-checkbox-group class="dark:text-white text-[#121211]"
-              :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.name" name="checkboxgroup"
-              :options="projectsContractData">
-            </a-checkbox-group>
-            <img src="@/assets/icons/cname.svg" @click="margumentVisible = true" />
-          </div>
+          <!-- <div
+            class="flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px]"> -->
+          <!-- <a-checkbox-group class="dark:text-white text-[#121211]"
+            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.name" name="checkboxgroup"
+            :options="projectsContractData">
+            <img v-show="hasArgument" src="@/assets/icons/cname.svg" />
+            <template>
+
+            </template>
+          </a-checkbox-group> -->
+
+          <!-- </div> -->
+
+          <a-checkbox-group class="dark:text-white text-[#121211] w-full" @change="hchange"
+            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
+            name="checkboxgroup">
+            <div v-for="(val, index) in projectsContractData" :key="val.id"
+              class="w-full flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px] mb-[16px]">
+              <a-checkbox :value="val" :disabled="val.hasModalFormData">{{ val.name }}</a-checkbox>
+              <img src="@/assets/icons/cname.svg" class="cursor-pointer" v-show="val.hasArgument"
+                @click="selectAargumentName(val, index)" />
+            </div>
+          </a-checkbox-group>
+
 
         </a-form-item>
 
@@ -60,6 +77,23 @@
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
 
+  <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null" @cancel="handleCancel">
+    <template #closeIcon>
+      <img class="" src="@/assets/icons/closeIcon.svg" />
+    </template>
+    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="modalFormState" name="userForm"
+      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
+      <a-form-item class="mb-[32px]" :name="item.name" v-for="item in abiInputData">
+        <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
+        <a-input v-model:value="projectsContractData[selectedIndex].modalFormData[item.name]"
+          :placeholder="'Please input ' + item.name" allowClear />
+      </a-form-item>
+    </a-form>
+    <div class="text-center">
+      <a-button class="done-btn" @click="getModalData">Done</a-button>
+    </div>
+  </a-modal>
+  <!-- 
   <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null">
     <template #closeIcon>
       <img class="" src="@/assets/icons/closeIcon.svg" />
@@ -68,15 +102,13 @@
       :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
       <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="item in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
-        <a-input v-model:value="modalFormState[item.name]" :placeholder="'Please input ' + item.name" allowClear
-          :class="theme.themeValue === 'dark' ? 'dark-css' : ''" />
+        <a-input v-model:value="modalFormState[item.name]" :placeholder="'Please input ' + item.name" allowClear />
       </a-form-item>
     </a-form>
     <div class="text-center">
-      <a-button class="done-btn">Done</a-button>
+      <a-button class="done-btn" @click="getModalData">Done</a-button>
     </div>
-
-  </a-modal>
+  </a-modal> -->
 
 
 </template>
@@ -111,6 +143,9 @@ const queryParams = reactive({
 const loading = ref(false);
 const visible = ref(false);
 const margumentVisible = ref(false);
+const hasArgument = ref(false);
+const selectedIndex = ref(0);
+const selectedItemData = reactive({});
 const showWallets = ref();
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
@@ -121,6 +156,7 @@ const abiInputData = ref([]);
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
+  nameData: [],
   name: [],
   chain: undefined,
   network: undefined,
@@ -134,16 +170,28 @@ const getVersion = async () => {
   Object.assign(versionData, data)
 }
 
+const hchange = (val: any) => {
+  console.info(val, '090')
+}
+
+const handleCancel = () => {
+  let data = projectsContractData[selectedIndex.value].modalFormData
+  for (let key in data) {
+    data[key] = undefined
+  }
+}
+
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
     item.label = item.name;
     item.value = item.id;
+    item.modalFormData = {};
     item.abiInfoData = YAML.parse(item.abiInfo);
     setAbiInfo(item);
   })
   Object.assign(projectsContractData, data)
-  console.log(projectsContractData, '999')
+  // console.log(projectsContractData, '999')
   // if (queryParams.contract === '00') {
   //   data.map((item: any) => {
   //     formState.name.push(item.id)
@@ -155,7 +203,8 @@ const getProjectsContract = async () => {
 
 
 //  创建合约
-const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
+const contractFactory = async (abi: any, bytecode: any, modalFormData: any, contractId: number) => {
+  // console.log(modalFormData, 'modalFormData')
   loading.value = true
   const { ethereum } = window;
   const provider = new ethers.providers.Web3Provider(ethereum);
@@ -166,9 +215,7 @@ const contractFactory = async (abi: any, bytecode: any, contractId: number) => {
     provider.getSigner()
   );
   try {
-    // ...(Object.values(modalFormState.value))  参数值
-    const values: any = modalFormState.value || {};
-    const contract = await factory.deploy(...Object.values(values));
+    const contract = await factory.deploy(...Object.values(modalFormData));
     await contract.deployed();
     // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
@@ -212,20 +259,19 @@ const deployClick = async () => {
   if (isWalletAccount == null || isWalletAccount === '[]') {
     // visible.value = true
     showWallets.value?.onClickConnect();
-
     // setWalletBtn(true)
   } else {
     // 连接钱包后再创建合约
     try {
       const values = await formRef?.value.validateFields();
-      const modalValues = await modalFormRef?.value.validateFields();
-      const { name } = formState;
+      // const modalValues = await modalFormRef?.value.validateFields();
+      const { nameData } = formState;
       const { ethereum } = window;
       const network = `0x${formState.network}`
       if (ethereum.chainId !== network) {
         switchToChain(formState.network)
       } else {
-        setContractFactory(name)
+        setContractFactory(nameData)
       }
     } catch (errorInfo) {
       // 表单校验
@@ -235,13 +281,16 @@ const deployClick = async () => {
 }
 
 
-const setContractFactory = async (name: any) => {
+const setContractFactory = async (nameData: any) => {
   // console.log(name, 'name')
   let promise: any = [];
-  name.map((item: number) => {
-    let selectItem: any = projectsContractData.find(val => { return val.id === item });
+  nameData.map((item: number) => {
+    formState.name.push(item.id);
+    let selectItem: any = projectsContractData.find(val => { return val.id === item.id });
+    console.log(selectItem, 'selectItem')
     // const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
-    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, item));
+    promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, selectItem.modalFormData, item.id));
+    // console.log(abiInputData.value, '000')
   })
   const res = await Promise.all(promise)
   loading.value = false;
@@ -252,10 +301,69 @@ const setContractFactory = async (name: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
-  // console.log(selectItem)
-  selectItem.abiInfoData.map((item: any) => {
-    if (item.type === 'constructor') {
-      abiInputData.value = item.inputs
+  const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
+  if (constructorData && constructorData.inputs.length > 0) {
+    selectItem.hasArgument = true;
+  }
+  // selectItem.hasArgument = selectItem.abiInfoData.some((item: any) => { return item.type === 'constructor' });
+  if (selectItem.hasArgument) {
+    selectItem.hasModalFormData = true;
+  }
+  // console.log(selectItem, abiInputData.value, 'hasArgument.value')
+}
+
+const getModalData = async () => {
+  try {
+    const modalValues = await modalFormRef?.value.validateFields();
+    console.log(projectsContractData, 'pop')
+
+    const value = Object.values(projectsContractData[selectedIndex.value].modalFormData);
+
+    let result = false
+    if (value.length > 0) {
+      value.map((val: any) => {
+        val != '' ? result = true : result = false
+      })
+    } else {
+      result = false
+    }
+
+    if (result) {
+      formState.nameData.push(projectsContractData[selectedIndex.value]);
+      projectsContractData[selectedIndex.value].hasModalFormData = false;
+      modalFormRef?.value.resetFields();
+    } else {
+      projectsContractData[selectedIndex.value].hasModalFormData = true;
+    }
+    margumentVisible.value = false;
+
+  } catch (err: any) {
+    console.info(err)
+  }
+  // console.log(modalFormState.value, selectedItemData.modalFormData, '09090')
+
+  // const data = {}
+  // Object.assign(data, projectsContractData[selectedIndex.value].modalFormData)
+  // console.log(data, 'data')
+  // projectsContractData[selectedIndex.value].modalFormData = modalFormState.value
+  // projectsContractData[selectedIndex.value].modalFormData = modalFormState.value;
+  // Object.assign(projectsContractData[selectedIndex.value].modalFormData, data)
+
+  // console.log(projectsContractData, '9090');
+
+};
+
+
+const selectAargumentName = (val: any, index: number) => {
+  // console.log(val, 'modalFormState')
+  selectedIndex.value = index
+  Object.assign(selectedItemData, val);
+
+  // console.log(selectedItemData, '90990gggggg')
+  margumentVisible.value = true;
+  val.abiInfoData.map((item: any) => {
+    if (item.type === 'constructor' && item.inputs.length > 0) {
+      abiInputData.value = item.inputs;
     }
   })
 }
@@ -265,7 +373,6 @@ const cancelModal = (val: boolean) => {
 }
 
 const changeVersion = (val: string) => {
-  // console.log(val, 'val')
   queryParams.version = val
   getProjectsContract()
 }
@@ -385,6 +492,13 @@ html[data-theme="dark"] {
   :deep(.ant-input) {
     color: #ffffff;
   }
+
+  :deep(.ant-modal) {
+    :deep(.ant-input) {
+      color: #000;
+    }
+
+  }
 }
 
 .ant-input-affix-wrapper {
@@ -396,5 +510,11 @@ html[data-theme="dark"] {
 :deep(.ant-input) {
   background: transparent;
   color: #121211;
+}
+
+:deep(.ant-modal) {
+  input {
+    color: #000;
+  }
 }
 </style>

@@ -48,7 +48,8 @@ import { ref, onMounted, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
 import { message } from "ant-design-vue";
-import { apiGetPackageDetail, apiGetWorkflowsDetail, apiGetDetailDelete } from "@/apis/workFlows.ts";
+import { apiGetPackageDetail, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
+import { apiDeleteDeployInfo } from "@/apis/projects.ts";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 
@@ -100,16 +101,12 @@ const copyUrl = () => {
 }
 
 const visitBtn = () => {
-  window.open(packageInfo?.domain)
+  window.open(packageInfo?.domain);
 }
 
 const deleteBtn = async () => {
-  const queryParams = {
-    workflowsId: params.workflowsId,
-    workflowDetailId: params.workflowDetailId,
-  }
   try {
-    const { data } = await apiGetDetailDelete(queryParams);
+    const { data } = await apiDeleteDeployInfo(workflowsDetailsData.packageId);
     router.back();
   } catch (err: any) {
     console.info(err)
