@@ -75,11 +75,12 @@ const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
 }
 
 const goCreateProject = () => {
+  localStorage.removeItem('createFormData');
   router.push("/projects/create");
 }
 
 onMounted(() => {
-  
+
   if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
     activeKey.value = window.localStorage.getItem("projectActiveKey");
   }

@@ -19,7 +19,8 @@
                 <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Contract code.</div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">FrontEnd
-                <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Front-End code.</div>
+                <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Front-End code.
+                </div>
               </a-radio>
               <a-radio :style="radioStyle" value="3" disabled="true">Blockchain Node（coming soon）
                 <div>Please pay attention to Hamster</div>
@@ -43,7 +44,7 @@
                 <div class="radio-sub">Build application based on EVM and Solidity language</div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">Aptos
-                <div class="radio-sub">Build application based on Aptos  and Move language</div>
+                <div class="radio-sub">Build application based on Aptos and Move language</div>
               </a-radio>
               <a-radio :style="radioStyle" value="3">Ton
                 <div class="radio-sub">Build application based on Ton and FunC language</div>
@@ -61,7 +62,7 @@
           <div class="flex justify-between">
             <div class="font-bold text-[16px]">Popular Template</div>
             <div class="cursor-pointer" @click="goNext">
-              <img src="@/assets/icons/explore-template.svg" class="h-[20px]"/>
+              <img src="@/assets/icons/explore-template.svg" class="h-[20px]" />
               <span class="text-[#E2B578] align-middle text-[16px]"> Explore all template</span>
             </div>
           </div>
@@ -77,8 +78,8 @@
                   <img :src="item.logo" class="h-[40px] w-[40px]" />
                   <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
                   <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
-                  <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]"/>
-                  <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]"/>
+                  <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]" />
+                  <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]" />
                 </div>
                 <div class="flex">
                   <div class="flex items-center">
@@ -136,16 +137,23 @@ const router = useRouter();
 const loading = ref(false);
 const showList = ref([])
 const formRef = ref();
-const formData = reactive({
+// const formData = reactive({
+//   name: '',
+//   type: '1',
+//   contractCode: '1',
+//   frameType: '1',
+// });
+
+const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) || reactive({
   name: '',
   type: '1',
   contractCode: '1',
   frameType: '1',
 });
-const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 
+const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 const fixedPopularTemplate = {
-  aptos:[
+  aptos: [
     {
       audited: false,
       description: 'Token vesting Smart Contract for Aptos Blockchain.',
@@ -187,7 +195,7 @@ const fixedPopularTemplate = {
       templateTypeId: 4
     },
   ],
-  ton:[
+  ton: [
     {
       audited: false,
       description: 'Basic implementation of smart contracts for NFT tokens and NFT collections in accordance with the Standard',
@@ -253,19 +261,19 @@ const fixedPopularTemplate = {
   ]
 }
 
-watchEffect( async() => {
+watchEffect(async () => {
   if (formData.frameType == '1') {
     await getInitTemplates()
-    console.log('formData.frameType=1:',formData.frameType)
-  } else if(formData.frameType == '2') {
+    console.log('formData.frameType=1:', formData.frameType)
+  } else if (formData.frameType == '2') {
     showList.value = fixedPopularTemplate.aptos
-    console.log('formData.frameType:',formData.frameType)
-  } else if(formData.frameType == '3') {
+    console.log('formData.frameType:', formData.frameType)
+  } else if (formData.frameType == '3') {
     showList.value = fixedPopularTemplate.ton
-    console.log('formData.frameType:',formData.frameType)
-  } else if(formData.frameType == '4') {
+    console.log('formData.frameType:', formData.frameType)
+  } else if (formData.frameType == '4') {
     showList.value = fixedPopularTemplate.StarkWare
-    console.log('formData.frameType:',formData.frameType)
+    console.log('formData.frameType:', formData.frameType)
   }
 })
 
@@ -301,6 +309,7 @@ const formRules = computed(() => {
   };
 });
 const goNext = async () => {
+  localStorage.setItem("createFormData", JSON.stringify(formData));
   setCreateProjectValue(`/projects/template/${formData.type}`)
 }
 const setCreateProjectValue = async (path: RouteLocationRaw) => {
@@ -314,6 +323,7 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
       type: formData.type,
       frameType: formData.frameType,
     }
+    localStorage.setItem("createFormData", JSON.stringify(formData));
     window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
     router.push(path);
   } catch (error: any) {
@@ -323,7 +333,8 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
   }
 }
 const goDetail = async (val: any) => {
-  if(val.lastVersion !== 'Coming soon'){
+  if (val.lastVersion !== 'Coming soon') {
+    localStorage.setItem("createFormData", JSON.stringify(formData));
     localStorage.setItem('frontendTemplateDetail', JSON.stringify(val));
     setCreateProjectValue("/projects/templates/" + val.id + "/details/" + formData.type)
   }
@@ -397,7 +408,7 @@ onMounted(() => {
   height: 40px;
 }
 
-.template-height{
+.template-height {
   height: calc(100% - 100px);
 }
 

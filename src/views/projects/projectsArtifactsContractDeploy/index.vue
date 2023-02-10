@@ -143,9 +143,7 @@ const queryParams = reactive({
 const loading = ref(false);
 const visible = ref(false);
 const margumentVisible = ref(false);
-const hasArgument = ref(false);
 const selectedIndex = ref(0);
-const selectedItemData = reactive({});
 const showWallets = ref();
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
@@ -315,14 +313,14 @@ const setAbiInfo = (selectItem: any) => {
 const getModalData = async () => {
   try {
     const modalValues = await modalFormRef?.value.validateFields();
-    console.log(projectsContractData, 'pop')
+
+    // console.log(projectsContractData, 'pop')
 
     const value = Object.values(projectsContractData[selectedIndex.value].modalFormData);
-
     let result = false
     if (value.length > 0) {
       value.map((val: any) => {
-        val != '' ? result = true : result = false
+        val != '' ? result = true : result = false;
       })
     } else {
       result = false
@@ -335,12 +333,13 @@ const getModalData = async () => {
     } else {
       projectsContractData[selectedIndex.value].hasModalFormData = true;
     }
+
+    
     margumentVisible.value = false;
 
   } catch (err: any) {
     console.info(err)
   }
-  // console.log(modalFormState.value, selectedItemData.modalFormData, '09090')
 
   // const data = {}
   // Object.assign(data, projectsContractData[selectedIndex.value].modalFormData)
@@ -355,11 +354,7 @@ const getModalData = async () => {
 
 
 const selectAargumentName = (val: any, index: number) => {
-  // console.log(val, 'modalFormState')
-  selectedIndex.value = index
-  Object.assign(selectedItemData, val);
-
-  // console.log(selectedItemData, '90990gggggg')
+  selectedIndex.value = index;
   margumentVisible.value = true;
   val.abiInfoData.map((item: any) => {
     if (item.type === 'constructor' && item.inputs.length > 0) {

@@ -268,7 +268,7 @@ export function apiProjectsCode(params: apiProjectsCodeParams) {
 export function apiDeleteDeployInfo(packageId:string) {
   return httpRequest({
     // url: `/api/projects/${id}/workflows/${workflowId}`,
-    url: `/api/projects/${packageId}/deploy-info`,
+    url: `/api/package/${packageId}/deploy-info`,
     method: "delete",
   });
 }
