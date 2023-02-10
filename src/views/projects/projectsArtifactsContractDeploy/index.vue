@@ -215,7 +215,8 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
     provider.getSigner()
   );
   try {
-    const contract = await factory.deploy(...Object.values(argsMapData));
+    let value = argsMapData || {}
+    const contract = await factory.deploy(...Object.values(value));
     await contract.deployed();
     // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
