@@ -70,7 +70,6 @@ const workflowsDetailsData = reactive({
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  console.log("workflowsDetailsData:", data);
   Object.assign(workflowsDetailsData, data);
   const stageInfo = YAML.parse(data.stageInfo);
   processData.value = stageInfo;
@@ -213,8 +212,6 @@ onMounted(() => {
   getWorkflowsDetails();
   getProjectsDetailData();
   loadInfo();
-  console.log("workflowsDetailsData12312:",workflowsDetailsData);
-  // setCurrentName();
 })
 
 
