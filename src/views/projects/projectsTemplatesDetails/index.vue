@@ -20,8 +20,8 @@
     </div>
 
 
-    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" v-if="params.type === '2'"></FrontendTemplateDeatilVue>
-    <div v-if="params.type === '1'">
+    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" v-if="projectType === '2'"></FrontendTemplateDeatilVue>
+    <div v-if="projectType === '1'">
       <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
         <div class="bg-[#36322D] rounded-tl-[12px] rounded-tr-[12px] p-[32px]">
           <div class="text-[24px] font-bold text-[#FFFFFF]">{{ templatesDetail.name }} Contract</div>
@@ -138,6 +138,7 @@ const router = useRouter();
 const { params } = useRoute();
 const loading = ref(false);
 const templateId = ref(params.templateId);
+const projectType = ref(params.type);
 const activeKey = ref("1");
 const functionList = ref([]);
 const functionName = ref();
@@ -195,7 +196,7 @@ const setEventList = (element: { inputs: never[]; name: any; }) => {
 }
 
 const getTemplatesDetail = async () => {
-  if (params.type == '1') {
+  if (projectType.value == '1') {
     getContractTemplatesDetail()
   } else {
     getFrontendTemplatesDetail()
@@ -292,6 +293,9 @@ const createProject = async () => {
       repoOwner: JSON.parse(userInfo)?.username,
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,
+    }
+    if (projectType.value == '2') {
+      params.frameType = templatesDetail.value.templateType;
     }
     const res = await apiAddProjects(params);
     message.success(res.message);
