@@ -6,51 +6,79 @@
     </template>
   </Breadcrumb>
   <div
-    class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211] grid grid-cols-5 gap-4 p-[32px] rounded-[12px] mt-[24px]">
-    <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
-      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
-      <div class="text-[16px] font-bold mb-[16px]">Contract</div>
-      <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
-        <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
-        <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
-          <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item name="name" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
-        <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
-        <a-checkbox-group class="dark:text-white text-[#121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          v-model:value="formState.name" name="checkboxgroup" :options="projectsContractData">
-        </a-checkbox-group>
-      </a-form-item>
-      <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="modalFormState" name="userForm"
+    class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
+    <div class="grid grid-cols-5 gap-4">
+      <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
         :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
-        <a-form-item :name="item.name" :rules="[{ required: true }]" v-for="item in abiInputData" class="">
-          <a-input v-model:value="modalFormState[item.name]" :placeholder="'Please input ' + item.name" allowClear
-            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" />
+        <div class="text-[16px] font-bold mb-[16px]">Contract</div>
+        <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
+          <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
+          <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
+            <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="name" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
+          <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
+          <div
+            class="flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px]">
+            <a-checkbox-group class="dark:text-white text-[#121211]"
+              :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.name" name="checkboxgroup"
+              :options="projectsContractData">
+            </a-checkbox-group>
+            <img src="@/assets/icons/cname.svg" @click="margumentVisible = true" />
+          </div>
+
+        </a-form-item>
+
+        <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
+        <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
+          <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
+          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select">
+            <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
+          <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
+          <a-select v-model:value="formState.network" style="width: 100%" placeholder="Please select"
+            @change="changeNetwork">
+            <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
         </a-form-item>
       </a-form>
-      <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
-      <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
-        <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-        <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select">
-          <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
-        <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
-        <a-select v-model:value="formState.network" style="width: 100%" placeholder="Please select"
-          @change="changeNetwork">
-          <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
-            {{ item.name }}
-          </a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-button class="btn" @click="deployClick" :loading="loading">{{ loading? 'Deploying': 'Deploy' }}</a-button>
-    </a-form>
+      <div class="col-span-2 m-auto">
+        <img src="@/assets/images/deployDetail.png" class="w-full" />
+      </div>
+    </div>
+    <div class="text-center mt-[16px]">
+      <a-button class="btn" @click="deployClick" :loading="loading">{{
+        loading? 'Deploying': 'Deploy'
+      }}</a-button>
+    </div>
   </div>
-
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
+
+  <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null">
+    <template #closeIcon>
+      <img class="" src="@/assets/icons/closeIcon.svg" />
+    </template>
+    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="modalFormState" name="userForm"
+      :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
+      <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="item in abiInputData">
+        <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
+        <a-input v-model:value="modalFormState[item.name]" :placeholder="'Please input ' + item.name" allowClear
+          :class="theme.themeValue === 'dark' ? 'dark-css' : ''" />
+      </a-form-item>
+    </a-form>
+    <div class="text-center">
+      <a-button class="done-btn">Done</a-button>
+    </div>
+
+  </a-modal>
+
+
 </template>
 <script lang='ts' setup>
 import { reactive, ref, onMounted } from "vue";
@@ -81,7 +109,8 @@ const queryParams = reactive({
 })
 
 const loading = ref(false);
-const visible = ref(false)
+const visible = ref(false);
+const margumentVisible = ref(false);
 const showWallets = ref();
 const versionData = reactive([]);
 const chainData = reactive(['Ethereum']);
@@ -114,13 +143,14 @@ const getProjectsContract = async () => {
     setAbiInfo(item);
   })
   Object.assign(projectsContractData, data)
-  if (queryParams.contract === '00') {
-    data.map((item: any) => {
-      formState.name.push(item.id)
-    })
-  } else {
-    formState.name.push(Number(queryParams?.contract))
-  }
+  console.log(projectsContractData, '999')
+  // if (queryParams.contract === '00') {
+  //   data.map((item: any) => {
+  //     formState.name.push(item.id)
+  //   })
+  // } else {
+  //   formState.name.push(Number(queryParams?.contract))
+  // }
 }
 
 
@@ -265,6 +295,10 @@ onMounted(async () => {
   margin-bottom: 0px !important;
 }
 
+// .btn {
+//   width: 440px !important;
+// }
+
 .modalFormRef {
   .ant-form-item {
     &:last-child {
@@ -273,17 +307,22 @@ onMounted(async () => {
   }
 }
 
-:deep(.ant-form label) {
-  color: #121211;
-  margin-bottom: 16px;
-}
+// :deep(.ant-form label) {
+//   color: #121211;
+//   margin-bottom: 16px;
+// }
 
 :deep(.ant-form-item) {
   margin-bottom: 16px;
 }
 
 .btn {
-  width: 131px;
+  width: 440px;
+  height: 43px;
+}
+
+.done-btn {
+  width: 120px;
   height: 43px;
 }
 
