@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="mt-2">
       <div class="flex justify-between items-center">
         <label>Base URI</label>
         <a-tooltip placement="right">

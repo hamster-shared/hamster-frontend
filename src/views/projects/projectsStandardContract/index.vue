@@ -101,27 +101,19 @@ const activeKey = ref(contractName);
 const loading = ref(false);
 
 onMounted(async () => {
+  optsERC20.value.name = 'ExampleToken';
+  optsERC20.value.symbol = 'ETK';
+  optsERC20.value.premint = '1000000';
   
-  contractERC20.value = erc20.print({
-    name: 'ExampleToken',
-    symbol: 'ETK',
-    burnable: true,
-    premint: '1000000',
-    // access: 'ownable',
-    // upgradeable: 'uups',
-    // ...erc20.defaults,
-    // upgradeable: 'uups',
-  });
+  contractERC20.value = erc20.print(optsERC20.value);
+
+  optsERC721.value.name = 'ExampleToken';
+  optsERC721.value.symbol = 'ETK';
+  contractERC721.value = erc721.print(optsERC721.value);
   
-  contractERC721.value = erc721.print({
-    name: 'ExampleToken',
-    symbol: 'ETK',
-  });
-  
-  contractERC1155.value = erc1155.print({
-    name: 'ExampleToken',
-    uri: '',
-  });
+  optsERC1155.value.name = 'ExampleToken';
+  optsERC1155.value.uri = '';
+  contractERC1155.value = erc1155.print(optsERC1155.value);
 })
 
 const setContract = async () => {
@@ -170,6 +162,7 @@ const createProject = async () => {
     }
     const res = await apiProjectsCode(params);
     message.success(res.message);
+    window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
     router.push("/projects");
   } catch (error: any) {
     console.log("erro:",error)

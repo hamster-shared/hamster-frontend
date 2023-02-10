@@ -3,9 +3,9 @@
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'action'">
         <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''"
-          @click="goDeploy(record.workflowId, record.workflowDetailId)">Deploy</label>
+          @click="goDeploy(record.projectId ,record.workflowId, record.workflowDetailId)">Deploy</label>
         <label class="text-[#E2B578] cursor-pointer ml-2" v-else
-          @click="goView(record.workflowId, record.workflowDetailId)">View</label>
+          @click="goView(record.workflowId, record.workflowDetailId, record.id)">View</label>
 
       </template>
     </template>
@@ -30,7 +30,7 @@ const { pageType, detailId, packageListData } = toRefs(props);
 const router = useRouter();
 const showMsg = ref(false);
 const msgParam = ref({
-  id: detailId?.value,
+  id: 0,
   workflowsId: 0,
   workflowDetailId: 0,
   projectType: 2,
@@ -134,17 +134,17 @@ const getProjectsPackage = async () => {
   }
 }
 
-const goDeploy = async (workflowId: number, workflowDetailId: number) => {
+const goDeploy = async (projectId:number, workflowId: number, workflowDetailId: number) => {
 
   try {
     const params = ref({
-      id: detailId?.value,
+      id: projectId,
       workflowsId: workflowId,
       workflowDetailId: workflowDetailId,
     });
-    const res = await apiProjectsDeploy(params.value);
-    console.log("res;",res);
+    const res = await apiProjectsDeploy(params.value); 
     showMsg.value = true;
+    msgParam.value.id = projectId;
     msgParam.value.workflowsId = workflowId;
     msgParam.value.workflowDetailId = workflowDetailId;
     setTimeout(function () {
@@ -156,8 +156,8 @@ const goDeploy = async (workflowId: number, workflowDetailId: number) => {
   }
 }
 
-const goView = (workflowId: number, workflowDetailId: number) => {
-  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId);
+const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId);
 }
 
 // const downloadAbi = (val: any) => {

@@ -120,7 +120,7 @@ const router = createRouter({
               meta: {
                 layout: 'null',
               }
-            } 
+            }
           ],
         },
         {
@@ -134,7 +134,7 @@ const router = createRouter({
           component: ProjectsContractsDetails,
         },
         {
-          path: "/projects/:workflowsId/frontend-details/:workflowDetailId",
+          path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
           name: "projectsFrontendDetails",
           component: ProjectsFrontendDetails,
         }
@@ -160,6 +160,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0);
   const token = localStorage.getItem('token') || '';
   if (!token) {
     if (to.path !== '/login' && to.path !== '/loginTransition') {

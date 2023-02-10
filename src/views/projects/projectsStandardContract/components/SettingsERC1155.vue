@@ -4,7 +4,7 @@
     <div>
       <a-input v-model:value="opts.name" @change="setContract()" placeholder="" allow-clear autocomplete="off" />
     </div>
-    <div>
+    <div class="mt-2">
       <div class="flex justify-between items-center">
         <label>URI</label>
         <a-tooltip placement="right">

@@ -75,7 +75,7 @@ const enum StatusEnum {
   "stop",
 }
 const toDetail = () => {
-  router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}`)
+  router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}/${props.workflowsDetailsData?.packageId}`)
 }
 
 const openDomain = () => {

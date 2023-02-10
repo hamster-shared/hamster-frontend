@@ -48,7 +48,6 @@ import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
-import { ta } from 'date-fns/locale';
 const theme = useThemeStore()
 
 const timer = ref();
@@ -80,6 +79,10 @@ const goCreateProject = () => {
 }
 
 onMounted(() => {
+  
+  if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
+    activeKey.value = window.localStorage.getItem("projectActiveKey");
+  }
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 })
 
@@ -93,12 +96,17 @@ const goSearch = async () => {
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
 }
 
+const getProjects = () => {
+  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+}
+
 const handleTabClick = (tab: any) => {
   if (tab === "1") {
     getProjectsContract('1')
   } else {
     getProjectsFrontend('2')
   }
+  window.localStorage.setItem("projectActiveKey", tab);
 }
 const getProjectsContract = async (type: string | undefined) => {
   try {
