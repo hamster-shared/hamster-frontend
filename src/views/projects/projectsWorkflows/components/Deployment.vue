@@ -1,5 +1,5 @@
 <template>
-  <div class="p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
+  <div  class="p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">Deployment</span>
       <a-button v-if="showBth" @click="toDetail">Ops</a-button>
@@ -7,7 +7,8 @@
     <div class="flex">
       <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
         <div class="w-full h-full overflow-hidden">
-          <iframe :src="packageInfo.domain" frameborder="0" width="105%" height="100%" scrolling="auto"></iframe>
+          <!-- <iframe :src="packageInfo.domain" frameborder="0" width="105%" height="100%" scrolling="auto"></iframe> -->
+          <iframe :src="packageInfo.image" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
         </div>
       </div>
 
@@ -66,7 +67,6 @@ const props = defineProps({
     default: true,
   },
 });
-
 const enum StatusEnum {
   "nonExecution",
   "running",
@@ -74,6 +74,7 @@ const enum StatusEnum {
   "ready",
   "stop",
 }
+
 const toDetail = () => {
   router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}/${props.workflowsDetailsData?.packageId}`)
 }

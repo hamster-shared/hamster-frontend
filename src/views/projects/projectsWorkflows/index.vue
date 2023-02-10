@@ -65,15 +65,18 @@ const workflowsDetailsData = reactive({
   workflowDetailId: params.workflowDetailId,
   workflowsId: params.workflowsId,
   packageId: 0,
+  execNumber: 0,
 });
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  // console.log("workflowsDetailsData:", data);
+  console.log("workflowsDetailsData:", data);
   Object.assign(workflowsDetailsData, data);
   const stageInfo = YAML.parse(data.stageInfo);
   processData.value = stageInfo;
   processData.value.unshift({ name: 'Start', status: 99, duration: 'none' })
+
+  setCurrentName();
 
   // 打印查看转换后的 stageInfo
   // console.log(stageInfo, 'stageInfo');
@@ -188,14 +191,11 @@ const getProjectsDetailData = async () => {
 
 }
 
-onMounted(() => {
-  getWorkflowsDetails();
-  getProjectsDetailData();
-  loadInfo();
+const setCurrentName = () => {
   if (queryJson.projectType === '1') {
     // projectType === '1' === contract
     title.value = queryJson.type === '1' ? 'Check' : 'Build';
-    currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
+    currentName.value = `Contract ${title.value}_#${workflowsDetailsData.execNumber}`
   } else {
     // projectType === '2' === frontend
     if (queryJson.type === '1') {
@@ -205,8 +205,16 @@ onMounted(() => {
     } else {
       title.value = 'Deploy'
     }
-    currentName.value = `Frontend ${title.value}_#${queryJson.workflowsId}`
+    currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
   }
+}
+
+onMounted(() => {
+  getWorkflowsDetails();
+  getProjectsDetailData();
+  loadInfo();
+  console.log("workflowsDetailsData12312:",workflowsDetailsData);
+  // setCurrentName();
 })
 
 

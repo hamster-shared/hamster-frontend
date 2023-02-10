@@ -142,11 +142,11 @@ const goDeploy = async (projectId:number, workflowId: number, workflowDetailId: 
       workflowsId: workflowId,
       workflowDetailId: workflowDetailId,
     });
-    const res = await apiProjectsDeploy(params.value); 
+    const { data } = await apiProjectsDeploy(params.value); 
     showMsg.value = true;
     msgParam.value.id = projectId;
-    msgParam.value.workflowsId = workflowId;
-    msgParam.value.workflowDetailId = workflowDetailId;
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
     setTimeout(function () {
       showMsg.value = false;
     }, 3000)
