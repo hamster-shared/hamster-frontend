@@ -1,5 +1,5 @@
 <template>
-  <div  class="p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
+  <div :class="{'hidden' : JSON.stringify(props.packageInfo) === '{}'}" class="p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">Deployment</span>
       <a-button v-if="showBth" @click="toDetail">Ops</a-button>
