@@ -45,8 +45,8 @@
               <a-radio :style="radioStyle" value="2">Aptos
                 <div class="radio-sub">Build application based on Aptos  and Move language</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="3">Ton
-                <div class="radio-sub">Build application based on Ton and FunC language</div>
+              <a-radio :style="radioStyle" value="3">TON
+                <div class="radio-sub">Build application based on TON and FunC language</div>
               </a-radio>
               <a-radio :style="radioStyle" value="4">StarkWare
                 <div class="radio-sub">Build application based on Starkware and Cairo language</div>
