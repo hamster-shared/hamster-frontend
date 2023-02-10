@@ -10,11 +10,11 @@
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- contract -->
-      <CheckReport v-show="queryJson.type === '1'" :checkReportData="checkReportData"></CheckReport>
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType" :checkReportData="checkReportData"></CheckReport>
       <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
-      <CheckReport v-show="queryJson.type === '1'" :checkReportData="frontendReportData"></CheckReport>
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType" :checkReportData="frontendReportData"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>
@@ -65,15 +65,17 @@ const workflowsDetailsData = reactive({
   workflowDetailId: params.workflowDetailId,
   workflowsId: params.workflowsId,
   packageId: 0,
+  execNumber: 0,
 });
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
-  // console.log("workflowsDetailsData:", data);
   Object.assign(workflowsDetailsData, data);
   const stageInfo = YAML.parse(data.stageInfo);
   processData.value = stageInfo;
   processData.value.unshift({ name: 'Start', status: 99, duration: 'none' })
+
+  setCurrentName();
 
   // 打印查看转换后的 stageInfo
   // console.log(stageInfo, 'stageInfo');
@@ -188,14 +190,11 @@ const getProjectsDetailData = async () => {
 
 }
 
-onMounted(() => {
-  getWorkflowsDetails();
-  getProjectsDetailData();
-  loadInfo();
+const setCurrentName = () => {
   if (queryJson.projectType === '1') {
     // projectType === '1' === contract
     title.value = queryJson.type === '1' ? 'Check' : 'Build';
-    currentName.value = `Contract ${title.value}_#${queryJson.workflowsId}`
+    currentName.value = `Contract ${title.value}_#${workflowsDetailsData.execNumber}`
   } else {
     // projectType === '2' === frontend
     if (queryJson.type === '1') {
@@ -205,8 +204,14 @@ onMounted(() => {
     } else {
       title.value = 'Deploy'
     }
-    currentName.value = `Frontend ${title.value}_#${queryJson.workflowsId}`
+    currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
   }
+}
+
+onMounted(() => {
+  getWorkflowsDetails();
+  getProjectsDetailData();
+  loadInfo();
 })
 
 

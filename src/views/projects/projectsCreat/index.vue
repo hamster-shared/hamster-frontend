@@ -96,7 +96,7 @@
               </div>
             </div>
           </div>
-          <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4 template-height">
+          <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px]">
               <img :src="item.image" class="w-full rounded-t-[12px]" />
@@ -131,6 +131,17 @@ import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
+import aptosone from '@/assets/svg/aptos-one.svg'
+import aptostwo from '@/assets/svg/aptos-two.svg';
+import aptosthree from '@/assets/svg/aptos-three.svg';
+import aptosfour from '@/assets/svg/aptos-four.svg';
+import tonone from '@/assets/svg/ton-one.svg';
+import tontwo from '@/assets/svg/ton-two.svg';
+import tonthree from '@/assets/svg/ton-three.svg';
+import starkwareone from '@/assets/svg/starkware-one.svg';
+import starkwaretwo from '@/assets/svg/starkware-two.svg';
+import starkwarethree from '@/assets/svg/starkware-three.svg'
+
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -160,7 +171,7 @@ const fixedPopularTemplate = {
       id: 1,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '111',
+      logo: aptosone,
       name: 'aptos-token-vesting',
       templateTypeId: 2
     },
@@ -170,7 +181,7 @@ const fixedPopularTemplate = {
       id: 2,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '211',
+      logo: aptostwo,
       name: 'aptos-token-staking',
       templateTypeId: 2
     },
@@ -180,7 +191,7 @@ const fixedPopularTemplate = {
       id: 3,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '311',
+      logo: aptosthree,
       name: 'nft-borrowing-lendin...',
       templateTypeId: 3
     },
@@ -190,7 +201,7 @@ const fixedPopularTemplate = {
       id: 4,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '411',
+      logo: aptosfour,
       name: 'aptos-raffle',
       templateTypeId: 4
     },
@@ -202,7 +213,7 @@ const fixedPopularTemplate = {
       id: 1,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '111',
+      logo: tonone,
       name: 'Non-Fungible tokens',
       templateTypeId: 2
     },
@@ -212,7 +223,7 @@ const fixedPopularTemplate = {
       id: 2,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '211',
+      logo: tontwo,
       name: 'Fungible tokens',
       templateTypeId: 2
     },
@@ -222,7 +233,7 @@ const fixedPopularTemplate = {
       id: 3,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '311',
+      logo: tonthree,
       name: 'TON DNS Smart Contr...',
       templateTypeId: 3
     },
@@ -234,7 +245,7 @@ const fixedPopularTemplate = {
       id: 1,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '111',
+      logo: starkwareone,
       name: 'ERC20',
       templateTypeId: 2
     },
@@ -244,7 +255,7 @@ const fixedPopularTemplate = {
       id: 2,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '211',
+      logo: starkwaretwo,
       name: 'ERC721',
       templateTypeId: 2
     },
@@ -254,7 +265,7 @@ const fixedPopularTemplate = {
       id: 3,
       image: '',
       lastVersion: 'Coming soon',
-      logo: '311',
+      logo: starkwarethree,
       name: 'ERC1155',
       templateTypeId: 3
     },

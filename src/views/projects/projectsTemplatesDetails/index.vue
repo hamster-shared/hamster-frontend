@@ -139,6 +139,7 @@ const router = useRouter();
 const { params } = useRoute();
 const loading = ref(false);
 const templateId = ref(params.templateId);
+const projectType = ref(params.type);
 const activeKey = ref("1");
 const functionList = ref([]);
 const functionName = ref();
@@ -197,7 +198,7 @@ const setEventList = (element: { inputs: never[]; name: any; }) => {
 }
 
 const getTemplatesDetail = async () => {
-  if (params.type == '1') {
+  if (projectType.value == '1') {
     getContractTemplatesDetail()
   } else {
     getFrontendTemplatesDetail()
@@ -295,6 +296,9 @@ const createProject = async () => {
       repoOwner: JSON.parse(userInfo)?.username,
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,
+    }
+    if (projectType.value == '2') {
+      params.frameType = templatesDetail.value.templateType;
     }
     const res = await apiAddProjects(params);
     message.success(res.message);
