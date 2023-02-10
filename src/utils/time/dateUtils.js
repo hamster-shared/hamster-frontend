@@ -16,7 +16,11 @@ export function changeDayJsLocale(language) {
 
 export function fromNowexecutionTime(time, timeText) {
   const { t } = useI18n()
-  return dayJs(time).fromNow() + ' ' + t(`datetime.${timeText}`)
+  let timeVal = dayJs(time).fromNow() + ' ' + t(`datetime.${timeText}`)
+  if (timeVal.indexOf('a few') === -1) {
+    timeVal = timeVal.replace(/an|a/, '1')
+  }
+  return timeVal
 }
 
 export function formatDurationTime(ms, timeText) {

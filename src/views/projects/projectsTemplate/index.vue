@@ -99,7 +99,6 @@ const getTemplatesCategory = async () => {
 
       templatesCategory.value[index]['templatesList'] = data;
     });
-    console.log("templatesCategory:", templatesCategory.value);
   } catch (error: any) {
     console.log("erro:", error)
   } finally {
