@@ -84,7 +84,8 @@ const statusList = reactive(["Notrun", "Running", "Fail", "Success", "Stop"]);
 const actionList = reactive([
   { label: "All Action", value: "0" },
   { label: "Check", value: "1" },
-  { label: "Build", value: "2" }
+  { label: "Build", value: "2" },
+  { label: "Deploy", value: "3" }
 ]);
 const action = ref("0");
 const workflowList = ref([]);
@@ -165,6 +166,9 @@ const pagination = reactive({
 });
 
 onMounted(() => {
+  if (projectType?.value === '1') {
+    actionList.length = 3;
+  }
   getProjectsWorkflows();
 })
 
