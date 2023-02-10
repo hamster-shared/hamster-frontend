@@ -30,7 +30,7 @@
               </div>
               <div v-if="record.network.String !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
-                @click="toDetailUrl(record)">Detail
+                @click="toDetailUrl(record)">View Dashboard
               </div>
             </template>
             <label class="dark:text-[#E0DBD2] text-[#151210] cursor-pointer hoverColor">More</label>

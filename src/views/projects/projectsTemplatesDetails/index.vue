@@ -15,7 +15,7 @@
       </div>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">Create Project</a-button>
+        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">Create by Template</a-button>
       </div>
     </div>
 
@@ -29,24 +29,28 @@
         </div>
         <div class="p-[32px]">
           <div class="text-[24px] font-bold">Extensions</div>
-          <div
+          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" 
             class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
             <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index"
               v-model:checked="items.checked">{{ items.label }}</a-checkbox>
           </div>
-          <div class="mt-[32px] text-[24px] font-bold flex items-center">
-            <img src="@/assets/icons/example.svg" class="h-[32px] mr-[8px]" />
-            Use Cases & Examples
+          <div v-if="templatesDetail.examples != ''">
+            <div class="mt-[32px] text-[24px] font-bold flex items-center">
+              <img src="@/assets/icons/example.svg" class="h-[32px] mr-[8px]" />
+              Use Cases & Examples
+            </div>
+            <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
+              <pre>{{ templatesDetail.examples }}</pre>
+            </div>
           </div>
-          <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
-            <pre>{{ templatesDetail.examples }}</pre>
-          </div>
-          <div class="mt-[32px] text-[24px] font-bold flex items-center">
-            <img src="@/assets/icons/resource.svg" class="h-[32px] mr-[8px]" />
-            Resources
-          </div>
-          <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
-            <pre>{{ templatesDetail.resources }}</pre>
+          <div v-if="templatesDetail.resources != ''">
+            <div class="mt-[32px] text-[24px] font-bold flex items-center">
+              <img src="@/assets/icons/resource.svg" class="h-[32px] mr-[8px]" />
+              Resources
+            </div>
+            <div class="mt-4 dark:text-[#E0DBD2] text-[#73706E]">
+              <pre>{{ templatesDetail.resources }}</pre>
+            </div>
           </div>
         </div>
       </div>
@@ -60,7 +64,7 @@
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Send
                 </div>
-                <div class="h-[120px] overflow-auto pb-4">
+                <div class=" pb-4"><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionList(item)" :class="{ '!text-[#E2B578]': item.name === functionName }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
@@ -69,7 +73,7 @@
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
-                <div class="h-[130px] overflow-auto pb-4">
+                <div class=" pb-4"><!-- h-[130px] overflow-auto -->
                   <div @click="setFunctionList(item)"
                     :class="{ '!bg-[#E2B578] !text-white': item.name === functionName }"
                     class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
@@ -87,7 +91,7 @@
           </a-tab-pane>
           <a-tab-pane key="2" tab="Events">
             <div class="flex">
-              <div class="p-4 border-r-[#302D2D] border-r border w-1/4 h-[300px] overflow-auto">
+              <div class="p-4 border-r-[#302D2D] border-r border w-1/4"><!--  h-[300px] overflow-auto -->
                 <div @click="setEventList(item)" :class="{ '!text-[#E2B578]': item.name === eventName }"
                   class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer"
                   v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
@@ -108,7 +112,7 @@
                 <img @click="copyInfo(sourceContent)" src="@/assets/icons/copy.svg" class="h-[19px] cursor-pointer" />
               </div>
               <div class="cursor-pointer"></div>
-              <div class="h-[200px] mt-4">
+              <div class="mt-4" :style="editHeight">
                 <CodeEditor :readOnly="true" :value="sourceContent"></CodeEditor>
               </div>
             </div>
@@ -143,6 +147,7 @@ const eventAllList = ref([]);
 const eventName = ref();
 const eventList = ref([]);
 const sourceContent = ref("");
+const editHeight = ref("height: 220px");
 const templatesDetail = ref([]);
 const frontendTemplatesDetail = ref('');
 const extensionsList = ref([]);
@@ -234,6 +239,7 @@ const getContractTemplatesDetail = async () => {
       .then(res => {
         if (res.data) {
           sourceContent.value = res.data;
+          setCodeHeight(sourceContent.value);
         }
       });
   } catch (error: any) {
@@ -241,6 +247,11 @@ const getContractTemplatesDetail = async () => {
   } finally {
     // loading.value = false;
   }
+}
+
+const setCodeHeight = (content: string) => {
+  let codeIndex = content.split('\n').length;
+  editHeight.value = 'height: ' + codeIndex * 22 + 'px';
 }
 
 const getFrontendTemplatesDetail = async () => {
@@ -336,12 +347,24 @@ const copyInfo = async (_items: any) => {
 }
 
 :deep(.ant-checkbox-wrapper),
-:deep(.ant-checkbox-disabled+span) {
+:deep(.ant-checkbox-disabled+span),
+:deep(.dark-css .ant-checkbox-disabled+span) {
   color: @baseColor;
 }
 
 :deep(.ant-checkbox-wrapper+.ant-checkbox-wrapper) {
   margin-left: 0px;
+}
+
+:deep(.ant-checkbox-checked .ant-checkbox-inner){
+  background-color: var(--ant-primary-color);
+}
+:deep(.ant-checkbox-disabled .ant-checkbox-inner),
+:deep(.dark-css .ant-checkbox-disabled .ant-checkbox-inner){
+  border-color: var(--ant-primary-color) !important;
+}
+:deep(.ant-checkbox-disabled.ant-checkbox-checked .ant-checkbox-inner:after){
+  border-color: #FFFFFF;
 }
 
 ul {
@@ -359,5 +382,11 @@ ul {
 :deep(.ant-tabs-tab-btn) {
   width: 100px;
   text-align: center;
+}
+
+
+pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 </style>
