@@ -298,7 +298,7 @@ const createProject = async () => {
       userId: JSON.parse(userInfo)?.id,
     }
     if (projectType.value == '2') {
-      params.frameType = templatesDetail.value.templateType;
+      params.frameType = templatesDetail.value.templateType - 0;
     }
     const res = await apiAddProjects(params);
     message.success(res.message);
