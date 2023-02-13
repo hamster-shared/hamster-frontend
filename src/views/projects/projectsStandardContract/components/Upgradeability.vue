@@ -1,7 +1,7 @@
 <template>
   <div class="my-2 flex justify-between items-center">
     <div class="font-bold text-[#818998]">UPGRADEABILITY
-      <input type="checkbox" value="transparent" :checked="opts.upgradeable" name="upgradeable" @click="checkRadioClick" />
+      <a-checkbox value="transparent" :checked="opts.upgradeable" name="upgradeable" @click="checkRadioClick" ></a-checkbox>
     </div>
     <a-tooltip placement="right">
       <template #title>
@@ -46,6 +46,9 @@ const { opts } = toRefs(props);
 const emit = defineEmits(["showContract"]);
 
 const setContract = () => {
+  if (opts.value.upgradeable === 'uups') {
+    opts.value.access = 'ownable';
+  }
   emit("showContract");
 }
 const checkRadioClick = (event: any) => {

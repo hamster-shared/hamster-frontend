@@ -1,9 +1,9 @@
 import httpRequest from "@/request";
 
 interface GetWorkflowsDetailParams {
- id: string,
- workflowsId: string,
- workflowDetailId: string,
+  id: string,
+  workflowsId: string,
+  workflowDetailId: string,
 }
 
 interface GetContractDeployDetailParams {
@@ -14,6 +14,12 @@ interface GetContractDeployDetailParams {
 interface GetDetailLogsParams {
   workflowsId: string;
   workflowDetailId: string;
+}
+
+interface GetPackageParams {
+  workflowsId: string;
+  workflowDetailId: string;
+  packageId: string;
 }
 
 interface GetDetailStagelogsParams {
@@ -105,5 +111,46 @@ export function apiGetDetailLogs(params: GetDetailLogsParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/logs`,
     method: "get",
+  });
+}
+
+// 获取workflow下的package 信息====Deployment/Artifact
+export function apiGetPackagesList(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/package`,
+    method: "get",
+  });
+}
+
+// 获取 package 详情 
+export function apiGetPackageDetail(packageId: string) {
+  return httpRequest({
+    // url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/deploy/detail`,
+    url: `/api/package/${packageId}/deploy/detail`,
+    method: "get",
+  });
+}
+
+// 获取 package 详情 
+export function apiGetDeployInfo(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy-info`,
+    method: "get",
+  });
+}
+
+//workflow详情report  
+export function apiGetDetailFrontendReport(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/report`,
+    method: "get",
+  });
+}
+
+// 删除 
+export function apiGetDetailDelete(params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
+    method: "delete",
   });
 }

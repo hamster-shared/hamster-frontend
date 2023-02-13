@@ -27,12 +27,13 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
+// const clientId = ref('9fce2a15f6df21849e20');
 const clientId = ref('a782e08a53e86517dcc5');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
-  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=user,repo,delete_repo&state=${state}`;
+  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user,repo&state=${state}`;
   const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
   myWindow?.focus()
 }

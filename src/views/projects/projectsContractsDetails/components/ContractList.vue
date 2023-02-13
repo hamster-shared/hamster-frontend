@@ -11,8 +11,8 @@
         <div>
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
-            :class="checkValue === val.name ? 'checked' : ''" v-for="val in sendAbis" :key="val.name"
-            @click="checkContract(val.name, val, 'Transact')">
+            :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
+            v-for="(val, index) in sendAbis" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
             {{ val.name }}</div>
         </div>
       </div>
@@ -25,8 +25,8 @@
         <div>
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
-            :class="checkValue === val.name ? 'checked' : ''" v-for="val in callAbis" :key="val.name"
-            @click="checkContract(val.name, val, 'Call')">
+            :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
+            v-for="(val, index) in callAbis" :key="val.name" @click="checkContract(val.name, val, 'Call', index)">
             {{ val.name }}</div>
         </div>
       </div>
@@ -60,11 +60,12 @@ const sendAbis = reactive([])
 const callAbis = reactive([])
 const buttonInfo = ref('');
 const checkValue = ref('');
+const checkValueIndex = ref(0);
 const inputs = ref([]);
 const contractForm = ref();
 
 const abiInfoData = YAML.parse(abiInfo.value)
-console.log(abiInfoData, 'abiInfoData')
+// console.log(abiInfoData, 'abiInfoData')
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
     if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
@@ -73,6 +74,8 @@ abiInfoData.map((item: any) => {
       callAbis.push(item)
     }
   }
+
+  console.log(sendAbis, 'sendAbis')
 
   if (sendAbis.length > 0) {
     checkValue.value = sendAbis[0]?.name;
@@ -90,7 +93,8 @@ abiInfoData.map((item: any) => {
 
 const emit = defineEmits(["checkContract"])
 
-const checkContract = (name: string, val: any, text: string) => {
+const checkContract = (name: string, val: any, text: string, index: number) => {
+  checkValueIndex.value = index;
   // console.log(buttonInfo, 'buttonInfo')
   checkValue.value = name
   inputs.value = val.inputs

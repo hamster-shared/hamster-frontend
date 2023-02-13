@@ -14,6 +14,7 @@ import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs
 import projectsArtifactsContractDeploy from "../views/projects/projectsArtifactsContractDeploy/index.vue";
 import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 import ProjectsStandardContract from "../views/projects/projectsStandardContract/index.vue";
+import ProjectsFrontendDetails from "../views/projects/projectsFrontendDetails/index.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -71,28 +72,28 @@ const router = createRouter({
               component: ProjectsList,
             },
             {
-              path: "/projects/:id/details",
+              path: "/projects/:id/details/:type",
               name: "ProjectsListDetails",
               component: ProjectsListDetails,
             }
           ],
         },
         {
-          path: "/projects/creat",
+          path: "/projects/create",
           name: "ProjectsCreat",
           component: ProjectsCreat,
         },
         {
-          path: "/projects/template",
-          redirect: "/projects/template",
+          path: "/projects/template/:type",
+          redirect: "/projects/template/:type",
           children: [
             {
-              path: "/projects/template",
+              path: "/projects/template/:type",
               name: "ProjectsTemplate",
               component: ProjectsTemplate,
             },
             {
-              path: "/projects/templates/:templateId/details",
+              path: "/projects/templates/:templateId/details/:type",
               name: "ProjectsTemplatesDetails",
               component: ProjectsTemplatesDetails,
             },
@@ -104,11 +105,11 @@ const router = createRouter({
           ]
         },
         {
-          path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type",
-          redirect: "/projects/:id/workflows/:workflowDetailId/:type",
+          path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type/:projectType",
+          redirect: "/projects/:id/workflows/:workflowDetailId/:type/:projectType",
           children: [
             {
-              path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type",
+              path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type/:projectType",
               name: "ProjectsWorkflows",
               component: ProjectsWorkflows,
             },
@@ -131,6 +132,11 @@ const router = createRouter({
           path: "/projects/:id/contracts-details/:version",
           name: "ProjectsContractsDetails",
           component: ProjectsContractsDetails,
+        },
+        {
+          path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
+          name: "projectsFrontendDetails",
+          component: ProjectsFrontendDetails,
         }
       ]
     },
@@ -154,6 +160,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  window.scrollTo(0, 0);
   const token = localStorage.getItem('token') || '';
   if (!token) {
     if (to.path !== '/login' && to.path !== '/loginTransition') {

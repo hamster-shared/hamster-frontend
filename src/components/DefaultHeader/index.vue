@@ -11,9 +11,9 @@
       <a-dropdown>
         <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer" @click.stop>
           NodeService 
-          <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block" />
-          <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden" />
-          <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px]" />
+          <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
+          <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
+          <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
         </div>
         <template #overlay>
           <a-menu>
@@ -279,5 +279,14 @@ const setWalletBtn = (val: boolean) => {
 :deep(.ant-btn.ant-btn-background-ghost:active),
 :deep(.ant-btn.ant-btn-background-ghost:focus) {
   background: transparent;
+}
+
+.up-tran {
+  transform: rotate(180deg);
+  transition: all .3s, visibility 0s;
+}
+
+:deep(.ant-dropdown-open .up-tran) {
+  transform: rotate(0deg);
 }
 </style>

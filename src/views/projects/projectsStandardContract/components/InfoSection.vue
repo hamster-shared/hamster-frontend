@@ -15,7 +15,7 @@
       <a-input @change="setContract" v-model:value="opts.info.securityContact" placeholder="security@example.com" allow-clear autocomplete="off" />
     </div>
   </div>
-  <div>
+  <div class="mt-2">
     <div>License</div>
     <a-input v-model:value="opts.info.license" :placeholder="infoDefaults.license" allow-clear autocomplete="off" />
   </div>

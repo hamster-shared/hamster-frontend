@@ -16,6 +16,7 @@ interface GetProjectsParams {
   query: string;
   page: number;
   size: number;
+  type: string;
 }
 
 interface GetWorkflowsParams {
@@ -55,6 +56,29 @@ interface updateProjectparams {
 interface apiDupProjectNameParams {
   owner: string;
   name: string;
+}
+interface GetWorkflowsParams {
+  type: string;
+  page: number;
+  size: number;
+}
+
+interface GetPackageParams {
+  page: number;
+  size: number;
+}
+interface apiProjectsDeployParams {
+  id: string,
+  workflowsId: string,
+  workflowDetailId: string,
+}
+
+interface apiProjectsCodeParams {
+  name: string,
+  type: number,
+  frameType: number,
+  fileName: string,
+  content: string,
 }
 
 //创建项目
@@ -196,10 +220,11 @@ export function apiDeleteProjects(id: String) {
   });
 }
 
-//删除workflows
-export function apiDeleteWorkflows(id: String, workflowId: String) {
+//删除workflows 
+export function apiDeleteWorkflows(workflowId: String, workflowDetailId: String) {
   return httpRequest({
-    url: `/api/projects/${id}/workflows/${workflowId}`,
+    // url: `/api/projects/${id}/workflows/${workflowId}`,
+    url: `/api/workflows/${workflowId}/detail/${workflowDetailId}`,
     method: "delete",
   });
 }
@@ -210,5 +235,40 @@ export function apiDupProjectName(params: apiDupProjectNameParams) {
     url: "/api/projects/check-name",
     method: "post",
     data: params,
+  });
+}
+
+// 获取 package 列表
+export function apiGetProjectsPackages(id: String, params: GetPackageParams) {
+  return httpRequest({
+    url: `/api/projects/${id}/packages`,
+    method: "get",
+    params: params,
+  });
+}
+
+// package里得deploy 操作 
+export function apiProjectsDeploy(params: apiProjectsDeployParams) {
+  return httpRequest({
+    url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
+    method: "post",
+  });
+}
+
+// create project by code
+export function apiProjectsCode(params: apiProjectsCodeParams) {
+  return httpRequest({
+    url: `/api/projects/code`,
+    method: "post",
+    data: params,
+  });
+}
+
+// 删除部署
+export function apiDeleteDeployInfo(packageId:string) {
+  return httpRequest({
+    // url: `/api/projects/${id}/workflows/${workflowId}`,
+    url: `/api/package/${packageId}/deploy-info`,
+    method: "delete",
   });
 }
