@@ -36,9 +36,12 @@
           <a-button disabled>Clear</a-button>
         </span>
       </div>
-      <div
+      <!-- <div
         class="dark:bg-[#36322D] bg-[#ffffff] border border-solid dark:border-[#434343] border-[#EBEBEB] p-[32px] rounded-[12px] text-center">
         <a-spin size="large" tip="Loading..." />
+      </div> -->
+      <div>
+        <projectsWorkflowsAllLogs></projectsWorkflowsAllLogs>
       </div>
     </div>
   </div>
@@ -47,6 +50,7 @@
 import { ref, onMounted, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
+import projectsWorkflowsAllLogs from '../projectsWorkflowsAllLogs/index.vue';
 import { message } from "ant-design-vue";
 import { apiGetPackageDetail, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
 import { apiDeleteDeployInfo } from "@/apis/projects.ts";

@@ -4,6 +4,8 @@ import Onboard, { type WalletState } from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
 import { useOnboard } from '@web3-onboard/vue'
 import { useWalletAddress } from "@/stores/useWalletAddress";
+import walletTitle from '@/assets/icons/logo-white.svg'
+
 const walletAddress = useWalletAddress()
 
 const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
@@ -22,6 +24,11 @@ const onboard = Onboard({
       rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
     }
   ],
+  appMetadata: {
+    name: 'Hamster',
+    icon: walletTitle, // svg string icon
+    description: 'Swap tokens for other tokens'
+  },
   notify: {
     desktop: {
       enabled: true,
