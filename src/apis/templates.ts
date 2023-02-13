@@ -12,10 +12,13 @@ export function apiTemplatesCategory(type: String) {
   });
 }
 // 根据模版类型ID查询模版信息
-export function apiTemplatesCategoryById(id: String) {
+export function apiTemplatesCategoryById(id: String,languageType: string) {
   return httpRequest({
     url: `/api/templates-category/${id}/templates`,
     method: "get",
+    params: {
+      languageType: languageType,
+    },
   });
 }
 // 查询模版详情
@@ -35,12 +38,13 @@ export function apiFrontendTemplatesDetail(id: String) {
 }
 
 //Popular Template
-export function apiTemplatesShow(type: String) {
+export function apiTemplatesShow(type: String,languageType:String) {
   return httpRequest({
     url: "/api/templates/show",
     method: "get",
     params: {
-      type: type
+      type: type,
+      languageType: languageType,
     },
   });
 }

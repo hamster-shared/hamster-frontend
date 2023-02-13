@@ -39,7 +39,7 @@
             </a-radio-group>
           </a-form-item>
           <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1'">
-            <a-radio-group v-model:value="formData.frameType" name="frameType">
+            <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <a-radio :style="radioStyle" value="1">EVM
                 <div class="radio-sub">Build application based on EVM and Solidity language</div>
               </a-radio>
@@ -272,21 +272,23 @@ const fixedPopularTemplate = {
   ]
 }
 
-watchEffect(async () => {
-  if (formData.frameType == '1') {
-    await getInitTemplates()
-    console.log('formData.frameType=1:', formData.frameType)
-  } else if (formData.frameType == '2') {
-    showList.value = fixedPopularTemplate.aptos
-    console.log('formData.frameType:', formData.frameType)
-  } else if (formData.frameType == '3') {
-    showList.value = fixedPopularTemplate.ton
-    console.log('formData.frameType:', formData.frameType)
-  } else if (formData.frameType == '4') {
-    showList.value = fixedPopularTemplate.StarkWare
-    console.log('formData.frameType:', formData.frameType)
-  }
-})
+
+
+// watchEffect(async () => {
+//   if (formData.frameType == '1') {
+//     await getInitTemplates()
+//     console.log('formData.frameType=1:', formData.frameType)
+//   } else if (formData.frameType == '2') {
+//     showList.value = fixedPopularTemplate.aptos
+//     console.log('formData.frameType:', formData.frameType)
+//   } else if (formData.frameType == '3') {
+//     showList.value = fixedPopularTemplate.ton
+//     console.log('formData.frameType:', formData.frameType)
+//   } else if (formData.frameType == '4') {
+//     showList.value = fixedPopularTemplate.StarkWare
+//     console.log('formData.frameType:', formData.frameType)
+//   }
+// })
 
 // Form rules
 const formRules = computed(() => {
@@ -320,6 +322,7 @@ const formRules = computed(() => {
   };
 });
 const goNext = async () => {
+  
   localStorage.setItem("createFormData", JSON.stringify(formData));
   setCreateProjectValue(`/projects/template/${formData.type}`)
 }
@@ -357,13 +360,24 @@ const getTemplatesShow = async (val: any) => {
 }
 
 const getInitTemplates = async () => {
+  console.log(formData.frameType, 'formData.frameType')
   try {
-    const { data } = await apiTemplatesShow(formData.type);
+    let languageType = '';
+    if (formData.type === '1') {
+      languageType = formData.frameType
+    } else if (formData.type === '2') {
+      languageType = null;
+    }
+    const { data } = await apiTemplatesShow(formData.type, languageType);
     showList.value = data;
     console.log(showList.value)
   } catch (error: any) {
     console.log("erro:", error)
   }
+}
+
+const changRadio = async (val: any) => {
+  getInitTemplates()
 }
 
 onMounted(() => {
