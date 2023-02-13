@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/login/index.vue";
 import LoginTransition from "../views/login/loginTransition.vue";
+import Welcome from "../views/login/welcome.vue";
 import HomeView from "../views/home/HomeView.vue";
 import RpcsIndex from "../views/nodeService/rpcs/index.vue";
 import AppsIndex from "../views/nodeService/apps/index.vue";
@@ -55,6 +56,14 @@ const router = createRouter({
       path: '/loginTransition',
       name: 'LoginTransition',
       component: LoginTransition,
+      meta: {
+        layout: 'null',
+      }
+    },
+    {
+      path: '/welcome',
+      name: 'Welcome',
+      component: Welcome,
       meta: {
         layout: 'null',
       }
