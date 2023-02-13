@@ -24,7 +24,7 @@ onMounted(() => {
 })
 </script>
 <style lang='less' scoped>
-.detailLogs {
-  min-height: 100vh;
-}
+// .detailLogs {
+//   min-height: 100vh;
+// }
 </style>
