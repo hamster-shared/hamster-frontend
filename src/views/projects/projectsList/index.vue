@@ -40,6 +40,10 @@
       </a-tabs>
     </div>
   </div>
+  <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
+    <img class="h-full w-full" src="@/assets/images/project-guide.jpg" />
+    <img class="h-[42px] w-[42px] absolute top-[16%] right-[6%] cursor-pointer" @click="showGuide=false" src="@/assets/icons/close-guide.svg" />
+  </div>
 </template>
 <script lang='ts' setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
@@ -50,6 +54,7 @@ import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
+const showGuide = ref(false)
 const timer = ref();
 const router = useRouter();
 const keyword = ref('');
