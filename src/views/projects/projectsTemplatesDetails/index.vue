@@ -15,7 +15,7 @@
       </div>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-        <a-button type="primary" class="ml-4 !w-[160px] inline-block" :loading="loading" @click="createProject">{{ createTemplate }}</a-button>
+        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">{{ createTemplate }}</a-button>
       </div>
     </div>
 
