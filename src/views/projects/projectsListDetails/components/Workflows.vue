@@ -130,7 +130,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
-    width: '150px'
+    width: '165px'
   },
   {
     title: 'Action',
