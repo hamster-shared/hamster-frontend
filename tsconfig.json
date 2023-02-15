@@ -14,11 +14,14 @@
       ]
     },
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "vite/client"
+    ]
   },
   "references": [
     {
       "path": "./tsconfig.config.json"
     }
-  ]
+  ],
 }

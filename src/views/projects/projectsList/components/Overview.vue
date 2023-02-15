@@ -59,8 +59,8 @@
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
-          <div class="my-2 text-ellipsis">
-            <a target="_blank" :href="viewInfo.repositoryUrl">{{ viewInfo.repositoryUrl }}</a>
+          <div class="my-2">
+            <a target="_blank" :href="viewInfo.repositoryUrl">{{showViewInfoRepositoryUrl}}</a>
           </div>
           <div>
             <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
@@ -190,7 +190,7 @@
   <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
 </template>
 <script lang='ts' setup>
-import { ref, toRefs } from 'vue';
+import { ref, toRefs, computed } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
@@ -207,6 +207,10 @@ const props = defineProps({
   projectType: String,
 });
 const { viewType, viewInfo, projectType } = toRefs(props);
+const showViewInfoRepositoryUrl = computed(()=>{
+  return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
+})
+
 const emit = defineEmits(["loadProjects"]);
 const showMsg = ref(false);
 const msgParam = ref({

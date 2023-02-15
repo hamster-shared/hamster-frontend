@@ -59,14 +59,14 @@
         <a-input v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
       </a-form-item>
     </a-form>
-    <div class="text-center mt-4">
+    <div class="mt-4 text-center">
       <a-button class="ml-4" type="primary" :loading="loading" @click="updateName">Done</a-button>
     </div>
   </a-modal>
   <a-modal v-model:visible="deleteModal" :footer="null">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Delete</div>
     <div>Are you sure delete this projects?</div>
-    <div class="text-center mt-8">
+    <div class="mt-8 text-center">
       <a-button type="primary" @click="deleteModal = false">NO</a-button>
       <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteProjects">YES</a-button>
     </div>

@@ -8,7 +8,8 @@
       <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
         <div class="w-full h-full overflow-hidden">
           <!-- <iframe :src="packageInfo.domain" frameborder="0" width="105%" height="100%" scrolling="auto"></iframe> -->
-          <iframe :src="packageInfo.image" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe>
+          <!-- <iframe :src="packageInfo.image" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe> -->
+          <img :src="packageInfo.image" class="h-[325px] w-[100%] object-cover rounded-xl"/>
         </div>
       </div>
 
@@ -57,6 +58,7 @@
 </template>
 <script setup lang="ts">
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
+import { nextTick } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const props = defineProps({
