@@ -35,7 +35,13 @@ const login = async () => {
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
-    router.push('/projects')
+    const userInfo = localStorage.getItem('userInfo');
+    if (JSON.parse(userInfo)?.firstState === 0) {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   } else {
     code.value = router.currentRoute.value.query?.code;
     if (code.value) {

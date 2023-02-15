@@ -42,11 +42,11 @@
   </div>
   <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
     <img class="h-full w-full" src="@/assets/images/project-guide.jpg" />
-    <img class="h-[42px] w-[42px] absolute top-[16%] right-[6%] cursor-pointer" @click="showGuide=false" src="@/assets/icons/close-guide.svg" />
+    <img class="h-[42px] w-[42px] absolute top-[16%] right-[6%] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
   </div>
 </template>
 <script lang='ts' setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref, onBeforeMount } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
@@ -84,6 +84,12 @@ const goCreateProject = () => {
   router.push("/projects/create");
 }
 
+onBeforeMount(() => {
+  if (window.localStorage.getItem("firstShowProjects") != undefined && window.localStorage.getItem("firstShowProjects") === "1") {
+    showGuide.value = true;
+  }
+})
+
 onMounted(() => {
 
   if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
@@ -95,6 +101,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearTimeout(timer.value);
 })
+
+const closeGuide = () => {
+  showGuide.value = false;
+  window.localStorage.removeItem('firstShowProjects');
+}
 
 const goSearch = async () => {
   currentContract.value = 1;

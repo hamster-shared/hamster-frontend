@@ -12,18 +12,19 @@
       <div class="welcome-gx-div w-full h-full flex justify-center items-center">
         <img class="w-[200px] h-[200px]" :class="[isShowGX === true ? 'welcome-gx' : 'hidden']" src="@/assets/icons/welcome-gx.svg" />
       </div>
-      <div class="welcome-fd">
+      <div class="welcome-fd" :class="[isShowGX === true ? 'welcome-fd-hidden' : 'welcome-fd-show']">
         <img class="w-[200px] h-[200px]" src="@/assets/icons/welcome-fd.svg" />
       </div>
       <div class="absolute -right-[30px]">
         <img class="h-[60px]" src="@/assets/icons/welcome-fd2.svg" />
       </div>
-      <div class="welcome-xq"></div>
+      <div class="welcome-xq" :class="[isShowGX === true ? 'welcome-xq-hidden' : 'welcome-xq-show']"></div>
     </div>
   </div>
 </template>
 <script lang='ts' setup>
 import { onMounted, onUnmounted, ref } from 'vue';
+import { apiUpdateFristState, apiGetUser } from "@/apis/login";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
@@ -39,10 +40,10 @@ const isShowGX = ref(false);
 const keyValue = ref("");
 
 onMounted(() => {
+  updateFristState();
   setTimeout(() => {
     changeContent();
   }, 2000);
-
   document.addEventListener("keyup", handleKeyUp)
 })
 
@@ -79,12 +80,35 @@ const changeContentLine = () => {
 
     setTimeout(() => {
       if (keyValue.value === "1") { //project页面 
-          router.push('/projects')
-        } else if (keyValue.value === "2"){ //nodeServer页面
-          router.push('/node-service/RPCs')
-        }
+        router.push('/projects')
+      } else if (keyValue.value === "2"){ //nodeServer页面
+        router.push('/node-service/RPCs')
+      }
     }, 3000);
   }
+}
+
+const updateFristState = async () => {
+  
+  try {
+    await apiUpdateFristState();
+    window.localStorage.setItem('firstShowProjects', "1");
+    window.localStorage.setItem('firstShowNodeService', "1");
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    getUser()
+  }
+}
+
+const getUser = async () => {
+  
+  try {
+    const { data } = await apiGetUser();
+    localStorage.setItem('userInfo', JSON.stringify(data));
+  } catch (error: any) {
+    console.log("erro:",error)
+  } 
 }
 
 const changeContent = () => {
@@ -105,8 +129,8 @@ const changeContent = () => {
 </script>
 <style lang='less' scoped>
 .content-div{
-  width: 800px;
-  height: 440px;
+  width: 655px;
+  height: 360px;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%,-50%);
@@ -119,7 +143,7 @@ const changeContent = () => {
   height: 100%;
   background: url(../../assets/icons/welcom-contentbg.svg);
   background-size: cover;
-  padding: 60px;
+  padding: 50px;
   color: #FFFFFF;
   font-size: 16px; 
 }
@@ -182,10 +206,18 @@ const changeContent = () => {
 .welcome-fd{
   position: absolute;
   z-index: 99;
-  right: 14%;
-  top: 10%;
+  right: 10%;
+  top: 8%;
   -webkit-animation: bounce 6s infinite;
   animation: bounce 6s infinite;
+}
+.welcome-fd-show{
+  -webkit-animation: bounce 6s infinite;
+  animation: bounce 6s infinite;
+}
+.welcome-fd-hidden{
+  -webkit-animation: bounceH 2s 1;
+  animation: bounceH 2s 1;
 }
 @keyframes bounce {
   0%,
@@ -195,6 +227,16 @@ const changeContent = () => {
   }
   50% {
     transform: translate(-20px, 20px);
+    animation-timing-function: ease;
+  }
+}
+@keyframes bounceH {
+  0% {
+    opacity: 100;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(200px, -200px);
     animation-timing-function: ease;
   }
 }
@@ -228,10 +270,9 @@ const changeContent = () => {
   75%{-webkit-transform:rotate(270deg);}
   100%{-webkit-transform:rotate(360deg);}
 }
-
 .welcome-xq{
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   z-index: 9;
   position: absolute;
   overflow: hidden;
@@ -240,16 +281,32 @@ const changeContent = () => {
 .welcome-xq::before {
   content: "";
   position: absolute;
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   top: 20%;
   left: -20%;
   z-index: -1;
   background: url(../../assets/icons/welcome-xq.svg) 100% 100% no-repeat;
   background-size: cover;
+}
+.welcome-xq-show::before{
   -webkit-animation: rotate 50s linear infinite;
   -moz-animation: rotate 50s linear infinite;
   -o-animation: rotate 50s linear infinite;
   animation: rotate 50s linear infinite;
+}
+.welcome-xq-hidden{
+  -webkit-animation: bouncexqH 2s 1;
+  animation: bouncexqH 2s 1;
+}
+@keyframes bouncexqH {
+  0% {
+    opacity: 100;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-200px, 200px);
+    animation-timing-function: ease;
+  }
 }
 </style>
