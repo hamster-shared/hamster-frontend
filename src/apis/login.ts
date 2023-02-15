@@ -13,3 +13,19 @@ export function apiLogin(params: AddLoginParams) {
     data: params,
   });
 }
+
+//修改首次登录状态
+export function apiUpdateFristState() {
+  return httpRequest({
+    url: "/api/user/first/state",
+    method: "PUT",
+  });
+}
+
+//获取用户信息
+export function apiGetUser() {
+  return httpRequest({
+    url: "/api/user",
+    method: "get",
+  });
+}
