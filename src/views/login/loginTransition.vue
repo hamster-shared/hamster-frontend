@@ -37,6 +37,7 @@ const login = async () => {
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
+    console.log("firstState:",localStorage.getItem('firstState'),localStorage.getItem('firstState')==="0",localStorage.getItem('firstState')==="1");
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')
