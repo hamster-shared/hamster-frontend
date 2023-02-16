@@ -14,7 +14,7 @@
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
-          <div v-if="contractList.length > 0">
+          <div v-if="totalContract > 0">
             <div v-for="(item, index) in contractList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -26,7 +26,7 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="FrontEnd">
-          <div v-if="frontentList.length > 0">
+          <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -134,7 +134,7 @@ const getProjectsContract = async (type: string | undefined) => {
       page: currentContract.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "2") {
         goCreateProject();
       } else {
@@ -173,7 +173,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       page: currentFrontend.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "1") {
         goCreateProject();
       } else {
