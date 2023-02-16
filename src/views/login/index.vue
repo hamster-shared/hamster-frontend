@@ -40,7 +40,12 @@ const loginBox = () => {
 
 onMounted(() => {
   if (localStorage.getItem('token')) {
-    router.push('/projects')
+    if (localStorage.getItem('firstState') === '0') {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   }
 })
 

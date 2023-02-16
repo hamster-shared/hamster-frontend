@@ -97,7 +97,7 @@ const updateFristState = async () => {
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
-    getUser()
+    getUser();
   }
 }
 
@@ -105,6 +105,8 @@ const getUser = async () => {
   
   try {
     const { data } = await apiGetUser();
+    
+    localStorage.setItem('firstState', data.firstState);
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error: any) {
     console.log("erro:",error)

@@ -22,6 +22,7 @@ const login = async () => {
   try {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('token', data.token);
+    localStorage.setItem('firstState', data.firstState);
     localStorage.setItem('userInfo', JSON.stringify(data));
     window.close();
     window.opener.location.reload();
@@ -35,8 +36,7 @@ const login = async () => {
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
-    const userInfo = localStorage.getItem('userInfo');
-    if (JSON.parse(userInfo)?.firstState === 0) {
+    if (localStorage.getItem('firstState') === '0') {
       //第一次登录
       router.push('/welcome')
     } else {
