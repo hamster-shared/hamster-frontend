@@ -15,13 +15,15 @@ import { apiLogin } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
-// const clientId = ref('9fce2a15f6df21849e20');
-const clientId = ref('a782e08a53e86517dcc5');
+const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
+// const clientId = ref('9fce2a15f6df21849e20'); //测试
+// const clientId = ref('a782e08a53e86517dcc5'); //生产
 
 const login = async () => {
   try {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('token', data.token);
+    localStorage.setItem('firstState', data.firstState);
     localStorage.setItem('userInfo', JSON.stringify(data));
     window.close();
     window.opener.location.reload();
@@ -35,7 +37,12 @@ const login = async () => {
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
-    router.push('/projects')
+    if (localStorage.getItem('firstState') === '0') {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   } else {
     code.value = router.currentRoute.value.query?.code;
     if (code.value) {

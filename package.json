@@ -5,6 +5,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "build:staging": "vite build --mode staging",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint frontend --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"

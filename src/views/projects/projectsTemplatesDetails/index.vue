@@ -15,7 +15,7 @@
       </div>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">Create by Template</a-button>
+        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">{{ createTemplate }}</a-button>
       </div>
     </div>
 
@@ -138,6 +138,7 @@ const theme = useThemeStore()
 const router = useRouter();
 const { params } = useRoute();
 const loading = ref(false);
+const createTemplate = ref('Create by Template')
 const templateId = ref(params.templateId);
 const projectType = ref(params.type);
 const activeKey = ref("1");
@@ -285,6 +286,7 @@ const getProjectsContract = async () => {
 
 const createProject = async () => {
   loading.value = true;
+  createTemplate.value = 'Create by...'
   try {
     const userInfo = localStorage.getItem('userInfo');
     const createProjectTemp = localStorage.getItem('createProjectTemp');
@@ -310,6 +312,7 @@ const createProject = async () => {
     message.error(error.response.data.message);
   } finally {
     loading.value = false;
+    createTemplate.value = 'Create by Template'
   }
 }
 

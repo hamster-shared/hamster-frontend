@@ -4,7 +4,7 @@
       <a-col :span="8">
         <div class="">
           <div class="process-detail-title">{{ $t('workFlows.codeRepository') }}</div>
-          <div class="process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
+          <div class="truncate process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
           <div class="process-detail-info">
             <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
             <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />

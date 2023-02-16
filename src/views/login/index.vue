@@ -27,8 +27,8 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
-// const clientId = ref('9fce2a15f6df21849e20');
-const clientId = ref('a782e08a53e86517dcc5');
+const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
+// const clientId = ref('a782e08a53e86517dcc5');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
@@ -40,7 +40,12 @@ const loginBox = () => {
 
 onMounted(() => {
   if (localStorage.getItem('token')) {
-    router.push('/projects')
+    if (localStorage.getItem('firstState') === '0') {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   }
 })
 

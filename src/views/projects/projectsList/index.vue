@@ -14,7 +14,7 @@
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
-          <div v-if="contractList.length > 0">
+          <div v-if="totalContract > 0">
             <div v-for="(item, index) in contractList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -26,7 +26,7 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="FrontEnd">
-          <div v-if="frontentList.length > 0">
+          <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -40,9 +40,13 @@
       </a-tabs>
     </div>
   </div>
+  <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
+    <img class="h-full w-full" src="@/assets/images/project-guide.jpg" />
+    <img class="h-[42px] w-[42px] absolute top-[16%] right-[6%] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
+  </div>
 </template>
 <script lang='ts' setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref, onBeforeMount } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
@@ -50,6 +54,7 @@ import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
+const showGuide = ref(false)
 const timer = ref();
 const router = useRouter();
 const keyword = ref('');
@@ -79,6 +84,12 @@ const goCreateProject = () => {
   router.push("/projects/create");
 }
 
+onBeforeMount(() => {
+  if (window.localStorage.getItem("firstShowProjects") != undefined && window.localStorage.getItem("firstShowProjects") === "1") {
+    showGuide.value = true;
+  }
+})
+
 onMounted(() => {
 
   if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
@@ -90,6 +101,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearTimeout(timer.value);
 })
+
+const closeGuide = () => {
+  showGuide.value = false;
+  window.localStorage.removeItem('firstShowProjects');
+}
 
 const goSearch = async () => {
   currentContract.value = 1;
@@ -118,7 +134,7 @@ const getProjectsContract = async (type: string | undefined) => {
       page: currentContract.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "2") {
         goCreateProject();
       } else {
@@ -157,7 +173,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       page: currentFrontend.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "1") {
         goCreateProject();
       } else {
