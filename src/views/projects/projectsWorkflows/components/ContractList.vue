@@ -7,7 +7,7 @@
         $t('common.deploy')
       }}</a-button>
     </div>
-    <a-table :dataSource="contractListData" :columns="columns" :pagination="false"
+    <a-table :dataSource="contractListData" :columns="columns" :pagination="false" style="width:100%"
       :class="contractListData.length <= 0 ? 'no-table-data' : ''">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'network'">
@@ -16,6 +16,8 @@
             class="border border-solid rounded-[32px] dark:border-[#E0DBD2] border-[#73706E]  px-3 py-1">{{
               item
             }}</label>
+          <label v-else-if="record.status === 1">Deploying</label>
+          <label v-else>-</label>
         </template>
         <template v-if="column.key === 'action'">
           <label class="dark:text-[#E0DBD2] text-[#151210] hoverColor" @click="toDeployUrl(record)">{{
@@ -28,6 +30,9 @@
               <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
                 Download ABI
               </div>
+              <div @click="starknetVisible = true" v-if="record.status === 1 || record.status === 2"
+                class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
+                View Deploy Process</div>
               <div v-if="record.network.String !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
                 @click="toDetailUrl(record)">View Dashboard
@@ -40,19 +45,26 @@
       </template>
     </a-table>
   </div>
+  <starkNetModal :starknetVisible="starknetVisible" :projectsId="state.id" @cancelModal="starknetVisible = false">
+  </starkNetModal>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import dayjs from "dayjs";
+import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 
 const router = useRouter();
+
+const starknetVisible = ref(false);
 
 const columns = [{
   title: 'Contract',
   dataIndex: 'name',
   align: "center",
+  width: '30%',
+  ellipsis: true,
   key: 'name',
 },
 {
@@ -76,6 +88,8 @@ const columns = [{
   title: 'Build Time',
   dataIndex: 'buildTime',
   align: "center",
+  width: '20%',
+  ellipsis: true,
   customRender: ({ text }) => {
     return dayjs(text).format('YYYY/MM/DD HH:mm:ss')
   },

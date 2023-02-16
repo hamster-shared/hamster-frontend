@@ -24,6 +24,8 @@
         <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
           :key="indexF" :class="{ 'ml-2': indexF !== 0 }"
           class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+        <label v-else-if="record.status === 1">Deploying</label>
+        <label v-else>-</label>
       </template>
       <template v-if="column.dataIndex === 'action'">
         <!-- <label class="cursor-pointer" v-if="record.network.String !== ''"
@@ -35,6 +37,9 @@
             <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
               Download ABI
             </div>
+            <div @click="starknetVisible = true" v-if="record.status === 1 || record.status === 2"
+              class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
+              View Deploy Process</div>
             <div v-if="record.network.String !== ''" @click="goContractDetail(record.version)"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">View
               Dashboard
@@ -45,6 +50,9 @@
       </template>
     </template>
   </a-table>
+
+  <starkNetModal :starknetVisible="starknetVisible" :projectsId="detailId" @cancelModal="starknetVisible = false">
+  </starkNetModal>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
@@ -56,7 +64,7 @@ import {
   apiProjectsContractNetwork,
   apiProjectsVersion,
 } from "@/apis/projects";
-
+import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 const router = useRouter();
 const props = defineProps({
   detailId: String,
@@ -70,6 +78,8 @@ const version = ref("All Version");
 const networkList = ref(["All Network"]);
 const network = ref("All Network");
 const contractTableList = ref([]);
+
+const starknetVisible = ref(false);
 
 const contractTableColumns = computed<any[]>(() => [
   {
@@ -154,6 +164,9 @@ const getProjectsContract = async () => {
       size: contractPagination.pageSize,
     }
     const { data } = await apiGetProjectsContract(detailId.value.toString(), params);
+    // data.data.map((item: any) => {
+    //   item.networkString = item.network.String ? item.network.String.split('/')[1] : '';
+    // })
     contractTableList.value = data.data;
     contractPagination.total = data.total
 

@@ -10,11 +10,13 @@
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- contract -->
-      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType" :checkReportData="checkReportData"></CheckReport>
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+        :checkReportData="checkReportData"></CheckReport>
       <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
-      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType" :checkReportData="frontendReportData"></CheckReport>
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+        :checkReportData="frontendReportData"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>

@@ -6,10 +6,10 @@
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
       <a-collapse v-model:activeKey="activeKey" accordion v-for="val in item.reportFileData" :key="val.Name">
         <a-collapse-panel :key="val.name + item.id" :header="val.name" :showArrow="false">
-          
+
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message"
-            :dataSource="val.message" :columns="ESLintColumns" :pagination="false" :showHeader="false">
+            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
+            :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
                 line {{ record.line }},col {{ record.column }},
@@ -256,6 +256,14 @@ const { checkReportData, projectType } = toRefs(props)
 
 :deep(.noHeader-table-css .ant-table-row:first-child .ant-table-cell:last-child) {
   border-radius: 0 12px 0 0;
+}
+
+:deep(.noHeader-table-css .ant-table-row:only-of-type .ant-table-cell:first-child) {
+  border-radius: 12px 0 0 12px;
+}
+
+:deep(.noHeader-table-css .ant-table-row:only-of-type .ant-table-cell:last-child) {
+  border-radius: 0 12px 12px 0;
 }
 
 :deep(.ant-table-row:last-child .ant-table-cell:first-child) {
