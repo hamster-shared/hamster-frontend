@@ -178,12 +178,7 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    if (localStorage.getItem('firstState') === '0') {
-      //第一次登录
-      router.push('/welcome')
-    } else {
-      next()
-    }
+    next()
   }
 })
 
