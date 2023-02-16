@@ -41,13 +41,13 @@ const props = defineProps({
 
 const router = useRouter();
 const hashTitle = ref('');
-const starknetHashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || reactive({});
+const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
 
-// console.log('starknetHashData', starknetHashData[props.projectsId])
+console.log('starknetHashData', starknetHashData[props.projectsId])
 const hash = ref('');
 
-const declareHash = starknetHashData[props.projectsId]?.declareHash;
-const deployHash = starknetHashData[props.projectsId]?.deployHash;
+const declareHash = starknetHashData[props.projectsId]?.declareHash || '';
+const deployHash = starknetHashData[props.projectsId]?.deployHash || '';
 hashTitle.value = deployHash ? 'Deploying' : 'Declareing';
 hash.value = deployHash ? deployHash : declareHash;
 

@@ -203,7 +203,6 @@ const cancelStarkNetModal = () => {
 // 创建starknet合约
 const contractStarkNetFactory = async (item: any) => {
   loading.value = true
-  console.log(item, 'item')
   starknetVisible.value = true;
   const networkItem: any = networkData.find(item => { return item.id === formState.network });
   const provider = new Provider({ sequencer: { network: networkItem.newokName } });
@@ -214,7 +213,7 @@ const contractStarkNetFactory = async (item: any) => {
   const account0 = new Account(provider, account0Address, starkKeyPair0);
   const testClassHash = "0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35";
   const declareTx = await account0.declare({ contract: item.abiInfo, classHash: testClassHash });
-  // console.log('declare hash=', declareTx.transaction_hash)
+  console.log('declare hash=', declareTx.transaction_hash)
 
   await setProjectsStarkNetDeploy(declareTx.transaction_hash, '', '', 1, item.id)
   hasDeclareHash.value = true
@@ -233,7 +232,7 @@ const contractStarkNetFactory = async (item: any) => {
   await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, myTestContract.address, 2, item.id)
   loading.value = false;
   starknetVisible.value = false;
-  // console.log('myTestContract', myTestContract.address)
+  console.log('address', myTestContract.address)
 };
 
 
@@ -253,7 +252,6 @@ const setProjectsStarkNetDeploy = async (declareHash: String, deployHash: String
 
   try {
     const { data } = await apiProjectsContractDeploy(queryJson)
-    console.log(data, '09090')
     starknetHashData[queryParams.id] = { 'declareHash': declareHash, 'deployHash': deployHash, 'address': address };
     localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
   } catch (err: any) {
