@@ -203,6 +203,7 @@ const cancelStarkNetModal = () => {
 
 // 创建starknet合约
 const contractStarkNetFactory = async (item: any) => {
+  localStorage.removeItem('starknetHashData');
   loading.value = true
   starknetVisible.value = true;
   const networkItem: any = networkData.find(item => { return item.id === formState.network });
