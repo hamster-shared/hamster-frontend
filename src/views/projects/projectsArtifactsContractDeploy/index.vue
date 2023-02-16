@@ -86,7 +86,7 @@
 
 
   <starkNetModal :starknetVisible="starknetVisible" :projectsId="queryParams.id" :hasDeclareHash="hasDeclareHash"
-    @cancelModal="cancelStarkNetModal">
+    :hasDeployHash="hasDeployHash" @cancelModal="cancelStarkNetModal">
   </starkNetModal>
 
 
@@ -147,6 +147,7 @@ const formState = reactive({
 
 const starknetVisible = ref(false);
 const hasDeclareHash = ref(false);
+const hasDeployHash = ref(false);
 
 // 查询版本号
 const getVersion = async () => {
@@ -212,28 +213,42 @@ const contractStarkNetFactory = async (item: any) => {
   const starkKeyPair0 = ec.getKeyPair(privateKey0);
   const account0 = new Account(provider, account0Address, starkKeyPair0);
   const testClassHash = "0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35";
-  const declareTx = await account0.declare({ contract: item.abiInfo, classHash: testClassHash });
-  console.log('declare hash=', declareTx.transaction_hash)
+  try {
+    const declareTx = await account0.declare({ contract: item.abiInfo, classHash: testClassHash });
+    console.log('declare hash=', declareTx.transaction_hash)
 
-  await setProjectsStarkNetDeploy(declareTx.transaction_hash, '', '', 1, item.id)
-  hasDeclareHash.value = true
+    await setProjectsStarkNetDeploy(declareTx.transaction_hash, '', '', 1, item.id)
+    hasDeclareHash.value = true
 
-  const declare = await account0.waitForTransaction(declareTx.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
+    const declare = await account0.waitForTransaction(declareTx.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
 
-  const deployTx = await account0.deploy({ contract: item.abiInfo, classHash: testClassHash });
-  await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, '', 1, item.id)
-  console.log('deploy hash=', deployTx.transaction_hash)
-  const txReceipt = await provider.waitForTransaction(deployTx.transaction_hash, undefined, [
-    'ACCEPTED_ON_L2',
-  ]);
-  const deployResponse = parseUDCEvent(txReceipt);
-  // console.log('deployResponse', deployResponse)
-  const myTestContract = new Contract(item.abiInfoData[0].abi, deployResponse.contract_address, provider);
-  await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, myTestContract.address, 2, item.id)
-  loading.value = false;
-  starknetVisible.value = false;
-  console.log('address', myTestContract.address)
-};
+    const deployTx = await account0.deploy({ contract: item.abiInfo, classHash: testClassHash });
+
+    await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, '', 1, item.id)
+    console.log('deploy hash=', deployTx.transaction_hash)
+    hasDeployHash.value = true
+    const txReceipt = await provider.waitForTransaction(deployTx.transaction_hash, undefined, [
+      'ACCEPTED_ON_L2',
+    ]);
+    const deployResponse = parseUDCEvent(txReceipt);
+    // console.log('deployResponse', deployResponse)
+    const myTestContract = new Contract(item.abiInfoData[0].abi, deployResponse.contract_address, provider);
+    await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, myTestContract.address, 2, item.id)
+    loading.value = false;
+    starknetVisible.value = false;
+    console.log('address', myTestContract.address)
+    message.info('deploying success')
+    router.push('/projects')
+  } catch (err: any) {
+    console.log('err:', err)
+    loading.value = false;
+    starknetVisible.value = false;
+  } finally {
+    loading.value = false;
+    starknetVisible.value = false;
+  }
+}
+
 
 
 const setProjectsStarkNetDeploy = async (declareHash: String, deployHash: String, address: String, status: Number, contractId: Number) => {

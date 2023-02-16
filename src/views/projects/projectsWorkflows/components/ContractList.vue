@@ -63,7 +63,7 @@ const columns = [{
   title: 'Contract',
   dataIndex: 'name',
   align: "center",
-  width: '30%',
+  width: '20%',
   ellipsis: true,
   key: 'name',
 },

@@ -33,6 +33,7 @@ import { useRouter } from "vue-router";
 const props = defineProps({
   starknetVisible: { type: Boolean, default: false },
   hasDeclareHash: { type: Boolean, default: false },
+  hasDeployHash: { type: Boolean, default: false },
   projectsId: {
     type: String,
     default: ''
@@ -69,6 +70,7 @@ const cancelModal = () => {
 }
 
 watch(() => props.hasDeclareHash,
+  // hasDeployHash
   (val) => {
     if (val) {
       const hashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || {};
@@ -76,6 +78,16 @@ watch(() => props.hasDeclareHash,
     }
   }, { deep: true, immediate: false })
 
+watch(() => props.hasDeployHash,
+  // hasDeployHash
+  (val) => {
+    if (val) {
+      console.log(val, 'Deploying')
+      hashTitle.value = 'Deploying';
+      const hashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || {};
+      hash.value = hashData[props.projectsId]?.deployHash;
+    }
+  }, { deep: true, immediate: false })
 </script>
 <style lang="less" scoped>
 .ant-btn {
