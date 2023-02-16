@@ -11,7 +11,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin } from "@/apis/login";
+import { apiLogin, apiGetUser } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
@@ -23,16 +23,30 @@ const login = async () => {
   try {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('token', data.token);
-    localStorage.setItem('firstState', data.firstState.toString());
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    window.close();
-    window.opener.location.reload();
+    console.log("login:",data);
   } catch (err) {
     window.close();
     router.push('/');
     message.error(err.message);
+  } finally {
+    getUser();
   }
 
+}
+
+const getUser = async () => {
+  
+  try {
+    const { data } = await apiGetUser();
+    console.log("getUser:",data);
+    localStorage.setItem('firstState', data.firstState.toString());
+    localStorage.setItem('userInfo', JSON.stringify(data));
+  } catch (error: any) {
+    console.log("erro:",error)
+  } finally {
+    window.close();
+    window.opener.location.reload();
+  }
 }
 
 onMounted(async () => {
