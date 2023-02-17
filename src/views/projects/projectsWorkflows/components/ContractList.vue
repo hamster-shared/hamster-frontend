@@ -30,10 +30,10 @@
               <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
                 Download ABI
               </div>
-              <div @click="starknetVisible = true" v-if="record.status === 1 || record.status === 2"
+              <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
                 View Deploy Process</div>
-              <div v-if="record.network.String !== ''"
+              <div v-else="record.network.String !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
                 @click="toDetailUrl(record)">View Dashboard
               </div>
@@ -45,7 +45,7 @@
       </template>
     </a-table>
   </div>
-  <starkNetModal :starknetVisible="starknetVisible" :projectsId="state.id" @cancelModal="starknetVisible = false">
+  <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
 </template>
 
@@ -56,9 +56,6 @@ import dayjs from "dayjs";
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 
 const router = useRouter();
-
-const starknetVisible = ref(false);
-
 const columns = [{
   title: 'Contract',
   dataIndex: 'name',
@@ -105,6 +102,11 @@ const state = reactive({
   id: router.currentRoute.value.params?.id,
   version: router.currentRoute.value.params?.version,
 })
+
+const starknetVisible = ref(false);
+const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
+// console.log(starknetHashData, 'starknetHashData')
+const deployTxHash = starknetHashData[state.id]?.deployTxHash || '';
 
 const props = defineProps({
   contractListData: Array,

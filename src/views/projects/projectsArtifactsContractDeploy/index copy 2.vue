@@ -64,9 +64,9 @@
         loading? 'Deploying': 'Deploy'
       }}</a-button>
     </div>
-    <!-- <div>
-      <a-button @click="getDeployHashById">test deploy</a-button>
-    </div> -->
+    <div>
+      <a-button @click="apiContractDeployIdtest">test deploy</a-button>
+    </div>
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
@@ -88,7 +88,8 @@
   </a-modal>
 
 
-  <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="cancelStarkNetModal">
+  <starkNetModal :starknetVisible="starknetVisible" :projectsId="queryParams.id" :hasDeclareHash="hasDeclareHash"
+    :hasDeployHash="hasDeployHash" @cancelModal="cancelStarkNetModal">
   </starkNetModal>
 
 
@@ -118,9 +119,7 @@ const { t } = useI18n()
 
 const frameType = ref(1);
 const argsMap = new Map();
-const deployTxHash = ref('');
-const starknetHashData = reactive({});
-// const starknetHashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || reactive({});
+const starknetHashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || reactive({});
 const testData = ref({});
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -205,6 +204,61 @@ const cancelStarkNetModal = () => {
   hasDeclareHash.value = false;
 }
 
+
+// 创建starknet合约
+// const contractStarkNetFactory = async (item: any) => {
+//   localStorage.removeItem('starknetHashData');
+//   loading.value = true
+//   starknetVisible.value = true;
+//   // const networkItem: any = networkData.find(item => { return item.id === formState.network });
+//   // const provider = new Provider({ sequencer: { network: networkItem.newokName } });
+//   // const provider = new Provider({ sequencer: { network: "goerli-alpha" } });
+//   // const privateKey0 = "0xe3e70682c2094cac629f6fbed82c0710";
+//   // const account0Address = "0x598525353e7d05617e2db032c36e855aea177e007979595d9f467c89c24c2d5";
+//   // const starkKeyPair0 = ec.getKeyPair(privateKey0);
+//   // console.log('ec.getKeyPair方法');
+//   // const account0 = new Account(provider, account0Address, starkKeyPair0);
+//   // console.log('new Account方法');
+//   // const testClassHash = "0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35";
+//   try {
+
+//     setProjectsStarkNetDeploy(item.id);
+//     // console.log('开始调用')
+//     // const declareTx = await account0.declare({ contract: item.abiInfo, classHash: testClassHash });
+//     // console.log('declare hash=', declareTx.transaction_hash)
+
+//     // await setProjectsStarkNetDeploy(declareTx.transaction_hash, '', '', 1, item.id)
+//     // hasDeclareHash.value = true
+
+//     // const declare = await account0.waitForTransaction(declareTx.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
+
+//     // const deployTx = await account0.deploy({ contract: item.abiInfo, classHash: testClassHash });
+
+//     // await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, '', 1, item.id)
+//     // console.log('deploy hash=', deployTx.transaction_hash)
+//     // hasDeployHash.value = true
+//     // const txReceipt = await account0.waitForTransaction(deployTx.transaction_hash, undefined, [
+//     //   'ACCEPTED_ON_L2',
+//     // ]);
+//     // const deployResponse = parseUDCEvent(txReceipt);
+//     // // console.log('deployResponse', deployResponse)
+//     // const myTestContract = new Contract(item.abiInfoData[0].abi, deployResponse.contract_address, provider);
+//     // await setProjectsStarkNetDeploy(declareTx.transaction_hash, deployTx.transaction_hash, myTestContract.address, 2, item.id)
+//     loading.value = false;
+//     starknetVisible.value = false;
+//     console.log('address', myTestContract.address)
+//     message.info('deploying success')
+//     router.push('/projects')
+//   } catch (err: any) {
+//     console.log('err:', err)
+//     loading.value = false;
+//     starknetVisible.value = false;
+//   } finally {
+//     loading.value = false;
+//     starknetVisible.value = false;
+//   }
+// }
+
 const contractStarkNetFactory = (item: any) => {
   loading.value = true;
   starknetVisible.value = true;
@@ -223,24 +277,19 @@ const setProjectsStarkNetDeploy = async (item: any) => {
 
   try {
     const { data } = await apiProjectsContractDeploy(queryJson)
-    getDeployHashById(data)
+    getDeployHashById(item, data)
+    // starknetHashData[queryParams.id] = { 'declareHash': declareHash, 'deployHash': deployHash, 'address': address };
+    // localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
   } catch (err: any) {
-    loading.value = false;
-    starknetVisible.value = false;
     console.log('err:', err)
   }
 };
 
 
-const getDeployHashById = async (id: number) => {
-  loading.value = true;
-  starknetVisible.value = true;
+const getDeployHashById = async (item: any, id: number) => {
   try {
-    const { data } = await apiContractDeployId(queryParams.id, 33);
+    const { data } = await apiContractDeployId(queryParams.id, id);
     // console.log(data, 'data')
-    deployTxHash.value = data.deployTxHash;
-    starknetHashData[queryParams.id] = { 'deployTxHash': data.deployTxHash, deploySuccess: false };
-    localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
 
     const networkItem: any = networkData.find(item => { return item.id === formState.network });
     const provider = new Provider({ sequencer: { network: networkItem.newokName } });
@@ -249,28 +298,46 @@ const getDeployHashById = async (id: number) => {
     const starkKeyPair0 = ec.getKeyPair(privateKey0);
     const account0 = new Account(provider, account0Address, starkKeyPair0);
 
-    const txReceipt = await account0.waitForTransaction(data.deployTxHash, undefined, [
-      'ACCEPTED_ON_L2',
-    ]);
+    // const txReceipt = await account0.waitForTransaction(data.deployTxHash, undefined, [
+    //   'ACCEPTED_ON_L2',
+    // ]);
     const deployResponse = await parseUDCEvent(txReceipt);
     console.log(deployResponse, 'deployResponse')
-    if (deployResponse) {
-      starknetHashData[queryParams.id] = { 'deployTxHash': data.deployTxHash, deploySuccess: true };
-    } else {
-      starknetHashData[queryParams.id] = { 'deployTxHash': data.deployTxHash, deploySuccess: false };
-    }
-    localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
 
 
   } catch (err: any) {
-    loading.value = false;
-    starknetVisible.value = false;
+    loading.value = true;
+    starknetVisible.value = true;
     console.log('err:', err)
   } finally {
-    loading.value = false;
-    starknetVisible.value = false;
+    loading.value = true;
+    starknetVisible.value = true;
   }
 }
+
+
+// const setProjectsStarkNetDeploy = async (declareHash: String, deployHash: String, address: String, status: Number, contractId: Number) => {
+//   const network: any = networkData.find(item => { return item.id === formState.network });
+//   const queryJson = {
+//     contractId: contractId,
+//     id: queryParams.id,
+//     projectId: queryParams.id,
+//     version: formState.version,
+//     network: network.name,
+//     declareTxHash: declareHash,
+//     deployTxHash: deployHash,
+//     status: status,
+//     address: address,
+//   }
+
+//   try {
+//     const { data } = await apiProjectsContractDeploy(queryJson)
+//     starknetHashData[queryParams.id] = { 'declareHash': declareHash, 'deployHash': deployHash, 'address': address };
+//     localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
+//   } catch (err: any) {
+
+//   }
+// };
 
 const parseUDCEvent = (txReceipt: any) => {
   if (!txReceipt.events) {

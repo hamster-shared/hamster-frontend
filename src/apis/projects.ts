@@ -272,3 +272,11 @@ export function apiDeleteDeployInfo(packageId:string) {
     method: "delete",
   });
 }
+
+// 根据id查询deployHash /projects/:id/contract/deploy/:contractDeployId
+export function apiContractDeployId(id: String, contractDeployId: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/deploy/${contractDeployId}`,
+    method: "get",
+  });
+}

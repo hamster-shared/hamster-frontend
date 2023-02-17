@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --mode staging",
     "build:staging": "vite build --mode staging",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
@@ -27,7 +27,7 @@
     "md-editor-v3": "^2.7.2",
     "monaco-editor": "^0.34.1",
     "pinia": "^2.0.23",
-    "starknet": "^4.17.1",
+    "starknet": "^4.21.0",
     "vue": "^3.2.41",
     "vue-fullscreen": "^3.1.1",
     "vue-i18n": "^9.2.2",

@@ -37,10 +37,10 @@
             <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
               Download ABI
             </div>
-            <div @click="starknetVisible = true" v-if="record.status === 1 || record.status === 2"
+            <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
               View Deploy Process</div>
-            <div v-if="record.network.String !== ''" @click="goContractDetail(record.version)"
+            <div v-else="record.network.String !== ''" @click="goContractDetail(record.version)"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">View
               Dashboard
             </div>
@@ -51,7 +51,7 @@
     </template>
   </a-table>
 
-  <starkNetModal :starknetVisible="starknetVisible" :projectsId="detailId" @cancelModal="starknetVisible = false">
+  <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
 </template>
 <script setup lang="ts">
@@ -80,6 +80,9 @@ const network = ref("All Network");
 const contractTableList = ref([]);
 
 const starknetVisible = ref(false);
+const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
+// console.log(starknetHashData, 'starknetHashData')
+const deployTxHash = starknetHashData[props.detailId]?.deployTxHash || '';
 
 const contractTableColumns = computed<any[]>(() => [
   {
