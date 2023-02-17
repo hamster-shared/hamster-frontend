@@ -17,8 +17,8 @@ export default ({ mode }) => defineConfig({
     proxy: {
       "/api": {
         target: 
-        // loadEnv(mode, process.cwd()).VITE_BASE_API,
-          "http://34.232.105.81:8088/api", //测试
+        loadEnv(mode, process.cwd()).VITE_BASE_API,
+          // "http://34.232.105.81:8088/api", //测试
           // "http://34.232.105.81:8080/api", //生产
         // "http://175.24.179.2:8080/api",
         changeOrigin: true, //是否跨域

@@ -212,9 +212,12 @@ const contractStarkNetFactory = async (item: any) => {
   const privateKey0 = "0xe3e70682c2094cac629f6fbed82c0710";
   const account0Address = "0x598525353e7d05617e2db032c36e855aea177e007979595d9f467c89c24c2d5";
   const starkKeyPair0 = ec.getKeyPair(privateKey0);
+  console.log('ec.getKeyPair方法');
   const account0 = new Account(provider, account0Address, starkKeyPair0);
+  console.log('new Account方法');
   const testClassHash = "0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35";
   try {
+    console.log('开始调用')
     const declareTx = await account0.declare({ contract: item.abiInfo, classHash: testClassHash });
     console.log('declare hash=', declareTx.transaction_hash)
 
