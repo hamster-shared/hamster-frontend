@@ -27,6 +27,7 @@ const login = async () => {
     // console.log("login:", data);
   } catch (err: any) {
     window.close();
+    localStorage.removeItem('userinfo');
     router.push('/');
     message.error(err.message);
   } finally {
@@ -53,7 +54,12 @@ const installGitHub = async () => {
   try {
     const { data } = await apiInstall();
     localStorage.setItem('token', data.token);
+    window.close();
+    window.opener.location.reload();
   } catch (err: any) {
+    window.close();
+    localStorage.removeItem('userinfo');
+    router.push('/');
     console.log('err:', err)
   }
 }
