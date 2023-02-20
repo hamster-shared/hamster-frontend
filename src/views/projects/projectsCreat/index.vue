@@ -7,12 +7,11 @@
     </div>
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="grid grid-cols-2 gap-8">
-        <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical"
-          ref="formRef" :rules="formRules">
-          <a-form-item label="Project Name" name="name">
+        <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical">
+          <!-- <a-form-item label="Project Name" name="name">
             <a-input v-model:value="formData.name" placeholder="Project Name" allow-clear autocomplete="off" />
             <div class="dark:text-[#E0DBD2] text-[#73706E] mt-[8px]">Great project names are short and memorable.</div>
-          </a-form-item>
+          </a-form-item> -->
           <a-form-item class="new-label" label="Project Type" name="type">
             <a-radio-group v-model:value="formData.type" name="type" @change="getTemplatesShow">
               <a-radio :style="radioStyle" value="1">Contract
@@ -291,36 +290,37 @@ const fixedPopularTemplate = {
 // })
 
 // Form rules
-const formRules = computed(() => {
-  const checkDupName = async () => {
-    try {
-      loading.value = true;
-      //校验仓库名称是否存在
-      const userInfo = localStorage.getItem('userInfo');
-      const params = {
-        owner: JSON.parse(userInfo)?.username,
-        name: formData.name,
-      }
-      const res = await apiDupProjectName(params);
-      if (res.data === false) {
-        return Promise.reject("Project Name duplication");
-      } else {
-        return Promise.resolve()
-      }
-    } catch (error: any) {
-      console.log("erro:", error)
-      return Promise.reject("Project Name check failure");
-    } finally {
-      loading.value = false;
-    }
-  }
+// const formRules = computed(() => {
+//   const checkDupName = async () => {
+//     try {
+//       loading.value = true;
+//       //校验仓库名称是否存在
+//       const userInfo = localStorage.getItem('userInfo');
+//       const params = {
+//         owner: JSON.parse(userInfo)?.username,
+//         name: formData.name,
+//       }
+//       const res = await apiDupProjectName(params);
+//       if (res.data === false) {
+//         return Promise.reject("Project Name duplication");
+//       } else {
+//         return Promise.resolve()
+//       }
+//     } catch (error: any) {
+//       console.log("erro:", error)
+//       return Promise.reject("Project Name check failure");
+//     } finally {
+//       loading.value = false;
+//     }
+//   }
 
-  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+//   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
-  return {
-    name: [requiredRule('Please enter Project Name'), { validator: checkDupName, trigger: "change" }],
-  };
-});
+//   return {
+//     name: [requiredRule('Please enter Project Name'), { validator: checkDupName, trigger: "change" }],
+//   };
+// });
+
 const goNext = async () => {
   
   localStorage.setItem("createFormData", JSON.stringify(formData));
@@ -328,7 +328,7 @@ const goNext = async () => {
 }
 const setCreateProjectValue = async (path: RouteLocationRaw) => {
 
-  await formRef.value.validate();
+  // await formRef.value.validate();
 
   try {
     loading.value = true;
