@@ -60,7 +60,7 @@
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
           <div class="my-2">
-            <a target="_blank" :href="viewInfo.repositoryUrl">{{showViewInfoRepositoryUrl}}</a>
+            <a target="_blank" :href="viewInfo.repositoryUrl">{{ showViewInfoRepositoryUrl }}</a>
           </div>
           <div>
             <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
@@ -145,15 +145,20 @@
           <div v-if="projectType === '1'">
             <div class="my-2" v-if="viewInfo.recentDeploy.version === ''">No Data</div>
             <div class="flex items-center my-2" v-else>
-              <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
-              {{ viewInfo.recentDeploy.version }}｜
-              {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
+              <div v-if="viewInfo.recentDeploy.status === 1">Deploying |
+                {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
+              </div>
+              <div v-else>
+                <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
+                {{ '#'+ viewInfo.recentDeploy.version }}｜
+                {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
+              </div>
             </div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
-            <!-- <div v-else class="text-[#E2B578] cursor-pointer"
-              @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Contract</div> -->
-            <div v-else class="text-[#E2B578] cursor-pointer"
-              @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
+            <div v-else class="text-[#E2B578] cursor-pointer">
+              <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
+              <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
+            </div>
           </div>
           <div v-else>
             <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">No Data</div>
@@ -180,7 +185,8 @@
               fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing")
             }}</div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
-            <div v-else class="text-[#E2B578] cursor-pointer" @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
+            <div v-else class="text-[#E2B578] cursor-pointer"
+              @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
               View FrontEnd</div>
           </div>
         </div>
@@ -188,15 +194,19 @@
     </div>
   </div>
   <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
+  <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
+  </starkNetModal>
 </template>
 <script lang='ts' setup>
-import { ref, toRefs, computed } from 'vue';
+import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
+import starkNetModal from '../../components/starkNetModal.vue';
 import { useThemeStore } from "@/stores/useTheme";
+
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -207,7 +217,7 @@ const props = defineProps({
   projectType: String,
 });
 const { viewType, viewInfo, projectType } = toRefs(props);
-const showViewInfoRepositoryUrl = computed(()=>{
+const showViewInfoRepositoryUrl = computed(() => {
   return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
 })
 
@@ -219,6 +229,12 @@ const msgParam = ref({
   workflowDetailId: viewInfo?.value.recentDeploy.id,
   projectType: projectType?.value
 });
+
+const starknetVisible = ref(false);
+const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
+// console.log(starknetHashData, 'starknetHashData')
+const deployTxHash = starknetHashData[props.viewInfo.id]?.deployTxHash || '';
+// console.log('deployTxHash', props.viewInfo.id, deployTxHash)
 
 const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
@@ -282,7 +298,7 @@ const projectsOps = async (id: String, recentDeploy: Object) => {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id +"/" + recentDeploy.packageId);
+    router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
   }
 };
 const loadView = async () => {
@@ -308,9 +324,16 @@ const goContractDeploy = async (id: String, status: number | String) => {
   //   router.push("/projects/" + id + "/artifacts-contract/" + version + "/deploy/00");
   // }
   if (status === 3) {
-      goFrontendDeploy(id);
-    }
+    goFrontendDeploy(id);
+  }
 };
+
+// const showStarknetVisible = (id: String) => {
+//   // const starknetHashData: any = JSON.parse(localStorage.getItem('starknetHashData'));
+//   // deployTxHash.value = starknetHashData[id].deployTxHash;
+//   starknetVisible.value = true;
+// };
+
 const goContractDetail = async (id: String, version: String) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)

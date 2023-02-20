@@ -147,12 +147,6 @@ const router = useRouter();
 const loading = ref(false);
 const showList = ref([])
 const formRef = ref();
-// const formData = reactive({
-//   name: '',
-//   type: '1',
-//   contractCode: '1',
-//   frameType: '1',
-// });
 
 const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) || reactive({
   name: '',
@@ -162,132 +156,6 @@ const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) ||
 });
 
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
-const fixedPopularTemplate = {
-  aptos: [
-    {
-      audited: false,
-      description: 'Token vesting Smart Contract for Aptos Blockchain.',
-      id: 1,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptosone,
-      name: 'aptos-token-vesting',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'The smart contract provides staking for Tokens and NFTs. The creators can decide the APR and way to distribute the gains.',
-      id: 2,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptostwo,
-      name: 'aptos-token-staking',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'Aptos Code for NFT borrow and lend',
-      id: 3,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptosthree,
-      name: 'nft-borrowing-lendin...',
-      templateTypeId: 3
-    },
-    {
-      audited: false,
-      description: 'Raffle in Aptos blockchain by Mokshya Protocol',
-      id: 4,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptosfour,
-      name: 'aptos-raffle',
-      templateTypeId: 4
-    },
-  ],
-  ton: [
-    {
-      audited: false,
-      description: 'Basic implementation of smart contracts for NFT tokens and NFT collections in accordance with the Standard',
-      id: 1,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: tonone,
-      name: 'Non-Fungible tokens',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'Basic implementation of smart contracts for Jetton wallet and Jetton minter in accordance with the Standard',
-      id: 2,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: tontwo,
-      name: 'Fungible tokens',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'Smart contracts of ".ton" zone',
-      id: 3,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: tonthree,
-      name: 'TON DNS Smart Contr...',
-      templateTypeId: 3
-    },
-  ],
-  StarkWare: [
-    {
-      audited: false,
-      description: 'The ERC20 preset offers a quick and easy setup for deploying a basic ERC20 token.',
-      id: 1,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: starkwareone,
-      name: 'ERC20',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'The ERC721 token standard is a specification for non-fungible tokens, or more colloquially: NFTs.',
-      id: 2,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: starkwaretwo,
-      name: 'ERC721',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'The ERC1155 multi token standard is a specification for fungibility-agnostic token contracts.',
-      id: 3,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: starkwarethree,
-      name: 'ERC1155',
-      templateTypeId: 3
-    },
-  ]
-}
-
-
-
-// watchEffect(async () => {
-//   if (formData.frameType == '1') {
-//     await getInitTemplates()
-//     console.log('formData.frameType=1:', formData.frameType)
-//   } else if (formData.frameType == '2') {
-//     showList.value = fixedPopularTemplate.aptos
-//     console.log('formData.frameType:', formData.frameType)
-//   } else if (formData.frameType == '3') {
-//     showList.value = fixedPopularTemplate.ton
-//     console.log('formData.frameType:', formData.frameType)
-//   } else if (formData.frameType == '4') {
-//     showList.value = fixedPopularTemplate.StarkWare
-//     console.log('formData.frameType:', formData.frameType)
-//   }
-// })
 
 // Form rules
 // const formRules = computed(() => {
@@ -322,7 +190,7 @@ const fixedPopularTemplate = {
 // });
 
 const goNext = async () => {
-  
+
   localStorage.setItem("createFormData", JSON.stringify(formData));
   setCreateProjectValue(`/projects/template/${formData.type}`)
 }

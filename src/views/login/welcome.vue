@@ -29,10 +29,10 @@ import { useRouter } from "vue-router";
 const router = useRouter()
 
 const contentList = ref<String[]>([]);
-const content = ref("Thank you for using Hamster！\nLet‘s begin the adventure ... \n\nWe have launched 2 services:\n1. Developer Toolkit\n2. Node Service\n\nType the number of service for select\n\nLet‘s begin the adventure ...");
+const content = ref("Thank you for using Hamster！\nLet‘s begin the adventure ... \n\nWe have launched 2 services:\n1. Developer Toolkit\n2. Node Service\n\nType the number of service for select\n> ");
 const showText = ref("");
 const timer = ref();
-const speed = ref(40);
+const speed = ref(50);
 const count = ref(1);
 const isEnd = ref(false);
 const isJump = ref(false);
@@ -42,7 +42,7 @@ const keyValue = ref("");
 onMounted(() => {
   updateFristState();
   setTimeout(() => {
-    changeContent();
+    changeContent('1');
   }, 2000);
   document.addEventListener("keyup", handleKeyUp)
 })
@@ -54,9 +54,14 @@ onUnmounted(() => {
 const handleKeyUp = (ele: any) => {
   keyValue.value = ele.key;
   if (isEnd.value === true && (keyValue.value === "1" || keyValue.value === "2")) {
-    contentList.value = content.value.split("\n"); //拆分
-    count.value = contentList.value.length - 1;
-    changeContentLine();
+    isEnd.value = false;
+    content.value += keyValue.value + "\nLet‘s begin the adventure ...";
+    changeContent('2');
+
+    // 一行一行的消失
+    // contentList.value = content.value.split("\n"); //拆分
+    // count.value = contentList.value.length - 1;
+    // changeContentLine();
   }
 }
 const changeContentLine = () => {
@@ -84,7 +89,7 @@ const changeContentLine = () => {
       } else if (keyValue.value === "2"){ //nodeServer页面
         router.push('/node-service/RPCs')
       }
-    }, 3000);
+    }, 2000);
   }
 }
 
@@ -97,7 +102,7 @@ const updateFristState = async () => {
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
-    getUser()
+    getUser();
   }
 }
 
@@ -105,13 +110,15 @@ const getUser = async () => {
   
   try {
     const { data } = await apiGetUser();
+    
+    localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error: any) {
     console.log("erro:",error)
   } 
 }
 
-const changeContent = () => {
+const changeContent = (type: string) => {
   showText.value = content.value.substring(0, count.value); //截取字符串
   count.value++;
   if (count.value != content.value.length + 1) {
@@ -119,11 +126,28 @@ const changeContent = () => {
     // if (speed.value < 5) speed.value = 5;
 
     timer.value = setTimeout(() => {
-      changeContent();
+      changeContent(type);
     }, speed.value)
   } else {
     clearTimeout(timer.value);
-    isEnd.value = true;
+    if (type === "1") {
+      isEnd.value = true;
+    } else {
+      showText.value = "";
+      isJump.value = true;
+
+      setTimeout(() => {
+        isShowGX.value = true;
+      }, 2000);
+
+      setTimeout(() => {
+        if (keyValue.value === "1") { //project页面 
+          router.push('/projects')
+        } else if (keyValue.value === "2"){ //nodeServer页面
+          router.push('/node-service/RPCs')
+        }
+      }, 3000);
+    }
   }
 }
 </script>
@@ -159,18 +183,19 @@ const changeContent = () => {
   overflow: hidden; 
 }
 .welcome-gx{
-  -webkit-animation: scaleGX 2s 1;
-  animation: scaleGX 2s 1;
+  -webkit-animation: scaleGX 1s 1;
+  animation: scaleGX 1s 1;
 }
 @keyframes scaleGX {
   
   0% {
     opacity: 0;
-    // transform: scale(0.2, 0.2);
+    transform: scale(0.2, 0.2);
   }
   100% {
     opacity: 100;
-    transform: scale(40, 40);
+    transform: scale(20, 20);
+    background: #FFFFFF;
   }
 }
 .content-bg-show{
@@ -198,9 +223,11 @@ const changeContent = () => {
     opacity: 100;
     transform: scale(1, 1);
   }
+  50% {
+    transform: scale(1, 0.1);
+  }
   100% {
-    opacity: 0;
-    transform: scale(0, 0);
+    transform: scale(0, 0.1);
   }
 }
 .welcome-fd{

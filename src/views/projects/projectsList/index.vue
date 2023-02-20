@@ -14,7 +14,7 @@
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
-          <div v-if="contractList.length > 0">
+          <div v-if="totalContract > 0">
             <div v-for="(item, index) in contractList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -26,7 +26,7 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="FrontEnd">
-          <div v-if="frontentList.length > 0">
+          <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -41,8 +41,11 @@
     </div>
   </div>
   <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
-    <img class="h-full w-full" src="@/assets/images/project-guide.jpg" />
-    <img class="h-[42px] w-[42px] absolute top-[16%] right-[6%] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
+    <img src="@/assets/images/project-guide.jpg" class="h-full w-full dark:hidden" />
+    <img src="@/assets/images/project-guide-dark.jpg" class="h-full w-full hidden dark:inline-block" />
+    <div class="absolute bottom-[30%] flex justify-center w-full">
+      <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
+    </div>
   </div>
 </template>
 <script lang='ts' setup>
@@ -134,7 +137,7 @@ const getProjectsContract = async (type: string | undefined) => {
       page: currentContract.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "2") {
         goCreateProject();
       } else {
@@ -173,7 +176,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       page: currentFrontend.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "1") {
         goCreateProject();
       } else {
