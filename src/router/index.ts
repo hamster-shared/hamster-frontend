@@ -16,6 +16,7 @@ import projectsArtifactsContractDeploy from "../views/projects/projectsArtifacts
 import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 import ProjectsStandardContract from "../views/projects/projectsStandardContract/index.vue";
 import ProjectsFrontendDetails from "../views/projects/projectsFrontendDetails/index.vue";
+import test from "../views/test/index.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -23,6 +24,11 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: HomeView,
+    },
+    {
+      path: "/test",
+      name: "test",
+      component: test,
     },
     // {
     //   path: "/",
@@ -172,7 +178,7 @@ router.beforeEach((to, from, next) => {
   window.scrollTo(0, 0);
   const token = localStorage.getItem('token') || '';
   if (!token) {
-    if (to.path !== '/login' && to.path !== '/loginTransition') {
+    if (to.path !== '/login' && to.path !== '/loginTransition' &&  to.path !== '/test') {
       next('/')
     } else {
       next()
