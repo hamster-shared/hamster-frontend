@@ -52,7 +52,13 @@ const login = async () => {
 const installGitHub = async () => {
   try {
     const { data } = await apiInstall(code.value);
-    localStorage.setItem('token', data.token);
+    localStorage.setItem('token', data);
+    if (localStorage.getItem('firstState') === "0") {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   } catch (err: any) {
     console.log('err:', err)
   }
