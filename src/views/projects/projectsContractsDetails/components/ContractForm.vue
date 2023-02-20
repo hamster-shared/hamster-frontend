@@ -138,9 +138,6 @@ watch(
   (oldV, newV) => {
     if (newV) {
       let name = [...(Object.keys(formData))]
-      // name.forEach((it: any) => {
-      //   delete formData[it]
-      // })
       let value = [...(Object.values(formData))]
 
       if (!isSend.value) {

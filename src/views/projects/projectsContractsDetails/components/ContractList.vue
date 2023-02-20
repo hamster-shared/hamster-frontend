@@ -64,18 +64,47 @@ const checkValueIndex = ref(0);
 const inputs = ref([]);
 const contractForm = ref();
 
-const abiInfoData = YAML.parse(abiInfo.value)
+// const abiInfoData = YAML.parse(abiInfo.value)
 // console.log(abiInfoData, 'abiInfoData')
+const abiInfoData = [{
+  inputs: [
+    {
+      name: "amount",
+      type: "felt"
+    }
+  ],
+  name: "increase_balance",
+  outputs: [],
+  type: "function"
+},
+{
+  inputs: [],
+  name: "get_balance",
+  outputs: [
+    {
+      name: "res",
+      type: "felt"
+    }
+  ],
+  stateMutability: "view",
+  type: "function"
+}];
+
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
-    if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+    if (!item.stateMutability) {
       sendAbis.push(item)
-    } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+    } else if (item.stateMutability === 'view') {
       callAbis.push(item)
     }
+    // if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+    //   sendAbis.push(item)
+    // } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+    //   callAbis.push(item)
+    // }
   }
 
-  console.log(sendAbis, 'sendAbis')
+  // console.log(sendAbis, 'sendAbis')
 
   if (sendAbis.length > 0) {
     checkValue.value = sendAbis[0]?.name;
