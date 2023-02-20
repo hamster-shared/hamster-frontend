@@ -27,6 +27,7 @@ const login = async () => {
     // console.log("login:", data);
   } catch (err: any) {
     window.close();
+    localStorage.removeItem('userInfo');
     router.push('/');
     message.error(err.message);
   } finally {
@@ -53,6 +54,7 @@ const installGitHub = async () => {
   try {
     const { data } = await apiInstall(code.value);
     localStorage.setItem('token', data);
+    window.close();
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')
@@ -60,6 +62,8 @@ const installGitHub = async () => {
       router.push('/projects')
     }
   } catch (err: any) {
+    localStorage.removeItem('userInfo');
+    router.push('/');
     console.log('err:', err)
   }
 }
