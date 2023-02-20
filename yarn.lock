@@ -30,6 +30,13 @@
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons-svg" "^4.2.1"
 
+"@argent/get-starknet@^5.3.1":
+  "integrity" "sha512-kgdUm2FTjpHNrfjL70cuYAvb2o2OunNcU5wvib5Tj+anGZEJi9NLfZLxHHv3jiUn9At1a7WHa61nFOCldWh9uA=="
+  "resolved" "https://registry.npmjs.org/@argent/get-starknet/-/get-starknet-5.3.1.tgz"
+  "version" "5.3.1"
+  dependencies:
+    "get-starknet" "^1.0.0"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.18.6":
   "integrity" "sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q=="
   "resolved" "https://registry.npmmirror.com/@babel/code-frame/-/code-frame-7.18.6.tgz"
@@ -4579,7 +4586,7 @@
     "safe-buffer" "^5.0.1"
     "sha.js" "^2.4.8"
 
-"cross-fetch@^3.1.4":
+"cross-fetch@^3.1.4", "cross-fetch@^3.1.5":
   "integrity" "sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw=="
   "resolved" "https://registry.npmmirror.com/cross-fetch/-/cross-fetch-3.1.5.tgz"
   "version" "3.1.5"
@@ -6116,6 +6123,13 @@
     "function-bind" "^1.1.1"
     "has" "^1.0.3"
     "has-symbols" "^1.0.3"
+
+"get-starknet@^1.0.0":
+  "integrity" "sha512-6A14mdPoMwO4orETjG5D+wwaZOzuAyNp/5+ZlDJnU+UU7QRGMYILUo8WjgqeVTg0mcN0BZoUE0C/Qhgd7dBvVQ=="
+  "resolved" "https://registry.npmjs.org/get-starknet/-/get-starknet-1.5.0.tgz"
+  "version" "1.5.0"
+  dependencies:
+    "bowser" "^2.11.0"
 
 "get-stream@^4.0.0":
   "integrity" "sha512-GMat4EJ5161kIy2HevLlr4luNjBgvmj413KaQA7jt4V8B4RDsfpHk7WQ9GVqfYyyx8OS/L66Kox+rJRNklLK7w=="
@@ -9740,6 +9754,23 @@
   dependencies:
     "type-fest" "^0.7.1"
 
+"starknet@^3.12.3":
+  "integrity" "sha512-1iUJdGtRDu2j3G8sS+yzRhp9O3O5Dr803oDfrm234Qmn05JTh5bU/wZwFPw9zWmMI0jyNZgjS+8dxPpBcpLgrQ=="
+  "resolved" "https://registry.npmjs.org/starknet/-/starknet-3.19.0.tgz"
+  "version" "3.19.0"
+  dependencies:
+    "@ethersproject/bytes" "^5.6.1"
+    "bn.js" "^5.2.1"
+    "cross-fetch" "^3.1.5"
+    "elliptic" "^6.5.4"
+    "ethereum-cryptography" "^1.0.3"
+    "hash.js" "^1.1.7"
+    "json-bigint" "^1.0.0"
+    "minimalistic-assert" "^1.0.1"
+    "pako" "^2.0.4"
+    "ts-custom-error" "^3.2.0"
+    "url-join" "^4.0.1"
+
 "starknet@^4.21.0":
   "integrity" "sha512-NTZENg8SRIYvVTgsQU66fjifrsgAucX1T3Z4Xaalx1ukLVG+N+R34f3N5iA4iajhBfW6vXWWfDLXrnf0qXgHdA=="
   "resolved" "https://registry.npmjs.org/starknet/-/starknet-4.21.0.tgz"
@@ -10176,7 +10207,7 @@
   "resolved" "https://registry.npmmirror.com/tr46/-/tr46-0.0.3.tgz"
   "version" "0.0.3"
 
-"ts-custom-error@^3.3.1":
+"ts-custom-error@^3.2.0", "ts-custom-error@^3.3.1":
   "integrity" "sha512-5OX1tzOjxWEgsr/YEUWSuPrQ00deKLh6D7OTWcvNHm12/7QPyRh8SYpyWvA4IZv8H/+GQWQEh/kwo95Q9OVW1A=="
   "resolved" "https://registry.npmjs.org/ts-custom-error/-/ts-custom-error-3.3.1.tgz"
   "version" "3.3.1"
