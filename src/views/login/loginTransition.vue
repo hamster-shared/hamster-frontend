@@ -51,7 +51,7 @@ const login = async () => {
 
 const installGitHub = async () => {
   try {
-    const { data } = await apiInstall();
+    const { data } = await apiInstall(code.value);
     localStorage.setItem('token', data.token);
   } catch (err: any) {
     console.log('err:', err)
@@ -83,7 +83,7 @@ onMounted(async () => {
     } else {
       code.value = router.currentRoute.value.query?.code || '';
       if (code.value) {
-        installGitHub(code.value)
+        installGitHub()
       }
     }
   }
