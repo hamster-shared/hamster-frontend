@@ -29,7 +29,7 @@ const router = useRouter()
 
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 // const clientId = ref('a782e08a53e86517dcc5');
-const oauthUrl = ref('https://github.com/apps/hamster-test/installations/new')
+const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
@@ -40,7 +40,7 @@ const loginBox = () => {
 
 onMounted(() => {
   if (localStorage.getItem('token')) {
-    console.log("firstState:",localStorage.getItem('firstState'),localStorage.getItem('firstState')==="0",localStorage.getItem('firstState')==="1");
+    console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')
