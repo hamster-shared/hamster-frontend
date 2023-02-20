@@ -54,14 +54,18 @@ const installGitHub = async () => {
   try {
     const { data } = await apiInstall(code.value);
     localStorage.setItem('token', data);
+    console.log(localStorage.getItem('firstState'), 'firstState1')
     window.close();
-    if (localStorage.getItem('firstState') === "0") {
-      //第一次登录
-      router.push('/welcome')
-    } else {
-      router.push('/projects')
-    }
+    console.log(localStorage.getItem('firstState'), 'firstState2')
+    window.opener.location.reload();
+    // if (localStorage.getItem('firstState') === "0") {
+    //   //第一次登录
+    //   router.push('/welcome')
+    // } else {
+    //   router.push('/projects')
+    // }
   } catch (err: any) {
+    window.close();
     localStorage.removeItem('userInfo');
     router.push('/');
     console.log('err:', err)
