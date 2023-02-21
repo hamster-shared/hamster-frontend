@@ -3,9 +3,6 @@
     <div class="flex justify-between login-header">
       <img src="@/assets/images/logo-block.png" class="h-[28px] mt-[16px]" />
     </div>
-    <div>
-      <a-button @click="testLogin">test-login</a-button>
-    </div>
     <div class="text-center login-content ">
       <img src="@/assets/images/logo.png" class="h-[92px]" />
       <div class="text-[32px] text-[#ffffff] font-bold mb-[32px]">Welcome to Hamster</div>
@@ -32,10 +29,6 @@ const router = useRouter()
 
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
-
-const testLogin = () => {
-  window.open('/test','','width=500, height=500')
-};
 
 const loginBox = () => {
   const state = new Date().getTime();
