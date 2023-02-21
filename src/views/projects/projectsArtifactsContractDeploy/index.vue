@@ -105,6 +105,7 @@ import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import starkNetModal from "../components/starkNetModal.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import { useDeployAddressStore } from "@/stores/useDeployAddress";
 import { useI18n } from 'vue-i18n';
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
 import { apiProjectsContractDeploy, apiGetProjectsDetail, apiContractDeployId } from "@/apis/projects";
@@ -114,6 +115,7 @@ import { connect, getStarknet } from "@argent/get-starknet";
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
+const deployAddress = useDeployAddressStore();
 const router = useRouter();
 const { t } = useI18n()
 
@@ -165,6 +167,7 @@ const connectWallet = async () => {
 }
 
 const deployContract = async (item: any) => {
+  loading.value = true;
   try {
     const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
     // const walletData = await connectWallet();
@@ -176,7 +179,21 @@ const deployContract = async (item: any) => {
     console.log(response.contract_address)
     setProjectsContractDeploy('', response.contract_address[0], item.id)
 
+    const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
+    console.log(starkWareData, 'starkWareData')
+    deployAddress.setDeployAddress(starkWareData)
+    localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
+    if (receiptResponsePromise.status === 'ACCEPTED_ON_L2') {
+      // contract_address.value = response.contract_address[0]
+      console.log('交易成功的结束了')
+      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+    } else {
+      loading.value = false
+    }
+    // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+
   } catch (err: any) {
+    loading.value = false
     // connectWallet()
     console.log('err:', err)
   }

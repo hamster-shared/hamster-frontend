@@ -138,7 +138,7 @@ const changeContent = (type: string) => {
 
       setTimeout(() => {
         isShowGX.value = true;
-      }, 2000);
+      }, 1000);
 
       setTimeout(() => {
         if (keyValue.value === "1") { //project页面 
@@ -146,7 +146,7 @@ const changeContent = (type: string) => {
         } else if (keyValue.value === "2"){ //nodeServer页面
           router.push('/node-service/RPCs')
         }
-      }, 3000);
+      }, 1500);
     }
   }
 }
@@ -183,13 +183,13 @@ const changeContent = (type: string) => {
   overflow: hidden; 
 }
 .welcome-gx{
-  -webkit-animation: scaleGX 1s 1;
-  animation: scaleGX 1s 1;
+  -webkit-animation: scaleGX 500ms 1;
+  animation: scaleGX 500ms 1;
 }
 @keyframes scaleGX {
   
   0% {
-    opacity: 0;
+    opacity: 100;
     transform: scale(0.2, 0.2);
   }
   100% {
@@ -214,8 +214,8 @@ const changeContent = (type: string) => {
   }
 }
 .content-bg-hidden{
-  -webkit-animation: scaleH 2s 1;
-  animation: scaleH 2s 1; 
+  -webkit-animation: scaleH 1s 1;
+  animation: scaleH 1s 1; 
 }
 @keyframes scaleH {
   

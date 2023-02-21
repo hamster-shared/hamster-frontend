@@ -35,7 +35,7 @@
     <div class="col-span-2 p-[32px]">
       <div>
         <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :abiInfo="abiInfo"
-          :buttonInfo="buttonInfo" ref="contractForm">
+          :frameType="frameType" :buttonInfo="buttonInfo" ref="contractForm">
         </ContractForm>
       </div>
       <!-- <div v-if="!checkValue">noData</div> -->
@@ -52,9 +52,10 @@ const theme = useThemeStore();
 const props = defineProps({
   contractAddress: String,
   abiInfo: String,
+  frameType: Number,
 });
 
-const { contractAddress, abiInfo } = toRefs(props);
+const { contractAddress, abiInfo, frameType } = toRefs(props);
 
 const sendAbis = reactive([])
 const callAbis = reactive([])

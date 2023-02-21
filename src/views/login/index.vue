@@ -28,7 +28,7 @@ import { useRouter } from "vue-router";
 const router = useRouter()
 
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
-const oauthUrl = ref('https://github.com/login/oauth/authorize')
+const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
 const loginBox = () => {
   const state = new Date().getTime();

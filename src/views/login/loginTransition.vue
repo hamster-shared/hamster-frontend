@@ -11,7 +11,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin, apiGetUser, apiInstall } from "@/apis/login";
+import { apiLogin, apiInstall } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
@@ -23,22 +23,25 @@ const login = async () => {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      window.close();
+      window.opener.location.reload();
+    }
   } catch (err: any) {
     window.close();
     localStorage.removeItem('userInfo');
     router.push('/');
     message.error(err.message);
   }
-
 }
+
 
 const installGitHub = async () => {
   try {
     const { data } = await apiInstall(code.value);
     localStorage.setItem('token', data);
-    console.log(localStorage.getItem('firstState'), 'firstState1')
     window.close();
-    console.log(localStorage.getItem('firstState'), 'firstState2')
     window.opener.location.reload();
   } catch (err: any) {
     window.close();
@@ -71,10 +74,16 @@ onMounted(async () => {
       const url = `${oauthUrl.value}?state=${state}`;
       const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
     } else {
-      code.value = router.currentRoute.value.query?.code || '';
-      if (code.value) {
-        installGitHub()
+      if (userInfo.token) {
+        localStorage.setItem('token', userInfo.token);
+        router.push('/projects')
+      } else {
+        code.value = router.currentRoute.value.query?.code || '';
+        if (code.value) {
+          installGitHub()
+        }
       }
+
     }
   }
 })

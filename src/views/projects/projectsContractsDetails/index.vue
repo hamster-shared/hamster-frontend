@@ -21,7 +21,8 @@
         </a-table>
         <div class="">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" @checkContract="checkContract">
+          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
+            @checkContract="checkContract">
           </ContractList>
         </div>
       </a-tab-pane>
@@ -31,12 +32,13 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, computed, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import Breadcrumb from "../components/Breadcrumb.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import Breadcrumb from "../components/Breadcrumb.vue";
 import ContractList from "./components/ContractList.vue";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiGetProjectsDetail } from "@/apis/projects"
 const router = useRouter();
 const theme = useThemeStore();
 
@@ -49,6 +51,7 @@ const queryJson = reactive({
 const activeKey = ref('');
 const activeKeyId = ref('');
 const projectName = ref('');
+const frameType = ref(0);
 const versionData = reactive([]);
 const contractName = ref('');
 const contractAddress = ref('');
@@ -80,6 +83,11 @@ const columns = [
 // const tabList = reactive([]);
 const contractDeployDetail = reactive({})
 const contractInfo = reactive({})
+
+const getProjectsDetail = async () => {
+  const { data } = await apiGetProjectsDetail(queryJson.id)
+  frameType.value = data.frameType
+}
 
 const getContractDeployDetail = async () => {
   const { data } = await apiGetContractDeployDetail(queryJson)
@@ -142,6 +150,7 @@ onMounted(() => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   getContractDeployDetail()
+  getProjectsDetail()
 })
 
 </script>

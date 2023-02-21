@@ -1,6 +1,6 @@
 <template>
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
-    :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit1">
+    :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
     <a-form-item>
       <div class="flex justify-between mb-[32px]">
         <span class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
@@ -35,18 +35,21 @@
 <script lang='ts' setup>
 import { reactive, toRefs, watch, ref } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
+import { useDeployAddressStore } from "@/stores/useDeployAddress";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import { message } from 'ant-design-vue';
 import { connect, getStarknet } from "@argent/get-starknet";
 import { stark, number } from "starknet";
-const theme = useThemeStore()
+const theme = useThemeStore();
+const deployAddress = useDeployAddressStore();
 
 const props = defineProps({
   contractAddress: String,
   checkValue: String,
   abiInfo: String,
   buttonInfo: String,
+  frameType: Number,
   inputs: { type: Array, default: () => { return [] } },
 
 })
@@ -58,12 +61,15 @@ const formState = reactive({
   contractAddress: '',
   checkValue: '',
   abiInfo: '',
+  frameType: Number,
 });
+
+const testData = reactive({});
 
 const formData = reactive({});
 
-const { checkValue, contractAddress, abiInfo, inputs } = toRefs(props)
-Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
+const { checkValue, contractAddress, abiInfo, inputs, frameType } = toRefs(props)
+Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 // console.log(formState, 'formState')
 
 const connectWallet = async () => {
@@ -74,19 +80,12 @@ const connectWallet = async () => {
   return windowStarknet
 }
 
-const submit1 = async () => {
-  const wallet = await connectWallet();
-  if (JSON.stringify(formData) == "{}") {
-    executeGet(wallet)
-  } else {
-    executeSet(wallet)
-  }
-}
-
-const executeGet = async (wallet: any) => {
-  console.log(formData, formState.checkValue, '8989')
+const executeGet = async () => {
+  isSend.value = true
+  // const data = JSON.parse(localStorage.getItem('deployAddressData'))
+  // console.log(formData, formState.checkValue, '8989')
   try {
-    const callResp = await wallet.account.callContract({
+    const callResp = await deployAddress.deployAddressValue.account.callContract({
       entrypoint: formState.checkValue,
       contractAddress: formState.contractAddress,
       calldata: stark.compileCalldata({
@@ -94,22 +93,32 @@ const executeGet = async (wallet: any) => {
     })
     const firstReturnData = callResp.result[0]
     console.log(firstReturnData, number.toFelt(firstReturnData))
+    hashValue.value = number.toFelt(firstReturnData)
   } catch (err: any) {
     message.error(err)
+  } finally {
+    isSend.value = false;
   }
 
 }
-const executeSet = async (wallet: any) => {
+const executeSet = async () => {
+  isSend.value = true
   // console.log(formData, 'set')
   try {
-    const invokeResponse = await wallet.account.execute({
+    const invokeResponse = await deployAddress.deployAddressValue.account.execute({
       contractAddress: formState.contractAddress,
       entrypoint: formState.checkValue,
       calldata: stark.compileCalldata(formData)
     })
     console.log(invokeResponse.transaction_hash)
+    const receiptResponsePromise = await deployAddress.deployAddressValue.account.waitForTransaction(invokeResponse.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
+
+    console.log(receiptResponsePromise, 'receiptResponsePromise')
+    hashValue.value = invokeResponse.transaction_hash;
   } catch (err: any) {
     message.error(err)
+  } finally {
+    isSend.value = false;
   }
 
 
@@ -117,60 +126,92 @@ const executeSet = async (wallet: any) => {
 
 
 const submit = async () => {
-  isSend.value = true
-  const { ethereum } = window;
+  // const data1 = await connectWallet()
+  // return
+  // console.log(formState.frameType)
+  // console.log(JSON.parse(localStorage.getItem('deployAddressData')), 'uuuuu')
 
-  let provider = new ethers.providers.Web3Provider(ethereum);
-  let abi = YAML.parse(formState.abiInfo);
-  // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
+  // console.log(JSON.stringify(deployAddress.deployAddressValue) === '{}')
+  console.log(deployAddress.deployAddressValue, 'deployAddressValue')
+  if (formState.frameType == 4) {
+    console.log(formState.frameType, 'formState.frameType')
+    if (JSON.stringify(deployAddress.deployAddressValue) == '{}') {
 
-  // console.log(formData, ...(Object.values(formData)), formState.checkValue, 'formData')
-  try {
-    let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
-    if (JSON.stringify(formData) == "{}") {
-
-      contract[formState.checkValue]().then((tx: any) => {
-        console.log(tx, 'tx')
-
-        // tx.wait().then((result: any) => {
-        isSend.value = false;
-        hashValue.value = tx;
-        //   // console.log(result, 'tx send success!')
-        // }).catch((err: any) => {
-        //   message.error('调用失败')
-        //   hashValue.value = 'No Data';
-        //   console.log(err, 'err1')
-        // })
-      }).catch((err: any) => {
-        message.error('调用失败')
-        hashValue.value = 'No Data';
-        console.log(err, 'err2')
-        isSend.value = false;
-      })
+      const data1 = await connectWallet()
+      Object.assign(testData, data1)
+      console.log(data1, 'data1')
+      deployAddress.setDeployAddress(testData)
+      // return
+      if (JSON.stringify(formData) == "{}") {
+        executeGet()
+      } else {
+        executeSet()
+      }
     } else {
-      contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-        // console.log(tx, tx.hash, 'tx')
+      if (JSON.stringify(formData) == "{}") {
+        executeGet()
+      } else {
+        executeSet()
+      }
+    }
 
-        tx.wait().then((result: any) => {
+  } else {
+    isSend.value = true
+    const { ethereum } = window;
+
+    let provider = new ethers.providers.Web3Provider(ethereum);
+    let abi = YAML.parse(formState.abiInfo);
+    // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
+
+    // console.log(formData, ...(Object.values(formData)), formState.checkValue, 'formData')
+    try {
+      let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+      if (JSON.stringify(formData) == "{}") {
+
+        contract[formState.checkValue]().then((tx: any) => {
+          console.log(tx, 'tx')
+
+          // tx.wait().then((result: any) => {
           isSend.value = false;
-          hashValue.value = tx.hash;
-          // console.log(result, 'tx send success!')
+          hashValue.value = tx;
+          //   // console.log(result, 'tx send success!')
+          // }).catch((err: any) => {
+          //   message.error('调用失败')
+          //   hashValue.value = 'No Data';
+          //   console.log(err, 'err1')
+          // })
         }).catch((err: any) => {
           message.error('调用失败')
           hashValue.value = 'No Data';
-          console.log(err, 'err3')
+          console.log(err, 'err2')
+          isSend.value = false;
         })
-      }).catch((err: any) => {
-        message.error('调用失败')
-        hashValue.value = 'No Data';
-        console.log(err.reason, 'err4')
-        isSend.value = false;
-      })
+      } else {
+        contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+          // console.log(tx, tx.hash, 'tx')
+
+          tx.wait().then((result: any) => {
+            isSend.value = false;
+            hashValue.value = tx.hash;
+            // console.log(result, 'tx send success!')
+          }).catch((err: any) => {
+            message.error('调用失败')
+            hashValue.value = 'No Data';
+            console.log(err, 'err3')
+          })
+        }).catch((err: any) => {
+          message.error('调用失败')
+          hashValue.value = 'No Data';
+          console.log(err.reason, 'err4')
+          isSend.value = false;
+        })
+      }
+    } catch (errorInfo) {
+      isSend.value = false;
+      message.error('调用失败')
+      // console.log(errorInfo, 'errorInfo')
     }
-  } catch (errorInfo) {
-    isSend.value = false;
-    message.error('调用失败')
-    // console.log(errorInfo, 'errorInfo')
+
   }
 }
 
