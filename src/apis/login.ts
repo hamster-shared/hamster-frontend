@@ -29,3 +29,12 @@ export function apiGetUser() {
     method: "get",
   });
 }
+
+//  /api/github/install
+export function apiInstall(code:string) {
+  return httpRequest({
+    url: "/api/github/install",
+    method: "post",
+    data: {code: code},
+  });
+}

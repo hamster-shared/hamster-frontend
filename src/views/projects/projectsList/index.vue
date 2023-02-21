@@ -41,7 +41,8 @@
     </div>
   </div>
   <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
-    <img class="h-full w-full" src="@/assets/images/project-guide.jpg" />
+    <img src="@/assets/images/project-guide.jpg" class="h-full w-full dark:hidden" />
+    <img src="@/assets/images/project-guide-dark.jpg" class="h-full w-full hidden dark:inline-block" />
     <div class="absolute bottom-[30%] flex justify-center w-full">
       <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
     </div>

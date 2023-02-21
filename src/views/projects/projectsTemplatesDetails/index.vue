@@ -15,10 +15,18 @@
       </div>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-        <a-button type="primary" class="ml-4" :loading="loading" @click="createProject">{{ createTemplate }}</a-button>
+        <a-button type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{ createTemplate }}</a-button>
       </div>
     </div>
-
+    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible" title="Create by template" @cancel="handleCancel">
+      <span class="text-sm">Project Name</span>
+      <a-input placeholder="Project Name" v-model:value="projectNameValue" allowClear/>
+      <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
+      <span class="text-sm">Great project names are short and memorable.</span>
+      <div class="mt-8 text-center">
+        <a-button type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
+      </div>
+    </a-modal>
 
     <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" :showUrl="showUrl" v-if="params.type === '2'">
     </FrontendTemplateDeatilVue>
@@ -127,9 +135,9 @@
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue"
-import { apiAddProjects } from "@/apis/projects";
+import { apiAddProjects, apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesDetail, apiFrontendTemplatesDetail } from "@/apis/templates";
-import { message } from 'ant-design-vue';
+import { message, Result } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
 import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
@@ -137,8 +145,12 @@ const theme = useThemeStore()
 
 const router = useRouter();
 const { params } = useRoute();
-const loading = ref(false);
+const createTemplateLoading = ref(false);
+const createProjectLoading = ref(false)
 const createTemplate = ref('Create by Template')
+const createProjectVisible = ref(false)
+const projectNameValue = ref('')
+const errorMsg = ref()
 const templateId = ref(params.templateId);
 const projectType = ref(params.type);
 const activeKey = ref("1");
@@ -284,14 +296,45 @@ const getProjectsContract = async () => {
   // }
 };
 
-const createProject = async () => {
-  loading.value = true;
+const showModal = async () => {
+  createTemplateLoading.value = true;
   createTemplate.value = 'Create by...'
+  createProjectVisible.value = true
+}
+
+const checkDupName = computed(async () => {
+  try {
+    createProjectLoading.value = true;
+    //校验仓库名称是否存在
+    const userInfo = localStorage.getItem('userInfo');
+    const params = {
+      owner: JSON.parse(userInfo)?.username,
+      name: projectNameValue.value,
+    }
+    const res = await apiDupProjectName(params);
+    console.log('res:',res)
+    if (res.data === false) {
+      return errorMsg.value = "Project Name duplication"
+    } else if(projectNameValue.value == ''){
+      return errorMsg.value = "Please enter Project Name"
+    } else {
+      return true
+    }
+  } catch (error: any) {
+    console.log("erro:", error)
+    return errorMsg.value = "Project Name check failure"
+  } finally {
+    // errorMsg.value = ''
+    createProjectLoading.value = false;
+  }
+})
+
+const createProject = async ()=>{
   try {
     const userInfo = localStorage.getItem('userInfo');
     const createProjectTemp = localStorage.getItem('createProjectTemp');
     const params = {
-      name: JSON.parse(createProjectTemp)?.name,
+      name: projectNameValue.value,
       type: JSON.parse(createProjectTemp)?.type - 0,
       templateOwner: templatesDetail.value.author,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
@@ -304,17 +347,39 @@ const createProject = async () => {
       params.frameType = templatesDetail.value.templateType - 0;
     }
     const res = await apiAddProjects(params);
+    console.log('apiAddProjects:',res.data)
     message.success(res.message);
 
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
-    router.push("/projects");
+    router.push(`/projects/integrated/${res.data}`);
   } catch (error: any) {
-    console.log("erro:", error)
+    console.log("error:", error)
     message.error(error.response.data.message);
   } finally {
-    loading.value = false;
-    createTemplate.value = 'Create by Template'
+    createProjectLoading.value = false
   }
+}
+
+const handleOk = async ()=>{
+  createProjectLoading.value = true
+  checkDupName.value.then((result)=>{
+    if (result === true){
+      console.log('success',result)
+      createProject()
+    } else {
+      console.log('fail',result)
+      errorMsg.value = result
+      createProjectLoading.value = false
+    }
+  })
+}
+
+const handleCancel = ()=>{
+  createProjectLoading.value = false
+  createTemplateLoading.value = false;
+  createTemplate.value = 'Create by Template'
+  errorMsg.value = ''
+  projectNameValue.value = ''
 }
 
 const setText = (str: String) => {
@@ -402,4 +467,19 @@ pre {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
+</style>
+
+<style lang="less">
+  .create-template-modal {
+    .ant-modal-body {
+      .ant-input-affix-wrapper {
+        border-color: #d9d9d9;
+        margin: 8px 0;
+      }
+    }
+    .ant-modal-header {
+      border-bottom: none !important;
+      padding-bottom: 8px;
+    }
+  }
 </style>
