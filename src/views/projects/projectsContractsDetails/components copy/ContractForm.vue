@@ -1,6 +1,6 @@
 <template>
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
-    :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit1">
+    :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
     <a-form-item>
       <div class="flex justify-between mb-[32px]">
         <span class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
@@ -38,7 +38,6 @@ import { useThemeStore } from "@/stores/useTheme";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import { message } from 'ant-design-vue';
-import { connect, getStarknet } from "@argent/get-starknet";
 import { stark, number } from "starknet";
 const theme = useThemeStore()
 
@@ -66,53 +65,29 @@ const { checkValue, contractAddress, abiInfo, inputs } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value })
 // console.log(formState, 'formState')
 
-const connectWallet = async () => {
-  const windowStarknet = await connect({
-    include: ["argentX"],
-  })
-  await windowStarknet?.enable({ starknetVersion: "v4" })
-  return windowStarknet
-}
-
 const submit1 = async () => {
-  const wallet = await connectWallet();
-  if (JSON.stringify(formData) == "{}") {
-    executeGet(wallet)
-  } else {
-    executeSet(wallet)
-  }
-}
-
-const executeGet = async (wallet: any) => {
-  console.log(formData, formState.checkValue, '8989')
-  try {
-    const callResp = await wallet.account.callContract({
-      entrypoint: formState.checkValue,
-      contractAddress: formState.contractAddress,
-      calldata: stark.compileCalldata({
-      }),
-    })
-    const firstReturnData = callResp.result[0]
-    console.log(firstReturnData, number.toFelt(firstReturnData))
-  } catch (err: any) {
-    message.error(err)
-  }
 
 }
-const executeSet = async (wallet: any) => {
-  // console.log(formData, 'set')
-  try {
-    const invokeResponse = await wallet.account.execute({
-      contractAddress: formState.contractAddress,
-      entrypoint: formState.checkValue,
-      calldata: stark.compileCalldata(formData)
+
+const executeGet = async () => {
+  const callResp = await wallet.value.account.callContract({
+    contractAddress: formState.contractAddress,
+    calldata: stark.compileCalldata({
+    }),
+    entrypoint: 'get_balance',
+  })
+  const firstReturnData = callResp.result[0]
+  console.log(number.toFelt(firstReturnData))
+}
+const executeSet = async () => {
+  const invokeResponse = await wallet.value.account.execute({
+    contractAddress: formState.contractAddress,
+    entrypoint: 'increase_balance',
+    calldata: stark.compileCalldata({
+      amount: '10'
     })
-    console.log(invokeResponse.transaction_hash)
-  } catch (err: any) {
-    message.error(err)
-  }
-
-
+  })
+  console.log(invokeResponse.transaction_hash)
 }
 
 

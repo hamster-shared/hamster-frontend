@@ -16,7 +16,7 @@ import projectsArtifactsContractDeploy from "../views/projects/projectsArtifacts
 import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
 import ProjectsStandardContract from "../views/projects/projectsStandardContract/index.vue";
 import ProjectsFrontendDetails from "../views/projects/projectsFrontendDetails/index.vue";
-import ProjectsIntegrated from "../views/projects/projectsIntegrated/index.vue"
+import ProjectsIntegrated from "../views/projects/projectsIntegrated/index.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [

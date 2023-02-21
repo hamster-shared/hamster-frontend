@@ -34,9 +34,6 @@
 import { ref, computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Breadcrumb from "../components/Breadcrumb.vue";
-import noData from "./components/noData.vue";
-import YAML from "yaml";
-import * as ethers from "ethers";
 import { useThemeStore } from "@/stores/useTheme";
 import ContractList from "./components/ContractList.vue";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
@@ -52,9 +49,7 @@ const queryJson = reactive({
 const activeKey = ref('');
 const activeKeyId = ref('');
 const projectName = ref('');
-const hasData = ref(true);
 const versionData = reactive([]);
-const dataSource = ref([]);
 const contractName = ref('');
 const contractAddress = ref('');
 const selectedRow = ref(0);
