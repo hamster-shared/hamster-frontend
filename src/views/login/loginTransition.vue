@@ -11,7 +11,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin, apiGetUser, apiInstall } from "@/apis/login";
+import { apiLogin, apiInstall } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
@@ -23,32 +23,13 @@ const login = async () => {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
-    // localStorage.setItem('token', data.token);
-    // console.log("login:", data);
   } catch (err: any) {
     window.close();
-    localStorage.removeItem('userinfo');
+    localStorage.removeItem('userInfo');
     router.push('/');
     message.error(err.message);
-  } finally {
-    // getUser();
   }
-
 }
-
-// const getUser = async () => {
-//   try {
-//     const { data } = await apiGetUser();
-//     // console.log("getUser:", data);
-//     localStorage.setItem('firstState', data.firstState.toString());
-//     localStorage.setItem('userInfo', JSON.stringify(data));
-//   } catch (error: any) {
-//     console.log("erro:", error)
-//   } finally {
-//     window.close();
-//     window.opener.location.reload();
-//   }
-// }
 
 const installGitHub = async () => {
   try {
@@ -58,9 +39,9 @@ const installGitHub = async () => {
     window.opener.location.reload();
   } catch (err: any) {
     window.close();
-    localStorage.removeItem('userinfo');
+    localStorage.removeItem('userInfo');
     router.push('/');
-    console.log('err:', err)
+    message.error(err.message);
   }
 }
 
@@ -85,30 +66,14 @@ onMounted(async () => {
       const state = new Date().getTime();
       const oauthUrl = ref('https://github.com/apps/hamster-test/installations/new');
       const url = `${oauthUrl.value}?state=${state}`;
-      const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
     } else {
       code.value = router.currentRoute.value.query?.code || '';
       if (code.value) {
-        installGitHub(code.value)
+        installGitHub()
       }
     }
   }
-
-
-  // if (localStorage.getItem('token')) {
-  //   console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
-  //   if (localStorage.getItem('firstState') === "0") {
-  //     //第一次登录
-  //     router.push('/welcome')
-  //   } else {
-  //     router.push('/projects')
-  //   }
-  // } else {
-  //   code.value = router.currentRoute.value.query?.code;
-  //   if (code.value) {
-  //     login()
-  //   }
-  // }
 })
 </script>
 <style lang='less' scoped>
