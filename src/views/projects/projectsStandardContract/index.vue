@@ -184,6 +184,7 @@ const createProject = async () => {
     loading.value = false;
   } finally {
     loading.value = false;
+    createCodeLoading.value = false
   }
 }
 
