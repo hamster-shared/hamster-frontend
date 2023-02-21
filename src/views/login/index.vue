@@ -28,12 +28,10 @@ import { useRouter } from "vue-router";
 const router = useRouter()
 
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
-// const clientId = ref('a782e08a53e86517dcc5');
 const oauthUrl = ref('https://github.com/login/oauth/authorize')
 
 const loginBox = () => {
   const state = new Date().getTime();
-  // const url = `${oauthUrl.value}?state=${state}`;
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
   const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
   myWindow?.focus()
@@ -41,7 +39,7 @@ const loginBox = () => {
 
 onMounted(() => {
   if (localStorage.getItem('token')) {
-    console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
+    // console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')

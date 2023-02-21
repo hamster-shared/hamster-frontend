@@ -23,32 +23,14 @@ const login = async () => {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
-    // localStorage.setItem('token', data.token);
-    // console.log("login:", data);
   } catch (err: any) {
     window.close();
     localStorage.removeItem('userInfo');
     router.push('/');
     message.error(err.message);
-  } finally {
-    // getUser();
   }
 
 }
-
-// const getUser = async () => {
-//   try {
-//     const { data } = await apiGetUser();
-//     // console.log("getUser:", data);
-//     localStorage.setItem('firstState', data.firstState.toString());
-//     localStorage.setItem('userInfo', JSON.stringify(data));
-//   } catch (error: any) {
-//     console.log("erro:", error)
-//   } finally {
-//     window.close();
-//     window.opener.location.reload();
-//   }
-// }
 
 const installGitHub = async () => {
   try {
@@ -58,12 +40,6 @@ const installGitHub = async () => {
     window.close();
     console.log(localStorage.getItem('firstState'), 'firstState2')
     window.opener.location.reload();
-    // if (localStorage.getItem('firstState') === "0") {
-    //   //第一次登录
-    //   router.push('/welcome')
-    // } else {
-    //   router.push('/projects')
-    // }
   } catch (err: any) {
     window.close();
     localStorage.removeItem('userInfo');
@@ -101,22 +77,6 @@ onMounted(async () => {
       }
     }
   }
-
-
-  // if (localStorage.getItem('token')) {
-  //   console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
-  //   if (localStorage.getItem('firstState') === "0") {
-  //     //第一次登录
-  //     router.push('/welcome')
-  //   } else {
-  //     router.push('/projects')
-  //   }
-  // } else {
-  //   code.value = router.currentRoute.value.query?.code;
-  //   if (code.value) {
-  //     login()
-  //   }
-  // }
 })
 </script>
 <style lang='less' scoped>
