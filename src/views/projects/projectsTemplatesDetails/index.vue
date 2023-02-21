@@ -297,14 +297,16 @@ const getProjectsContract = async () => {
 };
 
 const showModal = async () => {
-  createTemplateLoading.value = true;
-  createTemplate.value = 'Create by...'
+  // createTemplateLoading.value = true;
+  // createTemplate.value = 'Create by...'
   createProjectVisible.value = true
 }
 
 const checkDupName = computed(async () => {
   try {
     createProjectLoading.value = true;
+    createTemplateLoading.value = true;
+    createTemplate.value = 'Create by...'
     //校验仓库名称是否存在
     const userInfo = localStorage.getItem('userInfo');
     const params = {
