@@ -23,6 +23,11 @@ const login = async () => {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
     localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      window.close();
+      window.opener.location.reload();
+    }
   } catch (err: any) {
     window.close();
     localStorage.removeItem('userInfo');
@@ -31,17 +36,20 @@ const login = async () => {
   }
 }
 
+
 const installGitHub = async () => {
   try {
-    const { data } = await apiInstall();
-    localStorage.setItem('token', data.token);
+    const { data } = await apiInstall(code.value);
+    localStorage.setItem('token', data);
+    console.log(localStorage.getItem('token'), 'token1');
     window.close();
+    console.log(localStorage.getItem('token'), 'token2')
     window.opener.location.reload();
   } catch (err: any) {
     window.close();
     localStorage.removeItem('userInfo');
     router.push('/');
-    message.error(err.message);
+    console.log('err:', err)
   }
 }
 
