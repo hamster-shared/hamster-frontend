@@ -91,10 +91,6 @@ const getProjectsDetail = async () => {
 
 const getContractDeployDetail = async () => {
   const { data } = await apiGetContractDeployDetail(queryJson)
-  // console.log(data, 'data')
-  // for (let key in data.contractInfo) {
-  //   tabList.push(key)
-  // }
   Object.assign(contractDeployDetail, data)
   Object.assign(contractInfo, data.contractInfo)
 

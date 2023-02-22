@@ -3,51 +3,48 @@
     <div class="flex justify-between">
       <div class="flex items-center">
         <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-          <img
-            src="@/assets/icons/back-white.svg"
-            class="h-[24px] dark:hidden mr-2"
-          />
-          <img
-            src="@/assets/icons/back-dark.svg"
-            class="h-[24px] hidden dark:inline-block mr-2"
-          />
-          back</div>
+          <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
+          <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
+          back
+        </div>
         <div class="ml-4">
-          <img
-            src="@/assets/icons/Line-white.svg"
-            class="h-[16px] dark:hidden"
-          />
-          <img
-            src="@/assets/icons/Line-dark.svg"
-            class="h-[16px] hidden dark:inline-block"
-          />
+          <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
+          <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
         </div>
         <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
-        <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
-          <label v-if="projectType === '1'">Contract</label>
+        <div
+          class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
+          <!-- <label v-if="projectType === '1'">Contract</label>
+          <label v-else-if="projectType === '2'">FrontEnd</label> -->
+          <label v-if="projectType === '1'">
+            <div v-if="projectsDetail.frameType === 1">EVM</div>
+            <div v-if="projectsDetail.frameType === 4">StarkWare</div>
+          </label>
           <label v-else-if="projectType === '2'">FrontEnd</label>
         </div>
       </div>
       <div>
-       <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
-       <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
+        <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
+        <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
       </div>
     </div>
-    <div v-if="Object.keys(projectsDetail).length!==0">
-      <Overview :viewType="viewType" :projectType="projectType" :viewInfo="projectsDetail"  @loadProjects="loadProjects" />
+    <div v-if="Object.keys(projectsDetail).length !== 0">
+      <Overview :viewType="viewType" :projectType="projectType" :viewInfo="projectsDetail"
+        @loadProjects="loadProjects" />
     </div>
-    <Workflows :detailId="detailId" :projectType="projectType" />
-    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
+    <Workflows :detailId="detailId" :projectType="projectType" :frameType="frameType" />
+    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
+      class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] py-[24px] px-[32px]">
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
-          <Contract ref="contractRef" :detailId="detailId"  />
+          <Contract ref="contractRef" :detailId="detailId" />
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2'" key="2" tab="Package">
-          <Package ref="packageRef" pageType="project" :detailId="detailId"  />
+          <Package ref="packageRef" pageType="project" :detailId="detailId" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report">
-          <Report ref="reportRef" :detailId="detailId" :projectType="projectType"  />
+          <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -55,7 +52,7 @@
   <a-modal v-model:visible="visibleModal" :footer="null">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
-      <a-form-item label="Project Name" name="name" >
+      <a-form-item label="Project Name" name="name">
         <a-input v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
       </a-form-item>
     </a-form>
@@ -110,6 +107,7 @@ const formData = reactive({
   userId: JSON.parse(userInfo)?.id,
 });
 const projectsDetail = ref({});
+const frameType = ref(0);
 
 const formRules = computed(() => {
 
@@ -127,7 +125,7 @@ const formRules = computed(() => {
         return Promise.resolve()
       }
     } catch (error: any) {
-      console.log("erro:",error)
+      console.log("erro:", error)
       return Promise.reject("Project Name check failure");
     }
   }
@@ -135,7 +133,7 @@ const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
   return {
-    name: [requiredRule('Name'),{ validator: checkDupName, trigger: "change" }],
+    name: [requiredRule('Name'), { validator: checkDupName, trigger: "change" }],
   };
 });
 
@@ -155,36 +153,38 @@ const handleTabClick = (tab: any) => {
   setTimeout(function () {
     if (tab === "1") {
       contractRef.value.getProjectsContract();
-      
+
     } else if (tab === "2") {
-        packageRef.value.getProjectsPackage();
-      
+      packageRef.value.getProjectsPackage();
+
     } else if (tab === "3") {
-        reportRef.value.getProjectsReports();
+      reportRef.value.getProjectsReports();
     }
   }, 1)
-  
+
 }
 
 const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
+    frameType.value = data.frameType;
+    console.log(data, frameType.value, 'projectsDetail.frameType')
 
-    const recentStatusOld = localStorage.getItem('recentStatus'+data.name);
+    const recentStatusOld = localStorage.getItem('recentStatus' + data.name);
     if (recentStatusOld !== null && recentStatusOld !== undefined) {
       // running - success
       if (JSON.parse(recentStatusOld)?.checkStatus === 1 && data.recentCheck.status === 3
         || JSON.parse(recentStatusOld)?.buildStatus === 1 && data.recentBuild.status === 3) {
-        
+
         if (activeKey.value === "1") {
           contractRef.value.getProjectsContract();
-          
+
         } else if (activeKey.value === "2") {
-            packageRef.value.getProjectsPackage();
-          
+          packageRef.value.getProjectsPackage();
+
         } else if (activeKey.value === "3") {
-            reportRef.value.getProjectsReports();
+          reportRef.value.getProjectsReports();
         }
       }
     }
@@ -192,13 +192,13 @@ const getProjectsDetail = async () => {
       checkStatus: data.recentCheck.status,
       buildStatus: data.recentBuild.status,
     }
-    window.localStorage.setItem("recentStatus"+data.name, JSON.stringify(recentStatus));
+    window.localStorage.setItem("recentStatus" + data.name, JSON.stringify(recentStatus));
 
     localStorage.setItem("projectName", data.name)
     localStorage.setItem("projectId", data.id)
     if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1)
       || projectType.value === '2' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.recentDeploy.status === 1)) {
-      
+
       timer.value = setTimeout(() => {
         //需要定时执行的代码
         getProjectsDetail();
@@ -207,7 +207,7 @@ const getProjectsDetail = async () => {
       clearTimeout(timer.value);
     }
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     // loading.value = false;
   }
@@ -222,7 +222,7 @@ const updateName = async () => {
     message.success(data.message);
     projectsDetail.value.name = formData.name;
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
@@ -237,7 +237,7 @@ const deleteProjects = async () => {
     message.success(data.message);
     router.push("/projects");
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
   } finally {
     deleteModal.value = false;
@@ -246,22 +246,26 @@ const deleteProjects = async () => {
 }
 
 const goBack = () => {
-   router.back();
+  router.back();
 }
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
-:deep(.ant-btn-primary){
+
+:deep(.ant-btn-primary) {
   width: 120px;
   height: 40px;
 }
-:deep(.dark-css .ant-tabs){
+
+:deep(.dark-css .ant-tabs) {
   color: #E0DBD2;
 }
-:deep(.ant-input-affix-wrapper){
+
+:deep(.ant-input-affix-wrapper) {
   border-color: #EBEBEB;
 }
-:deep(.white-css .select-color .ant-select-selection-item){
+
+:deep(.white-css .select-color .ant-select-selection-item) {
   color: var(--ant-primary-color);
 }
 </style>

@@ -70,8 +70,6 @@ const formData = reactive({});
 
 const { checkValue, contractAddress, abiInfo, inputs, frameType } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
-// console.log(formState, 'formState')
-
 const connectWallet = async () => {
   const windowStarknet = await connect({
     include: ["argentX"],
@@ -82,8 +80,6 @@ const connectWallet = async () => {
 
 const executeGet = async () => {
   isSend.value = true
-  // const data = JSON.parse(localStorage.getItem('deployAddressData'))
-  // console.log(formData, formState.checkValue, '8989')
   try {
     const callResp = await deployAddress.deployAddressValue.account.callContract({
       entrypoint: formState.checkValue,
@@ -92,7 +88,7 @@ const executeGet = async () => {
       }),
     })
     const firstReturnData = callResp.result[0]
-    console.log(firstReturnData, number.toFelt(firstReturnData))
+    // console.log(firstReturnData, number.toFelt(firstReturnData))
     hashValue.value = number.toFelt(firstReturnData)
   } catch (err: any) {
     message.error(err)
@@ -110,10 +106,9 @@ const executeSet = async () => {
       entrypoint: formState.checkValue,
       calldata: stark.compileCalldata(formData)
     })
-    console.log(invokeResponse.transaction_hash)
+    // console.log(invokeResponse.transaction_hash)
     const receiptResponsePromise = await deployAddress.deployAddressValue.account.waitForTransaction(invokeResponse.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
-
-    console.log(receiptResponsePromise, 'receiptResponsePromise')
+    // console.log(receiptResponsePromise, 'receiptResponsePromise')
     hashValue.value = invokeResponse.transaction_hash;
   } catch (err: any) {
     message.error(err)
@@ -126,22 +121,15 @@ const executeSet = async () => {
 
 
 const submit = async () => {
-  // const data1 = await connectWallet()
-  // return
-  // console.log(formState.frameType)
-  // console.log(JSON.parse(localStorage.getItem('deployAddressData')), 'uuuuu')
-
-  // console.log(JSON.stringify(deployAddress.deployAddressValue) === '{}')
-  console.log(deployAddress.deployAddressValue, 'deployAddressValue')
+  // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
   if (formState.frameType == 4) {
     console.log(formState.frameType, 'formState.frameType')
     if (JSON.stringify(deployAddress.deployAddressValue) == '{}') {
 
       const data1 = await connectWallet()
       Object.assign(testData, data1)
-      console.log(data1, 'data1')
+      // console.log(data1, 'data1')
       deployAddress.setDeployAddress(testData)
-      // return
       if (JSON.stringify(formData) == "{}") {
         executeGet()
       } else {
@@ -169,27 +157,16 @@ const submit = async () => {
       if (JSON.stringify(formData) == "{}") {
 
         contract[formState.checkValue]().then((tx: any) => {
-          console.log(tx, 'tx')
-
-          // tx.wait().then((result: any) => {
+          // console.log(tx, 'tx')
           isSend.value = false;
           hashValue.value = tx;
-          //   // console.log(result, 'tx send success!')
-          // }).catch((err: any) => {
-          //   message.error('调用失败')
-          //   hashValue.value = 'No Data';
-          //   console.log(err, 'err1')
-          // })
         }).catch((err: any) => {
           message.error('调用失败')
           hashValue.value = 'No Data';
-          console.log(err, 'err2')
           isSend.value = false;
         })
       } else {
         contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-          // console.log(tx, tx.hash, 'tx')
-
           tx.wait().then((result: any) => {
             isSend.value = false;
             hashValue.value = tx.hash;
@@ -197,12 +174,10 @@ const submit = async () => {
           }).catch((err: any) => {
             message.error('调用失败')
             hashValue.value = 'No Data';
-            console.log(err, 'err3')
           })
         }).catch((err: any) => {
           message.error('调用失败')
           hashValue.value = 'No Data';
-          console.log(err.reason, 'err4')
           isSend.value = false;
         })
       }
