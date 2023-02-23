@@ -23,7 +23,7 @@ service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
     // 3Vpes5BrMdokkK38aOpru0fjlm5aTv7A8ofRwJN99FytUH5g3k4FgUZgfii156WV
-    let token = localStorage.getItem("token") || '';
+    let token = localStorage.getItem("token") || 'hJAAUEN+mKkcRgtym/0ToUSI6m5RZvRoXRG+Gc+YCe1zZvAXDb0GRvnATnFKr8/u';
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       (config as Recordable).headers['Access-Token'] = token;
     }
@@ -50,9 +50,9 @@ service.interceptors.response.use(
     return dataAxios;
   },
   function (error: any) {
-    if(error.response.status === 401) {
+    if (error.response.status === 401) {
       localStorage.setItem('token', '');
-      window.location.href='/login';
+      window.location.href = '/login';
     }
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么

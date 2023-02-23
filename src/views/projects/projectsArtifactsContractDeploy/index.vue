@@ -123,7 +123,6 @@ const frameType = ref(1);
 const argsMap = new Map();
 const deployTxHash = ref('');
 const starknetHashData = reactive({});
-// const starknetHashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || reactive({});
 const testData = ref({});
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -175,17 +174,15 @@ const deployContract = async (item: any) => {
       classHash: classHash,
       constructorCalldata: []
     })
-    console.log(response.transaction_hash)
-    console.log(response.contract_address)
+    // console.log(response.transaction_hash)
+    // console.log(response.contract_address)
     setProjectsContractDeploy('', response.contract_address[0], item.id)
 
     const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
-    console.log(starkWareData, 'starkWareData')
     deployAddress.setDeployAddress(starkWareData)
     localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
     if (receiptResponsePromise.status === 'ACCEPTED_ON_L2') {
       // contract_address.value = response.contract_address[0]
-      console.log('交易成功的结束了')
       router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
     } else {
       loading.value = false
@@ -194,8 +191,7 @@ const deployContract = async (item: any) => {
 
   } catch (err: any) {
     loading.value = false
-    // connectWallet()
-    console.log('err:', err)
+    // console.log('err:', err)
   }
 };
 
@@ -252,42 +248,16 @@ const cancelStarkNetModal = () => {
   hasDeclareHash.value = false;
 }
 
-// const contractStarkNetFactory = (item: any) => {
-//   loading.value = true;
-//   starknetVisible.value = true;
-//   setProjectsStarkNetDeploy(item);
-// }
-
-// const setProjectsStarkNetDeploy = async (item: any) => {
-//   const network: any = networkData.find(item => { return item.id === formState.network });
-//   const queryJson = {
-//     contractId: item.id,
-//     id: queryParams.id,
-//     projectId: queryParams.id,
-//     version: formState.version,
-//     network: network.name,
-//   }
-
-//   try {
-//     const { data } = await apiProjectsContractDeploy(queryJson)
-//     getDeployHashById(data)
-//   } catch (err: any) {
-//     loading.value = false;
-//     starknetVisible.value = false;
-//     console.log('err:', err)
-//   }
-// };
-
 const switchToChain = (chainId: string) => {
   window.ethereum && window.ethereum.request({
     method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId}` }],
   }).then((res: any) => {
     message.success('success')
-    console.info(res, '成功')
+    // console.info(res, '成功')
   }).catch((err: any) => {
     message.success('faild')
-    console.info(err, 'err')
+    // console.info(err, 'err')
   })
 }
 
@@ -310,7 +280,6 @@ const deployClick = async () => {
     try {
       const values = await formRef?.value.validateFields();
       projectsContractData.map((item: any) => {
-        // contractStarkNetFactory(item)
         deployContract(item)
       })
     } catch (err: any) {
@@ -322,7 +291,6 @@ const deployClick = async () => {
     // 有值说明已连接钱包
     const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
     if (isWalletAccount == null || isWalletAccount === '[]') {
-      // visible.value = true
       showWallets.value?.onClickConnect();
       // setWalletBtn(true)
     } else {
@@ -436,13 +404,10 @@ const getProjectsDetail = async () => {
   }
 }
 
-// const 
-
 onMounted(async () => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   await getProjectsDetail();
-
   await getProjectsContract()
 })
 

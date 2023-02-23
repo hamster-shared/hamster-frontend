@@ -9,18 +9,31 @@
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
-            <label v-if="projectType === '1'">Contract</label>
+            <!-- <label v-if="projectType === '1'">Contract</label>
+            <label v-else-if="projectType === '2'">FrontEnd</label> -->
+            <label v-if="projectType === '1'">
+              <div v-if="viewInfo.frameType === 1">EVM</div>
+              <div v-if="viewInfo.frameType === 4">StarkWare</div>
+            </label>
             <label v-else-if="projectType === '2'">FrontEnd</label>
           </div>
         </div>
       </div>
       <div>
         <label class="cursor-pointer group text-center w-[100px]"
-          @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status)">
-          <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden group-hover:hidden" />
-          <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-          <img src="@/assets/icons/check-color.svg" class="h-[16px] hidden group-hover:inline-block" />
-          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Check</label>
+          @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)">
+          <lable v-if="projectType === '1' && viewInfo.frameType === 4">
+            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden" />
+            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block" />
+          </lable>
+          <label v-else>
+            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden group-hover:hidden" />
+            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+            <img src="@/assets/icons/check-color.svg" class="h-[16px] hidden group-hover:inline-block" />
+          </label>
+
+          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer"
+            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''">Check</label>
         </label>
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
@@ -89,8 +102,11 @@
           <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{
             fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing")
           }}</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status)"
-            v-if="viewInfo.recentCheck.status === 0">Check Now</div>
+          <div class="text-[#E2B578] cursor-pointer"
+            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
+            @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
+            v-if="viewInfo.recentCheck.status === 0">
+            Check Now</div>
           <div class="text-[#E2B578] cursor-pointer"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
             v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
@@ -222,6 +238,7 @@ const showViewInfoRepositoryUrl = computed(() => {
 })
 
 const emit = defineEmits(["loadProjects"]);
+const disabled = ref(false);
 const showMsg = ref(false);
 const msgParam = ref({
   id: viewInfo?.value.id,
@@ -242,21 +259,27 @@ const goDetail = (id: string, type: string) => {
   router.push("/projects/" + id + "/details/" + type);
 }
 
-const projectsCheck = async (id: String, status: Number) => {
-  try {
-    if (status === 1) {
-      message.info("Executing Now，please wait a moment.");
-    } else {
-      const res = await apiProjectsCheck(id);
-      message.success(res.message);
-      loadView();
+const projectsCheck = async (id: String, status: Number, e: Event) => {
+  if (props.projectType === '1' && props.viewInfo.frameType === 4) {
+    e.stopPropagation()
+  } else {
+    disabled.value = false;
+    try {
+      if (status === 1) {
+        message.info("Executing Now，please wait a moment.");
+      } else {
+        const res = await apiProjectsCheck(id);
+        message.success(res.message);
+        loadView();
+      }
+    } catch (error: any) {
+      console.log("erro:", error)
+      message.error(error.response.data.message);
+    } finally {
+      // loading.value = false;
     }
-  } catch (error: any) {
-    console.log("erro:", error)
-    message.error(error.response.data.message);
-  } finally {
-    // loading.value = false;
   }
+
 };
 
 const projectsBuild = async (id: String, status: Number) => {
@@ -376,7 +399,19 @@ html[data-theme='dark'] {
   a:hover {
     color: #FFFFFF;
   }
+
+  .disabledCheckCss {
+    color: #E0DBD2;
+    cursor: default;
+  }
+
+  .disabledCheckCss:hover {
+    color: #E0DBD2;
+  }
+
 }
+
+
 
 :deep(.ant-btn) {
   border-radius: 8px;
@@ -408,5 +443,16 @@ a:hover {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+
+html[data-theme='light'] {
+  .disabledCheckCss {
+    color: #151210;
+    cursor: default;
+  }
+
+  .disabledCheckCss:hover {
+    color: #151210;
+  }
 }
 </style>

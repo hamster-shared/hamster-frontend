@@ -174,18 +174,18 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  window.scrollTo(0, 0);
-  const token = localStorage.getItem('token') || '';
-  if (!token) {
-    if (to.path !== '/login' && to.path !== '/loginTransition') {
-      next('/')
-    } else {
-      next()
-    }
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   window.scrollTo(0, 0);
+//   const token = localStorage.getItem('token') || '';
+//   if (!token) {
+//     if (to.path !== '/login' && to.path !== '/loginTransition') {
+//       next('/')
+//     } else {
+//       next()
+//     }
+//   } else {
+//     next()
+//   }
+// })
 
 export default router;
