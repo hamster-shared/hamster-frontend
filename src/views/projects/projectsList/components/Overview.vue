@@ -12,8 +12,9 @@
             <!-- <label v-if="projectType === '1'">Contract</label>
             <label v-else-if="projectType === '2'">FrontEnd</label> -->
             <label v-if="projectType === '1'">
-              <div v-if="viewInfo.frameType === 1">EVM</div>
-              <div v-if="viewInfo.frameType === 4">StarkWare</div>
+              <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
+              <!-- <div v-if="viewInfo.frameType === 1">EVM</div>
+              <div v-if="viewInfo.frameType === 4">StarkWare</div> -->
             </label>
             <label v-else-if="projectType === '2'">FrontEnd</label>
           </div>
@@ -222,6 +223,7 @@ import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/pr
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import { useThemeStore } from "@/stores/useTheme";
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts"
 
 const theme = useThemeStore()
 
@@ -401,12 +403,12 @@ html[data-theme='dark'] {
   }
 
   .disabledCheckCss {
-    color: #E0DBD2;
+    color: #FFFFFF;
     cursor: default;
   }
 
   .disabledCheckCss:hover {
-    color: #E0DBD2;
+    color: #FFFFFF;
   }
 
 }
