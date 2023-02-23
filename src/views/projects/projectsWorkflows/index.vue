@@ -21,6 +21,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
+    <!-- <AiAnalysis :aiQuestion="aiQuestion"/> -->
   </div>
 </template>
 <script lang='ts' setup>
@@ -38,6 +39,7 @@ import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
+// import AiAnalysis from './components/AiAnalysis.vue';
 
 const { t } = useI18n()
 const { params } = useRoute();
@@ -54,6 +56,8 @@ const title = ref('');
 const currentName = ref('');
 const inRunning = ref(true);
 const processData = ref([]);
+// const aiQuestion = ref('猫和狗的寿命是多长？')
+
 const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
 const contractListData = reactive([]);
