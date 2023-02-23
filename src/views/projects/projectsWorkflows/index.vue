@@ -12,6 +12,7 @@
       <!-- contract -->
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="checkReportData"></CheckReport>
+      <GasUsageReport v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
       <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
@@ -39,7 +40,9 @@ import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
+import GasUsageReport from './components/GasUsageReport.vue';
 // import AiAnalysis from './components/AiAnalysis.vue';
+
 
 const { t } = useI18n()
 const { params } = useRoute();
@@ -72,6 +75,7 @@ const workflowsDetailsData = reactive({
   workflowsId: params.workflowsId,
   packageId: 0,
   execNumber: 0,
+  frameType: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -189,7 +193,8 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId })
+    console.log("data project:",data);
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType })
   } catch (err: any) {
     console.info(err)
   }
