@@ -20,7 +20,7 @@
           <label v-else>-</label>
         </template>
         <template v-if="column.key === 'action'">
-          <label class="dark:text-[#E0DBD2] text-[#151210] hoverColor" @click="toDeployUrl(record)">{{
+          <label class="dark:text-[#E0DBD2] text-[#151210] cursor-pointer hoverColor" @click="toDeployUrl(record)">{{
             $t('common.deploy')
           }}</label>
           <a-divider type="vertical" />
