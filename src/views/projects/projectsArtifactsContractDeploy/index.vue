@@ -394,7 +394,7 @@ const getProjectsDetail = async () => {
     const { data } = await apiGetProjectsDetail(queryParams.id);
     frameType.value = data.frameType;
     if (frameType.value === 4) {
-      Object.assign(chainData, ['SratkWare'])
+      Object.assign(chainData, ['StarkWare'])
       Object.assign(networkData, [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }])
       const data = await connectWallet();
       Object.assign(starkWareData, data)
