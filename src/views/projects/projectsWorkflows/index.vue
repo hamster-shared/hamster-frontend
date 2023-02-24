@@ -122,6 +122,11 @@ const getCheckReport = async () => {
       list.push(item)
     }
   })
+  data.filter( item => {
+    if(item.checkTool == 'OpenAI'){
+      openAiInfo.value = item
+    }
+  })
 
   list.map((item: any) => {
     item.reportFileData = YAML.parse(item.reportFile);
@@ -219,26 +224,10 @@ const setCurrentName = () => {
   }
 }
 
-const getAiAnalysisReport =async () => {
-  const params = {
-    workflowsId: '266',
-    workflowDetailId: '252',
-  }
-  const { data } = await apiGetWorkFlowsReport(params)
-  // console.log('getAiAnalysisReport:::',data)
-  const aiInfo = data.filter( item => {
-    if(item.checkTool == 'OpenAI'){
-      openAiInfo.value = item
-    }
-  })
-  // console.log('openAiInfo:::',openAiInfo.value)
-}
-
 onMounted(() => {
   getWorkflowsDetails();
   getProjectsDetailData();
   loadInfo();
-  getAiAnalysisReport()
 })
 
 

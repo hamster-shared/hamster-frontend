@@ -43,12 +43,11 @@
         </div>
       </div>
       <div>
-        <a-button v-if="!isConnectedWallet" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
+        <a-button v-if="!isConnectedWallet" @click="showWallet" class="!p-0 ml-8" type="primary">Connect Wallet</a-button>
         <a-dropdown v-if="isConnectedWallet">
           <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
             <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
             <div class="text-[#E2B578] dark:text-[#FFFFFF]">{{ walletAccount }}</div>
-
           </div>
           <template #overlay>
             <a-menu>
