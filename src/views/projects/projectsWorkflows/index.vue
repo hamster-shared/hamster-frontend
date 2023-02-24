@@ -13,7 +13,7 @@
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="checkReportData"></CheckReport>
       <GasUsageReport :gasUsageReportData="gasUsageReportData" v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-      <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
+      <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
@@ -53,7 +53,6 @@ const queryJson = reactive({
   type: params.type,
   projectType: params.projectType,
 })
-
 const detailTimer = ref();
 const title = ref('');
 const currentName = ref('');
@@ -119,9 +118,8 @@ const getCheckReport = async () => {
   const list: any = []
   const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
-  console.log("checkReportData data:", data);
   data.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool !== 'OpenAI' && item.checkTool !== '') {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
       if (item.checkTool === 'eth-gas-reporter') {
         listGas.push(item);
       } else {
@@ -133,7 +131,6 @@ const getCheckReport = async () => {
   yamlData(listGas, issue);
   yamlData(list, issue);
 
-  console.log("checkReportData:", listGas);
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
