@@ -43,7 +43,7 @@
           <div class="text-[24px] font-bold" v-if="templatesDetail.extensions !== '' ">Extensions</div>
           <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" v-if="templatesDetail.extensions !== '' "
             class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
-            <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index"
+            <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index" v-if="templatesDetail.extensions !== '' "
               checked="true">{{ items }}</a-checkbox>
           </div>
           <div v-if="templatesDetail.examples != ''">
@@ -229,11 +229,12 @@ const getContractTemplatesDetail = async () => {
     const { data } = await apiTemplatesDetail(templateId.value.toString());
     templatesDetail.value = data;
     extensionsList.value = data.extensions.split(',');
-    checkboxList.value.forEach((element, index) => {
-      if (extensionsList.value.indexOf(element.label) !== -1) {
-        checkboxList.value[index].checked = true;
-      }
-    });
+    checkboxList.value.push(...extensionsList.value)
+    // checkboxList.value.forEach((element, index) => {
+    //   if (extensionsList.value.indexOf(element.label) !== -1) {
+    //     checkboxList.value[index].checked = true;
+    //   }
+    // });
     const ainInfoData = ref([]);
     if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
       ainInfoData.value = YAML.parse(data.abiInfo).abi;
