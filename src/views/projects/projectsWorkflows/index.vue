@@ -127,27 +127,35 @@ const getCheckReport = async () => {
       }
     }
   })
+
+  issue = yamlData(listGas, issue, "gasUsage");
+  issue = yamlData(list, issue, "report");
+
   data.filter( item => {
     if(item.checkTool == 'OpenAI'){
       openAiInfo.value = item
     }
   })
 
-  yamlData(listGas, issue);
-  yamlData(list, issue);
-
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
 }
 
-const yamlData = (list: any[], issue: number) => {
+const yamlData = (list: any[], issue: number, dataType: string) => {
   list.map((item: any) => {
     item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any) => {
-      issue += val.issue
+    item.reportFileData.map((val: any, index: number) => {
+      if (dataType === "gasUsage") {
+        if (index === 0) {
+          issue += val.issue
+        }
+      } else {
+        issue += val.issue
+      }
     })
   })
+  return issue;
 }
 
 const getDetailFrontendReport = async () => {
