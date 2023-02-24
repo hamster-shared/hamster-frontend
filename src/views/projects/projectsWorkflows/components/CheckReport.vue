@@ -38,7 +38,7 @@
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
             <div class="text-[#73706E]">No issues were detected.</div>
           </div>
-          <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}</div>
+          <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}111</div>
 
           <template #extra>
             <div>
