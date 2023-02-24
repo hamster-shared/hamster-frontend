@@ -12,7 +12,7 @@
       <!-- contract -->
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="checkReportData"></CheckReport>
-      <GasUsageReport v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
+      <GasUsageReport :gasUsageReportData="gasUsageReportData" v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
       <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
@@ -61,6 +61,7 @@ const inRunning = ref(true);
 const processData = ref([]);
 const openAiInfo = ref({})
 
+const gasUsageReportData = reactive([])
 const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
 const contractListData = reactive([]);
@@ -116,21 +117,35 @@ const getContractList = async () => {
 const getCheckReport = async () => {
   let issue = 0;
   const list: any = []
+  const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
+  console.log("checkReportData data:", data);
   data.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool !== '') {
-      list.push(item)
+    if (item.checkTool !== 'sol-profiler' && item.checkTool !== 'OpenAI' && item.checkTool !== '') {
+      if (item.checkTool === 'eth-gas-reporter') {
+        listGas.push(item);
+      } else {
+        list.push(item)
+      }
     }
   })
 
+  yamlData(listGas, issue);
+  yamlData(list, issue);
+
+  console.log("checkReportData:", listGas);
+  Object.assign(gasUsageReportData, listGas);
+  workflowsDetailsData.errorNumber = issue;
+  Object.assign(checkReportData, list);
+}
+
+const yamlData = (list: any[], issue: number) => {
   list.map((item: any) => {
     item.reportFileData = YAML.parse(item.reportFile);
     item.reportFileData.map((val: any) => {
       issue += val.issue
     })
   })
-  workflowsDetailsData.errorNumber = issue;
-  Object.assign(checkReportData, list);
 }
 
 const getDetailFrontendReport = async () => {
