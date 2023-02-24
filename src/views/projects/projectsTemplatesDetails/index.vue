@@ -15,12 +15,15 @@
       </div>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-        <a-button type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{ createTemplate }}</a-button>
+        <a-button type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{
+          createTemplate
+        }}</a-button>
       </div>
     </div>
-    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible" title="Create by template" @cancel="handleCancel">
+    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible"
+      title="Create by template" @cancel="handleCancel">
       <span class="text-sm">Project Name</span>
-      <a-input placeholder="Project Name" v-model:value="projectNameValue" allowClear/>
+      <a-input placeholder="Project Name" v-model:value="projectNameValue" allowClear />
       <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
@@ -98,7 +101,7 @@
               </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="Events">
+          <a-tab-pane key="2" tab="Events" v-if="eventAllList.length > 0">
             <div class="flex">
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4"><!--  h-[300px] overflow-auto -->
                 <div @click="setEventList(item)" :class="{ '!text-[#E2B578]': item.name === eventName }"
@@ -134,13 +137,14 @@
 <script lang='ts' setup>
 import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import CodeEditor from "@/components/CodeEditor.vue"
+import CodeEditor from "@/components/CodeEditor.vue";
 import { apiAddProjects, apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesDetail, apiFrontendTemplatesDetail } from "@/apis/templates";
-import { message, Result } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
 import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
+import YAML from "yaml";
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -229,18 +233,32 @@ const getContractTemplatesDetail = async () => {
         checkboxList.value[index].checked = true;
       }
     });
-    // console.log(JSON.parse(data.abiInfo))
-    JSON.parse(data.abiInfo).forEach((element: any) => {
+    const ainInfoData = ref([]);
+    if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
+      ainInfoData.value = YAML.parse(data.abiInfo).abi;
+    } else {
+      ainInfoData.value = YAML.parse(data.abiInfo);
+    }
+    ainInfoData.value.forEach((element: any) => {
       if (element.type === 'function') {
-        if (element.name === 'approve') {
-          functionList.value = element.inputs;
-          functionName.value = element.name;
+        if (Object.prototype.toString.call(ainInfoData) === '[object Object]') {
+          if (!element.stateMutability) {
+            sendList.value.push(element)
+          } else if (element.stateMutability === 'view') {
+            callList.value.push(element)
+          }
+        } else {
+          if (element.name === 'approve') {
+            functionList.value = element.inputs;
+            functionName.value = element.name;
+          }
+          if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
+            sendList.value.push(element)
+          } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
+            callList.value.push(element)
+          }
         }
-        if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
-          sendList.value.push(element)
-        } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
-          callList.value.push(element)
-        }
+
       }
       if (element.type === 'event') {
         eventAllList.value.push(element);
@@ -297,8 +315,6 @@ const getProjectsContract = async () => {
 };
 
 const showModal = async () => {
-  // createTemplateLoading.value = true;
-  // createTemplate.value = 'Create by...'
   createProjectVisible.value = true
 }
 
@@ -314,10 +330,10 @@ const checkDupName = computed(async () => {
       name: projectNameValue.value,
     }
     const res = await apiDupProjectName(params);
-    console.log('res:',res)
+    console.log('res:', res)
     if (res.data === false) {
       return errorMsg.value = "Project Name duplication"
-    } else if(projectNameValue.value == ''){
+    } else if (projectNameValue.value == '') {
       return errorMsg.value = "Please enter Project Name"
     } else {
       return true
@@ -326,12 +342,11 @@ const checkDupName = computed(async () => {
     console.log("erro:", error)
     return errorMsg.value = "Project Name check failure"
   } finally {
-    // errorMsg.value = ''
     createProjectLoading.value = false;
   }
 })
 
-const createProject = async ()=>{
+const createProject = async () => {
   try {
     const userInfo = localStorage.getItem('userInfo');
     const createProjectTemp = localStorage.getItem('createProjectTemp');
@@ -349,7 +364,7 @@ const createProject = async ()=>{
       params.frameType = templatesDetail.value.templateType - 0;
     }
     const res = await apiAddProjects(params);
-    console.log('apiAddProjects:',res.data)
+    console.log('apiAddProjects:', res.data)
     message.success(res.message);
 
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
@@ -362,21 +377,21 @@ const createProject = async ()=>{
   }
 }
 
-const handleOk = async ()=>{
+const handleOk = async () => {
   createProjectLoading.value = true
-  checkDupName.value.then((result)=>{
-    if (result === true){
-      console.log('success',result)
+  checkDupName.value.then((result) => {
+    if (result === true) {
+      console.log('success', result)
       createProject()
     } else {
-      console.log('fail',result)
+      console.log('fail', result)
       errorMsg.value = result
       createProjectLoading.value = false
     }
   })
 }
 
-const handleCancel = ()=>{
+const handleCancel = () => {
   createProjectLoading.value = false
   createTemplateLoading.value = false;
   createTemplate.value = 'Create by Template'
@@ -472,16 +487,17 @@ pre {
 </style>
 
 <style lang="less">
-  .create-template-modal {
-    .ant-modal-body {
-      .ant-input-affix-wrapper {
-        border-color: #d9d9d9;
-        margin: 8px 0;
-      }
-    }
-    .ant-modal-header {
-      border-bottom: none !important;
-      padding-bottom: 8px;
+.create-template-modal {
+  .ant-modal-body {
+    .ant-input-affix-wrapper {
+      border-color: #d9d9d9;
+      margin: 8px 0;
     }
   }
+
+  .ant-modal-header {
+    border-bottom: none !important;
+    padding-bottom: 8px;
+  }
+}
 </style>

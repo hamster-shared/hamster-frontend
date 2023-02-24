@@ -9,8 +9,6 @@
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
-            <!-- <label v-if="projectType === '1'">Contract</label>
-            <label v-else-if="projectType === '2'">FrontEnd</label> -->
             <label v-if="projectType === '1'">
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
               <!-- <div v-if="viewInfo.frameType === 1">EVM</div>
@@ -24,8 +22,8 @@
         <label class="cursor-pointer group text-center w-[100px]"
           @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)">
           <lable v-if="projectType === '1' && viewInfo.frameType === 4">
-            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden" />
-            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block" />
+            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
+            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" />
           </lable>
           <label v-else>
             <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden group-hover:hidden" />
@@ -223,7 +221,7 @@ import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/pr
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import { useThemeStore } from "@/stores/useTheme";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts"
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
 
 const theme = useThemeStore()
 
@@ -403,12 +401,12 @@ html[data-theme='dark'] {
   }
 
   .disabledCheckCss {
-    color: #FFFFFF;
+    color: #E0DBD2;
     cursor: default;
   }
 
   .disabledCheckCss:hover {
-    color: #FFFFFF;
+    color: #E0DBD2;
   }
 
 }

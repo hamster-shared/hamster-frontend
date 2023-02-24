@@ -76,7 +76,9 @@ onMounted(async () => {
     } else {
       if (userInfo.token) {
         localStorage.setItem('token', userInfo.token);
-        router.push('/projects')
+        window.close();
+        window.opener.location.reload();
+        // router.push('/projects')
       } else {
         code.value = router.currentRoute.value.query?.code || '';
         if (code.value) {

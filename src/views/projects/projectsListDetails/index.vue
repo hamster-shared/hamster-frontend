@@ -14,11 +14,10 @@
         <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
         <div
           class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
-          <!-- <label v-if="projectType === '1'">Contract</label>
-          <label v-else-if="projectType === '2'">FrontEnd</label> -->
           <label v-if="projectType === '1'">
-            <div v-if="projectsDetail.frameType === 1">EVM</div>
-            <div v-if="projectsDetail.frameType === 4">StarkWare</div>
+            <div>{{ ContractFrameTypeEnum[projectsDetail.frameType] }}</div>
+            <!-- <div v-if="projectsDetail.frameType === 1">EVM</div>
+            <div v-if="projectsDetail.frameType === 4">StarkWare</div> -->
           </label>
           <label v-else-if="projectType === '2'">FrontEnd</label>
         </div>
@@ -77,6 +76,7 @@ import Workflows from "./components/Workflows.vue";
 import Contract from "./components/Contract.vue";
 import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts"
 import {
   apiGetProjectsDetail,
   apiUpdateProjectsName,
