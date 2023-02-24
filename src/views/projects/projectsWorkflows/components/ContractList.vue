@@ -33,7 +33,8 @@
               <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
                 View Deploy Process</div>
-              <div v-else="record.network.String !== ''"
+              {{record.network.String}}
+              <div v-if="record.network.String !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
                 @click="toDetailUrl(record)">View Dashboard
               </div>
