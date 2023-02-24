@@ -40,11 +40,11 @@
           <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
         </div>
         <div class="p-[32px]">
-          <div class="text-[24px] font-bold">Extensions</div>
-          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
+          <div class="text-[24px] font-bold" v-if="templatesDetail.extensions !== '' ">Extensions</div>
+          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" v-if="templatesDetail.extensions !== '' "
             class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
             <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index"
-              v-model:checked="items.checked">{{ items.label }}</a-checkbox>
+              checked="true">{{ items }}</a-checkbox>
           </div>
           <div v-if="templatesDetail.examples != ''">
             <div class="mt-[32px] text-[24px] font-bold flex items-center">
@@ -171,17 +171,18 @@ const templatesDetail = ref([]);
 const frontendTemplatesDetail = ref('');
 const showUrl = ref('');
 const extensionsList = ref([]);
-const checkboxList = ref([
-  { checked: false, label: 'ERC721' },
-  { checked: false, label: 'ERC721Supply' },
-  { checked: false, label: 'ERC721Enumerable' },
-  { checked: false, label: 'ContractMetadata' },
-  { checked: false, label: 'Royalty' },
-  { checked: false, label: 'Permissions' },
-  { checked: false, label: 'PermissionsEnumerable' },
-  { checked: false, label: 'Ownable' },
-  { checked: false, label: 'Gasless' },
-]);
+// const checkboxList = ref([
+//   { checked: false, label: 'ERC721' },
+//   { checked: false, label: 'ERC721Supply' },
+//   { checked: false, label: 'ERC721Enumerable' },
+//   { checked: false, label: 'ContractMetadata' },
+//   { checked: false, label: 'Royalty' },
+//   { checked: false, label: 'Permissions' },
+//   { checked: false, label: 'PermissionsEnumerable' },
+//   { checked: false, label: 'Ownable' },
+//   { checked: false, label: 'Gasless' },
+// ]);
+const checkboxList = ref([])
 
 const tableColumns = computed<any[]>(() => [
   {
