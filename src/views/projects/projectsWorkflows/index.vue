@@ -22,7 +22,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
-    <!-- <AiAnalysis :aiQuestion="aiQuestion"/> -->
+    <AiAnalysis />
   </div>
 </template>
 <script lang='ts' setup>
@@ -41,7 +41,7 @@ import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
 import GasUsageReport from './components/GasUsageReport.vue';
-// import AiAnalysis from './components/AiAnalysis.vue';
+import AiAnalysis from './components/AiAnalysis.vue';
 
 
 const { t } = useI18n()
@@ -59,7 +59,6 @@ const title = ref('');
 const currentName = ref('');
 const inRunning = ref(true);
 const processData = ref([]);
-// const aiQuestion = ref('猫和狗的寿命是多长？')
 
 const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
