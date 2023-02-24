@@ -22,7 +22,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
-    <AiAnalysis />
+    <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile"/>
   </div>
 </template>
 <script lang='ts' setup>
@@ -59,6 +59,7 @@ const title = ref('');
 const currentName = ref('');
 const inRunning = ref(true);
 const processData = ref([]);
+const openAiInfo = ref({})
 
 const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
@@ -218,10 +219,26 @@ const setCurrentName = () => {
   }
 }
 
+const getAiAnalysisReport =async () => {
+  const params = {
+    workflowsId: '266',
+    workflowDetailId: '252',
+  }
+  const { data } = await apiGetWorkFlowsReport(params)
+  // console.log('getAiAnalysisReport:::',data)
+  const aiInfo = data.filter( item => {
+    if(item.checkTool == 'OpenAI'){
+      openAiInfo.value = item
+    }
+  })
+  // console.log('openAiInfo:::',openAiInfo.value)
+}
+
 onMounted(() => {
   getWorkflowsDetails();
   getProjectsDetailData();
   loadInfo();
+  getAiAnalysisReport()
 })
 
 
