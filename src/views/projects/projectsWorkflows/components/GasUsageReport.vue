@@ -10,7 +10,7 @@
       <div v-if="index === 0">
         <div class="flex justify-between">
           <div class="font-bold">{{ val.name }}</div>
-          <div>{{ val.issue }} issues</div>
+          <div class="pr-[36px]">{{ val.issue }} issues</div>
         </div>
         <div v-for="(msg, msg_index) in val.message" :key="msg_index">
           <div class="mt-[24px]">Contract：{{ msg.contractName }}</div>

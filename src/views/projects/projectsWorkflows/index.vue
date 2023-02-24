@@ -127,22 +127,28 @@ const getCheckReport = async () => {
       }
     }
   })
-
-  yamlData(listGas, issue);
-  yamlData(list, issue);
+  issue = yamlData(listGas, issue, "gasUsage");
+  issue = yamlData(list, issue, "report");
 
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
 }
 
-const yamlData = (list: any[], issue: number) => {
+const yamlData = (list: any[], issue: number, dataType: string) => {
   list.map((item: any) => {
     item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any) => {
-      issue += val.issue
+    item.reportFileData.map((val: any, index: number) => {
+      if (dataType === "gasUsage") {
+        if (index === 0) {
+          issue += val.issue
+        }
+      } else {
+        issue += val.issue
+      }
     })
   })
+  return issue;
 }
 
 const getDetailFrontendReport = async () => {
