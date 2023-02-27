@@ -334,17 +334,18 @@ const checkDupName = computed(async () => {
     const res = await apiDupProjectName(params);
     console.log('res:', res)
     if (res.data === false) {
+      createProjectLoading.value = false;
       return errorMsg.value = "Project Name duplication"
     } else if (projectNameValue.value == '') {
+      createProjectLoading.value = false;
       return errorMsg.value = "Please enter Project Name"
     } else {
       return true
     }
   } catch (error: any) {
     console.log("erro:", error)
-    return errorMsg.value = "Project Name check failure"
-  } finally {
     createProjectLoading.value = false;
+    return errorMsg.value = "Project Name check failure"
   }
 })
 
@@ -380,7 +381,6 @@ const createProject = async () => {
 }
 
 const handleOk = async () => {
-  createProjectLoading.value = true
   checkDupName.value.then((result) => {
     if (result === true) {
       console.log('success', result)

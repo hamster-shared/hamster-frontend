@@ -156,7 +156,6 @@ const checkboxClick = async (event: any) => {
 }
 
 const createProject = async () => {
-  
   try {
     // loading.value = true;
     const createProjectTemp = localStorage.getItem('createProjectTemp');
@@ -181,9 +180,7 @@ const createProject = async () => {
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
-    loading.value = false;
   } finally {
-    loading.value = false;
     createCodeLoading.value = false
   }
 }
@@ -201,23 +198,22 @@ const checkDupName = computed(async () => {
     const res = await apiDupProjectName(params);
     console.log('res:',res)
     if (res.data === false) {
+      createCodeLoading.value = false;
       return errorMsg.value = "Project Name duplication"
     } else if(codeNameValue.value == ''){
+      createCodeLoading.value = false;
       return errorMsg.value = "Please enter Project Name"
     } else {
       return true
     }
   } catch (error: any) {
     console.log("erro:", error)
-    return errorMsg.value = "Project Name check failure"
-  } finally {
-    // errorMsg.value = ''
     createCodeLoading.value = false;
+    return errorMsg.value = "Project Name check failure"
   }
 })
 
 const handleOk = async ()=>{
-  createCodeLoading.value = true
   checkDupName.value.then((result)=>{
     if (result === true){
       console.log('success',result)
