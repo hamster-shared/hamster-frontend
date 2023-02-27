@@ -2,7 +2,9 @@
   <Breadcrumb :currentName="projectName" :isClick="loading">
     <template v-slot:tags>
       <span
-        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
+        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">
+        {{ ContractFrameTypeEnum[frameType] }}
+      </span>
     </template>
   </Breadcrumb>
   <div
@@ -111,6 +113,7 @@ import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows
 import { apiProjectsContractDeploy, apiGetProjectsDetail, apiContractDeployId } from "@/apis/projects";
 import { Provider, Account, Contract, ec } from "starknet";
 import { connect, getStarknet } from "@argent/get-starknet";
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
