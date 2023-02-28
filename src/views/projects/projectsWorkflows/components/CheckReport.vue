@@ -196,7 +196,6 @@ const columns = [
 const { checkReportData, projectType } = toRefs(props)
 
 const timer = ref();
-console.log("checkReportData:",checkReportData?.value);
 onMounted(() => {
   
   timer.value = window.setInterval(() => {
