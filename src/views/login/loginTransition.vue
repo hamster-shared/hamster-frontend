@@ -11,7 +11,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin, apiInstall } from "@/apis/login";
+import { apiLogin, apiInstall,apiGetUser} from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
@@ -61,41 +61,44 @@ const initInstallGithub = ()=>{
 }
 
 onMounted(async () => {
-  code.value = router.currentRoute.value.query?.code || '';
   if (localStorage.getItem('token')) {
-    console.log('localStorage.getItem("token"):::',localStorage.getItem('token'))
-    localStorage.removeItem('backnumber')
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')
     } else {
       router.push('/projects')
     }
-  } else if(backNumber == '2') {
-    if (code.value) {
-      await login()
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-      if(!userInfo.token){
-        const state = new Date().getTime();
-        const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
-        const url = `${oauthUrl.value}?state=${state}`;
-        const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-      }
-      initInstallGithub()
-      console.log('initInstallGithub:::',backNumber,userInfo)
-    }
   } else {
-    if (code.value) {
-      await login()
-      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-      if(!userInfo.token){
-        localStorage.setItem('backnumber', '2' )
-        const state = new Date().getTime();
-        const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
-        const url = `${oauthUrl.value}?state=${state}`;
-        const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+    if (JSON.stringify(userInfo) === '{}') {
+      code.value = router.currentRoute.value.query?.code || '';
+      if (code.value) {
+        await login()
       }
-      console.log('userInfo.token:::',userInfo)
+      const state = new Date().getTime();
+      const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
+      const url = `${oauthUrl.value}?state=${state}`;
+      const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    } else {
+      if (userInfo.token) {
+        localStorage.setItem('token', userInfo.token);
+        const { code } = await apiGetUser();
+        if (code == 401) {
+          localStorage.removeItem('token')
+          code.value = router.currentRoute.value.query?.code || '';
+          if (code.value) {
+            installGitHub()
+          }
+        } else {
+          window.close();
+          window.opener.location.reload();
+        }
+      } else {
+        code.value = router.currentRoute.value.query?.code || '';
+        if (code.value) {
+          installGitHub()
+        }
+      }
     }
   }
 })
