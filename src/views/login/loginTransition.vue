@@ -80,6 +80,7 @@ onMounted(async () => {
       const url = `${oauthUrl.value}?state=${state}`;
       const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
     } else {
+      debugger
       if (userInfo.token) {
         localStorage.setItem('token', userInfo.token);
         const { code } = await apiGetUser();
