@@ -94,8 +94,9 @@ const checkProcess = (item: any, e: Event) => {
 }
 
 const getStageLogsData = async (val: any, start = 0) => {
+  queryParams.start = start;
   const { data } = await apiGetDetailStageLogs(queryParams);
-
+  
   let t = data?.content?.split("\r");
   if (data.content) {
     t.forEach((item: any) => {
@@ -136,7 +137,7 @@ onUnmounted(() => {
 })
 
 const initScroll = () => {
-  let scroll = new BScroll(wrapper.value, {
+  new BScroll(wrapper.value, {
     startX: 0,
     scrollX: true,
     scrollY: false,
@@ -144,7 +145,7 @@ const initScroll = () => {
     scrollbar: {
       fade: false,
       interactive: true,
-    },
+    }
   });
 };
 
