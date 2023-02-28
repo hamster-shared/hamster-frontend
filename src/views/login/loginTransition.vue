@@ -83,6 +83,8 @@ onMounted(async () => {
       if (userInfo.token) {
         localStorage.setItem('token', userInfo.token);
         const { code } = await apiGetUser();
+        console.log(code)
+        debugger
         if (code == 401) {
           localStorage.removeItem('token')
           code.value = router.currentRoute.value.query?.code || '';
