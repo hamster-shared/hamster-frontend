@@ -63,6 +63,7 @@ const initInstallGithub = ()=>{
 onMounted(async () => {
   code.value = router.currentRoute.value.query?.code || '';
   if (localStorage.getItem('token')) {
+    console.log('localStorage.getItem("token"):::',localStorage.getItem('token'))
     localStorage.removeItem('backnumber')
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
@@ -81,6 +82,7 @@ onMounted(async () => {
         const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
       }
       initInstallGithub()
+      console.log('initInstallGithub:::',backNumber,userInfo)
     }
   } else {
     if (code.value) {
@@ -93,6 +95,7 @@ onMounted(async () => {
         const url = `${oauthUrl.value}?state=${state}`;
         const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
       }
+      console.log('userInfo.token:::',userInfo)
     }
   }
 })
