@@ -57,13 +57,11 @@ const initInstallGithub = ()=>{
   if (backNumber == '2' && code.value) {
     installGitHub()
     localStorage.removeItem('backnumber')
-  } else {
-    localStorage.setItem('backnumber', '1' )
   }
 }
 
 onMounted(async () => {
-  await initInstallGithub()
+  code.value = router.currentRoute.value.query?.code || '';
   if (localStorage.getItem('token')) {
     localStorage.removeItem('backnumber')
     if (localStorage.getItem('firstState') === "0") {
@@ -72,8 +70,19 @@ onMounted(async () => {
     } else {
       router.push('/projects')
     }
+  } else if(backNumber == '2') {
+    if (code.value) {
+      await login()
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+      if(!userInfo.token){
+        const state = new Date().getTime();
+        const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
+        const url = `${oauthUrl.value}?state=${state}`;
+        const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      }
+      initInstallGithub()
+    }
   } else {
-    code.value = router.currentRoute.value.query?.code || '';
     if (code.value) {
       await login()
       const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
