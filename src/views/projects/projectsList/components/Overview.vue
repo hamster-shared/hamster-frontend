@@ -303,7 +303,7 @@ const projectsDeploy = async (id: String, version: String, status: Number) => {
     if (status === 0 || status === 1 || version === "") {
       message.info("Smart contract not avaliable.");
     } else {
-      goContractDeploy(id, version);
+      goContractDeploy(id, version, status);
     }
   } else {
     if (status === 3) {
@@ -338,16 +338,15 @@ const goContractBuild = async (id: String, workflowId: String, detailId: String)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
 };
-const goContractDeploy = async (id: String, status: number | String) => {
-  // if (version === "") {
-  //   message.error("version is empty.");
-  // } else {
-  //   localStorage.setItem("projectName", viewInfo.value.name)
-  //   localStorage.setItem("projectId", id)
-  //   router.push("/projects/" + id + "/artifacts-contract/" + version + "/deploy/00");
-  // }
-  if (status === 3) {
-    goFrontendDeploy(id);
+const goContractDeploy = async (id: String, version: String, status: number) => {
+  if(localStorage.getItem('projectActiveKey') == '1'){
+    localStorage.setItem("projectName", viewInfo.value.name)
+    localStorage.setItem("projectId", id)
+    router.push("/projects/" + id + "/artifacts-contract/" + version + "/deploy/00");
+  } else if (localStorage.getItem('projectActiveKey') == '2'){
+    if (status === 3) {
+      goFrontendDeploy(id);
+    }
   }
 };
 
