@@ -51,10 +51,21 @@ const installGitHub = async () => {
   }
 }
 
-
+const backNumber = localStorage.getItem('backnumber')
+const initInstallGithub = ()=>{
+  code.value = router.currentRoute.value.query?.code || '';
+  if (backNumber == '2' && code.value) {
+    installGitHub()
+    localStorage.removeItem('backnumber')
+  } else {
+    localStorage.setItem('backnumber', '1' )
+  }
+}
 
 onMounted(async () => {
+  await initInstallGithub()
   if (localStorage.getItem('token')) {
+    localStorage.removeItem('backnumber')
     if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')
@@ -62,30 +73,17 @@ onMounted(async () => {
       router.push('/projects')
     }
   } else {
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-    if (JSON.stringify(userInfo) === '{}') {
-      code.value = router.currentRoute.value.query?.code || '';
-      if (code.value) {
-        await login()
+    code.value = router.currentRoute.value.query?.code || '';
+    if (code.value) {
+      await login()
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+      if(!userInfo.token){
+        localStorage.setItem('backnumber', '2' )
+        const state = new Date().getTime();
+        const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
+        const url = `${oauthUrl.value}?state=${state}`;
+        const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
       }
-
-      const state = new Date().getTime();
-      const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
-      const url = `${oauthUrl.value}?state=${state}`;
-      const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-    } else {
-      if (userInfo.token) {
-        localStorage.setItem('token', userInfo.token);
-        window.close();
-        window.opener.location.reload();
-        // router.push('/projects')
-      } else {
-        code.value = router.currentRoute.value.query?.code || '';
-        if (code.value) {
-          installGitHub()
-        }
-      }
-
     }
   }
 })
