@@ -52,6 +52,7 @@ service.interceptors.response.use(
   function (error: any) {
     if (error.response.status === 401) {
       localStorage.setItem('token', '');
+      localStorage.removeItem('userInfo')
       window.location.href = '/login';
     }
     // 超出 2xx 范围的状态码都会触发该函数。
