@@ -86,10 +86,14 @@
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
                 <div class="pb-4 "><!-- h-[130px] overflow-auto -->
-                  <div @click="setFunctionList(item)"
-                    :class="{ '!bg-[#E2B578] !text-white': item.name === functionName }"
-                    class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
+                  <div @click="setFunctionList(item)" :class="{ '!text-[#E2B578]': item.name === functionName }"
+                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
+                  <!-- <div @click="setFunctionList(item)"
+                    :class="{ '!bg-[#E2B578] !text-white': item.name === functionName }"
+                    class="cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
+                    class="w-min cursor-pointer text-[#73706E] dark:text-[#E0DBD2] dark:bg-[#36322D] bg-[#F9F9F9] rounded-[12px] mt-4 px-[30px] py-[12px]"
+                    v-for="(item, index) in callList" :key="index">{{ item.name }}</div> -->
                 </div>
               </div>
               <div class="w-3/4 p-4">

@@ -4,7 +4,7 @@
       v-for="item in checkReportData" :key="item.id">
       <img class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
-      <a-collapse v-model:activeKey="activeKey" accordion v-for="val in item.reportFileData" :key="val.Name">
+      <a-collapse v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.Name">
         <a-collapse-panel :key="val.name + item.id" :header="val.name" :showArrow="false">
 
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
@@ -38,7 +38,7 @@
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
             <div class="text-[#73706E]">No issues were detected.</div>
           </div>
-          <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}</div>
+          <!-- <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}</div> -->
 
           <template #extra>
             <div>
@@ -50,13 +50,14 @@
             </div>
           </template>
         </a-collapse-panel>
+        <div class="text-[#73706E] pl-[12px]">{{ 'Support by '+ item.checkTool }}</div>
       </a-collapse>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { toRefs } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
@@ -194,6 +195,26 @@ const columns = [
 
 const { checkReportData, projectType } = toRefs(props)
 
+const timer = ref();
+console.log("checkReportData:",checkReportData?.value);
+onMounted(() => {
+  
+  timer.value = window.setInterval(() => {
+    if (checkReportData?.value?.length > 0) {
+      checkReportData?.value.map((item: any) => {
+        item.reportFileData.map((item_sub: any) => {
+          if (item_sub.issue === 0) {
+            activeKey.value.push(item_sub.name + item.id);
+          }
+        })
+      })
+      window.clearInterval(timer.value);
+    }
+  }, 500);
+})
+onBeforeUnmount(()=>{ //离开当前组件的生命周期执行的方法
+  window.clearInterval(timer.value);
+})
 </script>
 
 <style lang="less" scoped>
