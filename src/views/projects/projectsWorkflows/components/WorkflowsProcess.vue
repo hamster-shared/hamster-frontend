@@ -76,6 +76,7 @@ const stagesData = reactive({
 const stagesTimer = ref();
 const wrapper = ref();
 const processModalRef = ref();
+let bscroll = reactive({});
 
 const { processData, workflowsId, workflowDetailId } = toRefs(props);
 Object.assign(queryParams, { workflowsId: workflowsId, workflowDetailId: workflowDetailId });
@@ -123,7 +124,7 @@ watch(
   () => props.processData,
   (oldV, newV) => {
     nextTick(() => {
-      initScroll()
+      bscroll && bscroll.refresh();
     })
   }, { deep: true }
 );
@@ -137,7 +138,7 @@ onUnmounted(() => {
 })
 
 const initScroll = () => {
-  new BScroll(wrapper.value, {
+  bscroll = new BScroll(wrapper.value, {
     startX: 0,
     scrollX: true,
     scrollY: false,
