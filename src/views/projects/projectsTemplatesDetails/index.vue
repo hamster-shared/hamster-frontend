@@ -247,17 +247,17 @@ const getContractTemplatesDetail = async () => {
     }
     ainInfoData.value.forEach((element: any) => {
       if (element.type === 'function') {
+        if (element.name === 'approve') {
+          functionList.value = element.inputs;
+          functionName.value = element.name;
+        }
         if (Object.prototype.toString.call(ainInfoData) === '[object Object]') {
-          if (!element.stateMutability) {
+          if (element.stateMutability === 'nonpayable') {
             sendList.value.push(element)
           } else if (element.stateMutability === 'view') {
             callList.value.push(element)
           }
         } else {
-          if (element.name === 'approve') {
-            functionList.value = element.inputs;
-            functionName.value = element.name;
-          }
           if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
             sendList.value.push(element)
           } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
