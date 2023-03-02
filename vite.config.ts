@@ -1,13 +1,19 @@
 import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig, loadEnv } from "vite";
+import type {ConfigEnv} from 'vite';
 import vue from "@vitejs/plugin-vue";
+import viteCompression from 'vite-plugin-compression'
 
 // https://vitejs.dev/config/
-export default ({ mode }) => defineConfig({
+export default ({ mode }:ConfigEnv) => defineConfig({
   build: {
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    viteCompression({
+      // threshold: 1024000 // 对大于 1mb 的文件进行压缩
+    })],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
