@@ -6,7 +6,7 @@
       </div>
       <div class="content-div">
         <div class="content-bg" :class="[isJump === true ? 'content-bg-hidden' : 'content-bg-show', {'hidden' : isShowGX === true}]">
-          <div class="whitespace-pre-wrap">{{ showText }}</div>
+          <div class="whitespace-pre-wrap">{{ showText }}<label :class="[showText === '' ? 'hidden' : 'visible', {'cursor-css' : isEnd === true}]">|</label></div>
         </div>
       </div>
       <div class="welcome-gx-div w-full h-full flex justify-center items-center">
@@ -334,6 +334,18 @@ const changeContent = (type: string) => {
     opacity: 0;
     transform: translate(-200px, 200px);
     animation-timing-function: ease;
+  }
+}
+.cursor-css{
+  -webkit-animation: bounceCursor 1s infinite;
+  animation: bounceCursor 1s infinite;
+}
+@keyframes bounceCursor {
+  0%,100%  {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
   }
 }
 </style>
