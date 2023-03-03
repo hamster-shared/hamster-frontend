@@ -51,15 +51,6 @@ const installGitHub = async () => {
   }
 }
 
-const backNumber = localStorage.getItem('backnumber')
-const initInstallGithub = ()=>{
-  code.value = router.currentRoute.value.query?.code || '';
-  if (backNumber == '2' && code.value) {
-    installGitHub()
-    localStorage.removeItem('backnumber')
-  }
-}
-
 onMounted(async () => {
   if (localStorage.getItem('token')) {
     if (localStorage.getItem('firstState') === "0") {
