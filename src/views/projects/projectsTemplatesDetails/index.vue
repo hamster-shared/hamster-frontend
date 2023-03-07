@@ -27,7 +27,7 @@
       <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
-        <a-button type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
+        <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
       </div>
     </a-modal>
 
