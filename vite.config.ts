@@ -10,7 +10,7 @@ import PkgConfig from 'vite-plugin-package-config'
 // https://vitejs.dev/config/
 export default ({ mode }:ConfigEnv) => defineConfig({
   build: {
-    outDir: 'build', // 打包文件的输出目录
+    outDir: 'dist', // 打包文件的输出目录
     assetsDir: 'static', // 静态资源的存放目录
     assetsInlineLimit: 4096, // 图片转 base64 编码的阈值
     // minify: 'terser', // 混淆器，terser构建后文件体积更小
