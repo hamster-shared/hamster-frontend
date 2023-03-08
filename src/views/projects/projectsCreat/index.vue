@@ -56,6 +56,16 @@
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
+          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2'">
+            <a-radio-group v-model:value="formData.deployType" name="deployType" @change="getTemplatesShow">
+              <a-radio :style="radioStyle" value="1">IPFS
+                <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="2">Container
+                <div>Package the front-end code into a Docker image and upload it to container service</div>
+              </a-radio>
+            </a-radio-group>
+          </a-form-item>
         </a-form>
         <div>
           <div class="flex justify-between">
@@ -153,6 +163,7 @@ const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) ||
   type: '1',
   contractCode: '1',
   frameType: '1',
+  deployType: '1',
 });
 
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
@@ -223,7 +234,11 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
-  formData.type = val.target.value
+  if (val.target.name === 'deployType') {
+    formData.deployType = val.target.value
+  } else {
+    formData.type = val.target.value
+  }
   getInitTemplates()
 }
 
