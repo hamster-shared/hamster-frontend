@@ -5,7 +5,7 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
+          <div class="project-title text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -288,7 +288,7 @@ const projectsCheck = async (id: String, status: Number, e: Event) => {
 
 const projectsBuild = async (id: String, buildData: any) => {
   try {
-    
+
     if (buildData.status === 1) {
       if(projectType?.value === "1") {
         message.info("Executing Now，please wait a moment.");
@@ -308,7 +308,7 @@ const projectsBuild = async (id: String, buildData: any) => {
         msgType.value = 'build';
         setMsgShow();
       }
-      
+
       loadView();
     }
   } catch (error: any) {
@@ -392,7 +392,7 @@ const goFrontendDeploy = async () => {
     } else {
       frontendDeploying();
     }
-    
+
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
