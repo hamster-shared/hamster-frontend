@@ -1,6 +1,5 @@
 <template>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
-    class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
+  <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
     <div class="flex justify-between">
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
@@ -11,62 +10,38 @@
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
             <label v-if="projectType === '1'">
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
-              <!-- <div v-if="viewInfo.frameType === 1">EVM</div>
-              <div v-if="viewInfo.frameType === 4">StarkWare</div> -->
             </label>
             <label v-else-if="projectType === '2'">FrontEnd</label>
           </div>
         </div>
       </div>
+
       <div>
-        <label class="cursor-pointer group text-center w-[100px]"
-          @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)">
-          <lable v-if="projectType === '1' && viewInfo.frameType === 4">
+        <label class="cursor-pointer group text-center w-[100px]" v-for="(item, index) in actionButtonList"
+          @click="projectsAction(viewInfo, item, $event)">
+          <label v-if="index !== 0">
+            <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
+            <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
+          </label>
+          <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
             <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
             <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" />
-          </lable>
-          <label v-else>
-            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden group-hover:hidden" />
-            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-            <img src="@/assets/icons/check-color.svg" class="h-[16px] hidden group-hover:inline-block" />
           </label>
-
+          <label v-else>
+            <img :src="getActionImageUrl(item.url[0])" class="h-[16px] cursor-default dark:hidden group-hover:hidden" />
+            <img :src="getActionImageUrl(item.url[1])"
+              class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+            <img :src="getActionImageUrl(item.url[2])" class="h-[16px] hidden group-hover:inline-block" />
+          </label>
           <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer"
-            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''">Check</label>
+            :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
+            {{ item.name }}
+          </label>
         </label>
-        <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
-        <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group text-center w-[100px]"
-          @click="projectsBuild(viewInfo.id, viewInfo.recentBuild.status)">
-          <img src="@/assets/icons/build.svg" class="h-[16px] dark:hidden group-hover:hidden" />
-          <img src="@/assets/icons/build-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-          <img src="@/assets/icons/build-color.svg" class="h-[16px] hidden group-hover:inline-block" />
-          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Build</label>
-        </label>
-        <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
-        <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group"
-          @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">
-          <img src="@/assets/icons/deploy.svg" class="h-[16px] dark:hidden group-hover:hidden" />
-          <img src="@/assets/icons/deploy-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-          <img src="@/assets/icons/deploy-color.svg" class="h-[16px] hidden group-hover:inline-block" />
-          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Deploy</label>
-        </label>
-        <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
-        <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
-        <label class="cursor-pointer group text-center w-[100px]"
-          @click="projectsOps(viewInfo.id, viewInfo.recentDeploy)">
-          <img src="@/assets/icons/ops.svg" class="h-[16px] dark:hidden group-hover:hidden" />
-          <img src="@/assets/icons/ops-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-          <img src="@/assets/icons/ops-color.svg" class="h-[16px] hidden group-hover:inline-block" />
-          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer">Ops</label>
-        </label>
-        <!-- <a-button type="primary" @click="projectsCheck(viewInfo.id,viewInfo.recentCheck.status)">Check</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsBuild(viewInfo.id,viewInfo.recentBuild.status)">Build</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsDeploy(viewInfo.id, viewInfo.recentBuild.version, viewInfo.recentBuild.status)">Deploy</a-button>
-        <a-button type="primary" class="ml-4" @click="projectsOps(viewInfo.id, viewInfo.recentDeploy.version)">Ops</a-button> -->
       </div>
     </div>
+
+
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="grid grid-cols-4 gap-4">
         <div>
@@ -80,27 +55,19 @@
             main
           </div>
         </div>
+
         <div>
           <div class="text-[16px] font-bold">Recent Check</div>
-          <div class="my-2" v-if="viewInfo.recentCheck.status === 0">No Data</div>
-          <div class="flex items-center my-2" v-else-if="viewInfo.recentCheck.status === 1">
-            <img src="@/assets/icons/running.svg" class="h-[16px] mr-1" />
-            <div class="text-ellipsis">Running｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
+          <div class="my-2" v-if="viewInfo.recentCheck.status === 0">{{ RecentStatusEnums[viewInfo.recentCheck.status] }}
+          </div>
+          <div v-else class="flex items-center my-2 ">
+            <img :src="getImageUrl(viewInfo.recentCheck.status)" class="h-[16px] mr-1" />
+            <div class="text-ellipsis">
+              {{ RecentStatusEnums[viewInfo.recentCheck.status] }}｜{{
+                fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
             </div>
           </div>
-          <div class="flex items-center my-2" v-else-if="viewInfo.recentCheck.status === 2">
-            <img src="@/assets/icons/failed.svg" class="h-[16px] mr-1" />
-            <div class="text-ellipsis">Failed｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
-            </div>
-          </div>
-          <div class="flex items-center my-2 " v-else-if="viewInfo.recentCheck.status === 3">
-            <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
-            <div class="text-ellipsis">Success｜{{ fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
-            </div>
-          </div>
-          <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentCheck.status === 4">Stop｜{{
-            fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing")
-          }}</div>
+
           <div class="text-[#E2B578] cursor-pointer"
             :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
@@ -113,37 +80,29 @@
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View
             Result</div>
         </div>
+
         <div>
           <div class="text-[16px] font-bold">Recent Build</div>
-          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">No Data</div>
-          <div class="flex items-center my-2" v-else-if="viewInfo.recentBuild.status === 1">
-            <img src="@/assets/icons/running.svg" class="h-[16px] mr-1" />
-            <div class="text-ellipsis">Running｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
+          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentCheck.status] }}
+          </div>
+          <div v-else class="flex items-center my-2 ">
+            <img :src="getImageUrl(viewInfo.recentBuild.status)" class="h-[16px] mr-1" />
+            <div class="text-ellipsis">
+              {{ RecentStatusEnums[viewInfo.recentBuild.status] }}｜{{
+                fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
             </div>
           </div>
-          <div class="flex items-center my-2" v-else-if="viewInfo.recentBuild.status === 2">
-            <img src="@/assets/icons/failed.svg" class="h-[16px] mr-1" />
-            <div class="text-ellipsis">Failed｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
-            </div>
-          </div>
-          <div class="flex items-center my-2" v-else-if="viewInfo.recentBuild.status === 3">
-            <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
-            <div class="text-ellipsis">Success｜{{ fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
-            </div>
-          </div>
-          <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{
-            fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing")
-          }}</div>
+
           <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id, viewInfo.recentBuild.status)"
             v-if="viewInfo.recentBuild.status === 0">Build Now</div>
+
           <div class="text-[#E2B578] cursor-pointer"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
-          <!-- <div class="text-[#E2B578] cursor-pointer"
-            @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.version)" v-else>Deploy Now</div> -->
+
           <div v-else>
             <div v-if="projectType === '1'">
               <div class="text-[#E2B578] cursor-pointer"
@@ -151,8 +110,8 @@
                 View Result
               </div>
             </div>
-            <div class="text-[#E2B578] cursor-pointer"
-              @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)" v-else>Deploy Now</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)"
+              v-else>Deploy Now</div>
           </div>
         </div>
         <div>
@@ -165,7 +124,7 @@
               </div>
               <div v-else>
                 <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
-                {{ '#'+ viewInfo.recentDeploy.version }}｜
+                {{ '#' + viewInfo.recentDeploy.version }}｜
                 {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
               </div>
             </div>
@@ -176,29 +135,16 @@
             </div>
           </div>
           <div v-else>
-            <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">No Data</div>
-            <div class="flex items-center my-2" v-else-if="viewInfo.recentDeploy.status === 1">
-              <img src="@/assets/icons/running.svg" class="h-[16px] mr-1" />
-              <div class="text-ellipsis">Running｜{{
-                fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing")
-              }}
-              </div>
-            </div>
-            <div class="flex items-center my-2" v-else-if="viewInfo.recentDeploy.status === 2">
-              <img src="@/assets/icons/failed.svg" class="h-[16px] mr-1" />
-              <div class="text-ellipsis">Failed｜{{ fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
-              </div>
-            </div>
-            <div class="flex items-center my-2 " v-else-if="viewInfo.recentDeploy.status === 3">
-              <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
-              <div class="text-ellipsis">Success｜{{
-                fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing")
-              }}
-              </div>
-            </div>
-            <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentDeploy.status === 4">Stop｜{{
-              fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing")
+            <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">{{ RecentStatusEnums[viewInfo.recentDeploy.status]
             }}</div>
+            <div v-else class="flex items-center my-2 ">
+              <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
+              <div class="text-ellipsis">
+                {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
+                  fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
+              </div>
+            </div>
+
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
             <div v-else class="text-[#E2B578] cursor-pointer"
               @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
@@ -220,10 +166,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
-import { useThemeStore } from "@/stores/useTheme";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
-
-const theme = useThemeStore()
+import { ContractFrameTypeEnum, ActionButtonEnum } from "@/enums/frameTypeEnum.ts";
+import { RecentStatusEnums, SvgStatusEnums, RecentCheckAndBuldViewEnums } from "../enums/RecentEnums";
 
 const router = useRouter();
 
@@ -232,6 +176,13 @@ const props = defineProps({
   viewInfo: Object,
   projectType: String,
 });
+
+const actionButtonList = ref([
+  { name: 'Check', url: ['check', 'check-b', 'check-color'] },
+  { name: 'Build', url: ['build', 'build-b', 'build-color'] },
+  { name: 'Deploy', url: ['deploy', 'deploy-b', 'deploy-color'] },
+  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }])
+
 const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
   return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
@@ -257,6 +208,24 @@ const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/details/" + type);
+}
+
+const projectsAction = (val: any, type: string, e: Event) => {
+  switch (type) {
+    case 'Check':
+      projectsCheck(val.id, val.recentCheck.status, e);
+      break;
+    case 'Build':
+      projectsBuild(val.id, val.recentBuild.status);
+      break;
+    case 'Deploy':
+      projectsDeploy(val.id, val.recentDeploy.version, val.recentDeploy.status);
+      break;
+    case 'Ops':
+      projectsOps(val.id, val);
+      break;
+    default: break;
+  }
 }
 
 const projectsCheck = async (id: String, status: Number, e: Event) => {
@@ -339,11 +308,11 @@ const goContractBuild = async (id: String, workflowId: String, detailId: String)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
 };
 const goContractDeploy = async (id: String, status: String | Number) => {
-  if(localStorage.getItem('projectActiveKey') == '1'){
+  if (localStorage.getItem('projectActiveKey') == '1') {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
-  } else if (localStorage.getItem('projectActiveKey') == '2'){
+  } else if (localStorage.getItem('projectActiveKey') == '2') {
     if (status === 3) {
       goFrontendDeploy(id);
     }
@@ -388,6 +357,19 @@ const goFrontEndDetail = (id: string, recentDeploy: Object) => {
     router.push(`/projects/${id}/${recentDeploy.workflowId}/workflows/${recentDeploy.id}/3/${projectType?.value}`);
   }
 }
+
+const getActionImageUrl = (status: any) => {
+  return new URL(`../../../../assets/icons/${status}.svg`, import.meta.url)
+    .href;
+}
+
+
+const getImageUrl = (status: any) => {
+  let iconName = `${SvgStatusEnums[status]}`;
+  return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
+    .href;
+};
+
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
@@ -428,9 +410,6 @@ html[data-theme='dark'] {
   background: @baseColor;
 }
 
-// .dark-css a,.dark-css a:hover{
-//   color: #FFFFFF;
-// }
 a,
 a:hover {
   color: #151210;
