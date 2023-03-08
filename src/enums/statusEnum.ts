@@ -7,5 +7,4 @@ export enum WorkflowStatusEnum {
 }
 
 export enum BuildStatusEnum {
-
 }
