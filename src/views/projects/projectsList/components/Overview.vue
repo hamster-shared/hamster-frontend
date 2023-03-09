@@ -5,7 +5,7 @@
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
+          <div class="project-title text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -14,7 +14,7 @@
               <!-- <div v-if="viewInfo.frameType === 1">EVM</div>
               <div v-if="viewInfo.frameType === 4">StarkWare</div> -->
             </label>
-            <label v-else-if="projectType === '2'">FrontEnd</label>
+            <label v-else-if="projectType === '2'">IPFS/Container</label>
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@
         <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
         <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
         <label class="cursor-pointer group text-center w-[100px]"
-          @click="projectsBuild(viewInfo.id, viewInfo.recentBuild.status)">
+          @click="projectsBuild(viewInfo.id, viewInfo.recentBuild)">
           <img src="@/assets/icons/build.svg" class="h-[16px] dark:hidden group-hover:hidden" />
           <img src="@/assets/icons/build-b.svg" class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
           <img src="@/assets/icons/build-color.svg" class="h-[16px] hidden group-hover:inline-block" />
@@ -134,7 +134,7 @@
           <div class="my-2 text-ellipsis" v-else-if="viewInfo.recentBuild.status === 4">Stop｜{{
             fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing")
           }}</div>
-          <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id, viewInfo.recentBuild.status)"
+          <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id, viewInfo.recentBuild)"
             v-if="viewInfo.recentBuild.status === 0">Build Now</div>
           <div class="text-[#E2B578] cursor-pointer"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
@@ -208,7 +208,8 @@
       </div>
     </div>
   </div>
-  <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
+  <ContainerParam :containerVisible="containerVisible" @hideContainerParam="hideContainerParam" @frontendDeploying="frontendDeploying"></ContainerParam>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
 </template>
@@ -220,6 +221,7 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
+import ContainerParam from './ContainerParam.vue';
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
 
@@ -238,8 +240,10 @@ const showViewInfoRepositoryUrl = computed(() => {
 })
 
 const emit = defineEmits(["loadProjects"]);
+const containerVisible = ref(false);
 const disabled = ref(false);
 const showMsg = ref(false);
+const msgType = ref("");
 const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
@@ -282,13 +286,29 @@ const projectsCheck = async (id: String, status: Number, e: Event) => {
 
 };
 
-const projectsBuild = async (id: String, status: Number) => {
+const projectsBuild = async (id: String, buildData: any) => {
   try {
-    if (status === 1) {
-      message.info("Executing Now，please wait a moment.");
+
+    if (buildData.status === 1) {
+      if(projectType?.value === "1") {
+        message.info("Executing Now，please wait a moment.");
+      } else {
+        msgParam.value.workflowsId = buildData.workflowId;
+        msgParam.value.workflowDetailId = buildData.id;
+        msgType.value = 'build';
+        setMsgShow();
+      }
     } else {
       const res = await apiProjectsBuild(id);
-      message.success(res.message);
+      if(projectType?.value === "1") {
+        message.success(res.message);
+      } else {
+        msgParam.value.workflowsId = buildData.workflowId;
+        msgParam.value.workflowDetailId = buildData.id;
+        msgType.value = 'build';
+        setMsgShow();
+      }
+
       loadView();
     }
   } catch (error: any) {
@@ -307,9 +327,9 @@ const projectsDeploy = async (id: String, version: String, status: Number) => {
     }
   } else {
     if (status === 3) {
-      goFrontendDeploy(id);
+      goFrontendDeploy();
     } else {
-      message.info("FrontEnd package not avaliable.");
+      message.info("FrontEnd image not avaliable");
     }
   }
 };
@@ -345,7 +365,7 @@ const goContractDeploy = async (id: String, status: String | Number) => {
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
   } else if (localStorage.getItem('projectActiveKey') == '2'){
     if (status === 3) {
-      goFrontendDeploy(id);
+      goFrontendDeploy();
     }
   }
 };
@@ -361,24 +381,52 @@ const goContractDetail = async (id: String, version: String) => {
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/contracts-details/" + version);
 }
-const goFrontendDeploy = async (id: String) => {
+const goFrontendDeploy = async () => {
   try {
-    const params = ref({
-      id: id,
-      workflowsId: viewInfo?.value.recentBuild.workflowId,
-      workflowDetailId: viewInfo?.value.recentBuild.id,
-    });
-    const { data } = await apiProjectsDeploy(params.value);
-    showMsg.value = true;
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    setTimeout(function () {
-      showMsg.value = false;
-    }, 3000)
+    if (viewInfo?.value.deployType === "2") { //Container的场合
+      if (viewInfo?.value.recentDeploy.status === 3) {
+        frontendDeploying();
+      } else {
+        containerVisible.value = true;
+      }
+    } else {
+      frontendDeploying();
+    }
+
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
   }
+}
+const hideContainerParam = () => {
+  containerVisible.value = false;
+}
+const frontendDeploying = async () => {
+  try {
+    const params = ref({
+      id: viewInfo?.value.id,
+      workflowsId: viewInfo?.value.recentBuild.workflowId,
+      workflowDetailId: viewInfo?.value.recentBuild.id,
+    });
+    const { data } = await apiProjectsDeploy(params.value);
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
+    msgType.value = 'deploy';
+    setMsgShow();
+
+    loadView();
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const setMsgShow = () => {
+  showMsg.value = true;
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
 }
 
 const goFrontEndDetail = (id: string, recentDeploy: Object) => {
