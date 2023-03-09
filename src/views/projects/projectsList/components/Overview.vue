@@ -12,7 +12,8 @@
             <label v-if="projectType === '1'">
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
-            <label v-else-if="projectType === '2'">IPFS/Container</label>
+            <label v-else-if="projectType === '2' && viewInfo.deployType == '1'">IPFS</label>
+            <label v-else-if="projectType === '2' && viewInfo.deployType == '2'">Container</label>
           </div>
         </div>
       </div>

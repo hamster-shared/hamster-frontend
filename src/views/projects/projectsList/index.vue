@@ -28,7 +28,7 @@
         <a-tab-pane key="2" tab="FrontEnd">
           <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
-              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"/>
             </div>
             <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange"
               @showSizeChange="onShowSizeChange" :current="currentFrontend" :total="totalFrontend" size="small" />
@@ -40,9 +40,9 @@
       </a-tabs>
     </div>
   </div>
-  <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
-    <img src="@/assets/images/project-guide.jpg" class=" w-full dark:hidden" />
-    <img src="@/assets/images/project-guide-dark.jpg" class=" w-full hidden dark:inline-block" />
+  <div class="fixed top-0 left-0 z-10 w-screen h-screen" v-show="showGuide">
+    <img src="@/assets/images/project-guide.jpg" class="w-full dark:hidden" />
+    <img src="@/assets/images/project-guide-dark.jpg" class="hidden w-full dark:inline-block" />
     <div class="absolute bottom-[30%] flex justify-center w-full">
       <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
     </div>
