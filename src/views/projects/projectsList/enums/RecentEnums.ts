@@ -12,9 +12,3 @@ export enum SvgStatusEnums {
   "success" = 3,
   "stop" = 4,
 }
-
-export enum RecentCheckAndBuldViewEnums {
-  "View Process" = 1,
-  // "View Process " = 4,
-  "View Result" = 2 || 3,
-}
