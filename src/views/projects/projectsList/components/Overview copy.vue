@@ -166,8 +166,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
-import { ContractFrameTypeEnum, ActionButtonEnum } from "@/enums/frameTypeEnum.ts";
-import { RecentStatusEnums, SvgStatusEnums, RecentCheckAndBuldViewEnums } from "../enums/RecentEnums";
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
+import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 
 const router = useRouter();
 

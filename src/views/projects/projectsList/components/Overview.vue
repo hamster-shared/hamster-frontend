@@ -175,7 +175,7 @@ import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
-import { RecentStatusEnums, SvgStatusEnums, RecentCheckAndBuldViewEnums } from "../enums/RecentEnums";
+import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 
 const theme = useThemeStore()
 
