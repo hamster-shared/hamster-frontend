@@ -29,11 +29,11 @@
           <a-button type="primary" class="ml-4">Setting</a-button>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="visibleModal = true">General</a>
+              <a-menu-item @click="visibleModal = true">
+                <a href="javascript:;">General</a>
               </a-menu-item>
-              <a-menu-item v-if="projectsDetail.deployType == 2">
-                <a href="javascript:;" @click="containerVisible=true">Container</a>
+              <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible=true">
+                <a href="javascript:;">Container</a>
               </a-menu-item>
             </a-menu>
           </template>
