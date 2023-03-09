@@ -19,12 +19,25 @@
             <!-- <div v-if="projectsDetail.frameType === 1">EVM</div>
             <div v-if="projectsDetail.frameType === 4">StarkWare</div> -->
           </label>
-          <label v-else-if="projectType === '2'">FrontEnd</label>
+          <label v-else-if="projectType === '2'">IPFS/Container</label>
         </div>
       </div>
       <div>
         <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
-        <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
+        <!-- <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button> -->
+        <a-dropdown>
+          <a-button type="primary" class="ml-4">Setting</a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item>
+                <a href="javascript:;" @click="visibleModal = true">General</a>
+              </a-menu-item>
+              <a-menu-item v-if="projectsDetail.deployType == 2">
+                <a href="javascript:;" @click="containerVisible=true">Container</a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length !== 0">
@@ -67,6 +80,7 @@
       <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteProjects">YES</a-button>
     </div>
   </a-modal>
+  <ContainerParam :containerVisible="containerVisible" @hideContainerParam="containerVisible=false"></ContainerParam>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -108,6 +122,7 @@ const formData = reactive({
 });
 const projectsDetail = ref({});
 const frameType = ref(0);
+const containerVisible = ref(false);
 
 const formRules = computed(() => {
 
