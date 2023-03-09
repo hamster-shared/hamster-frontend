@@ -14,7 +14,9 @@
               <!-- <div v-if="viewInfo.frameType === 1">EVM</div>
               <div v-if="viewInfo.frameType === 4">StarkWare</div> -->
             </label>
-            <label v-else-if="projectType === '2'">FrontEnd</label>
+            <!-- <label v-else-if="projectType === '2'">FrontEnd111</label> -->
+            <label v-else-if="projectType === '2' && viewInfo.deployType == '1'">IPFS</label>
+            <label v-else-if="projectType === '2' && viewInfo.deployType == '2'">Container</label>
           </div>
         </div>
       </div>

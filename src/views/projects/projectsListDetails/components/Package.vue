@@ -24,6 +24,7 @@ const props = defineProps({
   detailId: String,
   pageType: String,
   packageListData: Array,
+  deployType:String
 });
 const { pageType, detailId, packageListData } = toRefs(props);
 
@@ -38,9 +39,19 @@ const msgParam = ref({
 const tableList = ref([]);
 const pagination = ref();
 
+const firstTitle = ref('')
+const checkImageOrPackage = ()=>{
+  console.log('props.projectType:::',props.deployType)
+  if(props.deployType == '1'){
+    firstTitle.value = 'Package Name'
+  }else{
+    firstTitle.value = 'Image Name'
+  }
+}
+
 const tableColumns = computed<any[]>(() => [
   {
-    title: 'Package Name',
+    title: firstTitle.value,
     dataIndex: 'name',
     align: 'center',
     ellipsis: 'fixed',
@@ -115,6 +126,8 @@ onMounted(() => {
     tableList.value = packageListData.value;
     pagination.value = false;
   }
+
+  checkImageOrPackage()
 })
 
 const getProjectsPackage = async () => {

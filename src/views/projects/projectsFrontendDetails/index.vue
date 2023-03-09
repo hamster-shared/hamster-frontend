@@ -40,22 +40,25 @@
         class="dark:bg-[#36322D] bg-[#ffffff] border border-solid dark:border-[#434343] border-[#EBEBEB] p-[32px] rounded-[12px] text-center">
         <a-spin size="large" tip="Loading..." />
       </div> -->
-      <div>
-        <projectsWorkflowsAllLogs></projectsWorkflowsAllLogs>
+      <div v-for="item in logsInfo">
+        <!-- <projectsWorkflowsAllLogs></projectsWorkflowsAllLogs> -->
+        <div class="whitespace-pre-wrap">{{ item }}</div>
       </div>
     </div>
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
-import projectsWorkflowsAllLogs from '../projectsWorkflowsAllLogs/index.vue';
+// import projectsWorkflowsAllLogs from '../projectsWorkflowsAllLogs/index.vue';
 import { message } from "ant-design-vue";
 import { apiGetPackageDetail, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
 import { apiDeleteDeployInfo } from "@/apis/projects.ts";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
+import { creatWebSocket, closeWebSocket} from '@/utils/websocket.ts'
+import { useWebSocket } from '@vueuse/core'
 
 const { t } = useI18n();
 const router = useRouter();
@@ -117,11 +120,39 @@ const deleteBtn = async () => {
   }
 }
 
+const logsInfo = ref([])
+const { id, username} = JSON.parse(localStorage.getItem('userInfo'))
+useWebSocket(`ws://172.16.10.81:8080/api/projects/${id}/${username}/frontend/logs`, {
+  // protocols: ['ufMizxtT9EqaTJf45pXUgUWget8C8jtbR+l/ltaerv/WYwyWAIUPOqRH/+f6R0ip'],
+  autoReconnect: true,
+  heartbeat: true,
+  onMessage: (_ws,event)=>{
+    realtimeLogs(event)
+  }
+})
+
+const realtimeLogs =(data)=>{
+  console.log('event:::',data.data)
+  logsInfo.value.push(data.data)
+}
+
+//获取到返回的数据
+// const logsInfo = ref([])
+// const getAlarmData = (data:any)=>{
+//   logsInfo.value.push(data.data)
+//   console.log('logsInfo:::',logsInfo.value)
+// }
+
 
 onMounted(() => {
   getPackageDetail();
   getWorkflowsDetail();
+  // creatWebSocket(getAlarmData)
 })
+
+// onBeforeUnmount(()=>{
+//   closeWebSocket()
+// })
 
 </script>
 
