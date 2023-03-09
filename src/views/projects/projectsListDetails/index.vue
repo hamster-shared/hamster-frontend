@@ -52,8 +52,11 @@
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
           <Contract ref="contractRef" :detailId="detailId" />
         </a-tab-pane>
-        <a-tab-pane v-if="params.type === '2'" key="2" tab="Package">
-          <Package ref="packageRef" pageType="project" :detailId="detailId" />
+        <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType"/>
+        </a-tab-pane>
+        <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '2'" key="2" tab="Image">
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType"/>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report">
           <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
