@@ -12,7 +12,7 @@
             <label v-if="projectType === '1'">
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
-            <label v-else-if="projectType === '2'">IPFS/Container</label>
+            <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@
 
         <div>
           <div class="text-[16px] font-bold">Recent Build</div>
-          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentCheck.status] }}
+          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentBuild.status] }}
           </div>
           <div v-else class="flex items-center my-2 ">
             <img :src="getImageUrl(viewInfo.recentBuild.status)" class="h-[16px] mr-1" />
@@ -159,7 +159,7 @@
     </div>
   </div>
   <ContainerParam :containerVisible="containerVisible" @hideContainerParam="hideContainerParam"
-    @frontendDeploying="frontendDeploying"></ContainerParam>
+    @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
@@ -169,12 +169,12 @@ import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
 import { useThemeStore } from "@/stores/useTheme";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
+import { ContractFrameTypeEnum,FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum.ts";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 
 const theme = useThemeStore()
@@ -230,7 +230,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsBuild(val.id, val.recentBuild.status);
       break;
     case 'Deploy':
-      projectsDeploy(val.id, val.recentDeploy.version, val.recentDeploy.status);
+      projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
       break;
     case 'Ops':
       projectsOps(val.id, val);
@@ -360,11 +360,8 @@ const goContractDetail = async (id: String, version: String) => {
 const goFrontendDeploy = async () => {
   try {
     if (viewInfo?.value.deployType === "2") { //Container的场合
-      if (viewInfo?.value.recentDeploy.status === 3) {
-        frontendDeploying();
-      } else {
-        containerVisible.value = true;
-      }
+      
+      frontendContainerCheck();
     } else {
       frontendDeploying();
     }
@@ -391,6 +388,41 @@ const frontendDeploying = async () => {
     setMsgShow();
 
     loadView();
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const frontendContainerDeploy = async (apiContainerDeployParams?: Object) => {
+  try {
+    const params = ref({
+      id: viewInfo?.value.id,
+      workflowsId: viewInfo?.value.recentBuild.workflowId,
+      workflowDetailId: viewInfo?.value.recentBuild.id,
+    });
+    const { data } = await apiProjectsContainerDeploy(params.value, apiContainerDeployParams);
+
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
+    msgType.value = 'deploy';
+    setMsgShow();
+
+    loadView();
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const frontendContainerCheck = async () => {
+  try {
+    const { data } = await apiContainerCheck(viewInfo?.value.id, viewInfo?.value.recentBuild.workflowId);
+    if (data === false) { //未配置
+      containerVisible.value = true;
+    } else {
+      frontendContainerDeploy();
+    }
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);

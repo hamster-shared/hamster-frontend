@@ -148,23 +148,26 @@ const getProjectsContract = async (type: string | undefined) => {
       totalContract.value = data.total;
     }
 
-    const isRunning = ref(false);
-    contractList.value.forEach(element => {
-      if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
-        || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
-        isRunning.value = true;
-      }
-    });
-    if (isRunning.value === true) {
-      timer.value = setTimeout(() => {
-        // 其他定时执行的方法
-        activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-      }, 5000)
-    } else {
-      clearTimeout(timer.value);
-    }
+    projectRunning(contractList.value);
   } catch (error: any) {
     console.log("erro:", error)
+  }
+}
+const projectRunning = (projectList: any) => {
+  const isRunning = ref(false);
+  projectList.forEach((element: { recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; }) => {
+    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
+      || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
+      isRunning.value = true;
+    }
+  });
+  if (isRunning.value === true) {
+    timer.value = setTimeout(() => {
+      // 其他定时执行的方法
+      activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+    }, 5000)
+  } else {
+    clearTimeout(timer.value);
   }
 }
 const getProjectsFrontend = async (type: string | undefined) => {
@@ -186,6 +189,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       frontentList.value = data.data;
       totalFrontend.value = data.total;
     }
+    projectRunning(frontentList.value);
   } catch (error: any) {
     console.log("erro:", error)
   } finally {

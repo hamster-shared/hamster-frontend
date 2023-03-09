@@ -15,7 +15,7 @@
             <span><label class="item-required">*</label>containerPort</span>
             <a-tooltip placement="right">
               <template #title>The application running in the container can be used to receive and process network requests on a specific port.</template>
-              <img src="@/assets/icons/info.svg" class="h-[16px] mr-1" />
+              <img src="@/assets/icons/info.svg" class="h-[16px] mr-1 cursor-pointer" />
             </a-tooltip>
           </div>
         </span>
@@ -32,7 +32,7 @@
             <span><label class="item-required">*</label>servicePort</span>
             <a-tooltip placement="right">
               <template #title>It is a logical port abstracted from a Service.</template>
-              <img src="@/assets/icons/info.svg" class="h-[16px] mr-1" />
+              <img src="@/assets/icons/info.svg" class="h-[16px] mr-1 cursor-pointer" />
             </a-tooltip>
           </div>
         </span>
@@ -44,7 +44,7 @@
             <span><label class="item-required">*</label>serviceTargetPort</span>
             <a-tooltip placement="right">
               <template #title>It is the Pod port to be accessed by the Service.</template>
-              <img src="@/assets/icons/info.svg" class="h-[16px] mr-1" />
+              <img src="@/assets/icons/info.svg" class="h-[16px] mr-1 cursor-pointer" />
             </a-tooltip>
           </div>
         </span>
@@ -57,24 +57,30 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { emit } from 'process';
-import { computed, reactive, ref, toRefs } from 'vue';
+import { computed, onMounted, reactive, ref, toRefs, watch } from 'vue';
+import {
+  apiPostContainer,
+  apiGetContainer
+} from "@/apis/projects";
+import { message } from "ant-design-vue";
 
 const props = defineProps({
   containerVisible: Boolean,
+  detailId: String,
+  containerType: String,
 });
-const { containerVisible } = toRefs(props);
-const emit = defineEmits(["hideContainerParam", "frontendDeploying"]);
+const { containerVisible, detailId, containerType } = toRefs(props);
+const emit = defineEmits(["hideContainerParam", "frontendContainerDeploy"]);
 
 const loading = ref(false);
 const formRef = ref();
 const serviceProtocolList = ref(['TCP','UDP','SCTP']);
 const formData = reactive({
   containerSize: '0.5 Core 0.5GB',
-  containerPort: '',
+  containerPort: null,
   serviceProtocol: 'TCP',
-  servicePort: '',
-  serviceTargetPort: '',
+  servicePort: null,
+  serviceTargetPort: null,
 });
 
 const formRules = computed(() => {
@@ -87,6 +93,13 @@ const formRules = computed(() => {
     serviceTargetPort: [requiredRule('serviceTargetPort')],
   };
 });
+
+watch(containerVisible, (newVal) => {
+  if (newVal === true) {
+    getContainer();
+  }
+ })
+
 const setPortData = () => {
   if (formData.containerPort != null && formData.containerPort != "") {
     formData.servicePort = formData.serviceTargetPort = formData.containerPort;
@@ -102,13 +115,46 @@ const paramDone = async () => {
   loading.value = true;
 
   try {
-    // const data = await apiAddApp(formData);
+    const params = {
+      containerPort: formData.containerPort - 0,
+      serviceProtocol: formData.serviceProtocol,
+      servicePort: formData.servicePort - 0,
+      serviceTargetPort: formData.serviceTargetPort - 0,
+    }
+    if (containerType?.value === 'update') {
+      updateContainer(params);
+    } else {
+      emit("frontendContainerDeploy", params);
+    }
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
     loading.value = false;
     hideVisible();
-    emit("frontendDeploying");
+  }
+}
+
+const updateContainer = async (apiContainerDeployParams: Object) => {
+  try {
+    const data = await apiPostContainer(detailId?.value, apiContainerDeployParams);
+    console.log("update :",data);
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const getContainer = async () => {
+  try {
+    const { data } = await apiGetContainer(detailId?.value);
+
+    formData.containerPort = data.containerPort === 0 ? '' : data.containerPort
+    formData.servicePort = data.servicePort === 0 ? '' : data.servicePort
+    formData.serviceTargetPort = data.serviceTargetPort === 0 ? '' : data.serviceTargetPort
+    formData.serviceProtocol = data.serviceProtocol === '' ? 'TCP' : data.serviceProtocol
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
   }
 }
 </script>
