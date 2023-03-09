@@ -362,6 +362,7 @@ const createProject = async () => {
       type: JSON.parse(createProjectTemp)?.type - 0,
       templateOwner: templatesDetail.value.author,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
+      deployType: JSON.parse(createProjectTemp)?.deployType - 0,
       repoOwner: JSON.parse(userInfo)?.username,
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,

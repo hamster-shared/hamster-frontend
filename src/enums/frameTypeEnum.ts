@@ -11,7 +11,7 @@ export enum ContractFrameTypeEnum {
 }
 
 export enum FrontEndFrameTypeEnum {
- 
+
 }
 
 export enum ActionButtonEnum {
@@ -19,4 +19,10 @@ export enum ActionButtonEnum {
   'Build' = '2',
   'Deploy' = '3',
   'Ops' = '4',
+}
+
+export enum FrontEndDeployTypeEnum {
+  'FrontEnd' = 0,
+  'IPFS' = 1,
+  'Container' = 2,
 }
