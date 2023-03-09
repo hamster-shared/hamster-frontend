@@ -1,27 +1,24 @@
 <template>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
-    class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
+  <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
     <div class="flex justify-between">
       <div class="mb-[32px] items-center">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="project-title text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
+          <div class="text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
             <label v-if="projectType === '1'">
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
-            <label v-else-if="projectType === '2' && viewInfo.deployType == '1'">IPFS</label>
-            <label v-else-if="projectType === '2' && viewInfo.deployType == '2'">Container</label>
+            <label v-else-if="projectType === '2'">FrontEnd</label>
           </div>
         </div>
       </div>
 
-
       <div>
         <label class="cursor-pointer group text-center w-[100px]" v-for="(item, index) in actionButtonList"
-          @click="projectsAction(viewInfo, item.name, $event)">
+          @click="projectsAction(viewInfo, item, $event)">
           <label v-if="index !== 0">
             <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
             <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
@@ -59,7 +56,6 @@
           </div>
         </div>
 
-
         <div>
           <div class="text-[16px] font-bold">Recent Check</div>
           <div class="my-2" v-if="viewInfo.recentCheck.status === 0">{{ RecentStatusEnums[viewInfo.recentCheck.status] }}
@@ -85,7 +81,6 @@
             Result</div>
         </div>
 
-
         <div>
           <div class="text-[16px] font-bold">Recent Build</div>
           <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentCheck.status] }}
@@ -98,15 +93,16 @@
             </div>
           </div>
 
-
-          <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id, viewInfo.recentBuild)"
+          <div class="text-[#E2B578] cursor-pointer" @click="projectsBuild(viewInfo.id, viewInfo.recentBuild.status)"
             v-if="viewInfo.recentBuild.status === 0">Build Now</div>
+
           <div class="text-[#E2B578] cursor-pointer"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
+
           <div v-else>
             <div v-if="projectType === '1'">
               <div class="text-[#E2B578] cursor-pointer"
@@ -118,8 +114,6 @@
               v-else>Deploy Now</div>
           </div>
         </div>
-
-
         <div>
           <div class="text-[16px] font-bold">Recent Deploy</div>
           <div v-if="projectType === '1'">
@@ -150,6 +144,7 @@
                   fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
               </div>
             </div>
+
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
             <div v-else class="text-[#E2B578] cursor-pointer"
               @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
@@ -159,9 +154,7 @@
       </div>
     </div>
   </div>
-  <ContainerParam :containerVisible="containerVisible" @hideContainerParam="hideContainerParam"
-    @frontendDeploying="frontendDeploying"></ContainerParam>
-  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
+  <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
 </template>
@@ -173,12 +166,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
-import ContainerParam from './ContainerParam.vue';
-import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
-
-const theme = useThemeStore()
 
 const router = useRouter();
 
@@ -187,11 +176,12 @@ const props = defineProps({
   viewInfo: Object,
   projectType: String,
 });
+
 const actionButtonList = ref([
   { name: 'Check', url: ['check', 'check-b', 'check-color'] },
   { name: 'Build', url: ['build', 'build-b', 'build-color'] },
   { name: 'Deploy', url: ['deploy', 'deploy-b', 'deploy-color'] },
-  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }]);
+  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }])
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
@@ -199,10 +189,8 @@ const showViewInfoRepositoryUrl = computed(() => {
 })
 
 const emit = defineEmits(["loadProjects"]);
-const containerVisible = ref(false);
 const disabled = ref(false);
 const showMsg = ref(false);
-const msgType = ref("");
 const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
@@ -263,29 +251,13 @@ const projectsCheck = async (id: String, status: Number, e: Event) => {
 
 };
 
-const projectsBuild = async (id: String, buildData: any) => {
+const projectsBuild = async (id: String, status: Number) => {
   try {
-
-    if (buildData.status === 1) {
-      if (projectType?.value === "1") {
-        message.info("Executing Now，please wait a moment.");
-      } else {
-        msgParam.value.workflowsId = buildData.workflowId;
-        msgParam.value.workflowDetailId = buildData.id;
-        msgType.value = 'build';
-        setMsgShow();
-      }
+    if (status === 1) {
+      message.info("Executing Now，please wait a moment.");
     } else {
       const res = await apiProjectsBuild(id);
-      if (projectType?.value === "1") {
-        message.success(res.message);
-      } else {
-        msgParam.value.workflowsId = buildData.workflowId;
-        msgParam.value.workflowDetailId = buildData.id;
-        msgType.value = 'build';
-        setMsgShow();
-      }
-
+      message.success(res.message);
       loadView();
     }
   } catch (error: any) {
@@ -304,9 +276,9 @@ const projectsDeploy = async (id: String, version: String, status: Number) => {
     }
   } else {
     if (status === 3) {
-      goFrontendDeploy();
+      goFrontendDeploy(id);
     } else {
-      message.info("FrontEnd image not avaliable");
+      message.info("FrontEnd package not avaliable.");
     }
   }
 };
@@ -342,7 +314,7 @@ const goContractDeploy = async (id: String, status: String | Number) => {
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
   } else if (localStorage.getItem('projectActiveKey') == '2') {
     if (status === 3) {
-      goFrontendDeploy();
+      goFrontendDeploy(id);
     }
   }
 };
@@ -358,52 +330,24 @@ const goContractDetail = async (id: String, version: String) => {
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/contracts-details/" + version);
 }
-const goFrontendDeploy = async () => {
-  try {
-    if (viewInfo?.value.deployType === "2") { //Container的场合
-      if (viewInfo?.value.recentDeploy.status === 3) {
-        frontendDeploying();
-      } else {
-        containerVisible.value = true;
-      }
-    } else {
-      frontendDeploying();
-    }
-
-  } catch (error: any) {
-    console.log("erro:", error)
-    message.error(error.response.data.message);
-  }
-}
-const hideContainerParam = () => {
-  containerVisible.value = false;
-}
-const frontendDeploying = async () => {
+const goFrontendDeploy = async (id: String) => {
   try {
     const params = ref({
-      id: viewInfo?.value.id,
+      id: id,
       workflowsId: viewInfo?.value.recentBuild.workflowId,
       workflowDetailId: viewInfo?.value.recentBuild.id,
     });
     const { data } = await apiProjectsDeploy(params.value);
+    showMsg.value = true;
     msgParam.value.workflowsId = data.workflowId;
     msgParam.value.workflowDetailId = data.detailId;
-    msgType.value = 'deploy';
-    setMsgShow();
-
-    loadView();
+    setTimeout(function () {
+      showMsg.value = false;
+    }, 3000)
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
   }
-}
-
-const setMsgShow = () => {
-  showMsg.value = true;
-  setTimeout(function () {
-    showMsg.value = false;
-  }, 3000)
-
 }
 
 const goFrontEndDetail = (id: string, recentDeploy: Object) => {
@@ -425,6 +369,7 @@ const getImageUrl = (status: any) => {
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };
+
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
@@ -465,9 +410,6 @@ html[data-theme='dark'] {
   background: @baseColor;
 }
 
-// .dark-css a,.dark-css a:hover{
-//   color: #FFFFFF;
-// }
 a,
 a:hover {
   color: #151210;

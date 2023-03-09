@@ -16,8 +16,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "types": [
-      "vite/client"
-    ]
+      "vite/client",
+      "vite-plugin-svg-icons/client"
+    ],
   },
   "references": [
     {
