@@ -100,8 +100,9 @@ const getTemplatesCategory = async () => {
     templatesCategory.value = data;
     const createFormData: any = JSON.parse(localStorage.getItem('createFormData')) || {};
     const frameType = createFormData.type === '2' ? 0 : createFormData.frameType;
+    const deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
     templatesCategory.value.forEach(async (element, index) => {
-      const { data } = await apiTemplatesCategoryById(element.id, frameType);
+      const { data } = await apiTemplatesCategoryById(element.id, frameType, deployType);
 
       templatesCategory.value[index]['templatesList'] = data;
     });
