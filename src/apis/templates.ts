@@ -12,12 +12,13 @@ export function apiTemplatesCategory(type: String) {
   });
 }
 // 根据模版类型ID查询模版信息
-export function apiTemplatesCategoryById(id: String, languageType: string) {
+export function apiTemplatesCategoryById(id: String, languageType: string, deployType: String) {
   return httpRequest({
     url: `/api/templates-category/${id}/templates`,
     method: "get",
     params: {
       languageType: languageType,
+      deployType: deployType,
     },
   });
 }

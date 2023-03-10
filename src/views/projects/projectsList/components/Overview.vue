@@ -359,7 +359,7 @@ const goContractDetail = async (id: String, version: String) => {
 }
 const goFrontendDeploy = async () => {
   try {
-    if (viewInfo?.value.deployType === "2") { //Container的场合
+    if (viewInfo?.value.deployType === 2) { //Container的场合
       
       frontendContainerCheck();
     } else {
