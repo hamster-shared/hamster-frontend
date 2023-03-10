@@ -122,7 +122,8 @@ const deleteBtn = async () => {
 
 const logsInfo = ref([])
 const { id, username} = JSON.parse(localStorage.getItem('userInfo'))
-useWebSocket(`ws://172.16.10.81:8080/api/projects/${id}/${username}/frontend/logs`, {
+const baseUrl = ref(import.meta.env.VITE_WS_API)
+useWebSocket(`${baseUrl.value}/projects/${id}/${username}/frontend/logs`, {
   // protocols: ['ufMizxtT9EqaTJf45pXUgUWget8C8jtbR+l/ltaerv/WYwyWAIUPOqRH/+f6R0ip'],
   autoReconnect: true,
   heartbeat: true,
