@@ -150,6 +150,7 @@ import tonthree from '@/assets/svg/ton-three.svg';
 import starkwareone from '@/assets/svg/starkware-one.svg';
 import starkwaretwo from '@/assets/svg/starkware-two.svg';
 import starkwarethree from '@/assets/svg/starkware-three.svg'
+import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
 
@@ -215,6 +216,7 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
       name: formData.name,
       type: formData.type,
       frameType: formData.frameType,
+      deployType: formData.deployType,
     }
     localStorage.setItem("createFormData", JSON.stringify(formData));
     window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
@@ -234,11 +236,6 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
-  if (val.target.name === 'deployType') {
-    formData.deployType = val.target.value
-  } else {
-    formData.type = val.target.value
-  }
   getInitTemplates()
 }
 
@@ -251,7 +248,7 @@ const getInitTemplates = async () => {
     } else if (formData.type === '2') {
       languageType = null;
     }
-    const { data } = await apiTemplatesShow(formData.type, languageType);
+    const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
     showList.value = data;
     console.log(showList.value)
   } catch (error: any) {

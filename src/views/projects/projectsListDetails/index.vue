@@ -19,8 +19,7 @@
             <!-- <div v-if="projectsDetail.frameType === 1">EVM</div>
             <div v-if="projectsDetail.frameType === 4">StarkWare</div> -->
           </label>
-          <label v-else-if="projectType === '2' && projectsDetail.deployType == '1'">IPFS</label>
-          <label v-else-if="projectType === '2' && projectsDetail.deployType == '2'">Container</label>
+          <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[projectsDetail.deployType] }}</label>
         </div>
       </div>
       <div>
@@ -30,11 +29,11 @@
           <a-button type="primary" class="ml-4">Setting</a-button>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="visibleModal = true">General</a>
+              <a-menu-item @click="visibleModal = true">
+                <a href="javascript:;">General</a>
               </a-menu-item>
-              <a-menu-item v-if="projectsDetail.deployType == 2">
-                <a href="javascript:;" @click="containerVisible=true">Container</a>
+              <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible=true">
+                <a href="javascript:;">Container</a>
               </a-menu-item>
             </a-menu>
           </template>
@@ -84,7 +83,8 @@
       <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteProjects">YES</a-button>
     </div>
   </a-modal>
-  <ContainerParam :containerVisible="containerVisible" @hideContainerParam="containerVisible=false"></ContainerParam>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
+  <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId" @hideContainerParam="containerVisible=false"></ContainerParam>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -94,12 +94,16 @@ import Workflows from "./components/Workflows.vue";
 import Contract from "./components/Contract.vue";
 import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts"
+import CustomMsg from '@/components/CustomMsg.vue';
+import ContainerParam from '../projectsList/components/ContainerParam.vue';
+import { ContractFrameTypeEnum,FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum.ts"
 import {
   apiGetProjectsDetail,
   apiUpdateProjectsName,
   apiDeleteProjects,
-  apiDupProjectName
+  apiDupProjectName,
+  apiPostContainer,
+  apiGetContainer
 } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -127,6 +131,14 @@ const formData = reactive({
 const projectsDetail = ref({});
 const frameType = ref(0);
 const containerVisible = ref(false);
+const showMsg = ref(false);
+const msgType = ref("");
+const msgParam = ref({
+  id: detailId.value,
+  workflowsId: 0,
+  workflowDetailId: 0,
+  projectType: projectType?.value
+});
 
 const formRules = computed(() => {
 
@@ -262,6 +274,14 @@ const deleteProjects = async () => {
     deleteModal.value = false;
     loading.value = false;
   }
+}
+
+const setMsgShow = () => {
+  showMsg.value = true;
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
 }
 
 const goBack = () => {
