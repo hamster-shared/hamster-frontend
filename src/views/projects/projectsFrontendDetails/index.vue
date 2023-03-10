@@ -74,10 +74,27 @@ const viewLogs = () => {
   router.push(`/projects/${packageInfo?.projectId}/${packageInfo?.workflowId}/workflows/${packageInfo?.workflowDetailId}/3/2`)
 }
 
+const logsInfo = ref([])
+const baseUrl = ref(import.meta.env.VITE_WS_API)
+const { username } = JSON.parse(localStorage.getItem('userInfo'))
+
+const realtimeLogs =(data)=>{
+  console.log('event:::',data.data)
+  logsInfo.value.push(data.data)
+}
+
 const getPackageDetail = async () => {
   try {
     const { data } = await apiGetPackageDetail(params.packageId)
     Object.assign(packageInfo, data)
+    
+    useWebSocket(`${baseUrl.value}/projects/${packageInfo.projectId}/${username}/frontend/logs`, {
+      autoReconnect: true,
+      heartbeat: true,
+      onMessage: (_ws,event)=>{
+        realtimeLogs(event)
+      }
+    })
   } catch (err: any) {
     console.info(err)
   }
@@ -118,23 +135,6 @@ const deleteBtn = async () => {
   } catch (err: any) {
     console.info(err)
   }
-}
-
-const logsInfo = ref([])
-const { id, username} = JSON.parse(localStorage.getItem('userInfo'))
-const baseUrl = ref(import.meta.env.VITE_WS_API)
-useWebSocket(`${baseUrl.value}/projects/${id}/${username}/frontend/logs`, {
-  // protocols: ['ufMizxtT9EqaTJf45pXUgUWget8C8jtbR+l/ltaerv/WYwyWAIUPOqRH/+f6R0ip'],
-  autoReconnect: true,
-  heartbeat: true,
-  onMessage: (_ws,event)=>{
-    realtimeLogs(event)
-  }
-})
-
-const realtimeLogs =(data)=>{
-  console.log('event:::',data.data)
-  logsInfo.value.push(data.data)
 }
 
 //获取到返回的数据
