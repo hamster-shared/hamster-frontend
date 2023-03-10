@@ -1,11 +1,10 @@
 import { fileURLToPath, URL } from "node:url";
 import path from 'path';
 import { defineConfig, loadEnv } from "vite";
-import type {ConfigEnv} from 'vite';
 import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
-export default ({ mode }:ConfigEnv) => defineConfig({
+export default ({ mode }) => defineConfig({
   build: {
   },
   plugins: [vue()],
