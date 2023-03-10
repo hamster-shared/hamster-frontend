@@ -137,7 +137,8 @@ const paramDone = async () => {
 const updateContainer = async (apiContainerDeployParams: Object) => {
   try {
     const data = await apiPostContainer(detailId?.value, apiContainerDeployParams);
-    console.log("update :",data);
+    
+    message.success(data.message);
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
