@@ -32,7 +32,7 @@
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2" disabled="true">Blockchain Node（coming soon）
+              <a-radio :style="radioStyle" value="2" disabled="true">Use an existing repository（coming soon）
                 <div>Please pay attention to Hamster</div>
               </a-radio>
             </a-radio-group>
