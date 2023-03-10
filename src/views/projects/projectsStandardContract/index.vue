@@ -54,7 +54,7 @@
       <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
-        <a-button type="primary" :loading="createCodeLoading" @click="handleOk">Done</a-button>
+        <a-button id="create-project-btn" type="primary" :loading="createCodeLoading" @click="handleOk">Done</a-button>
       </div>
     </a-modal>
   </div>
@@ -118,13 +118,13 @@ onMounted(async () => {
   optsERC20.value.name = 'ExampleToken';
   optsERC20.value.symbol = 'ETK';
   optsERC20.value.premint = '1000000';
-  
+
   contractERC20.value = erc20.print(optsERC20.value);
 
   optsERC721.value.name = 'ExampleToken';
   optsERC721.value.symbol = 'ETK';
   contractERC721.value = erc721.print(optsERC721.value);
-  
+
   optsERC1155.value.name = 'ExampleToken';
   optsERC1155.value.uri = '';
   contractERC1155.value = erc1155.print(optsERC1155.value);
@@ -151,7 +151,7 @@ const checkboxClick = async (event: any) => {
   } else if ( activeKey.value === 'ERC1155') {
     optsERC1155.value[event.target.name] = event.target.checked;
   }
-  
+
   setContract();
 }
 
@@ -237,12 +237,12 @@ const handleCancel = ()=>{
 
 :deep(.dark-css .ant-tabs){
   color: #E0DBD2;
-} 
+}
 :deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
   color: #FFFFFF;
 }
 :deep(.ant-tabs-tab-btn){
   width: 100px;
   text-align: center;
-} 
+}
 </style>

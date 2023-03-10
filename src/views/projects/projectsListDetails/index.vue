@@ -19,12 +19,25 @@
             <!-- <div v-if="projectsDetail.frameType === 1">EVM</div>
             <div v-if="projectsDetail.frameType === 4">StarkWare</div> -->
           </label>
-          <label v-else-if="projectType === '2'">FrontEnd</label>
+          <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[projectsDetail.deployType] }}</label>
         </div>
       </div>
       <div>
         <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
-        <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button>
+        <!-- <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button> -->
+        <a-dropdown>
+          <a-button type="primary" class="ml-4">Setting</a-button>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item @click="visibleModal = true">
+                <a href="javascript:;">General</a>
+              </a-menu-item>
+              <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible=true">
+                <a href="javascript:;">Container</a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length !== 0">
@@ -39,8 +52,11 @@
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
           <Contract ref="contractRef" :detailId="detailId" />
         </a-tab-pane>
-        <a-tab-pane v-if="params.type === '2'" key="2" tab="Package">
-          <Package ref="packageRef" pageType="project" :detailId="detailId" />
+        <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType"/>
+        </a-tab-pane>
+        <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '2'" key="2" tab="Image">
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType"/>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report">
           <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
@@ -67,6 +83,8 @@
       <a-button class="ml-[24px]" type="primary" :loading="loading" @click="deleteProjects">YES</a-button>
     </div>
   </a-modal>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
+  <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId" @hideContainerParam="containerVisible=false"></ContainerParam>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -76,12 +94,16 @@ import Workflows from "./components/Workflows.vue";
 import Contract from "./components/Contract.vue";
 import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts"
+import CustomMsg from '@/components/CustomMsg.vue';
+import ContainerParam from '../projectsList/components/ContainerParam.vue';
+import { ContractFrameTypeEnum,FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum.ts"
 import {
   apiGetProjectsDetail,
   apiUpdateProjectsName,
   apiDeleteProjects,
-  apiDupProjectName
+  apiDupProjectName,
+  apiPostContainer,
+  apiGetContainer
 } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -108,6 +130,15 @@ const formData = reactive({
 });
 const projectsDetail = ref({});
 const frameType = ref(0);
+const containerVisible = ref(false);
+const showMsg = ref(false);
+const msgType = ref("");
+const msgParam = ref({
+  id: detailId.value,
+  workflowsId: 0,
+  workflowDetailId: 0,
+  projectType: projectType?.value
+});
 
 const formRules = computed(() => {
 
@@ -243,6 +274,14 @@ const deleteProjects = async () => {
     deleteModal.value = false;
     loading.value = false;
   }
+}
+
+const setMsgShow = () => {
+  showMsg.value = true;
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
 }
 
 const goBack = () => {

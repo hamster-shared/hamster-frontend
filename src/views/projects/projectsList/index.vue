@@ -28,7 +28,7 @@
         <a-tab-pane key="2" tab="FrontEnd">
           <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
-              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"/>
             </div>
             <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange"
               @showSizeChange="onShowSizeChange" :current="currentFrontend" :total="totalFrontend" size="small" />
@@ -40,9 +40,9 @@
       </a-tabs>
     </div>
   </div>
-  <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
-    <img src="@/assets/images/project-guide.jpg" class=" w-full dark:hidden" />
-    <img src="@/assets/images/project-guide-dark.jpg" class=" w-full hidden dark:inline-block" />
+  <div class="fixed top-0 left-0 z-10 w-screen h-screen" v-show="showGuide">
+    <img src="@/assets/images/project-guide.jpg" class="w-full dark:hidden" />
+    <img src="@/assets/images/project-guide-dark.jpg" class="hidden w-full dark:inline-block" />
     <div class="absolute bottom-[30%] flex justify-center w-full">
       <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
     </div>
@@ -148,23 +148,26 @@ const getProjectsContract = async (type: string | undefined) => {
       totalContract.value = data.total;
     }
 
-    const isRunning = ref(false);
-    contractList.value.forEach(element => {
-      if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
-        || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
-        isRunning.value = true;
-      }
-    });
-    if (isRunning.value === true) {
-      timer.value = setTimeout(() => {
-        // 其他定时执行的方法
-        activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-      }, 5000)
-    } else {
-      clearTimeout(timer.value);
-    }
+    projectRunning(contractList.value);
   } catch (error: any) {
     console.log("erro:", error)
+  }
+}
+const projectRunning = (projectList: any) => {
+  const isRunning = ref(false);
+  projectList.forEach((element: { recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; }) => {
+    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
+      || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
+      isRunning.value = true;
+    }
+  });
+  if (isRunning.value === true) {
+    timer.value = setTimeout(() => {
+      // 其他定时执行的方法
+      activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+    }, 5000)
+  } else {
+    clearTimeout(timer.value);
   }
 }
 const getProjectsFrontend = async (type: string | undefined) => {
@@ -186,6 +189,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       frontentList.value = data.data;
       totalFrontend.value = data.total;
     }
+    projectRunning(frontentList.value);
   } catch (error: any) {
     console.log("erro:", error)
   } finally {

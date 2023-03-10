@@ -56,6 +56,16 @@
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
+          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2'">
+            <a-radio-group v-model:value="formData.deployType" name="deployType" @change="getTemplatesShow">
+              <a-radio :style="radioStyle" value="1">IPFS
+                <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="2">Container
+                <div>Package the front-end code into a Docker image and upload it to container service</div>
+              </a-radio>
+            </a-radio-group>
+          </a-form-item>
         </a-form>
         <div>
           <div class="flex justify-between">
@@ -140,6 +150,7 @@ import tonthree from '@/assets/svg/ton-three.svg';
 import starkwareone from '@/assets/svg/starkware-one.svg';
 import starkwaretwo from '@/assets/svg/starkware-two.svg';
 import starkwarethree from '@/assets/svg/starkware-three.svg'
+import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
 
@@ -153,6 +164,7 @@ const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) ||
   type: '1',
   contractCode: '1',
   frameType: '1',
+  deployType: '1',
 });
 
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
@@ -204,6 +216,7 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
       name: formData.name,
       type: formData.type,
       frameType: formData.frameType,
+      deployType: formData.deployType,
     }
     localStorage.setItem("createFormData", JSON.stringify(formData));
     window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
@@ -223,7 +236,6 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
-  formData.type = val.target.value
   getInitTemplates()
 }
 
@@ -236,7 +248,7 @@ const getInitTemplates = async () => {
     } else if (formData.type === '2') {
       languageType = null;
     }
-    const { data } = await apiTemplatesShow(formData.type, languageType);
+    const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
     showList.value = data;
     console.log(showList.value)
   } catch (error: any) {

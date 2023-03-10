@@ -27,7 +27,7 @@
       <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
-        <a-button type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
+        <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
       </div>
     </a-modal>
 
@@ -362,6 +362,7 @@ const createProject = async () => {
       type: JSON.parse(createProjectTemp)?.type - 0,
       templateOwner: templatesDetail.value.author,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
+      deployType: JSON.parse(createProjectTemp)?.deployType - 0,
       repoOwner: JSON.parse(userInfo)?.username,
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,

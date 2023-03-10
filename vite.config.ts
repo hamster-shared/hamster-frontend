@@ -1,11 +1,12 @@
 import { fileURLToPath, URL } from "node:url";
-
+import path from 'path';
 import { defineConfig, loadEnv } from "vite";
 import type {ConfigEnv} from 'vite';
 import vue from "@vitejs/plugin-vue";
-import viteCompression from 'vite-plugin-compression'
-import OptimizationPersist from 'vite-plugin-optimize-persist'
-import PkgConfig from 'vite-plugin-package-config'
+import viteCompression from 'vite-plugin-compression';
+import OptimizationPersist from 'vite-plugin-optimize-persist';
+import PkgConfig from 'vite-plugin-package-config';
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 
 // https://vitejs.dev/config/
 export default ({ mode }:ConfigEnv) => defineConfig({
@@ -22,6 +23,12 @@ export default ({ mode }:ConfigEnv) => defineConfig({
     }),
     OptimizationPersist(),//预构建
     PkgConfig(),//从包依赖中读取预构建项
+    createSvgIconsPlugin({
+      // 指定需要缓存的图标文件夹
+      iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+      // 指定symbolId格式
+      symbolId: "icon-[dir]-[name]",
+    }),
   ],
   resolve: {
     alias: {

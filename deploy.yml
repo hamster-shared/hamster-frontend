@@ -32,6 +32,6 @@ spec:
       containers:
         - name: hamster-frontend
           image: hamstershare/hamster-frontend:${PIPELINE_ID}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
