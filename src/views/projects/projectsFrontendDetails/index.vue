@@ -44,6 +44,7 @@
         <!-- <projectsWorkflowsAllLogs></projectsWorkflowsAllLogs> -->
         <div class="whitespace-pre-wrap">{{ item }}</div>
       </div>
+      <!-- <div id="terminal"></div> -->
     </div>
   </div>
 </template>
@@ -59,12 +60,14 @@ import Breadcrumb from '../components/Breadcrumb.vue';
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 import { creatWebSocket, closeWebSocket} from '@/utils/websocket.ts'
 import { useWebSocket } from '@vueuse/core'
+// import "xterm/css/xterm.css";
+// import { Terminal } from "xterm";
 
 const { t } = useI18n();
 const router = useRouter();
 const { params } = useRoute();
 const currentName = ref('Deployment Detail');
-const packageInfo = reactive({});
+const packageInfo = reactive<any>({});
 const workflowsDetailsData = reactive({
   packageId: params.packageId,
 });
@@ -74,13 +77,16 @@ const viewLogs = () => {
   router.push(`/projects/${packageInfo?.projectId}/${packageInfo?.workflowId}/workflows/${packageInfo?.workflowDetailId}/3/2`)
 }
 
-const logsInfo = ref([])
+const logsInfo = ref<any>([])
 const baseUrl = ref(import.meta.env.VITE_WS_API)
-const { username } = JSON.parse(localStorage.getItem('userInfo'))
+const { username } = JSON.parse(localStorage.getItem('userInfo') as string)
+// const term = new Terminal()
 
-const realtimeLogs =(data)=>{
-  console.log('event:::',data.data)
-  logsInfo.value.push(data.data)
+const realtimeLogs =(data:any)=>{
+  logsInfo.value.push(data.data as never)
+  // term.open(document.getElementById('terminal'))
+  // console.log('logsInfo.value:::',logsInfo.value)
+  // term.write(...logsInfo.value)
 }
 
 const getPackageDetail = async () => {
