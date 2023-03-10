@@ -11,7 +11,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 // https://vitejs.dev/config/
 export default ({ mode }:ConfigEnv) => defineConfig({
   build: {
-    outDir: 'dist', // 打包文件的输出目录
+    outDir: 'build', // 打包文件的输出目录
     assetsDir: 'static', // 静态资源的存放目录
     assetsInlineLimit: 4096, // 图片转 base64 编码的阈值
     // minify: 'terser', // 混淆器，terser构建后文件体积更小
