@@ -34,6 +34,8 @@ export default ({ mode }:ConfigEnv) => defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
+    // 配置文件扩展名
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
   },
   server: {
     proxy: {
