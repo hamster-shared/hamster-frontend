@@ -95,7 +95,7 @@ const formRules = computed(() => {
 });
 
 watch(containerVisible, (newVal) => {
-  if (newVal === true) {
+  if (newVal === true && containerType?.value === 'update') {
     getContainer();
   }
  })
@@ -121,9 +121,8 @@ const paramDone = async () => {
       servicePort: formData.servicePort - 0,
       serviceTargetPort: formData.serviceTargetPort - 0,
     }
-    if (containerType?.value === 'update') {
-      updateContainer(params);
-    } else {
+    updateContainer(params);
+    if (containerType?.value !== 'update') {
       emit("frontendContainerDeploy", params);
     }
   } catch (error: any) {
@@ -137,8 +136,9 @@ const paramDone = async () => {
 const updateContainer = async (apiContainerDeployParams: Object) => {
   try {
     const data = await apiPostContainer(detailId?.value, apiContainerDeployParams);
-    
-    message.success(data.message);
+    if (containerType?.value === 'update') {
+      message.success(data.message);
+    }
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);

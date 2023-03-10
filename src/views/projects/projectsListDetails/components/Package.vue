@@ -10,14 +10,17 @@
       </template>
     </template>
   </a-table>
-  <CustomMsg :showMsg="showMsg" :msgParam="msgParam"></CustomMsg>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
+  <ContainerParam :containerVisible="containerVisible" :detailId="detailId" @hideContainerParam="containerVisible=false"
+    @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { useRouter } from "vue-router";
-import { apiGetProjectsPackages, apiProjectsDeploy } from "@/apis/projects";
+import { apiGetProjectsPackages, apiProjectsDeploy, apiProjectsContainerDeploy, apiContainerCheck } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
+import ContainerParam from '../../projectsList/components/ContainerParam.vue';
 import { message } from 'ant-design-vue';
 
 const props = defineProps({
@@ -29,12 +32,19 @@ const props = defineProps({
 const { pageType, detailId, packageListData } = toRefs(props);
 
 const router = useRouter();
+const containerVisible = ref(false);
 const showMsg = ref(false);
+const msgType = ref("");
 const msgParam = ref({
-  id: 0,
+  id: detailId?.value,
   workflowsId: 0,
   workflowDetailId: 0,
   projectType: 2,
+});
+const deployParams = ref({
+  id: detailId?.value,
+  workflowsId: '',
+  workflowDetailId: '',
 });
 const tableList = ref([]);
 const pagination = ref();
@@ -147,26 +157,57 @@ const getProjectsPackage = async () => {
   }
 }
 
-const goDeploy = async (projectId:number, workflowId: number, workflowDetailId: number) => {
+const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: string) => {
 
   try {
-    const params = ref({
-      id: projectId,
-      workflowsId: workflowId,
-      workflowDetailId: workflowDetailId,
-    });
-    const { data } = await apiProjectsDeploy(params.value); 
-    showMsg.value = true;
-    msgParam.value.id = projectId;
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    setTimeout(function () {
-      showMsg.value = false;
-    }, 3000)
+    deployParams.value.id = projectId;
+    deployParams.value.workflowsId = workflowId;
+    deployParams.value.workflowDetailId = workflowDetailId;
+    if (props.deployType == '2') {
+      frontendContainerCheck();
+    } else {
+      const { data } = await apiProjectsDeploy(deployParams.value); 
+      setMsgShow(data);
+    }
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
   }
+}
+const frontendContainerCheck = async () => {
+  try {
+    const { data } = await apiContainerCheck(deployParams.value.id, deployParams.value.workflowsId);
+    if (data === false) { //未配置
+      containerVisible.value = true;
+    } else {
+      frontendContainerDeploy();
+    }
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+const frontendContainerDeploy = async (apiContainerDeployParams?: Object) => {
+  try {
+    const { data } = await apiProjectsContainerDeploy(deployParams.value, apiContainerDeployParams);
+
+    setMsgShow(data);
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const setMsgShow = (data:any) => {
+  showMsg.value = true;
+  msgParam.value.id = deployParams.value.id;
+  msgParam.value.workflowsId = data.workflowId;
+  msgParam.value.workflowDetailId = data.detailId;
+  msgType.value = 'deploy';
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
 }
 
 const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
