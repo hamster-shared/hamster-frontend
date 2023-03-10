@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 // import Login from "../views/login/index.vue";
-// const Login = important("@/views/login/index.vue")
 // import LoginTransition from "../views/login/loginTransition.vue";
 // import Welcome from "../views/login/welcome.vue";
 // import HomeView from "../views/home/HomeView.vue";
