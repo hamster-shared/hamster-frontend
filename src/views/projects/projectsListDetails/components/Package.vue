@@ -50,8 +50,8 @@ const tableList = ref([]);
 const pagination = ref();
 
 const firstTitle = ref('')
-const checkImageOrPackage = ()=>{
-  console.log('props.projectType:::',props.deployType)
+const checkImageOrPackage = () => {
+  
   if(props.deployType == '1'){
     firstTitle.value = 'Package Name'
   }else{

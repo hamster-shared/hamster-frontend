@@ -109,7 +109,6 @@ const hideVisible = () => {
   emit("hideContainerParam");
 }
 const paramDone = async () => {
-  console.log("formData:", formData);
   await formRef.value.validate();
 
   loading.value = true;
@@ -122,9 +121,6 @@ const paramDone = async () => {
       serviceTargetPort: formData.serviceTargetPort - 0,
     }
     updateContainer(params);
-    if (containerType?.value !== 'update') {
-      emit("frontendContainerDeploy", params);
-    }
   } catch (error: any) {
     console.log("erro:",error)
   } finally {
@@ -138,6 +134,8 @@ const updateContainer = async (apiContainerDeployParams: Object) => {
     const data = await apiPostContainer(detailId?.value, apiContainerDeployParams);
     if (containerType?.value === 'update') {
       message.success(data.message);
+    } else {
+      emit("frontendContainerDeploy", apiContainerDeployParams);
     }
   } catch (error: any) {
     console.log("erro:", error)

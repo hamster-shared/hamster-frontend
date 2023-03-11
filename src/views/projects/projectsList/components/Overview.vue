@@ -227,7 +227,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsCheck(val.id, val.recentCheck.status, e);
       break;
     case 'Build':
-      projectsBuild(val.id, val.recentBuild.status);
+      projectsBuild(val.id, val.recentBuild);
       break;
     case 'Deploy':
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
@@ -264,7 +264,6 @@ const projectsCheck = async (id: String, status: Number, e: Event) => {
 
 const projectsBuild = async (id: String, buildData: any) => {
   try {
-
     if (buildData.status === 1) {
       if (projectType?.value === "1") {
         message.info("Executing Now，please wait a moment.");
