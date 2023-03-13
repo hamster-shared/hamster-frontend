@@ -17,7 +17,6 @@ import "./design/app.less";
 import DefaultLayout from "./layout/default/index.vue";
 import Null from "./layout/null/index.vue";
 import SvgIcon from "./components/Icon/SvgIcon.vue";
-import 'virtual:svg-icons-register';
 
 const app = createApp(App);
 
