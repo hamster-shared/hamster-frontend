@@ -1,31 +1,27 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import Login from "../views/login/index.vue";
-// const Login = important("@/views/login/index.vue")
-// import LoginTransition from "../views/login/loginTransition.vue";
-// import Welcome from "../views/login/welcome.vue";
-// import HomeView from "../views/home/HomeView.vue";
-// import RpcsIndex from "../views/nodeService/rpcs/index.vue";
-// import AppsIndex from "../views/nodeService/apps/index.vue";
-// import ProjectsList from "../views/projects/projectsList/index.vue";
-// import ProjectsListDetails from "../views/projects/projectsListDetails/index.vue";
-// import ProjectsCreat from "../views/projects/projectsCreat/index.vue";
-// import ProjectsTemplate from "../views/projects/projectsTemplate/index.vue";
-// import ProjectsTemplatesDetails from "../views/projects/projectsTemplatesDetails/index.vue";
-// import ProjectsWorkflows from "../views/projects/projectsWorkflows/index.vue";
-// import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs/index.vue";
-// import projectsArtifactsContractDeploy from "../views/projects/projectsArtifactsContractDeploy/index.vue";
-// import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
-// import ProjectsStandardContract from "../views/projects/projectsStandardContract/index.vue";
-// import ProjectsFrontendDetails from "../views/projects/projectsFrontendDetails/index.vue";
-// import ProjectsIntegrated from "../views/projects/projectsIntegrated/index.vue";
+import Login from "../views/login/index.vue";
+import LoginTransition from "../views/login/loginTransition.vue";
+import HomeView from "../views/home/HomeView.vue";
+import RpcsIndex from "../views/nodeService/rpcs/index.vue";
+import AppsIndex from "../views/nodeService/apps/index.vue";
+import ProjectsList from "../views/projects/projectsList/index.vue";
+import ProjectsListDetails from "../views/projects/projectsListDetails/index.vue";
+import ProjectsCreat from "../views/projects/projectsCreat/index.vue";
+import ProjectsTemplate from "../views/projects/projectsTemplate/index.vue";
+import ProjectsTemplatesDetails from "../views/projects/projectsTemplatesDetails/index.vue";
+import ProjectsWorkflows from "../views/projects/projectsWorkflows/index.vue";
+import ProjectsWorkflowsAllLogs from "../views/projects/projectsWorkflowsAllLogs/index.vue";
+import projectsArtifactsContractDeploy from "../views/projects/projectsArtifactsContractDeploy/index.vue";
+import ProjectsContractsDetails from "../views/projects/projectsContractsDetails/index.vue";
+import ProjectsStandardContract from "../views/projects/projectsStandardContract/index.vue";
+import ProjectsFrontendDetails from "../views/projects/projectsFrontendDetails/index.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: "/home",
       name: "home",
-      // component: HomeView,
-      component: () => import('@/views/home/HomeView.vue'),
+      component: HomeView,
     },
     // {
     //   path: "/",
@@ -48,7 +44,7 @@ const router = createRouter({
         {
           path: '/login',
           name: 'Login',
-          component: import('@/views/login/index.vue'),
+          component: Login,
         }
       ],
       meta: {
@@ -58,15 +54,7 @@ const router = createRouter({
     {
       path: '/loginTransition',
       name: 'LoginTransition',
-      component: import('@/views/login/loginTransition.vue'),
-      meta: {
-        layout: 'null',
-      }
-    },
-    {
-      path: '/welcome',
-      name: 'Welcome',
-      component: import('@/views/login/welcome.vue'),
+      component: LoginTransition,
       meta: {
         layout: 'null',
       }
@@ -81,24 +69,19 @@ const router = createRouter({
             {
               path: "/projects",
               name: "ProjectsList",
-              component: import('@/views/projects/projectsList/index.vue'),
+              component: ProjectsList,
             },
             {
               path: "/projects/:id/details/:type",
               name: "ProjectsListDetails",
-              component: import('@/views/projects/projectsListDetails/index.vue'),
-            },
-            {
-              path: "/projects/integrated/:id",
-              name: "ProjectsIntegrated",
-              component: import('@/views/projects/projectsIntegrated/index.vue')
+              component: ProjectsListDetails,
             }
           ],
         },
         {
           path: "/projects/create",
           name: "ProjectsCreat",
-          component: import('@/views/projects/projectsCreat/index.vue'),
+          component: ProjectsCreat,
         },
         {
           path: "/projects/template/:type",
@@ -107,17 +90,17 @@ const router = createRouter({
             {
               path: "/projects/template/:type",
               name: "ProjectsTemplate",
-              component: import('@/views/projects/projectsTemplate/index.vue'),
+              component: ProjectsTemplate,
             },
             {
               path: "/projects/templates/:templateId/details/:type",
               name: "ProjectsTemplatesDetails",
-              component: import('@/views/projects/projectsTemplatesDetails/index.vue'),
+              component: ProjectsTemplatesDetails,
             },
             {
               path: "/projects/templates/:contractName/standard",
               name: "ProjectsStandardContract",
-              component: import('@/views/projects/projectsStandardContract/index.vue'),
+              component: ProjectsStandardContract,
             },
           ]
         },
@@ -128,12 +111,12 @@ const router = createRouter({
             {
               path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type/:projectType",
               name: "ProjectsWorkflows",
-              component: import('@/views/projects/projectsWorkflows/index.vue'),
+              component: ProjectsWorkflows,
             },
             {
               path: "/projects/:workflowsId/workflows/:workflowDetailId/allLogs",
               name: "ProjectsWorkflowsAllLogs",
-              component: import('@/views/projects/projectsWorkflowsAllLogs/index.vue'),
+              component: ProjectsWorkflowsAllLogs,
               meta: {
                 layout: 'null',
               }
@@ -143,17 +126,17 @@ const router = createRouter({
         {
           path: "/projects/:id/artifacts-contract/:version/deploy/:contract",
           name: "projectsArtifactsContractDeploy",
-          component: import('@/views/projects/projectsArtifactsContractDeploy/index.vue'),
+          component: projectsArtifactsContractDeploy,
         },
         {
           path: "/projects/:id/contracts-details/:version",
           name: "ProjectsContractsDetails",
-          component: import('@/views/projects/projectsContractsDetails/index.vue'),
+          component: ProjectsContractsDetails,
         },
         {
           path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
           name: "projectsFrontendDetails",
-          component: import('@/views/projects/projectsFrontendDetails/index.vue'),
+          component: ProjectsFrontendDetails,
         }
       ]
     },
@@ -164,12 +147,12 @@ const router = createRouter({
         {
           path: "/node-service/RPCs",
           name: "RPCs",
-          component: import('@/views/nodeService/rpcs/index.vue'),
+          component: RpcsIndex,
         },
         {
           path: "/node-service/Apps",
           name: "AppsIndex",
-          component: import('@/views/nodeService/apps/index.vue'),
+          component: AppsIndex,
         }
       ],
     },
