@@ -67,30 +67,40 @@ const contractForm = ref();
 const abiInfoData = reactive([]);
 
 const data = YAML.parse(abiInfo.value);
-// console.log(data, 'data')
-if (Object.prototype.toString.call(data) === '[object Object]') {
+console.log(data, 'data')
+// if (Object.prototype.toString.call(data) === '[object Object]') {
+//   Object.assign(abiInfoData, data.abi)
+// } else {
+//   Object.assign(abiInfoData, data)
+// }
+
+// console.log(Object.prototype.toString.call(abiInfoData), 'abiInfo.value')
+if (data.abi) {
   Object.assign(abiInfoData, data.abi)
 } else {
   Object.assign(abiInfoData, data)
 }
 
-// console.log(Object.prototype.toString.call(abiInfoData), 'abiInfo.value')
-
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
-    if (Object.prototype.toString.call(data) === '[object Object]') {
-      if (!item.stateMutability) {
-        sendAbis.push(item)
-      } else if (item.stateMutability === 'view') {
-        callAbis.push(item)
-      }
-    } else {
-      if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
-        sendAbis.push(item)
-      } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
-        callAbis.push(item)
-      }
+    if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+      sendAbis.push(item)
+    } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+      callAbis.push(item)
     }
+    // if (Object.prototype.toString.call(data) === '[object Object]') {
+    //   if (!item.stateMutability) {
+    //     sendAbis.push(item)
+    //   } else if (item.stateMutability === 'view') {
+    //     callAbis.push(item)
+    //   }
+    // } else {
+    //   if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+    //     sendAbis.push(item)
+    //   } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+    //     callAbis.push(item)
+    //   }
+    // }
   }
 
   console.log(sendAbis, 'sendAbis')

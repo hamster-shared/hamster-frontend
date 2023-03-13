@@ -5,7 +5,7 @@
       <div class="flex justify-between mb-[32px]">
         <span class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
         <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
-          isSend? buttonInfo + 'ing': buttonInfo
+          isSend ? buttonInfo + 'ing' : buttonInfo
         }}</a-button>
       </div>
     </a-form-item>
@@ -30,7 +30,6 @@
         :class="theme.themeValue === 'dark' ? 'dark-css' : ''" ref="textareaRef" />
     </div>
   </a-form>
-
 </template>
 <script lang='ts' setup>
 import { reactive, toRefs, watch, ref } from 'vue';
@@ -50,7 +49,7 @@ const props = defineProps({
   abiInfo: String,
   buttonInfo: String,
   frameType: Number,
-  inputs: { type: Array, default: () => { return [] } },
+  inputs: { type: Array as any, default: () => { return [] } },
 
 })
 const isSend = ref(false);

@@ -1,23 +1,26 @@
 interface RecentBuildItem {
-  id: number,
+  id: string,
   startTime: string,
   status: number,
   version: string,
-  workflowId: number,
+  workflowId: string,
 }
 
 interface RecentCheckItem {
-  id: number,
+  id: string,
   startTime: string,
   status: number,
-  workflowId: number,
+  workflowId: string,
 }
 
-interface RecentDeployItem {
-  id: number,
+export interface RecentDeployItem {
+  id: string,
   status: number,
-  workflowId: number,
+  version: string,
+  startTime: string,
+  workflowId: string,
   deployTime: string,
+  packageId: number,
 }
 
 export interface ViewInfoItem {
@@ -26,9 +29,31 @@ export interface ViewInfoItem {
   frameType: number,
   name: string,
   repositoryUrl: string,
-  type: number,
+  type: string,
   userId: number,
+  deployType: number,
   recentBuild: RecentBuildItem,
   recentCheck: RecentCheckItem,
   recentDeploy:RecentDeployItem,
+}
+
+interface AbiInfoDataInputsItem {
+  internalType: string,
+  name: string,
+  type: string,
+}
+
+interface AbiInfoDataOutputsItem {
+  internalType: string,
+  name: string,
+  type: string,
+}
+
+export interface AbiInfoDataItem {
+  inputs: AbiInfoDataInputsItem,
+  stateMutability: string,
+  name: string,
+  type: string,
+  outputs: AbiInfoDataOutputsItem,
+  anonymous: boolean,
 }

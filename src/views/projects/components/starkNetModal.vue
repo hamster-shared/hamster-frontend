@@ -27,7 +27,7 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, toRefs, watch } from "vue";
+import { ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -57,26 +57,6 @@ const emits = defineEmits(['cancelModal'])
 const cancelModal = () => {
   emits("cancelModal", false);
 }
-
-// watch(() => props.hasDeclareHash,
-//   // hasDeployHash
-//   (val) => {
-//     if (val) {
-//       const hashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || {};
-//       hash.value = hashData[props.projectsId]?.declareHash;
-//     }
-//   }, { deep: true, immediate: false })
-
-// watch(() => props.hasDeployHash,
-//   // hasDeployHash
-//   (val) => {
-//     if (val) {
-//       console.log(val, 'Deploying')
-//       hashTitle.value = 'Deploying';
-//       const hashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || {};
-//       hash.value = hashData[props.projectsId]?.deployHash;
-//     }
-//   }, { deep: true, immediate: false })
 </script>
 <style lang="less" scoped>
 .ant-btn {

@@ -21,8 +21,7 @@
             }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item name="nameData" class="name-item"
-          :rules="[{ required: true, message: 'Please input your Name!' }]">
+        <a-form-item name="nameData" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
           <a-checkbox-group class="dark:text-white text-[#121211] w-full"
             :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
@@ -63,7 +62,7 @@
     </div>
     <div class="text-center mt-[16px]">
       <a-button class="btn" @click="deployClick" :loading="loading">{{
-        loading? 'Deploying': 'Deploy'
+        loading ? 'Deploying' : 'Deploy'
       }}</a-button>
     </div>
     <!-- <div>
@@ -92,8 +91,6 @@
 
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="cancelStarkNetModal">
   </starkNetModal>
-
-
 </template>
 <script lang='ts' setup>
 import { reactive, ref, onMounted } from "vue";
@@ -113,7 +110,7 @@ import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows
 import { apiProjectsContractDeploy, apiGetProjectsDetail, apiContractDeployId } from "@/apis/projects";
 import { Provider, Account, Contract, ec } from "starknet";
 import { connect, getStarknet } from "@argent/get-starknet";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum.ts";
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
@@ -211,11 +208,12 @@ const getProjectsContract = async () => {
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
-    if (typeof (item) === 'object') {
-      item.abiInfoData = [YAML.parse(item.abiInfo)];
-    } else {
-      item.abiInfoData = YAML.parse(item.abiInfo);
-    }
+    // if (typeof (item) === 'object') {
+    //   item.abiInfoData = [YAML.parse(item.abiInfo)];
+    // } else {
+    //   item.abiInfoData = YAML.parse(item.abiInfo);
+    // }
+    item.abiInfoData = YAML.parse(item.abiInfo);
     setAbiInfo(item);
   })
   Object.assign(projectsContractData, data)
@@ -377,6 +375,8 @@ const selectAargumentName = (val: any, index: number) => {
       }
     }
   })
+
+
 }
 
 const cancelModal = (val: boolean) => {

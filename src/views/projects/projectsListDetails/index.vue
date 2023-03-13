@@ -12,8 +12,7 @@
           <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
         </div>
         <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
-        <div
-          class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
+        <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
           <label v-if="projectType === '1'">
             <div>{{ ContractFrameTypeEnum[projectsDetail.frameType] }}</div>
             <!-- <div v-if="projectsDetail.frameType === 1">EVM</div>
@@ -32,7 +31,7 @@
               <a-menu-item @click="visibleModal = true">
                 <a href="javascript:;">General</a>
               </a-menu-item>
-              <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible=true">
+              <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
                 <a href="javascript:;">Container</a>
               </a-menu-item>
             </a-menu>
@@ -41,8 +40,7 @@
       </div>
     </div>
     <div v-if="Object.keys(projectsDetail).length !== 0">
-      <Overview :viewType="viewType" :projectType="projectType" :viewInfo="projectsDetail"
-        @loadProjects="loadProjects" />
+      <Overview :viewType="viewType" :projectType="projectType" :viewInfo="projectsDetail" @loadProjects="loadProjects" />
     </div>
     <Workflows :detailId="detailId" :projectType="projectType" :frameType="frameType" />
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
@@ -53,10 +51,10 @@
           <Contract ref="contractRef" :detailId="detailId" />
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
-          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType"/>
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '2'" key="2" tab="Image">
-          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType"/>
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report">
           <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
@@ -84,7 +82,8 @@
     </div>
   </a-modal>
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
-  <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId" @hideContainerParam="containerVisible=false"></ContainerParam>
+  <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId"
+    @hideContainerParam="containerVisible = false"></ContainerParam>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -96,7 +95,7 @@ import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../projectsList/components/ContainerParam.vue';
-import { ContractFrameTypeEnum,FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum.ts"
+import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import {
   apiGetProjectsDetail,
   apiUpdateProjectsName,

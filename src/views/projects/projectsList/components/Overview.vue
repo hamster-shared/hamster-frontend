@@ -174,18 +174,26 @@ import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
 import { useThemeStore } from "@/stores/useTheme";
-import { ContractFrameTypeEnum,FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum.ts";
+import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
+import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components/data";
 
 const theme = useThemeStore()
 
 const router = useRouter();
 
-const props = defineProps({
-  viewType: String,
-  viewInfo: Object,
-  projectType: String,
-});
+// const props = defineProps({
+//   viewType: string,
+//   viewInfo: { type: Object, required: true },
+//   projectType: string,
+// });
+
+const props = defineProps<{
+  viewType: string,
+  projectType: string,
+  viewInfo: ViewInfoItem,
+}>()
+
 const actionButtonList = ref([
   { name: 'Check', url: ['check', 'check-b', 'check-color'] },
   { name: 'Build', url: ['build', 'build-b', 'build-color'] },
@@ -239,7 +247,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
   }
 }
 
-const projectsCheck = async (id: String, status: Number, e: Event) => {
+const projectsCheck = async (id: string, status: Number, e: Event) => {
   if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
   } else {
@@ -262,7 +270,7 @@ const projectsCheck = async (id: String, status: Number, e: Event) => {
 
 };
 
-const projectsBuild = async (id: String, buildData: any) => {
+const projectsBuild = async (id: string, buildData: any) => {
   try {
     if (buildData.status === 1) {
       if (projectType?.value === "1") {
@@ -293,7 +301,7 @@ const projectsBuild = async (id: String, buildData: any) => {
     // loading.value = false;
   }
 };
-const projectsDeploy = async (id: String, version: String, status: Number) => {
+const projectsDeploy = async (id: string, version: string, status: Number) => {
   if (projectType?.value === '1') {
     if (status === 0 || status === 1 || version === "") {
       message.info("Smart contract not avaliable.");
@@ -308,7 +316,7 @@ const projectsDeploy = async (id: String, version: String, status: Number) => {
     }
   }
 };
-const projectsOps = async (id: String, recentDeploy: Object) => {
+const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
       message.info("Smart contract not avaliable.");
@@ -323,17 +331,17 @@ const loadView = async () => {
   //重新查询数据
   emit("loadProjects");
 };
-const goContractCheck = async (id: String, workflowId: String, detailId: String) => {
+const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
 };
-const goContractBuild = async (id: String, workflowId: String, detailId: String) => {
+const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
 };
-const goContractDeploy = async (id: String, status: String | Number) => {
+const goContractDeploy = async (id: string, status: string | Number) => {
   if (localStorage.getItem('projectActiveKey') == '1') {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
@@ -345,13 +353,13 @@ const goContractDeploy = async (id: String, status: String | Number) => {
   }
 };
 
-// const showStarknetVisible = (id: String) => {
+// const showStarknetVisible = (id: string) => {
 //   // const starknetHashData: any = JSON.parse(localStorage.getItem('starknetHashData'));
 //   // deployTxHash.value = starknetHashData[id].deployTxHash;
 //   starknetVisible.value = true;
 // };
 
-const goContractDetail = async (id: String, version: String) => {
+const goContractDetail = async (id: string, version: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/contracts-details/" + version);
@@ -359,12 +367,10 @@ const goContractDetail = async (id: String, version: String) => {
 const goFrontendDeploy = async () => {
   try {
     if (viewInfo?.value.deployType === 2) { //Container的场合
-      
       frontendContainerCheck();
     } else {
       frontendDeploying();
     }
-
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
@@ -474,9 +480,7 @@ html[data-theme='dark'] {
   .disabledCheckCss:hover {
     color: #E0DBD2;
   }
-
 }
-
 
 
 :deep(.ant-btn) {
@@ -495,9 +499,6 @@ html[data-theme='dark'] {
   background: @baseColor;
 }
 
-// .dark-css a,.dark-css a:hover{
-//   color: #FFFFFF;
-// }
 a,
 a:hover {
   color: #151210;

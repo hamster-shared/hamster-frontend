@@ -40,11 +40,11 @@
           <div class="mt-2 text-[#BBBAB9]">{{ templatesDetail.description }}</div>
         </div>
         <div class="p-[32px]">
-          <div class="text-[24px] font-bold" v-if="templatesDetail.extensions !== '' ">Extensions</div>
-          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" v-if="templatesDetail.extensions !== '' "
+          <div class="text-[24px] font-bold" v-if="templatesDetail.extensions !== ''">Extensions</div>
+          <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" v-if="templatesDetail.extensions !== ''"
             class="mt-4 border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] p-4 rounded-[12px] grid grid-cols-5 gap-4">
-            <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index" v-if="templatesDetail.extensions !== '' "
-              checked="true">{{ items }}</a-checkbox>
+            <a-checkbox disabled="true" v-for="(items, index) in checkboxList" :key="index"
+              v-if="templatesDetail.extensions !== ''" checked="true">{{ items }}</a-checkbox>
           </div>
           <div v-if="templatesDetail.examples != ''">
             <div class="mt-[32px] text-[24px] font-bold flex items-center">
@@ -77,7 +77,8 @@
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Send
                 </div>
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
-                  <div @click="setFunctionList(item)" :class="{ '!text-[#E2B578]': item.name === functionName }"
+                  <div @click="setFunctionList(item, index)"
+                    :class="{ '!text-[#E2B578]': item.name === functionName && slectedIndex === index }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
                 </div>
@@ -86,7 +87,8 @@
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
                 <div class="pb-4 "><!-- h-[130px] overflow-auto -->
-                  <div @click="setFunctionList(item)" :class="{ '!text-[#E2B578]': item.name === functionName }"
+                  <div @click="setFunctionList(item, index)"
+                    :class="{ '!text-[#E2B578]': item.name === functionName && slectedIndex === index }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
                   <!-- <div @click="setFunctionList(item)"
@@ -139,13 +141,14 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
 import { apiAddProjects, apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesDetail, apiFrontendTemplatesDetail } from "@/apis/templates";
 import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
+import type { AbiInfoDataItem } from "@/views/projects/components/data"
 import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
 import YAML from "yaml";
@@ -175,6 +178,7 @@ const templatesDetail = ref([]);
 const frontendTemplatesDetail = ref('');
 const showUrl = ref('');
 const extensionsList = ref([]);
+const slectedIndex = ref(0);
 // const checkboxList = ref([
 //   { checked: false, label: 'ERC721' },
 //   { checked: false, label: 'ERC721Supply' },
@@ -209,9 +213,10 @@ onMounted(() => {
   getTemplatesDetail();
 })
 
-const setFunctionList = (element: { inputs: never[]; name: any; }) => {
+const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
   functionList.value = element.inputs;
   functionName.value = element.name;
+  slectedIndex.value = index;
 }
 
 const setEventList = (element: { inputs: never[]; name: any; }) => {
@@ -234,46 +239,47 @@ const getContractTemplatesDetail = async () => {
     templatesDetail.value = data;
     extensionsList.value = data.extensions.split(',');
     checkboxList.value.push(...extensionsList.value)
-    // checkboxList.value.forEach((element, index) => {
-    //   if (extensionsList.value.indexOf(element.label) !== -1) {
-    //     checkboxList.value[index].checked = true;
-    //   }
-    // });
+
     const ainInfoData = ref([]);
     if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
       ainInfoData.value = YAML.parse(data.abiInfo).abi;
     } else {
       ainInfoData.value = YAML.parse(data.abiInfo);
     }
-    ainInfoData.value.forEach((element: any) => {
-      if (element.type === 'function') {
-        if (element.name === 'approve') {
-          functionList.value = element.inputs;
-          functionName.value = element.name;
-        }
-        if (Object.prototype.toString.call(ainInfoData) === '[object Object]') {
-          if (element.stateMutability === 'nonpayable') {
-            sendList.value.push(element)
-          } else if (element.stateMutability === 'view') {
-            callList.value.push(element)
-          }
-        } else {
-          if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
-            sendList.value.push(element)
-          } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
-            callList.value.push(element)
-          }
-        }
 
-      }
-      if (element.type === 'event') {
-        eventAllList.value.push(element);
-        if (element.name === 'Approval') {
-          eventList.value = element.inputs;
-          eventName.value = element.name;
-        }
-      }
-    });
+    // console.log(ainInfoData.value, 'ainInfoData.value')
+    setAbiInfoData(ainInfoData.value);
+
+
+    // ainInfoData.value.forEach((element: any) => {
+    //   if (element.type === 'function') {
+    //     if (element.name === 'approve') {
+    //       functionList.value = element.inputs;
+    //       functionName.value = element.name;
+    //     }
+    //     if (Object.prototype.toString.call(ainInfoData) === '[object Object]') {
+    //       if (element.stateMutability === 'nonpayable') {
+    //         sendList.value.push(element)
+    //       } else if (element.stateMutability === 'view') {
+    //         callList.value.push(element)
+    //       }
+    //     } else {
+    //       if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
+    //         sendList.value.push(element)
+    //       } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
+    //         callList.value.push(element)
+    //       }
+    //     }
+
+    //   }
+    //   if (element.type === 'event') {
+    //     eventAllList.value.push(element);
+    //     if (element.name === 'Approval') {
+    //       eventList.value = element.inputs;
+    //       eventName.value = element.name;
+    //     }
+    //   }
+    // });
     axios
       .get(data.codeSources)
       .then(res => {
@@ -287,6 +293,46 @@ const getContractTemplatesDetail = async () => {
   } finally {
     // loading.value = false;
   }
+}
+
+const setAbiInfoData = (abiInfoData: any) => {
+  abiInfoData.forEach((item: AbiInfoDataItem) => {
+    if (item.type === 'function') {
+      // if (item.name === 'approve') {
+      //   functionList.value = item.inputs;
+      //   functionName.value = item.name;
+      // }
+
+      if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+        sendList.value.push(item)
+      } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+        callList.value.push(item)
+      }
+
+
+      if (sendList.value.length > 0) {
+        functionList.value = sendList.value[0]?.inputs;
+        functionName.value = sendList.value[0]?.name;
+      } else if (callList.value.length > 0) {
+        functionList.value = callList.value[0]?.inputs;
+        functionName.value = callList.value[0]?.name;
+      }
+
+
+
+
+    } else if (item.type === 'event') {
+      eventAllList.value.push(item);
+      if (eventAllList.value.length > 0) {
+        eventList.value = eventAllList.value[0]?.inputs;
+        eventName.value = eventAllList.value[0]?.name;
+      }
+      // if (item.name === 'Approval') {
+      //   eventList.value = item.inputs;
+      //   eventName.value = item.name;
+      // }
+    }
+  })
 }
 
 const setCodeHeight = (content: string) => {
