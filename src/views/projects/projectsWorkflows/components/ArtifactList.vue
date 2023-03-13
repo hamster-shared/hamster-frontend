@@ -4,7 +4,7 @@
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">Artifact</span>
     </div>
-    <Package pageType="workflow" :packageListData="artifactListData" />
+    <Package pageType="workflow" :packageListData="artifactListData" :deployType="deployType" />
   </div>
 </template>
 
@@ -22,8 +22,9 @@ const state = reactive({
 
 const props = defineProps({
   artifactListData: Array,
+  deployType: String,
 })
 
-const { artifactListData } = toRefs(props)
+const { artifactListData,deployType } = toRefs(props)
 
 </script>

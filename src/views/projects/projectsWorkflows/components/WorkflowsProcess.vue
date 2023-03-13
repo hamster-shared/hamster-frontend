@@ -146,6 +146,7 @@ const initScroll = () => {
     scrollbar: {
       fade: false,
       interactive: true,
+      scrollbarTrackClickable: true,
     }
   });
 };
