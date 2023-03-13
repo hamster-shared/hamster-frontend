@@ -278,12 +278,11 @@ const projectsBuild = async (id: String, buildData: any) => {
       if (projectType?.value === "1") {
         message.success(res.message);
       } else {
-        msgParam.value.workflowsId = buildData.workflowId;
-        msgParam.value.workflowDetailId = buildData.id;
+        msgParam.value.workflowsId = res.workflowId;
+        msgParam.value.workflowDetailId = res.detailId;
         msgType.value = 'build';
         setMsgShow();
       }
-
       loadView();
     }
   } catch (error: any) {

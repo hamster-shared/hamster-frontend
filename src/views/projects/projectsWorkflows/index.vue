@@ -18,7 +18,7 @@
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="frontendReportData"></CheckReport>
-      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
+      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData" :deployType="workflowsDetailsData.deployType"></ArtifactList>
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
         :workflowsDetailsData="workflowsDetailsData"></Deployment>
     </div>
@@ -76,6 +76,7 @@ const workflowsDetailsData = reactive({
   packageId: 0,
   execNumber: 0,
   frameType: 0,
+  deployType: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -219,7 +220,7 @@ const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
     console.log("data project:",data);
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType })
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType:data.deployType })
   } catch (err: any) {
     console.info(err)
   }
