@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --mode staging",
+    "preview": "vite preview",
     "build:staging": "vite build --mode staging",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
