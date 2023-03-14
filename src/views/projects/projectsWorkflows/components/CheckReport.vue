@@ -1,7 +1,14 @@
 <template>
   <div class=" dark:text-white text-[#121211]">
-    <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]"
-      v-for="item in checkReportData" :key="item.id">
+    <div v-if="checkReportData?.length === 0" class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
+      <div class="text-center p-[16px]">
+        <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
+        <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
+        <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
+        <div class="text-[#73706E]">No issues were detected.</div>
+      </div>
+    </div>
+    <div v-for="item in checkReportData" :key="item.id" class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
       <img class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
       <a-collapse v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.Name">
@@ -56,8 +63,8 @@
           <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
           <div class="text-[#73706E]">No issues were detected.</div>
         </div>
-        <div class="text-[#73706E] pl-[12px]">{{ 'Support by '+ item.checkTool }}</div>
       </a-collapse>
+      <div class="text-[#73706E] pl-[12px]">{{ 'Support by '+ item.checkTool }}</div>
     </div>
   </div>
 </template>
@@ -200,6 +207,8 @@ const columns = [
 ];
 
 const { checkReportData, projectType } = toRefs(props)
+
+console.log("checkReportData:",checkReportData?.value, );
 </script>
 
 <style lang="less" scoped>
