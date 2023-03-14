@@ -1,13 +1,13 @@
 <template>
   <div
-    class="contracyList p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] mt-[32px]">
+    class="contracyList p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] rounded-[12px] my-[32px]">
     <div class="flex justify-between mb-[32px]">
       <span class="text-[24px] font-bold">{{ $t("workFlows.contractList") }}</span>
       <a-button class="btn" @click="toDeployUrl(contractListData[0])" :disabled="contractListData?.length <= 0">{{
         $t('common.deploy')
       }}</a-button>
     </div>
-    <a-table :dataSource="contractListData" :columns="columns" :pagination="false"
+    <a-table :dataSource="contractListData" :columns="columns" :pagination="false" style="width:100%"
       :class="contractListData.length <= 0 ? 'no-table-data' : ''">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'network'">
@@ -16,9 +16,11 @@
             class="border border-solid rounded-[32px] dark:border-[#E0DBD2] border-[#73706E]  px-3 py-1">{{
               item
             }}</label>
+          <label v-else-if="record.status === 1">Deploying</label>
+          <label v-else>-</label>
         </template>
         <template v-if="column.key === 'action'">
-          <label class="dark:text-[#E0DBD2] text-[#151210] hoverColor" @click="toDeployUrl(record)">{{
+          <label class="dark:text-[#E0DBD2] text-[#151210] cursor-pointer hoverColor" @click="toDeployUrl(record)">{{
             $t('common.deploy')
           }}</label>
           <a-divider type="vertical" />
@@ -28,6 +30,9 @@
               <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
                 Download ABI
               </div>
+              <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
+                class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
+                View Deploy Process</div>
               <div v-if="record.network.String !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
                 @click="toDetailUrl(record)">View Dashboard
@@ -40,19 +45,23 @@
       </template>
     </a-table>
   </div>
+  <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
+  </starkNetModal>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import dayjs from "dayjs";
+import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 
 const router = useRouter();
-
 const columns = [{
   title: 'Contract',
   dataIndex: 'name',
   align: "center",
+  width: '20%',
+  ellipsis: true,
   key: 'name',
 },
 {
@@ -76,6 +85,8 @@ const columns = [{
   title: 'Build Time',
   dataIndex: 'buildTime',
   align: "center",
+  width: '20%',
+  ellipsis: true,
   customRender: ({ text }) => {
     return dayjs(text).format('YYYY/MM/DD HH:mm:ss')
   },
@@ -91,6 +102,11 @@ const state = reactive({
   id: router.currentRoute.value.params?.id,
   version: router.currentRoute.value.params?.version,
 })
+
+const starknetVisible = ref(false);
+const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
+// console.log(starknetHashData, 'starknetHashData')
+const deployTxHash = starknetHashData[state.id]?.deployTxHash || '';
 
 const props = defineProps({
   contractListData: Array,

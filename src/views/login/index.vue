@@ -27,20 +27,37 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
-// const clientId = ref('9fce2a15f6df21849e20');
-const clientId = ref('a782e08a53e86517dcc5');
-const oauthUrl = ref('https://github.com/login/oauth/authorize')
+const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
+const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
 const loginBox = () => {
-  const state = new Date().getTime();
-  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user,repo&state=${state}`;
-  const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-  myWindow?.focus()
+  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+  if (JSON.stringify(userInfo) === '{}') {
+    const state = new Date().getTime();
+    const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+    const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    myWindow?.focus()
+  } else {
+    if (userInfo.token) {
+      if (localStorage.getItem('firstState') === "0") {
+        //第一次登录
+        router.push('/welcome')
+      } else {
+        router.push('/projects')
+      }
+    }
+  }
 }
 
 onMounted(() => {
   if (localStorage.getItem('token')) {
-    router.push('/projects')
+    // console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
+    if (localStorage.getItem('firstState') === "0") {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   }
 })
 

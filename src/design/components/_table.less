@@ -6,6 +6,9 @@ html[data-theme='dark'] {
   .ant-table-tbody>tr>td {
     border-bottom:1px solid #302D2D;
   }
+  .ant-table-tbody>tr>td:only-of-type {
+    border-bottom:none;
+  }
   .ant-table-tbody {
     box-shadow: none;
     border-radius: 0 0 12px 12px;
@@ -28,6 +31,8 @@ html[data-theme='dark'] {
     // background-color: #36322D;
     background-color: #463F36;
   }
+
+  // ant-table-cell
 }
 
 .ant-table {
@@ -53,6 +58,10 @@ html[data-theme='dark'] {
 
 .ant-table-tbody .ant-table-cell {
   color: #73706E;
+}
+.ant-table-tbody .ant-table-cell:only-of-type {
+  // color: #73706E;
+  border-radius: 0 0 12px 12px;
 }
 
 .ant-table-tbody {

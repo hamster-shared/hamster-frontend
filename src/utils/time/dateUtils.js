@@ -18,7 +18,9 @@ export function fromNowexecutionTime(time, timeText) {
   const { t } = useI18n()
   let timeVal = dayJs(time).fromNow() + ' ' + t(`datetime.${timeText}`)
   if (timeVal.indexOf('a few') === -1) {
-    timeVal = timeVal.replace(/an|a/, '1')
+    if (timeVal.indexOf('a') === 0 || timeVal.indexOf('an') === 0) {
+      timeVal = timeVal.replace(/an|a/, '1')
+    }
   }
   return timeVal
 }

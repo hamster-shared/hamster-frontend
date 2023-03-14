@@ -14,7 +14,7 @@
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
-          <div v-if="contractList.length > 0">
+          <div v-if="totalContract > 0">
             <div v-for="(item, index) in contractList" :key="index">
               <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
@@ -26,9 +26,9 @@
           </div>
         </a-tab-pane>
         <a-tab-pane key="2" tab="FrontEnd">
-          <div v-if="frontentList.length > 0">
+          <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
-              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"/>
             </div>
             <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange"
               @showSizeChange="onShowSizeChange" :current="currentFrontend" :total="totalFrontend" size="small" />
@@ -40,9 +40,16 @@
       </a-tabs>
     </div>
   </div>
+  <div class="fixed top-0 left-0 z-10 w-screen h-screen" v-show="showGuide">
+    <img src="@/assets/images/project-guide.jpg" class="w-full dark:hidden" />
+    <img src="@/assets/images/project-guide-dark.jpg" class="hidden w-full dark:inline-block" />
+    <div class="absolute bottom-[30%] flex justify-center w-full">
+      <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
+    </div>
+  </div>
 </template>
 <script lang='ts' setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref, onBeforeMount } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
@@ -50,6 +57,7 @@ import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
+const showGuide = ref(false)
 const timer = ref();
 const router = useRouter();
 const keyword = ref('');
@@ -79,6 +87,12 @@ const goCreateProject = () => {
   router.push("/projects/create");
 }
 
+onBeforeMount(() => {
+  if (window.localStorage.getItem("firstShowProjects") != undefined && window.localStorage.getItem("firstShowProjects") === "1") {
+    showGuide.value = true;
+  }
+})
+
 onMounted(() => {
 
   if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
@@ -90,6 +104,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearTimeout(timer.value);
 })
+
+const closeGuide = () => {
+  showGuide.value = false;
+  window.localStorage.removeItem('firstShowProjects');
+}
 
 const goSearch = async () => {
   currentContract.value = 1;
@@ -118,7 +137,7 @@ const getProjectsContract = async (type: string | undefined) => {
       page: currentContract.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "2") {
         goCreateProject();
       } else {
@@ -129,23 +148,26 @@ const getProjectsContract = async (type: string | undefined) => {
       totalContract.value = data.total;
     }
 
-    const isRunning = ref(false);
-    contractList.value.forEach(element => {
-      if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
-        || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
-        isRunning.value = true;
-      }
-    });
-    if (isRunning.value === true) {
-      timer.value = setTimeout(() => {
-        // 其他定时执行的方法
-        activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-      }, 5000)
-    } else {
-      clearTimeout(timer.value);
-    }
+    projectRunning(contractList.value);
   } catch (error: any) {
     console.log("erro:", error)
+  }
+}
+const projectRunning = (projectList: any) => {
+  const isRunning = ref(false);
+  projectList.forEach((element: { recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; }) => {
+    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
+      || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
+      isRunning.value = true;
+    }
+  });
+  if (isRunning.value === true) {
+    timer.value = setTimeout(() => {
+      // 其他定时执行的方法
+      activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+    }, 5000)
+  } else {
+    clearTimeout(timer.value);
   }
 }
 const getProjectsFrontend = async (type: string | undefined) => {
@@ -157,7 +179,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       page: currentFrontend.value,
     }
     const { data } = await apiGetProjects(params);
-    if ((data.data === null || data.data === "[]")) {
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
       if (activeKey.value === "1") {
         goCreateProject();
       } else {
@@ -167,6 +189,7 @@ const getProjectsFrontend = async (type: string | undefined) => {
       frontentList.value = data.data;
       totalFrontend.value = data.total;
     }
+    projectRunning(frontentList.value);
   } catch (error: any) {
     console.log("erro:", error)
   } finally {

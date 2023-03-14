@@ -50,9 +50,10 @@ service.interceptors.response.use(
     return dataAxios;
   },
   function (error: any) {
-    if(error.response.status === 401) {
+    if (error.response.status === 401) {
       localStorage.setItem('token', '');
-      window.location.href='/login';
+      localStorage.removeItem('userInfo')
+      window.location.href = '/login';
     }
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
