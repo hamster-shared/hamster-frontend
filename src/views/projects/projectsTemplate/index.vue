@@ -50,7 +50,7 @@
         </div>
       </div>
 
-      <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
+      <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]" v-if="frameTypeInfo == '1'">
         <div class="text-[24px] font-bold mb-[16px]">
           Didn't find what you're looking for?<br />
           Choose standard contract to build your own!
@@ -94,6 +94,7 @@ onMounted(() => {
   getTemplatesCategory();
 })
 
+const frameTypeInfo = ref()
 const getTemplatesCategory = async () => {
   try {
     const { data } = await apiTemplatesCategory(params.type);
@@ -101,6 +102,7 @@ const getTemplatesCategory = async () => {
     const createFormData: any = JSON.parse(localStorage.getItem('createFormData')) || {};
     const frameType = createFormData.type === '2' ? 0 : createFormData.frameType;
     const deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
+    frameTypeInfo.value = frameType
     templatesCategory.value.forEach(async (element, index) => {
       const { data } = await apiTemplatesCategoryById(element.id, frameType, deployType);
 
