@@ -143,10 +143,10 @@ const deploymentsColumns = [
     key: 'avg',
   },
   {
-    // title: '% of limit(6718926 gas)',
-    title: () => ('% of limit('+deploymentGasLimit.value+')'),
+    title: () => ('% of limit ('+deploymentGasLimit.value+')'),
     dataIndex: 'limit',
     align: "center",
+    width: '150px',
     key: 'limit',
   },
 ];
