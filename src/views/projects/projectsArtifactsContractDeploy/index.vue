@@ -227,7 +227,7 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
   const factory = new ethers.ContractFactory(
-    abi[0], // abi[0] 是一个数组，原因未知
+    abi, // abi[0] 是一个数组，原因未知
     bytecode,
     provider.getSigner()
   );
@@ -241,6 +241,8 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
     // 失败的处理
     // console.log(errorInfo, 'errorInfo')
     message.error(t('common.operateFail'));
+  } finally {
+    loading.value = false;
   }
 }
 
