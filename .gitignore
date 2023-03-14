@@ -33,6 +33,7 @@ dist-ssr
 
 # ignore package lock
 package-lock.json
+yarn.lock
 
 # local env files
 .env.local

@@ -21,7 +21,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { onMounted, ref, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router'
 import { apiGetProjectsDetail } from "@/apis/projects";
