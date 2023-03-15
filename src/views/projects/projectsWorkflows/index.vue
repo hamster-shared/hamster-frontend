@@ -11,17 +11,17 @@
     <div v-if="queryJson.projectType === '1'">
       <!-- contract -->
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="checkReportData"></CheckReport>
+        :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <GasUsageReport :gasUsageReportData="gasUsageReportData"
         v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
       <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="frontendReportData"></CheckReport>
+        :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
         :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData">
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
     <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool"
@@ -80,6 +80,7 @@ const workflowsDetailsData = reactive({
   execNumber: 0,
   frameType: 0,
   deployType: 0,
+  checkStatus: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -101,6 +102,7 @@ const getWorkflowsDetails = async () => {
   } else {
     clearTimeout(detailTimer.value);
     loadInfo();
+    getProjectsDetailData();
   }
 }
 
@@ -223,7 +225,7 @@ const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
     // console.log("data project:", data);
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType })
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status })
   } catch (err: any) {
     console.info(err)
   }
