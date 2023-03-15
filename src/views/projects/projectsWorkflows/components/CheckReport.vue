@@ -1,6 +1,6 @@
 <template>
   <div class=" dark:text-white text-[#121211]">
-    <div v-if="checkReportData?.length === 0"
+    <div v-if="checkReportData?.length === 0 && projectType === '2' && checkStatus != 0 && checkStatus != 1"
       class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
       <div class="text-center p-[16px]">
         <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
@@ -93,6 +93,7 @@ interface CheckReportData {
 const props = defineProps<{
   projectType: String,
   checkReportData: CheckReportData[],
+  checkStatus: Number,
 }>()
 // const props = defineProps({
 //   projectType: String,
@@ -224,7 +225,7 @@ const columns = [
   }
 ];
 
-const { checkReportData, projectType } = toRefs(props)
+const { checkReportData, projectType, checkStatus } = toRefs(props)
 
 </script>
 
