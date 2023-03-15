@@ -12,17 +12,20 @@
       <!-- contract -->
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="checkReportData"></CheckReport>
-      <GasUsageReport :gasUsageReportData="gasUsageReportData" v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
+      <GasUsageReport :gasUsageReportData="gasUsageReportData"
+        v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
       <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="frontendReportData"></CheckReport>
-      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData" :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
-        :workflowsDetailsData="workflowsDetailsData"></Deployment>
+      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
+        :deployType="workflowsDetailsData.deployType"></ArtifactList>
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData">
+      </Deployment>
     </div>
-    <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile"/>
+    <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool"
+      :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
@@ -132,8 +135,8 @@ const getCheckReport = async () => {
   issue = yamlData(listGas, issue, "gasUsage");
   issue = yamlData(list, issue, "report");
 
-  data.filter( item => {
-    if(item.checkTool == 'OpenAI'){
+  data.filter((item: any) => {
+    if (item.checkTool == 'OpenAI') {
       openAiInfo.value = item
     }
   })
@@ -177,7 +180,7 @@ const getDetailFrontendReport = async () => {
     workflowsDetailsData.errorNumber = issue;
     Object.assign(frontendReportData, data)
 
-    console.log(frontendReportData, 'frontendReportData')
+    // console.log(frontendReportData, 'frontendReportData')
 
   } catch (error: any) {
     console.log("erro:", error)
@@ -219,8 +222,8 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    console.log("data project:",data);
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType:data.deployType })
+    // console.log("data project:", data);
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType })
   } catch (err: any) {
     console.info(err)
   }
