@@ -31,6 +31,7 @@ const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
 const loginBox = () => {
+  console.log(localStorage.getItem('token') === '')
   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
   if (JSON.stringify(userInfo) === '{}') {
     const state = new Date().getTime();
@@ -38,11 +39,15 @@ const loginBox = () => {
     const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
     myWindow?.focus()
   } else {
-    if (localStorage.getItem('firstState') === "0") {
-      //第一次登录
-      router.push('/welcome')
-    } else {
-      router.push('/projects')
+    if (userInfo.token) {
+      console.log("user token")
+      if (localStorage.getItem('firstState') === "0") {
+        //第一次登录
+        router.push('/welcome')
+      } else {
+        console.log("to projects");
+        router.push('/projects')
+      }
     }
   }
 }
