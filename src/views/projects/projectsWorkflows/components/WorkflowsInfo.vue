@@ -16,7 +16,7 @@
         <div class="process-detail-item">
           <div class="process-detail-title">{{ title + ' Result' }}</div>
           <div class="process-detail-info">{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
-          <div class="process-detail-info error-info" v-show="title === 'Check'">
+          <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
             {{ workflowsDetailsData.errorNumber + ' issues found' }}
           </div>
         </div>
