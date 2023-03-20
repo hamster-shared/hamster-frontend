@@ -30,8 +30,8 @@
               <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px] dark:hidden" />
             </div>
             <div v-if="item.stage" class="">
-              <div v-for="val in item.stage.steps"
-                class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage">
+              <div v-for="val in item.stage.steps" @click="checkProcessStep(item.name, val)"
+                class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage cursor-pointer">
                 <div>
                   <img :src="getImageUrl(val.status)" class="w-[28px] mr-[24px] align-middle inline-block"
                     v-if="val.status !== 1" />
@@ -59,15 +59,20 @@ import BScroll from "@better-scroll/core";
 import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
 import { formatDurationTime } from "@/utils/time/dateUtils.js";
-import { apiGetDetailStageLogs } from "@/apis/workFlows";
+import { apiGetDetailStageLogs, apiGetDetailStepLogs } from "@/apis/workFlows";
 import { WorkflowStatusEnum } from "@/enums/statusEnum";
 BScroll.use(Scrollbar);
-interface ProcessData {
+
+interface Process {
+  name: string,
   status: number,
   duration: string,
-  name: string,
+  startTime: string,
+}
+
+interface ProcessData extends Process {
   stage: {
-    steps: [],
+    steps: Process[],
   },
 }
 
@@ -105,12 +110,12 @@ const stagesData = reactive({
 const stagesTimer = ref();
 const wrapper = ref();
 const processModalRef = ref();
-let bscroll = reactive({});
+const bscroll = ref();
 
 const { processData, workflowsId, workflowDetailId } = toRefs(props);
 Object.assign(queryParams, { workflowsId: workflowsId, workflowDetailId: workflowDetailId });
 
-console.log(processData, 'processData')
+// console.log(processData, 'processData')
 
 
 const checkProcess = (item: any, e: Event) => {
@@ -145,6 +150,33 @@ const getStageLogsData = async (val: any, start = 0) => {
   }
 }
 
+
+const checkProcessStep = async (stagename: string, val: any) => {
+  console.log(val)
+  const queryJson = {
+    name: queryParams.workflowsId,
+    id: queryParams.workflowDetailId,
+    stagename: stagename,
+    stepname: val.name,
+  }
+  try {
+    const { data } = await apiGetDetailStepLogs(queryJson);
+    let t = data?.content?.split("\r");
+    if (data.content) {
+      t.forEach((item: any) => {
+        let h = item ? item.split("\n") : '';
+        h.forEach((val: any) => {
+          stagesData.content.push(val)
+        })
+      })
+    }
+    processModalRef.value.showVisible();
+  } catch (err: any) {
+    console.log(err, 'err')
+  }
+
+}
+
 const getImageUrl = (status: any) => {
   let iconName = `${WorkflowStatusEnum[status]}`;
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
@@ -155,7 +187,7 @@ watch(
   () => props.processData,
   (oldV, newV) => {
     nextTick(() => {
-      bscroll && bscroll.refresh();
+      bscroll.value && bscroll.value.refresh();
     })
   }, { deep: true }
 );
@@ -169,7 +201,7 @@ onUnmounted(() => {
 })
 
 const initScroll = () => {
-  bscroll = new BScroll(wrapper.value, {
+  bscroll.value = new BScroll(wrapper.value, {
     startX: 0,
     scrollX: true,
     scrollY: false,

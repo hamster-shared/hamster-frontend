@@ -161,7 +161,9 @@
   </div>
   <ContainerParam :containerVisible="containerVisible" :detailId="viewInfo?.id" @hideContainerParam="hideContainerParam"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
-  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
+  <AptosParam :aptosVisible="aptosVisible" @hideAptosParam="hideAptosParam"></AptosParam>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam">
+  </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
 </template>
@@ -174,6 +176,7 @@ import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerChec
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
+import AptosParam from "./AptosParam.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
@@ -208,6 +211,7 @@ const showViewInfoRepositoryUrl = computed(() => {
 
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
+const aptosVisible = ref(false);
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -282,6 +286,9 @@ const projectsBuild = async (id: string, buildData: any) => {
         msgType.value = 'build';
         setMsgShow();
       }
+    } else if (buildData.status === 2) {
+      console.log(buildData.status)
+      aptosVisible.value = true
     } else {
       const res = await apiProjectsBuild(id);
       if (projectType?.value === "1") {
@@ -379,6 +386,9 @@ const goFrontendDeploy = async () => {
 const hideContainerParam = () => {
   containerVisible.value = false;
 }
+const hideAptosParam = () => {
+  aptosVisible.value = false;
+}
 const frontendDeploying = async () => {
   try {
     const params = ref({
@@ -442,7 +452,7 @@ const setMsgShow = () => {
 
 }
 
-const goFrontEndDetail = (id: string, recentDeploy: Object) => {
+const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
   } else {

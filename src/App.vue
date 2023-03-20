@@ -35,7 +35,7 @@ init({
       token: 'M',
       label: 'Hamster-Moonbean',
       rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
-    }
+    },
   ]
 })
 </script>
