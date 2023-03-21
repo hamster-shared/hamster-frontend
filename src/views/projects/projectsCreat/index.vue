@@ -42,8 +42,8 @@
               <a-radio :style="radioStyle" value="1">EVM
                 <div class="radio-sub">Build application based on EVM and Solidity language</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2" disabled="true">Aptos
-                <div>Build application based on Aptos and Move language</div>
+              <a-radio :style="radioStyle" value="2">Aptos
+                <div class="radio-sub">Build application based on Aptos and Move language</div>
               </a-radio>
               <a-radio :style="radioStyle" value="3" disabled="true">TON
                 <div>Build application based on TON and FunC language</div>

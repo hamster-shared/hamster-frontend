@@ -36,10 +36,7 @@
           <a-button disabled>Clear</a-button>
         </span>
       </div>
-      <!-- <div v-for="item in logsInfo"> -->
-        <!-- <div class="whitespace-pre-wrap">{{ item }}</div> -->
-      <!-- </div> -->
-      <div ref="terminalElementRef" class="w-full"></div>
+      <div ref="terminalElementRef"></div>
     </div>
   </div>
 </template>
@@ -131,7 +128,6 @@ const getWorkflowsDetail = async () => {
   } catch (err: any) {
     console.info(err)
   }
-
 }
 
 const copyUrl = () => {
@@ -157,14 +153,6 @@ const deleteBtn = async () => {
   }
 }
 
-//获取到返回的数据
-// const logsInfo = ref([])
-// const getAlarmData = (data:any)=>{
-//   logsInfo.value.push(data.data)
-//   console.log('logsInfo:::',logsInfo.value)
-// }
-
-
 onMounted(() => {
   getPackageDetail();
   getWorkflowsDetail();
@@ -173,7 +161,6 @@ onMounted(() => {
 onBeforeUnmount(()=>{
   closeWebSocket()
 })
-
 </script>
 
 <style lang='less' scoped>
