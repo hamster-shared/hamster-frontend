@@ -164,16 +164,18 @@
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
+import AptosBuildParams from './AptosBuildParams.vue'
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
@@ -208,6 +210,7 @@ const showViewInfoRepositoryUrl = computed(() => {
 
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
+const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -236,7 +239,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsCheck(val.id, val.recentCheck.status, e);
       break;
     case 'Build':
-      projectsBuild(val.id, val.recentBuild);
+      projectsBuild(val.id, val.recentBuild, val.frameType);
       break;
     case 'Deploy':
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
@@ -271,29 +274,67 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
 
 };
 
-const projectsBuild = async (id: string, buildData: any) => {
-  try {
-    if (buildData.status === 1) {
-      if (projectType?.value === "1") {
-        message.info("Executing Now，please wait a moment.");
-      } else {
-        msgParam.value.workflowsId = buildData.workflowId;
-        msgParam.value.workflowDetailId = buildData.id;
-        msgType.value = 'build';
-        setMsgShow();
-      }
+const buildStatusAction = async (id: string, buildData: any)=> {
+  if (buildData.status === 1) {
+    if (projectType?.value === "1") {
+      message.info("Executing Now，please wait a moment.");
     } else {
-      const res = await apiProjectsBuild(id);
-      if (projectType?.value === "1") {
-        message.success(res.message);
-      } else {
-        msgParam.value.workflowsId = res.workflowId;
-        msgParam.value.workflowDetailId = res.detailId;
-        msgType.value = 'build';
-        setMsgShow();
-      }
-      loadView();
+      msgParam.value.workflowsId = buildData.workflowId;
+      msgParam.value.workflowDetailId = buildData.id;
+      msgType.value = 'build';
+      setMsgShow();
     }
+  } else {
+    const res = await apiProjectsBuild(id);
+    if (projectType?.value === "1") {
+      message.success(res.message);
+    } else {
+      msgParam.value.workflowsId = res.workflowId;
+      msgParam.value.workflowDetailId = res.detailId;
+      msgType.value = 'build';
+      setMsgShow();
+    }
+    loadView();
+  }
+}
+
+const checkAptosWalletInstalled = () => {
+  if ('aptos' in window) {
+    aptosBuildVisible.value = true
+    return window.aptos;
+  } else {
+    window.open('https://petra.app/', `_blank`);
+  }
+};
+
+const aptosBuildParams = ref([])
+const projectsBuild = async (id: string, buildData: any, frameType:string) => {
+  console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
+  const res = await apiCheckSetAptosBuildParams(id)
+  const needsParams = res.data.needsParams
+  try {
+    if (frameType == '2' && needsParams) {
+      await checkAptosWalletInstalled()
+      const { data } = await apiGetAptosBuildParams(id)
+      console.log('apiGetAptosBuildParams:::', data)
+      aptosBuildParams.value = data
+    }else if (frameType == '2' && !needsParams){
+      // if (buildData.status == 1){
+      //   message.info("Executing Now，please wait a moment.");
+      // } else {
+
+      // }
+      const { data } = await apiAptosBuild(id)
+      msgParam.value.workflowsId = data.workflowId;
+      msgParam.value.workflowDetailId = data.id;
+      msgType.value = 'build';
+      setMsgShow();
+
+      loadView();
+    }else {
+      buildStatusAction(id, buildData)
+    }
+    
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
@@ -396,6 +437,24 @@ const frontendDeploying = async () => {
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
+  }
+}
+
+const hideAptosBuildVisible = () =>{
+  aptosBuildVisible.value = false
+}
+const aptosBuild = async(id:any)=>{
+  try {
+    const { data } = await apiAptosBuild(id.value)
+    console.log('aptosbuild::',data)
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
+    msgType.value = 'build';
+    setMsgShow();
+
+    loadView();
+  } catch(err:any) {
+    console.log('err:',err)
   }
 }
 
