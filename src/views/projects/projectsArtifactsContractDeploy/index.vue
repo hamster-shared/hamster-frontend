@@ -336,6 +336,7 @@ const setContractFactory = async (nameData: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
+  console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
   if (constructorData && constructorData.inputs.length > 0) {
     selectItem.hasArgument = true;
@@ -377,8 +378,6 @@ const selectAargumentName = (val: any, index: number) => {
       }
     }
   })
-
-
 }
 
 const cancelModal = (val: boolean) => {

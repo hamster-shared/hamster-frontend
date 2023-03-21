@@ -82,19 +82,6 @@ const props = defineProps<{
   processData: ProcessData[]
 }>()
 
-
-// const props = defineProps({
-//   workflowsId: String,
-//   workflowDetailId: String,
-//   processData: {
-//     type: Array,
-//     default: () => {
-//       return []
-//     }
-//   },
-// });
-
-
 const queryParams = reactive({
   id: '',
   stagename: '',
@@ -116,8 +103,6 @@ const { processData, workflowsId, workflowDetailId } = toRefs(props);
 Object.assign(queryParams, { workflowsId: workflowsId, workflowDetailId: workflowDetailId });
 
 // console.log(processData, 'processData')
-
-
 const checkProcess = (item: any, e: Event) => {
   if (item.status === 0 || item.status === 99) {
     e.stopPropagation();

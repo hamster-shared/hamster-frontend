@@ -19,21 +19,20 @@
 
 
       <div>
-        <label class="cursor-pointer group text-center w-[100px]" v-for="(item, index) in actionButtonList"
-          @click="projectsAction(viewInfo, item.name, $event)">
+        <label class="cursor-pointer group text-center w-[100px] action-button-item"
+          v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
-            <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
-            <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
+            <svg-icon name="line-slash" size="16" class="mx-4" />
+            <!-- <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
+            <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" /> -->
           </label>
           <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
-            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
-            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" />
+            <!-- <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
+            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" /> -->
+            <svg-icon name="check" size="14" />
           </label>
-          <label v-else>
-            <img :src="getActionImageUrl(item.url[0])" class="h-[16px] cursor-default dark:hidden group-hover:hidden" />
-            <img :src="getActionImageUrl(item.url[1])"
-              class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-            <img :src="getActionImageUrl(item.url[2])" class="h-[16px] hidden group-hover:inline-block" />
+          <label v-else class="action-icon">
+            <svg-icon :name="item.url" size="14" />
           </label>
           <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer align-middle"
             :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
@@ -52,8 +51,9 @@
             <a target="_blank" :href="viewInfo.repositoryUrl">{{ showViewInfoRepositoryUrl }}</a>
           </div>
           <div>
-            <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
-            <img src="@/assets/icons/dark-link.svg" class="h-[16px] mr-1 hidden dark:inline-block" />
+            <!-- <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
+            <img src="@/assets/icons/dark-link.svg" class="h-[16px] mr-1 hidden dark:inline-block" /> -->
+            <svg-icon name="white-link" size="16" />
             main
           </div>
         </div>
@@ -65,6 +65,7 @@
           </div>
           <div v-else class="flex items-center my-2 ">
             <img :src="getImageUrl(viewInfo.recentCheck.status)" class="h-[16px] mr-1" />
+            <!-- <svg-icon :name="SvgStatusEnums[viewInfo.recentCheck.status]" size="18" class="mr-1"></svg-icon> -->
             <div class="text-ellipsis">
               {{ RecentStatusEnums[viewInfo.recentCheck.status] }}｜{{
                 fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
@@ -199,10 +200,10 @@ const props = defineProps<{
 }>()
 
 const actionButtonList = ref([
-  { name: 'Check', url: ['check', 'check-b', 'check-color'] },
-  { name: 'Build', url: ['build', 'build-b', 'build-color'] },
-  { name: 'Deploy', url: ['deploy', 'deploy-b', 'deploy-color'] },
-  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }]);
+  { name: 'Check', url: 'check' },
+  { name: 'Build', url: 'build' },
+  { name: 'Deploy', url: 'deploy' },
+  { name: 'Ops', url: 'ops' }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
@@ -531,5 +532,15 @@ html[data-theme='light'] {
   .disabledCheckCss:hover {
     color: #151210;
   }
+}
+
+.action-button-item:hover {
+  .action-icon {
+    .svg-icon {
+      color: #E2B578;
+    }
+  }
+
+
 }
 </style>
