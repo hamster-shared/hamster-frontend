@@ -4,13 +4,13 @@
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="ERC20" tab="ERC20">
         <div class="flex">
-          <div class="p-4 w-1/4">
+          <div class="w-1/4 p-4">
             <SettingsERC20 :opts="optsERC20" @showContract="setContract"/>
             <FeaturesERC20 :opts="optsERC20" @checkboxClick="checkboxClick" />
             <AccessControl :opts="optsERC20" @showContract="setContract" />
             <Upgradeability :opts="optsERC20" @showContract="setContract" />
             <InfoSection :opts="optsERC20" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createProject">Creat by Code</a-button>
+            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Creat by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC20"></CodeEditor>
@@ -19,13 +19,13 @@
       </a-tab-pane>
       <a-tab-pane key="ERC721" tab="ERC721">
         <div class="flex">
-          <div class="p-4 w-1/4">
+          <div class="w-1/4 p-4">
             <SettingsERC721 :opts="optsERC721" @showContract="setContract"/>
             <FeaturesERC721 :opts="optsERC721" @checkboxClick="checkboxClick" />
             <AccessControl :opts="optsERC721" @showContract="setContract" />
             <Upgradeability :opts="optsERC721" @showContract="setContract" />
             <InfoSection :opts="optsERC721" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createProject">Creat by Code</a-button>
+            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Creat by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC721"></CodeEditor>
@@ -34,13 +34,13 @@
       </a-tab-pane>
       <a-tab-pane key="ERC1155" tab="ERC1155">
         <div class="flex">
-          <div class="p-4 w-1/4">
+          <div class="w-1/4 p-4">
             <SettingsERC1155 :opts="optsERC1155" @showContract="setContract"/>
             <FeaturesERC1155 :opts="optsERC1155" @checkboxClick="checkboxClick" />
             <AccessControl :opts="optsERC1155" @showContract="setContract" />
             <Upgradeability :opts="optsERC1155" @showContract="setContract" />
             <InfoSection :opts="optsERC1155" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createProject">Creat by Code</a-button>
+            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Creat by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC1155"></CodeEditor>
@@ -48,10 +48,19 @@
         </div>
       </a-tab-pane>
     </a-tabs>
+    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
+      <span class="text-sm">Project Name</span>
+      <a-input placeholder="Project Name" v-model:value="codeNameValue" allowClear/>
+      <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
+      <span class="text-sm">Great project names are short and memorable.</span>
+      <div class="mt-8 text-center">
+        <a-button id="create-project-btn" type="primary" :loading="createCodeLoading" @click="handleOk">Done</a-button>
+      </div>
+    </a-modal>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import { erc20, erc721, erc1155, infoDefaults } from '@openzeppelin/wizard';
@@ -66,10 +75,15 @@ import FeaturesERC1155 from './components/FeaturesERC1155.vue';
 import SettingsERC1155 from './components/SettingsERC1155.vue';
 import CodeEditor from '@/components/CodeEditor.vue';
 import { useThemeStore } from "@/stores/useTheme";
-import { apiProjectsCode } from "@/apis/projects";
+import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
 import { message } from "ant-design-vue";
 const theme = useThemeStore()
 const router = useRouter();
+
+const createCodeLoading = ref(false)
+const createCodeVisible = ref(false)
+const codeNameValue = ref('')
+const errorMsg = ref()
 
 const optsERC20 = ref({
   kind: 'ERC20',
@@ -104,13 +118,13 @@ onMounted(async () => {
   optsERC20.value.name = 'ExampleToken';
   optsERC20.value.symbol = 'ETK';
   optsERC20.value.premint = '1000000';
-  
+
   contractERC20.value = erc20.print(optsERC20.value);
 
   optsERC721.value.name = 'ExampleToken';
   optsERC721.value.symbol = 'ETK';
   contractERC721.value = erc721.print(optsERC721.value);
-  
+
   optsERC1155.value.name = 'ExampleToken';
   optsERC1155.value.uri = '';
   contractERC1155.value = erc1155.print(optsERC1155.value);
@@ -137,17 +151,16 @@ const checkboxClick = async (event: any) => {
   } else if ( activeKey.value === 'ERC1155') {
     optsERC1155.value[event.target.name] = event.target.checked;
   }
-  
+
   setContract();
 }
 
 const createProject = async () => {
-  
   try {
-    loading.value = true;
+    // loading.value = true;
     const createProjectTemp = localStorage.getItem('createProjectTemp');
     const params = {
-      name: JSON.parse(createProjectTemp)?.name,
+      name: codeNameValue.value,
       type: JSON.parse(createProjectTemp)?.type - 0,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       fileName: optsERC20.value.name,
@@ -167,22 +180,69 @@ const createProject = async () => {
   } catch (error: any) {
     console.log("erro:",error)
     message.error(error.response.data.message);
-    loading.value = false;
   } finally {
-    loading.value = false;
+    createCodeLoading.value = false
   }
+}
+
+const checkDupName = computed(async () => {
+  try {
+    createCodeLoading.value = true;
+    loading.value = true;
+    //校验仓库名称是否存在
+    const userInfo = localStorage.getItem('userInfo');
+    const params = {
+      owner: JSON.parse(userInfo)?.username,
+      name: codeNameValue.value,
+    }
+    const res = await apiDupProjectName(params);
+    console.log('res:',res)
+    if (res.data === false) {
+      createCodeLoading.value = false;
+      return errorMsg.value = "Project Name duplication"
+    } else if(codeNameValue.value == ''){
+      createCodeLoading.value = false;
+      return errorMsg.value = "Please enter Project Name"
+    } else {
+      return true
+    }
+  } catch (error: any) {
+    console.log("erro:", error)
+    createCodeLoading.value = false;
+    return errorMsg.value = "Project Name check failure"
+  }
+})
+
+const handleOk = async ()=>{
+  checkDupName.value.then((result)=>{
+    if (result === true){
+      console.log('success',result)
+      createProject()
+    } else {
+      console.log('fail',result)
+      errorMsg.value = result
+      createCodeLoading.value = false
+    }
+  })
+}
+
+const handleCancel = ()=>{
+  createCodeLoading.value = false
+  loading.value = false;
+  errorMsg.value = ''
+  codeNameValue.value = ''
 }
 </script>
 <style lang='less' scoped>
 
 :deep(.dark-css .ant-tabs){
   color: #E0DBD2;
-} 
+}
 :deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
   color: #FFFFFF;
 }
 :deep(.ant-tabs-tab-btn){
   width: 100px;
   text-align: center;
-} 
+}
 </style>

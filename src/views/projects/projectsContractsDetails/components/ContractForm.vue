@@ -35,6 +35,7 @@
 import { reactive, toRefs, watch, ref } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 import { useDeployAddressStore } from "@/stores/useDeployAddress";
+import { useDeployAddressStore } from "@/stores/useDeployAddress";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import { message } from 'ant-design-vue';
@@ -58,6 +59,7 @@ const formState = reactive({
   contractAddress: '',
   checkValue: '',
   abiInfo: '',
+  frameType: Number,
   frameType: Number,
 });
 const testData = reactive({});

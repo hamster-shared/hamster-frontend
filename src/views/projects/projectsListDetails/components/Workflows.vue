@@ -58,7 +58,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount, reactive, ref, toRefs } from "vue";
+import { computed, onMounted, onBeforeUnmount, reactive, ref, toRefs, watch } from "vue";
 import { useRouter } from "vue-router";
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useThemeStore } from "@/stores/useTheme";
@@ -69,24 +69,28 @@ import {
   apiProjectsWorkflowsStop,
   apiDeleteWorkflows,
 } from "@/apis/projects";
+import { number } from "joi";
 const theme = useThemeStore()
 const router = useRouter();
 
 const props = defineProps({
   detailId: String,
   projectType: String,
+  frameType: Number,
 });
-const { detailId, projectType } = toRefs(props);
+const { detailId, projectType, frameType } = toRefs(props);
 
 const timer = ref();
 const loading = ref(false);
 const statusList = reactive(["Notrun", "Running", "Fail", "Success", "Stop"]);
-const actionList = reactive([
+// const actionList = reactive([]);
+const actionList = ref([
   { label: "All Action", value: "0" },
   { label: "Check", value: "1" },
   { label: "Build", value: "2" },
   { label: "Deploy", value: "3" }
 ]);
+
 const action = ref("0");
 const workflowList = ref([]);
 const delWorkflowModal = ref(false);
@@ -130,7 +134,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'startTime',
-    width: '150px'
+    width: '165px'
   },
   {
     title: 'Action',
@@ -166,9 +170,6 @@ const pagination = reactive({
 });
 
 onMounted(() => {
-  if (projectType?.value === '1') {
-    actionList.length = 3;
-  }
   getProjectsWorkflows();
 })
 
@@ -200,7 +201,7 @@ const getProjectsWorkflows = async () => {
       }
     });
     if (isRunning.value === true) {
-      
+
       timer.value = setTimeout(() => {
         //需要定时执行的代码
         getProjectsWorkflows();
@@ -246,12 +247,37 @@ const stopWorkflow = async (projectId: String, workflowId: number, detailId: num
     const data = await apiProjectsWorkflowsStop(params);
     message.success(data.message);
   } catch (error: any) {
-    console.log("error:", error)
+    // console.log("error:", error)
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
   }
-
 }
+
+watch(() => props.frameType,
+  (value) => {
+    if (props.projectType === '1') {
+      if (value === 4) {
+        actionList.value = [
+          { label: "All Action", value: "0" },
+          { label: "Build", value: "2" },
+        ]
+      } else {
+        actionList.value = [
+          { label: "All Action", value: "0" },
+          { label: "Check", value: "1" },
+          { label: "Build", value: "2" },
+        ]
+      }
+    } else {
+      actionList.value = [
+        { label: "All Action", value: "0" },
+        { label: "Check", value: "1" },
+        { label: "Build", value: "2" },
+        { label: "Deploy", value: "3" }
+      ]
+    }
+  }
+)
 
 </script>

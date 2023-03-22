@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="visible" :closable="false" :footer="null" ref="modal" :keyboard="false"
+  <a-modal v-model:visible="visible" :closable="false" :footer="null" ref="modal" :keyboard="false" class="modal-height"
     style="top: 0px; margin-right: 0px; padding: 0px" width="800px">
     <div class="px-[24px]">
       <div class="flex justify-between">
@@ -94,6 +94,7 @@ export default defineComponent({
   background-color: #000;
   overflow-x: hidden;
   overflow-y: auto;
+  height: calc(100vh - 133px);
 }
 
 .resetoreFixed {
@@ -112,5 +113,12 @@ export default defineComponent({
 
 .fullStyle {
   border-radius: 0;
+}
+</style>
+<style lang="less">
+.modal-height{
+  .ant-modal-body {
+    height: 100vh !important;
+  }
 }
 </style>

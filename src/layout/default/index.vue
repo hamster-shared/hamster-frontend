@@ -19,7 +19,7 @@
       <!-- Layout Content -->
       <a-layout class="layout-default-page pt-[64px] dark:!bg-[#000000]">
         <!-- Page Content -->
-        <a-layout-content class="layout-default-content px-40 dark:text-white text-[#151210]">
+        <a-layout-content class="layout-default-content px-60 dark:text-white text-[#151210]">
           <keep-alive>
             <router-view v-if="$route.meta.keepAlive" />
           </keep-alive>
@@ -57,7 +57,7 @@ const layoutClass = computed(() => {
 .layout-default-content {
   width: 100%;
   // padding: 24px;
-  max-width: 1440px;
+  max-width: 1920px;
   min-width: 1080px;
   margin: 24px auto;
   border-radius: 12px;

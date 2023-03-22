@@ -81,6 +81,13 @@ interface apiProjectsCodeParams {
   content: string,
 }
 
+interface apiContainerDeployParams {
+  containerPort?: number,
+  serviceProtocol?: string,
+  servicePort?: number,
+  serviceTargetPort?: number,
+}
+
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
@@ -265,10 +272,50 @@ export function apiProjectsCode(params: apiProjectsCodeParams) {
 }
 
 // 删除部署
-export function apiDeleteDeployInfo(packageId:string) {
+export function apiDeleteDeployInfo(packageId: string) {
   return httpRequest({
     // url: `/api/projects/${id}/workflows/${workflowId}`,
     url: `/api/package/${packageId}/deploy-info`,
     method: "delete",
+  });
+}
+
+// 根据id查询deployHash /projects/:id/contract/deploy/:contractDeployId
+export function apiContractDeployId(id: String, contractDeployId: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/deploy/${contractDeployId}`,
+    method: "get",
+  });
+}
+
+// 容器部署接口
+export function apiProjectsContainerDeploy(params: apiProjectsDeployParams, dataParam?: apiContainerDeployParams) {
+  return httpRequest({
+    url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/container/deploy`,
+    method: "post",
+    data: dataParam,
+  });
+}
+// 判断是否进行容器配置
+export function apiContainerCheck(id: String, workflowId: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/workflows/${workflowId}/container/check`,
+    method: "get",
+  });
+}
+
+// 获取container
+export function apiGetContainer(id: String) {
+  return httpRequest({
+    url: `/api/projects/${id}/container/deploy`,
+    method: "get",
+  });
+}
+//  更新配置
+export function apiPostContainer(id: String, dataParam?: apiContainerDeployParams) {
+  return httpRequest({
+    url: `/api/projects/${id}/container/deploy`,
+    method: "post",
+    data: dataParam,
   });
 }

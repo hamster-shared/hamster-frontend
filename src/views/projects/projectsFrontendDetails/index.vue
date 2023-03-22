@@ -40,28 +40,34 @@
         class="dark:bg-[#36322D] bg-[#ffffff] border border-solid dark:border-[#434343] border-[#EBEBEB] p-[32px] rounded-[12px] text-center">
         <a-spin size="large" tip="Loading..." />
       </div> -->
-      <div>
-        <projectsWorkflowsAllLogs></projectsWorkflowsAllLogs>
+      <div v-for="item in logsInfo">
+        <!-- <projectsWorkflowsAllLogs></projectsWorkflowsAllLogs> -->
+        <div class="whitespace-pre-wrap">{{ item }}</div>
       </div>
+      <!-- <div id="terminal"></div> -->
     </div>
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from 'vue-i18n';
-import projectsWorkflowsAllLogs from '../projectsWorkflowsAllLogs/index.vue';
+// import projectsWorkflowsAllLogs from '../projectsWorkflowsAllLogs/index.vue';
 import { message } from "ant-design-vue";
 import { apiGetPackageDetail, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
 import { apiDeleteDeployInfo } from "@/apis/projects.ts";
 import Breadcrumb from '../components/Breadcrumb.vue';
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
+import { creatWebSocket, closeWebSocket} from '@/utils/websocket.ts'
+import { useWebSocket } from '@vueuse/core'
+// import "xterm/css/xterm.css";
+// import { Terminal } from "xterm";
 
 const { t } = useI18n();
 const router = useRouter();
 const { params } = useRoute();
 const currentName = ref('Deployment Detail');
-const packageInfo = reactive({});
+const packageInfo = reactive<any>({});
 const workflowsDetailsData = reactive({
   packageId: params.packageId,
 });
@@ -71,10 +77,30 @@ const viewLogs = () => {
   router.push(`/projects/${packageInfo?.projectId}/${packageInfo?.workflowId}/workflows/${packageInfo?.workflowDetailId}/3/2`)
 }
 
+const logsInfo = ref<any>([])
+const baseUrl = ref(import.meta.env.VITE_WS_API)
+const { username } = JSON.parse(localStorage.getItem('userInfo') as string)
+// const term = new Terminal()
+
+const realtimeLogs =(data:any)=>{
+  logsInfo.value.push(data.data as never)
+  // term.open(document.getElementById('terminal'))
+  // console.log('logsInfo.value:::',logsInfo.value)
+  // term.write(...logsInfo.value)
+}
+
 const getPackageDetail = async () => {
   try {
     const { data } = await apiGetPackageDetail(params.packageId)
     Object.assign(packageInfo, data)
+    
+    useWebSocket(`${baseUrl.value}/projects/${packageInfo.projectId}/${username}/frontend/logs`, {
+      autoReconnect: true,
+      heartbeat: true,
+      onMessage: (_ws,event)=>{
+        realtimeLogs(event)
+      }
+    })
   } catch (err: any) {
     console.info(err)
   }
@@ -117,11 +143,23 @@ const deleteBtn = async () => {
   }
 }
 
+//获取到返回的数据
+// const logsInfo = ref([])
+// const getAlarmData = (data:any)=>{
+//   logsInfo.value.push(data.data)
+//   console.log('logsInfo:::',logsInfo.value)
+// }
+
 
 onMounted(() => {
   getPackageDetail();
   getWorkflowsDetail();
+  // creatWebSocket(getAlarmData)
 })
+
+// onBeforeUnmount(()=>{
+//   closeWebSocket()
+// })
 
 </script>
 

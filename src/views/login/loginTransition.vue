@@ -11,35 +11,76 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin } from "@/apis/login";
+import { apiLogin, apiInstall,apiGetUser} from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
-// const clientId = ref('9fce2a15f6df21849e20');
-const clientId = ref('a782e08a53e86517dcc5');
+const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
+
 
 const login = async () => {
   try {
     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
-    localStorage.setItem('token', data.token);
+    localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      window.close();
+      window.opener.location.reload();
+    }
+  } catch (err: any) {
     window.close();
-    window.opener.location.reload();
-  } catch (err) {
-    window.close();
+    localStorage.removeItem('userInfo');
     router.push('/');
     message.error(err.message);
   }
+}
 
+
+const installGitHub = async () => {
+  try {
+    const { data } = await apiInstall(code.value);
+    localStorage.setItem('token', data);
+    window.close();
+    window.opener.location.reload();
+  } catch (err: any) {
+    window.close();
+    localStorage.removeItem('userInfo');
+    router.push('/');
+    console.log('err:', err)
+  }
 }
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
-    router.push('/projects')
+    if (localStorage.getItem('firstState') === "0") {
+      //第一次登录
+      router.push('/welcome')
+    } else {
+      router.push('/projects')
+    }
   } else {
-    code.value = router.currentRoute.value.query?.code;
-    if (code.value) {
-      login()
+    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+    if (JSON.stringify(userInfo) === '{}') {
+      code.value = router.currentRoute.value.query?.code || '';
+      if (code.value) {
+        await login()
+      }
+      const state = new Date().getTime();
+      const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
+      const url = `${oauthUrl.value}?state=${state}`;
+      const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    } else {
+      if (userInfo.token) {
+        localStorage.setItem('token', userInfo.token);
+        window.close();
+        window.opener.location.reload();
+      } else {
+        code.value = router.currentRoute.value.query?.code || '';
+        if (code.value) {
+          installGitHub()
+        }
+      }
     }
   }
 })

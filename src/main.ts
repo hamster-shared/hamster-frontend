@@ -11,9 +11,13 @@ import "./design/main.css";
 import 'ant-design-vue/dist/antd.variable.min.css';
 import "./design/app.less";
 
+// console.log('env', import.meta.env)
+// console.log('VITE_BASE_API', import.meta.env.VITE_BASE_API)
 
 import DefaultLayout from "./layout/default/index.vue";
 import Null from "./layout/null/index.vue";
+import SvgIcon from "./components/Icon/SvgIcon.vue";
+import 'virtual:svg-icons-register';
 
 const app = createApp(App);
 
@@ -25,5 +29,5 @@ app.use(tool);
 
 app.component("layout-default", DefaultLayout);
 app.component("layout-null", Null);
-
+app.component("svg-icon", SvgIcon);
 app.mount("#app");

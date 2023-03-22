@@ -18,8 +18,12 @@
     <div v-if="params.type === '1'">
       <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
         <div v-for="(items, index) in templatesCategory" :key="index">
-          <div v-if="items.templatesList !== null" class="text-[24px] font-bold" :class="{ 'mt-[32px]': index != 0 }">{{ items.name }}</div>
-          <div v-if="items.templatesList !== null" class="text-[#73706E] dark:text-[#E0DBD2] mb-[16px]">{{ items.description }}</div>
+          <div v-if="items.templatesList !== null" class="text-[24px] font-bold" :class="{ 'mt-[32px]': index != 0 }">{{
+            items.name
+          }}</div>
+          <div v-if="items.templatesList !== null" class="text-[#73706E] dark:text-[#E0DBD2] mb-[16px]">{{
+            items.description
+          }}</div>
           <div class="grid grid-cols-3 gap-4">
             <div v-for="(item, index2) in items.templatesList" :key="index2"
               class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer"
@@ -46,7 +50,7 @@
         </div>
       </div>
 
-      <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
+      <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]" v-if="frameTypeInfo == '1'">
         <div class="text-[24px] font-bold mb-[16px]">
           Didn't find what you're looking for?<br />
           Choose standard contract to build your own!
@@ -90,12 +94,17 @@ onMounted(() => {
   getTemplatesCategory();
 })
 
+const frameTypeInfo = ref()
 const getTemplatesCategory = async () => {
   try {
     const { data } = await apiTemplatesCategory(params.type);
     templatesCategory.value = data;
+    const createFormData: any = JSON.parse(localStorage.getItem('createFormData')) || {};
+    const frameType = createFormData.type === '2' ? 0 : createFormData.frameType;
+    const deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
+    frameTypeInfo.value = frameType
     templatesCategory.value.forEach(async (element, index) => {
-      const { data } = await apiTemplatesCategoryById(element.id);
+      const { data } = await apiTemplatesCategoryById(element.id, frameType, deployType);
 
       templatesCategory.value[index]['templatesList'] = data;
     });
