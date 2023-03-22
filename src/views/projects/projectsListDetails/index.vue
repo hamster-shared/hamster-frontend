@@ -34,7 +34,7 @@
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
                 <a href="javascript:;">Container</a>
               </a-menu-item>
-              <a-menu-item v-if="projectsDetail.deployType == 1" @click="aptosVisible = true">
+              <a-menu-item v-if="projectType === '1' && projectsDetail.frameType === 2" @click="aptosBuildVisible = true">
                 <a href="javascript:;">Build Setting</a>
               </a-menu-item>
             </a-menu>
@@ -87,7 +87,8 @@
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId"
     @hideContainerParam="containerVisible = false"></ContainerParam>
-  <AptosParam :aptosVisible="aptosVisible" @hideAptosParam="aptosVisible = false"></AptosParam>
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams"
+    @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild" />
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -99,7 +100,7 @@ import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../projectsList/components/ContainerParam.vue';
-import AptosParam from "../projectsList/components/AptosParam.vue";
+import AptosBuildParams from "../projectsList/components/AptosBuildParams.vue";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import {
   apiGetProjectsDetail,
@@ -136,7 +137,7 @@ const formData = reactive({
 const projectsDetail = ref({});
 const frameType = ref(0);
 const containerVisible = ref(false);
-const aptosVisible = ref(false);
+const aptosBuildVisible = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
 const msgParam = ref({
@@ -266,8 +267,27 @@ const updateName = async () => {
     loading.value = false;
   }
 }
-const deleteProjects = async () => {
 
+const hideAptosBuildVisible = () => {
+  aptosBuildVisible.value = false
+}
+
+const aptosBuild = async (id: any) => {
+  try {
+    const { data } = await apiAptosBuild(id.value)
+    console.log('aptosbuild::', data)
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
+    msgType.value = 'build';
+    // setMsgShow();
+
+    // loadView();
+  } catch (err: any) {
+    console.log('err:', err)
+  }
+}
+
+const deleteProjects = async () => {
   try {
     loading.value = true;
     const data = await apiDeleteProjects(detailId.value.toString());

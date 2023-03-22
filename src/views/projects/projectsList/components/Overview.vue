@@ -167,7 +167,8 @@
   </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
-  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams"
+    @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild" />
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
@@ -248,7 +249,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
       break;
     case 'Ops':
-      projectsOps(val.id, val);
+      projectsOps(val.id, val.recentDeploy);
       break;
     default: break;
   }
@@ -277,7 +278,7 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
 
 };
 
-const buildStatusAction = async (id: string, buildData: any)=> {
+const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
     if (projectType?.value === "1") {
       message.info("Executing Now，please wait a moment.");
@@ -301,50 +302,75 @@ const buildStatusAction = async (id: string, buildData: any)=> {
   }
 }
 
-const checkAptosWalletInstalled = () => {
-  if ('aptos' in window) {
-    aptosBuildVisible.value = true
-    return window.aptos;
-  } else {
-    window.open('https://petra.app/', `_blank`);
-  }
-};
+// const checkAptosWalletInstalled = () => {
+//   if ('aptos' in window) {
+//     aptosBuildVisible.value = true
+//     return window.aptos;
+//   } else {
+//     window.open('https://petra.app/', `_blank`);
+//   }
+// };
 
-const aptosBuildParams = ref([])
-const projectsBuild = async (id: string, buildData: any, frameType:string) => {
-  console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
-  const res = await apiCheckSetAptosBuildParams(id)
-  const needsParams = res.data.needsParams
-  try {
-    if (frameType == '2' && needsParams) {
-      await checkAptosWalletInstalled()
-      const { data } = await apiGetAptosBuildParams(id)
-      console.log('apiGetAptosBuildParams:::', data)
-      aptosBuildParams.value = data
-    }else if (frameType == '2' && !needsParams){
-      // if (buildData.status == 1){
-      //   message.info("Executing Now，please wait a moment.");
-      // } else {
+const aptosBuildParams = ref([]);
 
-      // }
-      const { data } = await apiAptosBuild(id)
-      msgParam.value.workflowsId = data.workflowId;
-      msgParam.value.workflowDetailId = data.id;
-      msgType.value = 'build';
-      setMsgShow();
-
-      loadView();
-    }else {
-      buildStatusAction(id, buildData)
+const projectsBuild = async (id: string, buildData: any, frameType: string) => {
+  if (frameType == '2') {
+    const { data } = await apiCheckSetAptosBuildParams(id);
+    if (data.needsParams) {
+      // await checkAptosWalletInstalled()
+      const { data } = await apiGetAptosBuildParams(id);
+      aptosBuildParams.value = data;
+      aptosBuildVisible.value = true;
+      aptosBuildVisible.value = true;
+    } else {
+      // const { data } = await apiAptosBuild(id)
+      // msgParam.value.workflowsId = data.workflowId;
+      // msgParam.value.workflowDetailId = data.id;
+      // msgType.value = 'build';
+      // setMsgShow();
+      // loadView();
     }
-    
-  } catch (error: any) {
-    console.log("erro:", error)
-    message.error(error.response.data.message);
-  } finally {
-    // loading.value = false;
+  } else {
+    buildStatusAction(id, buildData);
   }
-};
+}
+
+
+// const projectsBuild = async (id: string, buildData: any, frameType:string) => {
+//   // console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
+//   const res = await apiCheckSetAptosBuildParams(id)
+//   const needsParams = res.data.needsParams
+//   try {
+//     if (frameType == '2' && needsParams) {
+//       await checkAptosWalletInstalled()
+//       const { data } = await apiGetAptosBuildParams(id)
+//       // console.log('apiGetAptosBuildParams:::', data)
+//       aptosBuildParams.value = data
+//     }else if (frameType == '2' && !needsParams){
+//       // if (buildData.status == 1){
+//       //   message.info("Executing Now，please wait a moment.");
+//       // } else {
+
+//       // }
+//       const { data } = await apiAptosBuild(id)
+//       msgParam.value.workflowsId = data.workflowId;
+//       msgParam.value.workflowDetailId = data.id;
+//       msgType.value = 'build';
+//       setMsgShow();
+//       loadView();
+//     }else {
+//       buildStatusAction(id, buildData)
+//     }
+
+//   } catch (error: any) {
+//     console.log("erro:", error)
+//     message.error(error.response.data.message);
+//   } finally {
+//     // loading.value = false;
+//   }
+// };
+
+
 const projectsDeploy = async (id: string, version: string, status: Number) => {
   if (projectType?.value === '1') {
     if (status === 0 || status === 1 || version === "") {
@@ -361,6 +387,7 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
   }
 };
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
+  console.log(recentDeploy, 'recentDeploy')
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
       message.info("Smart contract not avaliable.");
@@ -371,10 +398,12 @@ const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
     router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
   }
 };
+
 const loadView = async () => {
   //重新查询数据
   emit("loadProjects");
 };
+
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
@@ -404,10 +433,13 @@ const goContractDeploy = async (id: string, status: string | Number) => {
 // };
 
 const goContractDetail = async (id: string, version: string) => {
+  console.log(version, 'v')
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/contracts-details/" + version);
 }
+
+
 const goFrontendDeploy = async () => {
   try {
     if (viewInfo?.value.deployType === 2) { //Container的场合
@@ -423,9 +455,7 @@ const goFrontendDeploy = async () => {
 const hideContainerParam = () => {
   containerVisible.value = false;
 }
-const hideAptosParam = () => {
-  aptosVisible.value = false;
-}
+
 const frontendDeploying = async () => {
   try {
     const params = ref({
@@ -438,7 +468,6 @@ const frontendDeploying = async () => {
     msgParam.value.workflowDetailId = data.detailId;
     msgType.value = 'deploy';
     setMsgShow();
-
     loadView();
   } catch (error: any) {
     console.log("erro:", error)
@@ -446,21 +475,22 @@ const frontendDeploying = async () => {
   }
 }
 
-const hideAptosBuildVisible = () =>{
+const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
 }
-const aptosBuild = async(id:any)=>{
+
+
+const aptosBuild = async (id: any) => {
   try {
-    const { data } = await apiAptosBuild(id.value)
-    console.log('aptosbuild::',data)
+    const { data } = await apiAptosBuild(id)
+    console.log('aptosbuild::', data)
     msgParam.value.workflowsId = data.workflowId;
     msgParam.value.workflowDetailId = data.detailId;
     msgType.value = 'build';
     setMsgShow();
-
     loadView();
-  } catch(err:any) {
-    console.log('err:',err)
+  } catch (err: any) {
+    console.log('err:', err)
   }
 }
 
@@ -477,7 +507,6 @@ const frontendContainerDeploy = async (apiContainerDeployParams?: Object) => {
     msgParam.value.workflowDetailId = data.detailId;
     msgType.value = 'deploy';
     setMsgShow();
-
     loadView();
   } catch (error: any) {
     console.log("erro:", error)
@@ -504,7 +533,6 @@ const setMsgShow = () => {
   setTimeout(function () {
     showMsg.value = false;
   }, 3000)
-
 }
 
 const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
