@@ -227,7 +227,7 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
   const factory = new ethers.ContractFactory(
-    abi, // abi[0] 是一个数组，原因未知
+    abi,
     bytecode,
     provider.getSigner()
   );
