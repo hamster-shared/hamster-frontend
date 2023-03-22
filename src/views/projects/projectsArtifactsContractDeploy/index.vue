@@ -40,7 +40,7 @@
         <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
         <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select">
+          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select" @change="changeChain">
             <a-select-option :value="item" v-for="item in chainData" :key="item">{{
               item
             }}</a-select-option>
@@ -137,11 +137,14 @@ const selectedIndex = ref(0);
 const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
-const chainData = reactive(['Ethereum']);
-const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
+const chainData = reactive(['Ethereum', 'Polygon', 'BNB Smart Chain']);
+const networkData = ref([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }])
 const projectsContractData = reactive([]);
 const projectName = ref('');
 const abiInputData = ref([]);
+const chainName = ref('');
+const rpcUrl = ref('');
+const currencySymbol = ref('');
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -174,8 +177,6 @@ const deployContract = async (item: any) => {
       classHash: classHash,
       constructorCalldata: []
     })
-    // console.log(response.transaction_hash)
-    // console.log(response.contract_address)
     setProjectsContractDeploy('', response.contract_address[0], item.id)
 
     const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
@@ -187,8 +188,6 @@ const deployContract = async (item: any) => {
     } else {
       loading.value = false
     }
-    // router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
-
   } catch (err: any) {
     loading.value = false
     // console.log('err:', err)
@@ -208,11 +207,6 @@ const getProjectsContract = async () => {
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
-    // if (typeof (item) === 'object') {
-    //   item.abiInfoData = [YAML.parse(item.abiInfo)];
-    // } else {
-    //   item.abiInfoData = YAML.parse(item.abiInfo);
-    // }
     item.abiInfoData = YAML.parse(item.abiInfo);
     setAbiInfo(item);
   })
@@ -235,11 +229,9 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
     let value = argsMapData || {}
     const contract = await factory.deploy(...Object.values(value));
     await contract.deployed();
-    // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
   } catch (errorInfo) {
     // 失败的处理
-    // console.log(errorInfo, 'errorInfo')
     message.error(t('common.operateFail'));
   } finally {
     loading.value = false;
@@ -251,21 +243,58 @@ const cancelStarkNetModal = () => {
   hasDeclareHash.value = false;
 }
 
-const switchToChain = (chainId: string) => {
+const switchToChain = async (chainId: string) => {
+  loading.value = true;
   window.ethereum && window.ethereum.request({
     method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId}` }],
   }).then((res: any) => {
-    message.success('success')
+    loading.value = false;
+    message.success('success');
     // console.info(res, '成功')
   }).catch((err: any) => {
-    message.success('faild')
-    // console.info(err, 'err')
+    if (err.code === 4902) {
+      message.info('Please add the network first');
+      addToChain(chainId)
+    } else {
+      message.error('faild')
+    }
+  })
+}
+
+const addToChain = (chainId: string) => {
+
+  window.ethereum && window.ethereum.request({
+    method: "wallet_addEthereumChain",
+    params: [
+      {
+        chainId: `0x${chainId}`,
+        chainName: chainName.value,
+        rpcUrls: [rpcUrl.value],
+        // nativeCurrency: {
+        //   name: currencySymbol.value,
+        //   symbol: "RΞ",
+        //   decimals: 18,
+        // },
+      },
+    ],
+  }).then((res: any) => {
+    message.info('successfully added')
+    // console.log(res)
+  }).catch((err: any) => {
+    console.log(err.code, 'code')
+    if (err.code === 4001) {
+      message.info('Cancel adding a network')
+    } else {
+      message.info('faild')
+    }
+  }).finally(() => {
+    loading.value = false;
   })
 }
 
 const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
-  const network: any = networkData.find(item => { return item.id === formState.network })
+  const network: any = networkData.value.find(item => { return item.id === formState.network })
   const queryJson = {
     id: queryParams.id,
     contractId: contractId,
@@ -377,8 +406,6 @@ const selectAargumentName = (val: any, index: number) => {
       }
     }
   })
-
-
 }
 
 const cancelModal = (val: boolean) => {
@@ -386,8 +413,23 @@ const cancelModal = (val: boolean) => {
 }
 
 const changeNetwork = (val: any) => {
-  console.log(val, 'val')
+  const data = networkData.value.find((item: any) => { return item.id === val });
+  chainName.value = data.networkName;
+  rpcUrl.value = data.url;
+  currencySymbol.value = currencySymbol;
 };
+
+const changeChain = (val: string) => {
+  formState.network = undefined;
+  if (val === 'Ethereum') {
+    // ETH
+  } else if (val === 'Polygon') {
+    // 货币符号 currencySymbol = MATIC
+    networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
+  } else if (val === 'BNB Smart Chain')
+    // 货币符号  BNB
+    networkData.value = [{ name: 'Mainnet', id: '38', url: 'https://bsc.nodereal.io/', networkName: 'Mainnet' }, { name: 'Testnet', id: '61', url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	', networkName: 'Testnet' }]
+}
 
 const changeVersion = (val: string) => {
   queryParams.version = val
@@ -400,7 +442,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     if (frameType.value === 4) {
       Object.assign(chainData, ['StarkWare'])
-      Object.assign(networkData, [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }])
+      networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
       const data = await connectWallet();
       Object.assign(starkWareData, data)
     }

@@ -35,7 +35,6 @@
 import { reactive, toRefs, watch, ref } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 import { useDeployAddressStore } from "@/stores/useDeployAddress";
-import { useDeployAddressStore } from "@/stores/useDeployAddress";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import { message } from 'ant-design-vue';
@@ -59,7 +58,6 @@ const formState = reactive({
   contractAddress: '',
   checkValue: '',
   abiInfo: '',
-  frameType: Number,
   frameType: Number,
 });
 const testData = reactive({});
@@ -113,7 +111,7 @@ const executeSet = async () => {
 const submit = async () => {
   // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
   if (formState.frameType == 4) {
-    console.log(formState.frameType, 'formState.frameType')
+    // console.log(formState.frameType, 'formState.frameType')
     if (JSON.stringify(deployAddress.deployAddressValue) == '{}') {
       const data1 = await connectWallet()
       Object.assign(testData, data1)
@@ -132,45 +130,105 @@ const submit = async () => {
       }
     }
   } else {
-    isSend.value = true
-    const { ethereum } = window;
-    let provider = new ethers.providers.Web3Provider(ethereum);
-    let abi = YAML.parse(formState.abiInfo);
-    // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
-    // console.log(formData, ...(Object.values(formData)), formState.checkValue, 'formData')
-    try {
-      let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
-      if (JSON.stringify(formData) == "{}") {
-        contract[formState.checkValue]().then((tx: any) => {
-          // console.log(tx, 'tx')
+    evmDeployFunction();
+    // isSend.value = true
+    // const { ethereum } = window;
+    // let provider = new ethers.providers.Web3Provider(ethereum);
+    // let abi = YAML.parse(formState.abiInfo);
+    // // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
+    // // console.log(formData, ...(Object.values(formData)), formState.checkValue, 'formData')
+    // try {
+    //   let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+    //   if (JSON.stringify(formData) == "{}") {
+    //     contract[formState.checkValue]().then((tx: any) => {
+    //       if (tx.hash) {
+    //         hashValue.value = tx.hash;
+    //       } else {
+    //         hashValue.value = tx;
+    //       }
+    //       console.log(tx, 'tx')
+    //       isSend.value = false;
+    //     }).catch((err: any) => {
+    //       message.error('调用失败')
+    //       hashValue.value = 'No Data';
+    //       isSend.value = false;
+    //     })
+    //   } else {
+    //     console.log(...(Object.values(formData)), 'data')
+    //     // let data = ethers.utils.parseEther('1.0')
+    //     // console.log(data, ethers.utils.formatEther(data._hex), 'j')
+    //     // let data = ethers.utils.parseEther('0xe6e2FC7813137332943213cA1EFFd24fEd158cf7')
+    //     contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+    //       // contract[formState.checkValue](data._hex).then((tx: any) => {
+    //       console.log(tx, ethers.utils.formatEther(tx._hex), 'tx')
+    //       // hashValue.value = ethers.utils.parseEther(tx);
+    //       if (tx._isBigNumber) {
+    //         isSend.value = false;
+    //         hashValue.value = ethers.utils.formatEther(tx._hex);
+    //       } else {
+    //         tx.wait().then((result: any) => {
+    //           isSend.value = false;
+    //           hashValue.value = tx.hash;
+    //           // console.log(result, 'tx send success!')
+    //         }).catch((err: any) => {
+    //           console.log(err, 'err')
+    //           message.error('调用失败')
+    //           hashValue.value = 'No Data';
+    //         })
+    //       }
+    //       console.log(tx, '9090')
+    //     }).catch((err: any) => {
+    //       console.log(err, 'err')
+    //       message.error('调用失败')
+    //       hashValue.value = 'No Data';
+    //       isSend.value = false;
+    //     })
+    //   }
+    // } catch (errorInfo) {
+    //   console.log('errorInfo:' + errorInfo)
+    //   isSend.value = false;
+    //   message.error('调用失败')
+    //   // console.log(errorInfo, 'errorInfo')
+    // }
+  }
+}
+// evm合约方法调用
+const evmDeployFunction = () => {
+  isSend.value = true
+  const { ethereum } = window;
+  let provider = new ethers.providers.Web3Provider(ethereum);
+  let abi = YAML.parse(formState.abiInfo);
+  try {
+    let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+    if (props.buttonInfo === 'Transact') {
+      // send 方法
+      console.log(...(Object.values(formData)), 'data')
+      contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+        tx.wait().then((result: any) => {
+          // isSend.value = false;
+          hashValue.value = tx.hash;
+        }).catch((err: any) => {
+          // console.log(err, 'err')
+          message.error('调用失败')
+          hashValue.value = 'No Data';
+        }).finally(() => {
           isSend.value = false;
+        })
+      })
+    } else {
+      contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+        if (tx._isBigNumber) {
+          hashValue.value = ethers.utils.formatEther(tx._hex);
+        } else {
           hashValue.value = tx;
-        }).catch((err: any) => {
-          message.error('调用失败')
-          hashValue.value = 'No Data';
-          isSend.value = false;
-        })
-      } else {
-        contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-          tx.wait().then((result: any) => {
-            isSend.value = false;
-            hashValue.value = tx.hash;
-            // console.log(result, 'tx send success!')
-          }).catch((err: any) => {
-            message.error('调用失败')
-            hashValue.value = 'No Data';
-          })
-        }).catch((err: any) => {
-          message.error('调用失败')
-          hashValue.value = 'No Data';
-          isSend.value = false;
-        })
-      }
-    } catch (errorInfo) {
-      isSend.value = false;
-      message.error('调用失败')
-      // console.log(errorInfo, 'errorInfo')
+        }
+        isSend.value = false;
+      })
     }
+  } catch (errorInfo: any) {
+    // console.log('errorInfo:' + errorInfo)
+    isSend.value = false;
+    message.error('调用失败')
   }
 }
 const copy = () => {
@@ -189,8 +247,9 @@ watch(
       let name = [...(Object.keys(formData))]
       let value = [...(Object.values(formData))]
       if (!isSend.value) {
+        // formRef.value.resetFields();
         name.forEach((it: any) => {
-          delete formData[it]
+          delete formData[it];
         })
         hashValue.value = ''
       }
@@ -250,10 +309,6 @@ html[data-theme="dark"] {
   :deep(.ant-input) {
     color: #ffffff;
   }
-
-  // :deep(.anticon.ant-input-clear-icon) {
-  //   color: #E0DBD2;
-  // }
 }
 
 input::-webkit-input-placeholder,
@@ -261,4 +316,5 @@ input:-moz-placeholder,
 input::-moz-placeholder,
 input:-ms-input-placeholder {
   color: #E0DBD2;
-}</style>
+}
+</style>
