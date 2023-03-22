@@ -31,14 +31,14 @@ const onboard = Onboard({
     recommendedInjectedWallets: [
       { name: 'MetaMask', url: 'https://metamask.io/' },
       { name: 'WalletConnect', url: 'https://walletconnect.com/' },
-      { name: 'imToken', url: 'https://www.token.im/'},
+      { name: 'imToken', url: 'https://www.token.im/' },
       { name: 'Math Wallet', url: 'https://www.mathwallet.org/' },
       { name: 'Trust Wallet', url: 'https://trustwallet.com/' },
       { name: 'Huobi Wallet', url: 'https://www.huobi.com/' },
-    ]
+    ],
   },
   connect: {
-    showSidebar: false, 
+    showSidebar: false,
   },
   notify: {
     desktop: {
@@ -110,6 +110,7 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
     return null
   }
 }
+
 
 onBeforeMount(async () => {
   // 进入页面即要求连接钱包

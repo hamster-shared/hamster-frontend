@@ -1,5 +1,8 @@
 <template>
   <a-modal v-model:visible="containerVisible" :footer="null" @cancel="hideVisible">
+    <template #closeIcon>
+      <img class="" src="@/assets/icons/closeIcon.svg" @click="hideVisible" />
+    </template>
     <div class="text-[24px] text-[#151210] font-bold">Set Container Parameters</div>
     <div class="text-[#73706E] mb-4">set parameters to create Container for deploy this FrontEnd on.</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
@@ -14,16 +17,18 @@
           <div class="flex justify-between pb-[8px] items-center">
             <span><label class="item-required">*</label>containerPort</span>
             <a-tooltip placement="right">
-              <template #title>The application running in the container can be used to receive and process network requests on a specific port.</template>
+              <template #title>The application running in the container can be used to receive and process network
+                requests on a specific port.</template>
               <img src="@/assets/icons/info.svg" class="h-[16px] mr-1 cursor-pointer" />
             </a-tooltip>
           </div>
         </span>
-        <a-input onchange="" @change="setPortData" v-model:value="formData.containerPort" placeholder="containerPort" allow-clear autocomplete="off" />
+        <a-input onchange="" @change="setPortData" v-model:value="formData.containerPort" placeholder="containerPort"
+          allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="serviceProtocol" name="serviceProtocol">
         <a-select v-model:value="formData.serviceProtocol" placeholder="serviceProtocol" autocomplete="off"
-        :options="serviceProtocolList.map(item => ({ value: item }))">
+          :options="serviceProtocolList.map(item => ({ value: item }))">
         </a-select>
       </a-form-item>
       <a-form-item name="servicePort">
@@ -48,7 +53,8 @@
             </a-tooltip>
           </div>
         </span>
-        <a-input v-model:value="formData.serviceTargetPort" placeholder="serviceTargetPort" allow-clear autocomplete="off" />
+        <a-input v-model:value="formData.serviceTargetPort" placeholder="serviceTargetPort" allow-clear
+          autocomplete="off" />
       </a-form-item>
     </a-form>
     <div class="mt-4 text-center">
@@ -66,7 +72,10 @@ import { message } from "ant-design-vue";
 
 const props = defineProps({
   containerVisible: Boolean,
-  detailId: String,
+  detailId: {
+    type: String,
+    default: '',
+  },
   containerType: String,
 });
 const { containerVisible, detailId, containerType } = toRefs(props);
@@ -74,7 +83,7 @@ const emit = defineEmits(["hideContainerParam", "frontendContainerDeploy"]);
 
 const loading = ref(false);
 const formRef = ref();
-const serviceProtocolList = ref(['TCP','UDP','SCTP']);
+const serviceProtocolList = ref(['TCP', 'UDP', 'SCTP']);
 const formData = reactive({
   containerSize: '0.5 Core 0.5GB',
   containerPort: null,
@@ -98,7 +107,7 @@ watch(containerVisible, (newVal) => {
   if (newVal === true && containerType?.value === 'update') {
     getContainer();
   }
- })
+})
 
 const setPortData = () => {
   if (formData.containerPort != null && formData.containerPort != "") {
@@ -122,7 +131,7 @@ const paramDone = async () => {
     }
     updateContainer(params);
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     loading.value = false;
     hideVisible();
@@ -158,8 +167,7 @@ const getContainer = async () => {
 }
 </script>
 <style lang='less' scoped>
-
-:deep(.ant-select-selection-item){
+:deep(.ant-select-selection-item) {
   color: #8A8A8A !important;
 }
 
@@ -172,7 +180,7 @@ const getContainer = async () => {
   color: #ff4d4f;
   content: "*";
   display: inline-block;
-  font-family: SimSun,sans-serif;
+  font-family: SimSun, sans-serif;
   font-size: 14px;
   line-height: 1;
   margin-right: 4px;

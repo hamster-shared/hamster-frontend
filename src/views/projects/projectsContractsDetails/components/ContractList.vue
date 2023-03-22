@@ -67,7 +67,7 @@ const contractForm = ref();
 const abiInfoData = reactive([]);
 
 const data = YAML.parse(abiInfo.value);
-console.log(data, 'data')
+// console.log(data, 'data')
 // if (Object.prototype.toString.call(data) === '[object Object]') {
 //   Object.assign(abiInfoData, data.abi)
 // } else {
@@ -103,7 +103,7 @@ abiInfoData.map((item: any) => {
     // }
   }
 
-  console.log(sendAbis, 'sendAbis')
+  // console.log(sendAbis, 'sendAbis')
 
   if (sendAbis.length > 0) {
     checkValue.value = sendAbis[0]?.name;

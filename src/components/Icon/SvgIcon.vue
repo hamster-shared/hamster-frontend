@@ -1,4 +1,5 @@
 <template>
+  <!-- @mouseenter="color = hover" -->
   <svg aria-hidden="true" :class="[$attrs.class, 'svg-icon']" :style="getStyle" @mouseenter="color = hover">
     <use :xlink:href="symbolId" :fill="color" />
   </svg>
@@ -30,26 +31,32 @@ const props = defineProps({
   }
 })
 const { normal, hover } = toRefs(props)
+
+
+
 const color = ref('')
 onMounted(() => {
   color.value = normal.value
 })
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 const getStyle = computed((): CSSProperties => {
-  const { size } = props
-  let s = `${size}`
-  s = `${s.replace('px', '')}px`
+  const { size } = props;
+  let s = `${size}`;
+  s = `${s.replace('px', '')}px`;
   return {
     width: s,
-    height: s
+    height: s,
   }
 })
+
 </script>
 <style lang="less" scoped>
 .svg-icon {
+  cursor: pointer;
   display: inline-block;
   overflow: hidden;
-  vertical-align: -0.15em;
+  // vertical-align: -0.15em;
+  vertical-align: middle;
   fill: currentColor;
 }
 </style>
