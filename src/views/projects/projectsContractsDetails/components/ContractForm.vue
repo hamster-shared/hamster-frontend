@@ -112,6 +112,7 @@ const submit = async () => {
   // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
   if (formState.frameType == 4) {
     // console.log(formState.frameType, 'formState.frameType')
+    // console.log(formState.frameType, 'formState.frameType')
     if (JSON.stringify(deployAddress.deployAddressValue) == '{}') {
       const data1 = await connectWallet()
       Object.assign(testData, data1)
@@ -247,6 +248,7 @@ watch(
       let name = [...(Object.keys(formData))]
       let value = [...(Object.values(formData))]
       if (!isSend.value) {
+        // formRef.value.resetFields();
         // formRef.value.resetFields();
         name.forEach((it: any) => {
           delete formData[it];

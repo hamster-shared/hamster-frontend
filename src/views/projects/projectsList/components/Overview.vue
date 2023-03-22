@@ -19,21 +19,20 @@
 
 
       <div>
-        <label class="cursor-pointer group text-center w-[100px]" v-for="(item, index) in actionButtonList"
-          @click="projectsAction(viewInfo, item.name, $event)">
+        <label class="cursor-pointer group text-center w-[100px] action-button-item"
+          v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
-            <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
-            <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" />
+            <svg-icon name="line-slash" size="16" class="mx-4" />
+            <!-- <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
+            <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" /> -->
           </label>
           <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
-            <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
-            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" />
+            <!-- <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
+            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" /> -->
+            <svg-icon name="check" size="14" />
           </label>
-          <label v-else>
-            <img :src="getActionImageUrl(item.url[0])" class="h-[16px] cursor-default dark:hidden group-hover:hidden" />
-            <img :src="getActionImageUrl(item.url[1])"
-              class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
-            <img :src="getActionImageUrl(item.url[2])" class="h-[16px] hidden group-hover:inline-block" />
+          <label v-else class="action-icon">
+            <svg-icon :name="item.url" size="14" />
           </label>
           <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer align-middle"
             :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
@@ -52,8 +51,9 @@
             <a target="_blank" :href="viewInfo.repositoryUrl">{{ showViewInfoRepositoryUrl }}</a>
           </div>
           <div>
-            <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
-            <img src="@/assets/icons/dark-link.svg" class="h-[16px] mr-1 hidden dark:inline-block" />
+            <!-- <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
+            <img src="@/assets/icons/dark-link.svg" class="h-[16px] mr-1 hidden dark:inline-block" /> -->
+            <svg-icon name="white-link" size="16" />
             main
           </div>
         </div>
@@ -65,6 +65,7 @@
           </div>
           <div v-else class="flex items-center my-2 ">
             <img :src="getImageUrl(viewInfo.recentCheck.status)" class="h-[16px] mr-1" />
+            <!-- <svg-icon :name="SvgStatusEnums[viewInfo.recentCheck.status]" size="18" class="mr-1"></svg-icon> -->
             <div class="text-ellipsis">
               {{ RecentStatusEnums[viewInfo.recentCheck.status] }}｜{{
                 fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
@@ -161,19 +162,23 @@
   </div>
   <ContainerParam :containerVisible="containerVisible" :detailId="viewInfo?.id" @hideContainerParam="hideContainerParam"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
-  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
+  <AptosParam :aptosVisible="aptosVisible" @hideAptosParam="hideAptosParam"></AptosParam>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam">
+  </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
+import AptosBuildParams from './AptosBuildParams.vue'
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
@@ -196,10 +201,10 @@ const props = defineProps<{
 }>()
 
 const actionButtonList = ref([
-  { name: 'Check', url: ['check', 'check-b', 'check-color'] },
-  { name: 'Build', url: ['build', 'build-b', 'build-color'] },
-  { name: 'Deploy', url: ['deploy', 'deploy-b', 'deploy-color'] },
-  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }]);
+  { name: 'Check', url: 'check' },
+  { name: 'Build', url: 'build' },
+  { name: 'Deploy', url: 'deploy' },
+  { name: 'Ops', url: 'ops' }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
@@ -208,6 +213,7 @@ const showViewInfoRepositoryUrl = computed(() => {
 
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
+const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -236,7 +242,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsCheck(val.id, val.recentCheck.status, e);
       break;
     case 'Build':
-      projectsBuild(val.id, val.recentBuild);
+      projectsBuild(val.id, val.recentBuild, val.frameType);
       break;
     case 'Deploy':
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
@@ -271,29 +277,67 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
 
 };
 
-const projectsBuild = async (id: string, buildData: any) => {
-  try {
-    if (buildData.status === 1) {
-      if (projectType?.value === "1") {
-        message.info("Executing Now，please wait a moment.");
-      } else {
-        msgParam.value.workflowsId = buildData.workflowId;
-        msgParam.value.workflowDetailId = buildData.id;
-        msgType.value = 'build';
-        setMsgShow();
-      }
+const buildStatusAction = async (id: string, buildData: any)=> {
+  if (buildData.status === 1) {
+    if (projectType?.value === "1") {
+      message.info("Executing Now，please wait a moment.");
     } else {
-      const res = await apiProjectsBuild(id);
-      if (projectType?.value === "1") {
-        message.success(res.message);
-      } else {
-        msgParam.value.workflowsId = res.workflowId;
-        msgParam.value.workflowDetailId = res.detailId;
-        msgType.value = 'build';
-        setMsgShow();
-      }
-      loadView();
+      msgParam.value.workflowsId = buildData.workflowId;
+      msgParam.value.workflowDetailId = buildData.id;
+      msgType.value = 'build';
+      setMsgShow();
     }
+  } else {
+    const res = await apiProjectsBuild(id);
+    if (projectType?.value === "1") {
+      message.success(res.message);
+    } else {
+      msgParam.value.workflowsId = res.workflowId;
+      msgParam.value.workflowDetailId = res.detailId;
+      msgType.value = 'build';
+      setMsgShow();
+    }
+    loadView();
+  }
+}
+
+const checkAptosWalletInstalled = () => {
+  if ('aptos' in window) {
+    aptosBuildVisible.value = true
+    return window.aptos;
+  } else {
+    window.open('https://petra.app/', `_blank`);
+  }
+};
+
+const aptosBuildParams = ref([])
+const projectsBuild = async (id: string, buildData: any, frameType:string) => {
+  console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
+  const res = await apiCheckSetAptosBuildParams(id)
+  const needsParams = res.data.needsParams
+  try {
+    if (frameType == '2' && needsParams) {
+      await checkAptosWalletInstalled()
+      const { data } = await apiGetAptosBuildParams(id)
+      console.log('apiGetAptosBuildParams:::', data)
+      aptosBuildParams.value = data
+    }else if (frameType == '2' && !needsParams){
+      // if (buildData.status == 1){
+      //   message.info("Executing Now，please wait a moment.");
+      // } else {
+
+      // }
+      const { data } = await apiAptosBuild(id)
+      msgParam.value.workflowsId = data.workflowId;
+      msgParam.value.workflowDetailId = data.id;
+      msgType.value = 'build';
+      setMsgShow();
+
+      loadView();
+    }else {
+      buildStatusAction(id, buildData)
+    }
+    
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
@@ -379,6 +423,9 @@ const goFrontendDeploy = async () => {
 const hideContainerParam = () => {
   containerVisible.value = false;
 }
+const hideAptosParam = () => {
+  aptosVisible.value = false;
+}
 const frontendDeploying = async () => {
   try {
     const params = ref({
@@ -396,6 +443,24 @@ const frontendDeploying = async () => {
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
+  }
+}
+
+const hideAptosBuildVisible = () =>{
+  aptosBuildVisible.value = false
+}
+const aptosBuild = async(id:any)=>{
+  try {
+    const { data } = await apiAptosBuild(id.value)
+    console.log('aptosbuild::',data)
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
+    msgType.value = 'build';
+    setMsgShow();
+
+    loadView();
+  } catch(err:any) {
+    console.log('err:',err)
   }
 }
 
@@ -442,7 +507,7 @@ const setMsgShow = () => {
 
 }
 
-const goFrontEndDetail = (id: string, recentDeploy: Object) => {
+const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
   } else {
@@ -521,5 +586,15 @@ html[data-theme='light'] {
   .disabledCheckCss:hover {
     color: #151210;
   }
+}
+
+.action-button-item:hover {
+  .action-icon {
+    .svg-icon {
+      color: #E2B578;
+    }
+  }
+
+
 }
 </style>

@@ -34,6 +34,9 @@
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
                 <a href="javascript:;">Container</a>
               </a-menu-item>
+              <a-menu-item v-if="projectsDetail.deployType == 1" @click="aptosVisible = true">
+                <a href="javascript:;">Build Setting</a>
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -84,6 +87,7 @@
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId"
     @hideContainerParam="containerVisible = false"></ContainerParam>
+  <AptosParam :aptosVisible="aptosVisible" @hideAptosParam="aptosVisible = false"></AptosParam>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -95,6 +99,7 @@ import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../projectsList/components/ContainerParam.vue';
+import AptosParam from "../projectsList/components/AptosParam.vue";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import {
   apiGetProjectsDetail,
@@ -106,6 +111,7 @@ import {
 } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
+import type { ViewInfoItem } from "@/views/projects/components/data";
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -130,6 +136,7 @@ const formData = reactive({
 const projectsDetail = ref({});
 const frameType = ref(0);
 const containerVisible = ref(false);
+const aptosVisible = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
 const msgParam = ref({
@@ -199,7 +206,7 @@ const getProjectsDetail = async () => {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
     frameType.value = data.frameType;
-    console.log(data, frameType.value, 'projectsDetail.frameType')
+    // console.log(data, frameType.value, 'projectsDetail.frameType')
 
     const recentStatusOld = localStorage.getItem('recentStatus' + data.name);
     if (recentStatusOld !== null && recentStatusOld !== undefined) {

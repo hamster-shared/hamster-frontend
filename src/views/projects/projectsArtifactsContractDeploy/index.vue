@@ -107,7 +107,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import { useDeployAddressStore } from "@/stores/useDeployAddress";
 import { useI18n } from 'vue-i18n';
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiProjectsContractDeploy, apiGetProjectsDetail, apiContractDeployId } from "@/apis/projects";
+import { apiProjectsContractDeploy, apiGetProjectsDetail } from "@/apis/projects";
 import { Provider, Account, Contract, ec } from "starknet";
 import { connect, getStarknet } from "@argent/get-starknet";
 import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
@@ -365,6 +365,7 @@ const setContractFactory = async (nameData: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
+  console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
   if (constructorData && constructorData.inputs.length > 0) {
     selectItem.hasArgument = true;
