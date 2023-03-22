@@ -10,15 +10,22 @@
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- contract -->
-      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType" :checkReportData="checkReportData"></CheckReport>
-      <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+        :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
+      <GasUsageReport :gasUsageReportData="gasUsageReportData"
+        v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
+      <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
     </div>
     <div v-else>
-      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType" :checkReportData="frontendReportData"></CheckReport>
-      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
-        :workflowsDetailsData="workflowsDetailsData"></Deployment>
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+        :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
+      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
+        :deployType="workflowsDetailsData.deployType"></ArtifactList>
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
+      </Deployment>
     </div>
+    <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool"
+      :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
@@ -36,6 +43,9 @@ import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
+import GasUsageReport from './components/GasUsageReport.vue';
+import AiAnalysis from './components/AiAnalysis.vue';
+
 
 const { t } = useI18n()
 const { params } = useRoute();
@@ -46,12 +56,14 @@ const queryJson = reactive({
   type: params.type,
   projectType: params.projectType,
 })
-
 const detailTimer = ref();
 const title = ref('');
 const currentName = ref('');
 const inRunning = ref(true);
 const processData = ref([]);
+const openAiInfo = ref({})
+
+const gasUsageReportData = reactive([])
 const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
 const contractListData = reactive([]);
@@ -66,6 +78,9 @@ const workflowsDetailsData = reactive({
   workflowsId: params.workflowsId,
   packageId: 0,
   execNumber: 0,
+  frameType: 0,
+  deployType: 0,
+  checkStatus: 0,
 });
 
 const getWorkflowsDetails = async () => {
@@ -87,6 +102,7 @@ const getWorkflowsDetails = async () => {
   } else {
     clearTimeout(detailTimer.value);
     loadInfo();
+    getProjectsDetailData();
   }
 }
 
@@ -106,21 +122,46 @@ const getContractList = async () => {
 const getCheckReport = async () => {
   let issue = 0;
   const list: any = []
+  const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool !== '') {
-      list.push(item)
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+      if (item.checkTool === 'eth-gas-reporter') {
+        listGas.push(item);
+      } else {
+        list.push(item)
+      }
     }
   })
 
-  list.map((item: any) => {
-    item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any) => {
-      issue += val.issue
-    })
+  issue = yamlData(listGas, issue, "gasUsage");
+  issue = yamlData(list, issue, "report");
+
+  data.filter((item: any) => {
+    if (item.checkTool == 'OpenAI') {
+      openAiInfo.value = item
+    }
   })
+
+  Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
+}
+
+const yamlData = (list: any[], issue: number, dataType: string) => {
+  list.map((item: any) => {
+    item.reportFileData = YAML.parse(item.reportFile);
+    item.reportFileData.map((val: any, index: number) => {
+      if (dataType === "gasUsage") {
+        if (index === 0) {
+          issue += val.issue
+        }
+      } else {
+        issue += val.issue
+      }
+    })
+  })
+  return issue;
 }
 
 const getDetailFrontendReport = async () => {
@@ -141,7 +182,7 @@ const getDetailFrontendReport = async () => {
     workflowsDetailsData.errorNumber = issue;
     Object.assign(frontendReportData, data)
 
-    console.log(frontendReportData, 'frontendReportData')
+    // console.log(frontendReportData, 'frontendReportData')
 
   } catch (error: any) {
     console.log("erro:", error)
@@ -183,7 +224,8 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId })
+    // console.log("data project:", data);
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status })
   } catch (err: any) {
     console.info(err)
   }

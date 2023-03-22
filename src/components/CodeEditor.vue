@@ -67,6 +67,7 @@ export default {
         fixedOverflowWidgets: false,
         scrollbar: {
           alwaysConsumeMouseWheel: false,
+          horizontal: 'hidden'
         },
       });
       // Monitoring value change

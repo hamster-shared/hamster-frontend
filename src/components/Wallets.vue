@@ -27,7 +27,18 @@ const onboard = Onboard({
   appMetadata: {
     name: 'Hamster',
     icon: walletTitle, // svg string icon
-    description: 'Swap tokens for other tokens'
+    description: 'Swap tokens for other tokens',
+    recommendedInjectedWallets: [
+      { name: 'MetaMask', url: 'https://metamask.io/' },
+      { name: 'WalletConnect', url: 'https://walletconnect.com/' },
+      { name: 'imToken', url: 'https://www.token.im/' },
+      { name: 'Math Wallet', url: 'https://www.mathwallet.org/' },
+      { name: 'Trust Wallet', url: 'https://trustwallet.com/' },
+      { name: 'Huobi Wallet', url: 'https://www.huobi.com/' },
+    ],
+  },
+  connect: {
+    showSidebar: false,
   },
   notify: {
     desktop: {
@@ -67,6 +78,15 @@ const onboard = Onboard({
       minimal: true
     }
   },
+  i18n: {
+    en: {
+      connect: {
+        selectingWallet: {
+          header: 'Connect wallet to continue'
+        }
+      },
+    }
+  }
 })
 
 // 尝试自动连接钱包，如果连不上，返回 null
@@ -90,6 +110,7 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
     return null
   }
 }
+
 
 onBeforeMount(async () => {
   // 进入页面即要求连接钱包

@@ -7,12 +7,11 @@
     </div>
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="grid grid-cols-2 gap-8">
-        <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical"
-          ref="formRef" :rules="formRules">
-          <a-form-item label="Project Name" name="name">
+        <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical">
+          <!-- <a-form-item label="Project Name" name="name">
             <a-input v-model:value="formData.name" placeholder="Project Name" allow-clear autocomplete="off" />
             <div class="dark:text-[#E0DBD2] text-[#73706E] mt-[8px]">Great project names are short and memorable.</div>
-          </a-form-item>
+          </a-form-item> -->
           <a-form-item class="new-label" label="Project Type" name="type">
             <a-radio-group v-model:value="formData.type" name="type" @change="getTemplatesShow">
               <a-radio :style="radioStyle" value="1">Contract
@@ -33,21 +32,21 @@
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2" disabled="true">Blockchain Node（coming soon）
+              <a-radio :style="radioStyle" value="2" disabled="true">Use an existing repository（coming soon）
                 <div>Please pay attention to Hamster</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1'">
-            <a-radio-group v-model:value="formData.frameType" name="frameType">
+            <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <a-radio :style="radioStyle" value="1">EVM
                 <div class="radio-sub">Build application based on EVM and Solidity language</div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">Aptos
                 <div class="radio-sub">Build application based on Aptos and Move language</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="3">TON
-                <div class="radio-sub">Build application based on TON and FunC language</div>
+              <a-radio :style="radioStyle" value="3" disabled="true">TON
+                <div>Build application based on TON and FunC language</div>
               </a-radio>
               <a-radio :style="radioStyle" value="4">StarkWare
                 <div class="radio-sub">Build application based on Starkware and Cairo language</div>
@@ -55,6 +54,16 @@
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
               <a-radio value="8">Angular</a-radio> -->
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2'">
+            <a-radio-group v-model:value="formData.deployType" name="deployType" @change="getTemplatesShow">
+              <a-radio :style="radioStyle" value="1">IPFS
+                <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="2">Container
+                <div>Package the front-end code into a Docker image and upload it to container service</div>
+              </a-radio>
             </a-radio-group>
           </a-form-item>
         </a-form>
@@ -141,6 +150,7 @@ import tonthree from '@/assets/svg/ton-three.svg';
 import starkwareone from '@/assets/svg/starkware-one.svg';
 import starkwaretwo from '@/assets/svg/starkware-two.svg';
 import starkwarethree from '@/assets/svg/starkware-three.svg'
+import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
 
@@ -148,184 +158,57 @@ const router = useRouter();
 const loading = ref(false);
 const showList = ref([])
 const formRef = ref();
-// const formData = reactive({
-//   name: '',
-//   type: '1',
-//   contractCode: '1',
-//   frameType: '1',
-// });
 
 const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) || reactive({
   name: '',
   type: '1',
   contractCode: '1',
   frameType: '1',
+  deployType: '1',
 });
 
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
-const fixedPopularTemplate = {
-  aptos: [
-    {
-      audited: false,
-      description: 'Token vesting Smart Contract for Aptos Blockchain.',
-      id: 1,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptosone,
-      name: 'aptos-token-vesting',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'The smart contract provides staking for Tokens and NFTs. The creators can decide the APR and way to distribute the gains.',
-      id: 2,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptostwo,
-      name: 'aptos-token-staking',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'Aptos Code for NFT borrow and lend',
-      id: 3,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptosthree,
-      name: 'nft-borrowing-lendin...',
-      templateTypeId: 3
-    },
-    {
-      audited: false,
-      description: 'Raffle in Aptos blockchain by Mokshya Protocol',
-      id: 4,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: aptosfour,
-      name: 'aptos-raffle',
-      templateTypeId: 4
-    },
-  ],
-  ton: [
-    {
-      audited: false,
-      description: 'Basic implementation of smart contracts for NFT tokens and NFT collections in accordance with the Standard',
-      id: 1,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: tonone,
-      name: 'Non-Fungible tokens',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'Basic implementation of smart contracts for Jetton wallet and Jetton minter in accordance with the Standard',
-      id: 2,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: tontwo,
-      name: 'Fungible tokens',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'Smart contracts of ".ton" zone',
-      id: 3,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: tonthree,
-      name: 'TON DNS Smart Contr...',
-      templateTypeId: 3
-    },
-  ],
-  StarkWare: [
-    {
-      audited: false,
-      description: 'The ERC20 preset offers a quick and easy setup for deploying a basic ERC20 token.',
-      id: 1,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: starkwareone,
-      name: 'ERC20',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'The ERC721 token standard is a specification for non-fungible tokens, or more colloquially: NFTs.',
-      id: 2,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: starkwaretwo,
-      name: 'ERC721',
-      templateTypeId: 2
-    },
-    {
-      audited: false,
-      description: 'The ERC1155 multi token standard is a specification for fungibility-agnostic token contracts.',
-      id: 3,
-      image: '',
-      lastVersion: 'Coming soon',
-      logo: starkwarethree,
-      name: 'ERC1155',
-      templateTypeId: 3
-    },
-  ]
-}
-
-watchEffect(async () => {
-  if (formData.frameType == '1') {
-    await getInitTemplates()
-    console.log('formData.frameType=1:', formData.frameType)
-  } else if (formData.frameType == '2') {
-    showList.value = fixedPopularTemplate.aptos
-    console.log('formData.frameType:', formData.frameType)
-  } else if (formData.frameType == '3') {
-    showList.value = fixedPopularTemplate.ton
-    console.log('formData.frameType:', formData.frameType)
-  } else if (formData.frameType == '4') {
-    showList.value = fixedPopularTemplate.StarkWare
-    console.log('formData.frameType:', formData.frameType)
-  }
-})
 
 // Form rules
-const formRules = computed(() => {
-  const checkDupName = async () => {
-    try {
-      loading.value = true;
-      //校验仓库名称是否存在
-      const userInfo = localStorage.getItem('userInfo');
-      const params = {
-        owner: JSON.parse(userInfo)?.username,
-        name: formData.name,
-      }
-      const res = await apiDupProjectName(params);
-      if (res.data === false) {
-        return Promise.reject("Project Name duplication");
-      } else {
-        return Promise.resolve()
-      }
-    } catch (error: any) {
-      console.log("erro:", error)
-      return Promise.reject("Project Name check failure");
-    } finally {
-      loading.value = false;
-    }
-  }
+// const formRules = computed(() => {
+//   const checkDupName = async () => {
+//     try {
+//       loading.value = true;
+//       //校验仓库名称是否存在
+//       const userInfo = localStorage.getItem('userInfo');
+//       const params = {
+//         owner: JSON.parse(userInfo)?.username,
+//         name: formData.name,
+//       }
+//       const res = await apiDupProjectName(params);
+//       if (res.data === false) {
+//         return Promise.reject("Project Name duplication");
+//       } else {
+//         return Promise.resolve()
+//       }
+//     } catch (error: any) {
+//       console.log("erro:", error)
+//       return Promise.reject("Project Name check failure");
+//     } finally {
+//       loading.value = false;
+//     }
+//   }
 
-  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+//   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
-  return {
-    name: [requiredRule('Please enter Project Name'), { validator: checkDupName, trigger: "change" }],
-  };
-});
+//   return {
+//     name: [requiredRule('Please enter Project Name'), { validator: checkDupName, trigger: "change" }],
+//   };
+// });
+
 const goNext = async () => {
+
   localStorage.setItem("createFormData", JSON.stringify(formData));
   setCreateProjectValue(`/projects/template/${formData.type}`)
 }
 const setCreateProjectValue = async (path: RouteLocationRaw) => {
 
-  await formRef.value.validate();
+  // await formRef.value.validate();
 
   try {
     loading.value = true;
@@ -333,6 +216,7 @@ const setCreateProjectValue = async (path: RouteLocationRaw) => {
       name: formData.name,
       type: formData.type,
       frameType: formData.frameType,
+      deployType: formData.deployType,
     }
     localStorage.setItem("createFormData", JSON.stringify(formData));
     window.localStorage.setItem("createProjectTemp", JSON.stringify(createProjectTemp));
@@ -352,18 +236,28 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
-  formData.type = val.target.value
   getInitTemplates()
 }
 
 const getInitTemplates = async () => {
+  console.log(formData.frameType, 'formData.frameType')
   try {
-    const { data } = await apiTemplatesShow(formData.type);
+    let languageType = '';
+    if (formData.type === '1') {
+      languageType = formData.frameType
+    } else if (formData.type === '2') {
+      languageType = null;
+    }
+    const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
     showList.value = data;
     console.log(showList.value)
   } catch (error: any) {
     console.log("erro:", error)
   }
+}
+
+const changRadio = async (val: any) => {
+  getInitTemplates()
 }
 
 onMounted(() => {

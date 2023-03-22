@@ -35,7 +35,7 @@
     <div class="col-span-2 p-[32px]">
       <div>
         <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :abiInfo="abiInfo"
-          :buttonInfo="buttonInfo" ref="contractForm">
+          :frameType="frameType" :buttonInfo="buttonInfo" ref="contractForm">
         </ContractForm>
       </div>
       <!-- <div v-if="!checkValue">noData</div> -->
@@ -43,7 +43,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onMounted, toRefs } from "vue";
+import { ref, reactive, toRefs } from "vue";
 import YAML from "yaml";
 import ContractForm from "./ContractForm.vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -52,9 +52,10 @@ const theme = useThemeStore();
 const props = defineProps({
   contractAddress: String,
   abiInfo: String,
+  frameType: Number,
 });
 
-const { contractAddress, abiInfo } = toRefs(props);
+const { contractAddress, abiInfo, frameType } = toRefs(props);
 
 const sendAbis = reactive([])
 const callAbis = reactive([])
@@ -63,19 +64,46 @@ const checkValue = ref('');
 const checkValueIndex = ref(0);
 const inputs = ref([]);
 const contractForm = ref();
+const abiInfoData = reactive([]);
 
-const abiInfoData = YAML.parse(abiInfo.value)
-// console.log(abiInfoData, 'abiInfoData')
+const data = YAML.parse(abiInfo.value);
+// console.log(data, 'data')
+// if (Object.prototype.toString.call(data) === '[object Object]') {
+//   Object.assign(abiInfoData, data.abi)
+// } else {
+//   Object.assign(abiInfoData, data)
+// }
+
+// console.log(Object.prototype.toString.call(abiInfoData), 'abiInfo.value')
+if (data.abi) {
+  Object.assign(abiInfoData, data.abi)
+} else {
+  Object.assign(abiInfoData, data)
+}
+
 abiInfoData.map((item: any) => {
   if (item.type === "function") {
-    if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+    if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
       sendAbis.push(item)
     } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
       callAbis.push(item)
     }
+    // if (Object.prototype.toString.call(data) === '[object Object]') {
+    //   if (!item.stateMutability) {
+    //     sendAbis.push(item)
+    //   } else if (item.stateMutability === 'view') {
+    //     callAbis.push(item)
+    //   }
+    // } else {
+    //   if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+    //     sendAbis.push(item)
+    //   } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+    //     callAbis.push(item)
+    //   }
+    // }
   }
 
-  console.log(sendAbis, 'sendAbis')
+  // console.log(sendAbis, 'sendAbis')
 
   if (sendAbis.length > 0) {
     checkValue.value = sendAbis[0]?.name;

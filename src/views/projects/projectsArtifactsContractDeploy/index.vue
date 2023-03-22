@@ -2,7 +2,9 @@
   <Breadcrumb :currentName="projectName" :isClick="loading">
     <template v-slot:tags>
       <span
-        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
+        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">
+        {{ ContractFrameTypeEnum[frameType] }}
+      </span>
     </template>
   </Breadcrumb>
   <div
@@ -14,26 +16,14 @@
         <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
           <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
-            <a-select-option :value="item" v-for="item in versionData" :key="item">{{ item }}</a-select-option>
+            <a-select-option :value="item" v-for="item in versionData" :key="item">{{
+              item
+            }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item name="nameData" class="name-item"
-          :rules="[{ required: true, message: 'Please input your Name!' }]">
+        <a-form-item name="nameData" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
-          <!-- <div
-            class="flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px]"> -->
-          <!-- <a-checkbox-group class="dark:text-white text-[#121211]"
-            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.name" name="checkboxgroup"
-            :options="projectsContractData">
-            <img v-show="hasArgument" src="@/assets/icons/cname.svg" />
-            <template>
-
-            </template>
-          </a-checkbox-group> -->
-
-          <!-- </div> -->
-
-          <a-checkbox-group class="dark:text-white text-[#121211] w-full" @change="hchange"
+          <a-checkbox-group class="dark:text-white text-[#121211] w-full"
             :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
             name="checkboxgroup">
             <div v-for="(val, index) in projectsContractData" :key="val.id"
@@ -50,8 +40,10 @@
         <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
         <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select">
-            <a-select-option :value="item" v-for="item in chainData" :key="item">{{ item }}</a-select-option>
+          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select" @change="changeChain">
+            <a-select-option :value="item" v-for="item in chainData" :key="item">{{
+              item
+            }}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
@@ -70,30 +62,15 @@
     </div>
     <div class="text-center mt-[16px]">
       <a-button class="btn" @click="deployClick" :loading="loading">{{
-        loading? 'Deploying': 'Deploy'
+        loading ? 'Deploying' : 'Deploy'
       }}</a-button>
     </div>
+    <!-- <div>
+      <a-button @click="deployContract">test deploy</a-button>
+    </div> -->
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
-
-  <!-- <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null" @cancel="handleCancel">
-    <template #closeIcon>
-      <img class="" src="@/assets/icons/closeIcon.svg" />
-    </template>
-    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]"
-      :model="projectsContractData[selectedIndex].modalFormData" name="userForm" :label-col="{ span: 0 }"
-      :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
-      <a-form-item class="mb-[32px]" :name="item.name" v-for="item in abiInputData">
-        <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
-        <a-input v-model:value="projectsContractData[selectedIndex].modalFormData[item.name]"
-          :placeholder="'Please input ' + item.name" allowClear />
-      </a-form-item>
-    </a-form>
-    <div class="text-center">
-      <a-button class="done-btn" @click="getModalData">Done</a-button>
-    </div>
-  </a-modal> -->
 
   <a-modal v-model:visible="margumentVisible" title="Contract Metadata" :footer="null">
     <template #closeIcon>
@@ -112,6 +89,8 @@
   </a-modal>
 
 
+  <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="cancelStarkNetModal">
+  </starkNetModal>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, onMounted } from "vue";
@@ -123,18 +102,27 @@ import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
+import starkNetModal from "../components/starkNetModal.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import { useDeployAddressStore } from "@/stores/useDeployAddress";
+import { useI18n } from 'vue-i18n';
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiProjectsContractDeploy } from "@/apis/projects";
+import { apiProjectsContractDeploy, apiGetProjectsDetail } from "@/apis/projects";
+import { Provider, Account, Contract, ec } from "starknet";
+import { connect, getStarknet } from "@argent/get-starknet";
+import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
+const deployAddress = useDeployAddressStore();
 const router = useRouter();
-import { useI18n } from 'vue-i18n';
 const { t } = useI18n()
 
+const frameType = ref(1);
 const argsMap = new Map();
+const deployTxHash = ref('');
+const starknetHashData = reactive({});
 const testData = ref({});
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -149,11 +137,14 @@ const selectedIndex = ref(0);
 const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
-const chainData = reactive(['Ethereum']);
-const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
+const chainData = reactive(['Ethereum', 'Polygon', 'BNB Smart Chain']);
+const networkData = ref([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }])
 const projectsContractData = reactive([]);
 const projectName = ref('');
 const abiInputData = ref([]);
+const chainName = ref('');
+const rpcUrl = ref('');
+const currencySymbol = ref('');
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -163,24 +154,52 @@ const formState = reactive({
   network: undefined,
 });
 
-const modalFormState = ref({});
+const starknetVisible = ref(false);
+const hasDeclareHash = ref(false);
+const hasDeployHash = ref(false);
+
+const starkWareData = reactive({});
+
+const connectWallet = async () => {
+  const windowStarknet = await connect({
+    include: ["argentX"],
+  })
+  await windowStarknet?.enable({ starknetVersion: "v4" })
+  return windowStarknet
+}
+
+const deployContract = async (item: any) => {
+  loading.value = true;
+  try {
+    const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
+    // const walletData = await connectWallet();
+    const response = await starkWareData.account.deploy({
+      classHash: classHash,
+      constructorCalldata: []
+    })
+    setProjectsContractDeploy('', response.contract_address[0], item.id)
+
+    const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
+    deployAddress.setDeployAddress(starkWareData)
+    localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
+    if (receiptResponsePromise.status === 'ACCEPTED_ON_L2') {
+      // contract_address.value = response.contract_address[0]
+      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+    } else {
+      loading.value = false
+    }
+  } catch (err: any) {
+    loading.value = false
+    // console.log('err:', err)
+  }
+};
+
 
 // 查询版本号
 const getVersion = async () => {
   const { data } = await apiGetProjectsVersions({ id: queryParams.id });
   Object.assign(versionData, data)
-}
-
-const hchange = (val: any) => {
-  console.info(val, '090')
-}
-
-const handleCancel = () => {
-  let data = projectsContractData[selectedIndex.value].modalFormData
-  for (let key in data) {
-    data[key] = undefined
-  }
-}
+};
 
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
@@ -192,14 +211,6 @@ const getProjectsContract = async () => {
     setAbiInfo(item);
   })
   Object.assign(projectsContractData, data)
-  // console.log(projectsContractData, '999')
-  // if (queryParams.contract === '00') {
-  //   data.map((item: any) => {
-  //     formState.name.push(item.id)
-  //   })
-  // } else {
-  //   formState.name.push(Number(queryParams?.contract))
-  // }
 }
 
 
@@ -218,30 +229,72 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
     let value = argsMapData || {}
     const contract = await factory.deploy(...Object.values(value));
     await contract.deployed();
-    // console.log(contract, 'contract')
     return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
   } catch (errorInfo) {
     // 失败的处理
-    // console.log(errorInfo, 'errorInfo')
     message.error(t('common.operateFail'));
+  } finally {
+    loading.value = false;
   }
 }
 
-const switchToChain = (chainId: string) => {
+const cancelStarkNetModal = () => {
+  starknetVisible.value = false;
+  hasDeclareHash.value = false;
+}
+
+const switchToChain = async (chainId: string) => {
+  loading.value = true;
   window.ethereum && window.ethereum.request({
     method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId}` }],
   }).then((res: any) => {
-    message.success('success')
-    console.info(res, '成功')
+    loading.value = false;
+    message.success('success');
+    // console.info(res, '成功')
   }).catch((err: any) => {
-    message.success('faild')
-    console.info(err, 'err')
+    if (err.code === 4902) {
+      message.info('Please add the network first');
+      addToChain(chainId)
+    } else {
+      message.error('faild')
+    }
+  })
+}
+
+const addToChain = (chainId: string) => {
+
+  window.ethereum && window.ethereum.request({
+    method: "wallet_addEthereumChain",
+    params: [
+      {
+        chainId: `0x${chainId}`,
+        chainName: chainName.value,
+        rpcUrls: [rpcUrl.value],
+        // nativeCurrency: {
+        //   name: currencySymbol.value,
+        //   symbol: "RΞ",
+        //   decimals: 18,
+        // },
+      },
+    ],
+  }).then((res: any) => {
+    message.info('successfully added')
+    // console.log(res)
+  }).catch((err: any) => {
+    console.log(err.code, 'code')
+    if (err.code === 4001) {
+      message.info('Cancel adding a network')
+    } else {
+      message.info('faild')
+    }
+  }).finally(() => {
+    loading.value = false;
   })
 }
 
 const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
-  const network = networkData.find(item => { return item.id === formState.network })
+  const network: any = networkData.value.find(item => { return item.id === formState.network })
   const queryJson = {
     id: queryParams.id,
     contractId: contractId,
@@ -255,28 +308,41 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
 }
 
 const deployClick = async () => {
-  // 有值说明已连接钱包
-  const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-  if (isWalletAccount == null || isWalletAccount === '[]') {
-    // visible.value = true
-    showWallets.value?.onClickConnect();
-    // setWalletBtn(true)
-  } else {
-    // 连接钱包后再创建合约
+  if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
-      // const modalValues = await modalFormRef?.value.validateFields();
-      const { nameData } = formState;
-      const { ethereum } = window;
-      const network = `0x${formState.network}`
-      if (ethereum.chainId !== network) {
-        switchToChain(formState.network)
-      } else {
-        setContractFactory(nameData)
-      }
-    } catch (errorInfo) {
+      projectsContractData.map((item: any) => {
+        deployContract(item)
+      })
+    } catch (err: any) {
       // 表单校验
-      console.log('Failed:', errorInfo);
+      console.log('Failed:', err);
+    }
+
+  } else {
+    // 有值说明已连接钱包
+    const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
+    if (isWalletAccount == null || isWalletAccount === '[]') {
+      showWallets.value?.onClickConnect();
+      // setWalletBtn(true)
+    } else {
+      // 连接钱包后再创建合约
+      try {
+        const values = await formRef?.value.validateFields();
+        // const modalValues = await modalFormRef?.value.validateFields();
+        const { nameData } = formState;
+        const { ethereum } = window;
+        const network = `0x${formState.network}`
+        if (ethereum.chainId !== network) {
+          switchToChain(formState.network)
+        } else {
+          setContractFactory(nameData)
+        }
+
+      } catch (errorInfo) {
+        // 表单校验
+        console.log('Failed:', errorInfo);
+      }
     }
   }
 }
@@ -288,9 +354,7 @@ const setContractFactory = async (nameData: any) => {
     formState.name.push(item.id);
     let selectItem: any = projectsContractData.find(val => { return val.id === item.id });
     // console.log(selectItem, 'selectItem')
-    // const byteCode = selectItem.byteCode.includes('__') ? selectItem.byteCode.split('__')[0] : selectItem.byteCode
     promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, argsMap.get(selectId.value), item.id));
-    // console.log(abiInputData.value, '000')
   })
   const res = await Promise.all(promise)
   loading.value = false;
@@ -301,76 +365,32 @@ const setContractFactory = async (nameData: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
+  console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
   if (constructorData && constructorData.inputs.length > 0) {
     selectItem.hasArgument = true;
   }
-  // selectItem.hasArgument = selectItem.abiInfoData.some((item: any) => { return item.type === 'constructor' });
   if (selectItem.hasArgument) {
     selectItem.hasModalFormData = true;
   }
-  // console.log(selectItem, abiInputData.value, 'hasArgument.value')
 }
 
 const getModalData = async () => {
   try {
     const modalValues = await modalFormRef?.value.validateFields();
-
-    // console.log(projectsContractData, 'pop')
-    // projectsContractData[selectedIndex.value].data = projectsContractData[selectedIndex.value].modalFormData
-    const value = Object.values(testData.value);
     formState.nameData.push(projectsContractData[selectedIndex.value]);
     projectsContractData[selectedIndex.value].hasModalFormData = false;
-    // console.log(projectsContractData[selectedIndex.value].modalFormData, projectsContractData[selectedIndex.value], modalFormState.value)
-
-
-    // let result = false
-    // if (value.length > 0) {
-    //   value.map((val: any) => {
-    //     if (val && val != '') {
-    //       result = true
-    //     } else {
-    //       result = false
-    //     }
-
-    //   })
-    // } else {
-    //   result = false
-    // }
-
-    // if (result) {
-    //   formState.nameData.push(projectsContractData[selectedIndex.value]);
-    //   projectsContractData[selectedIndex.value].hasModalFormData = false;
-    //   // modalFormRef?.value.resetFields();
-    // } else {
-    //   projectsContractData[selectedIndex.value].hasModalFormData = true;
-    // }
-
-
     margumentVisible.value = false;
-    // console.log("testData2", testData.value);
     let data = Object.assign({}, testData.value)
-    // console.log("DATA", data)
     argsMap.set(selectId.value, data)
   } catch (err: any) {
     projectsContractData[selectedIndex.value].hasModalFormData = true;
     console.info(err)
   }
-
-  // const data = {}
-  // Object.assign(data, projectsContractData[selectedIndex.value].modalFormData)
-  // console.log(data, 'data')
-  // projectsContractData[selectedIndex.value].modalFormData = modalFormState.value
-  // projectsContractData[selectedIndex.value].modalFormData = modalFormState.value;
-  // Object.assign(projectsContractData[selectedIndex.value].modalFormData, data)
-
-  // console.log(projectsContractData, '9090');
-
 };
 
 
 const selectAargumentName = (val: any, index: number) => {
-  // console.log(testData, 'testData')
   selectedIndex.value = index;
   selectId.value = val.id;
   testData.value = argsMap.get(val.id);
@@ -385,8 +405,6 @@ const selectAargumentName = (val: any, index: number) => {
         })
         testData.value = param
       }
-
-      // testData["abiInputData.value"] = null;
     }
   })
 }
@@ -395,14 +413,49 @@ const cancelModal = (val: boolean) => {
   visible.value = val
 }
 
+const changeNetwork = (val: any) => {
+  const data = networkData.value.find((item: any) => { return item.id === val });
+  chainName.value = data.networkName;
+  rpcUrl.value = data.url;
+  currencySymbol.value = currencySymbol;
+};
+
+const changeChain = (val: string) => {
+  formState.network = undefined;
+  if (val === 'Ethereum') {
+    // ETH
+  } else if (val === 'Polygon') {
+    // 货币符号 currencySymbol = MATIC
+    networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
+  } else if (val === 'BNB Smart Chain')
+    // 货币符号  BNB
+    networkData.value = [{ name: 'Mainnet', id: '38', url: 'https://bsc.nodereal.io/', networkName: 'Mainnet' }, { name: 'Testnet', id: '61', url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	', networkName: 'Testnet' }]
+}
+
 const changeVersion = (val: string) => {
   queryParams.version = val
   getProjectsContract()
 }
 
+const getProjectsDetail = async () => {
+  try {
+    const { data } = await apiGetProjectsDetail(queryParams.id);
+    frameType.value = data.frameType;
+    if (frameType.value === 4) {
+      Object.assign(chainData, ['StarkWare'])
+      networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
+      const data = await connectWallet();
+      Object.assign(starkWareData, data)
+    }
+  } catch (err: any) {
+
+  }
+}
+
 onMounted(async () => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
+  await getProjectsDetail();
   await getProjectsContract()
 })
 
@@ -453,6 +506,17 @@ onMounted(async () => {
 
 :deep(.ant-checkbox-checked+span) {
   color: #E2B578;
+}
+
+:deep(.ant-checkbox-wrapper span:hover) {
+  color: #E2B578;
+}
+
+:deep(.ant-checkbox-wrapper) {
+  max-width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 :deep(.ant-checkbox-inner),

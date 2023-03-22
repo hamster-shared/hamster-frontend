@@ -1,15 +1,24 @@
 <template>
   <div class=" dark:text-white text-[#121211]">
-    <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]"
-      v-for="item in checkReportData" :key="item.id">
+    <div v-if="checkReportData?.length === 0 && projectType === '2' && checkStatus != 0 && checkStatus != 1"
+      class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
+      <div class="text-center p-[16px]">
+        <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
+        <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
+        <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
+        <div class="text-[#73706E]">No issues were detected.</div>
+      </div>
+    </div>
+    <div v-for="item in checkReportData" :key="item.id"
+      class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
       <img class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
-      <a-collapse v-model:activeKey="activeKey" accordion v-for="val in item.reportFileData" :key="val.Name">
-        <a-collapse-panel :key="val.name + item.id" :header="val.name" :showArrow="false">
-          
+      <a-collapse v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.name">
+        <a-collapse-panel v-if="val.issue > 0" :key="val.name + item.id" :header="val.name" :showArrow="false">
+
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message"
-            :dataSource="val.message" :columns="ESLintColumns" :pagination="false" :showHeader="false">
+            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
+            :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
                 line {{ record.line }},col {{ record.column }},
@@ -38,7 +47,7 @@
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
             <div class="text-[#73706E]">No issues were detected.</div>
           </div>
-          <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}</div>
+          <!-- <div class="text-[#73706E]">{{ 'Support by '+ item.checkTool }}</div> -->
 
           <template #extra>
             <div>
@@ -50,22 +59,46 @@
             </div>
           </template>
         </a-collapse-panel>
+        <div v-else class="text-center p-[16px]">
+          <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
+          <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
+          <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
+          <div class="text-[#73706E]">No issues were detected.</div>
+        </div>
       </a-collapse>
+      <div class="text-[#73706E] pl-[12px]">{{ 'Support by ' + item.checkTool }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { toRefs } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
 
 const activeKey = ref(['1']);
-const props = defineProps({
+interface ReportFileData {
+  name: string,
+  val: string,
+  message: [],
+  issue: number,
+}
+interface CheckReportData {
+  id: number,
+  name: string,
+  checkTool: string,
+  reportFileData: ReportFileData[],
+}
+const props = defineProps<{
   projectType: String,
-  checkReportData: Array,
-})
+  checkReportData: CheckReportData[],
+  checkStatus: Number,
+}>()
+// const props = defineProps({
+//   projectType: String,
+//   checkReportData: Array,
+// })
 
 const getImageUrl = (iconName: string) => {
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
@@ -192,7 +225,7 @@ const columns = [
   }
 ];
 
-const { checkReportData, projectType } = toRefs(props)
+const { checkReportData, projectType, checkStatus } = toRefs(props)
 
 </script>
 
@@ -256,6 +289,14 @@ const { checkReportData, projectType } = toRefs(props)
 
 :deep(.noHeader-table-css .ant-table-row:first-child .ant-table-cell:last-child) {
   border-radius: 0 12px 0 0;
+}
+
+:deep(.noHeader-table-css .ant-table-row:only-of-type .ant-table-cell:first-child) {
+  border-radius: 12px 0 0 12px;
+}
+
+:deep(.noHeader-table-css .ant-table-row:only-of-type .ant-table-cell:last-child) {
+  border-radius: 0 12px 12px 0;
 }
 
 :deep(.ant-table-row:last-child .ant-table-cell:first-child) {

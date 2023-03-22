@@ -1,24 +1,23 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": [
-    "env.d.ts",
-    "src/**/*",
-    "src/**/*.vue"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "compilerOptions": {
     "module": "esnext",
-    "baseUrl": "./frontend",
+    // "baseUrl": "./frontend",
+    "baseUrl": "./",// 解析非相对模块的基础地址，默认是当前目录
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "vite/client",
+      "vite-plugin-svg-icons/client"
+    ],
   },
   "references": [
     {
       "path": "./tsconfig.config.json"
     }
-  ]
+  ],
 }

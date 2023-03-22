@@ -21,7 +21,8 @@
         </a-table>
         <div class="">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" @checkContract="checkContract">
+          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
+            @checkContract="checkContract">
           </ContractList>
         </div>
       </a-tab-pane>
@@ -31,15 +32,13 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, computed, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import Breadcrumb from "../components/Breadcrumb.vue";
-import noData from "./components/noData.vue";
-import YAML from "yaml";
-import * as ethers from "ethers";
 import { useThemeStore } from "@/stores/useTheme";
+import Breadcrumb from "../components/Breadcrumb.vue";
 import ContractList from "./components/ContractList.vue";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiGetProjectsDetail } from "@/apis/projects"
 const router = useRouter();
 const theme = useThemeStore();
 
@@ -52,9 +51,8 @@ const queryJson = reactive({
 const activeKey = ref('');
 const activeKeyId = ref('');
 const projectName = ref('');
-const hasData = ref(true);
+const frameType = ref(0);
 const versionData = reactive([]);
-const dataSource = ref([]);
 const contractName = ref('');
 const contractAddress = ref('');
 const selectedRow = ref(0);
@@ -86,12 +84,13 @@ const columns = [
 const contractDeployDetail = reactive({})
 const contractInfo = reactive({})
 
+const getProjectsDetail = async () => {
+  const { data } = await apiGetProjectsDetail(queryJson.id)
+  frameType.value = data.frameType
+}
+
 const getContractDeployDetail = async () => {
   const { data } = await apiGetContractDeployDetail(queryJson)
-  // console.log(data, 'data')
-  // for (let key in data.contractInfo) {
-  //   tabList.push(key)
-  // }
   Object.assign(contractDeployDetail, data)
   Object.assign(contractInfo, data.contractInfo)
 
@@ -147,6 +146,7 @@ onMounted(() => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   getContractDeployDetail()
+  getProjectsDetail()
 })
 
 </script>

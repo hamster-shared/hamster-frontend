@@ -48,9 +48,17 @@
     </div>
   </div>
   <CreateApp :isRPCs="isRPCs" :showCreate="showCreate" :defaultChain="defaultChain" :defaultNetwork="defaultNetwork" @setShowCreate="showCreate=false" />
+  
+  <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
+    <img src="@/assets/images/nodeservice-guide.jpg" class=" w-full dark:hidden" />
+    <img src="@/assets/images/nodeservice-guide-dark.jpg" class=" w-full hidden dark:inline-block" />
+    <div class="absolute bottom-[30%] flex justify-center w-full">
+      <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 import { apiGetChains } from "@/apis/rpcs";
 import CreateApp from "../apps/components/CreateApp.vue"
 import useAssets from "@/stores/useAssets";
@@ -59,16 +67,29 @@ import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
 const { getImageURL } = useAssets()
+const showGuide = ref(false);
 const showCreate = ref(false);
 const isRPCs = ref(true);
 const defaultChain = ref('');
 const defaultNetwork = ref('');
 const chainList = ref([]); //链列表
 
+
+onBeforeMount(() => {
+  if (window.localStorage.getItem("firstShowNodeService") != undefined && window.localStorage.getItem("firstShowNodeService") === "1") {
+    showGuide.value = true;
+  }
+})
+
 onMounted(async () => {
   getChains();
 });
 
+
+const closeGuide = () => {
+  showGuide.value = false;
+  window.localStorage.removeItem('firstShowNodeService');
+}
 const getChains = async () => {
   try {
     const data = await apiGetChains();

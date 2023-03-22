@@ -4,7 +4,7 @@
       <a-col :span="8">
         <div class="">
           <div class="process-detail-title">{{ $t('workFlows.codeRepository') }}</div>
-          <div class="process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
+          <div class="truncate process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
           <div class="process-detail-info">
             <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
             <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />
@@ -15,8 +15,8 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ title + ' Result' }}</div>
-          <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status] }`) }}</div>
-          <div class="process-detail-info error-info" v-show="title === 'Check'">
+          <div class="process-detail-info">{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
+          <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
             {{ workflowsDetailsData.errorNumber + ' issues found' }}
           </div>
         </div>
@@ -33,22 +33,30 @@
       </a-col>
     </a-row>
   </div>
-</template>duration
+</template>
 <script lang='ts' setup>
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
-const props = defineProps({
+import { WorkflowStatusEnum } from "@/enums/statusEnum";
+
+interface WorkflowsDetailsData {
+  repositoryUrl: string,
+  status: number,
+  startTime: string,
+  errorNumber: number,
+  duration: string,
+}
+
+const props = defineProps<{
   title: String,
   inRunning: Boolean,
-  workflowsDetailsData: { type: Object }
-});
+  workflowsDetailsData: WorkflowsDetailsData,
+}>()
 
-const enum StatusEnum {
-  "nonExecution",
-  "running",
-  "failed",
-  "passed",
-  "stop",
-}
+// const props = defineProps({
+//   title: String,
+//   inRunning: Boolean,
+//   workflowsDetailsData: { type: Object }
+// });
 
 
 </script>

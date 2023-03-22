@@ -4,17 +4,20 @@
 
 <script lang="ts" setup>
 // 引入echarts
-import * as echarts from '@/components/Echarts.vue'
+import * as echarts from 'echarts'
 import { onMounted, toRefs } from "vue";
 
 const props = defineProps({
   echartsData: Array,
-  echartsId: String,
+  echartsId: {
+    type:String,
+    required:true
+  },
 });
 const { echartsData, echartsId } = toRefs(props);
 
 onMounted(() => { // 需要获取到element,所以是onMounted的Hook
-  let myChart = echarts.init(document.getElementById(echartsId?.value));
+  let myChart = echarts.init(document.getElementById(echartsId?.value)as HTMLElement);
   // 绘制图表
   myChart.setOption({
     xAxis: {
