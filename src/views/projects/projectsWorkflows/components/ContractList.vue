@@ -68,6 +68,7 @@ const columns = [{
   title: 'Version',
   dataIndex: 'version',
   align: "center",
+  width: '15%',
   customRender: ({ text }) => {
     if (text) {
       return '#' + text
@@ -78,6 +79,7 @@ const columns = [{
 {
   title: 'Network',
   dataIndex: 'network',
+  width: '25%',
   align: "center",
   key: 'network',
 },

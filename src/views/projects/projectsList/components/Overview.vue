@@ -159,8 +159,7 @@
   </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
-  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams"
-    @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild" />
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" v-model:aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
@@ -288,15 +287,6 @@ const buildStatusAction = async (id: string, buildData: any) => {
   }
 }
 
-const checkAptosWalletInstalled = () => {
-  if ('aptos' in window) {
-    aptosBuildVisible.value = true
-    return window.aptos;
-  } else {
-    window.open('https://petra.app/', `_blank`);
-  }
-};
-
 const aptosBuildParams = ref([])
 const projectsBuild = async (id: string, buildData: any, frameType: string) => {
   console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
@@ -304,24 +294,23 @@ const projectsBuild = async (id: string, buildData: any, frameType: string) => {
   const needsParams = res.data.needsParams
   try {
     if (frameType == '2' && needsParams) {
-      await checkAptosWalletInstalled()
+      aptosBuildVisible.value = true
       const { data } = await apiGetAptosBuildParams(id)
       console.log('apiGetAptosBuildParams:::', data)
       aptosBuildParams.value = data
-    } else if (frameType == '2' && !needsParams) {
-      // if (buildData.status == 1){
-      //   message.info("Executing Now，please wait a moment.");
-      // } else {
+    }else if (frameType == '2' && !needsParams){
+      if (buildData.status == 1){
+        message.info("Executing Now，please wait a moment.");
+      } else {
+        const { data } = await apiAptosBuild(id)
+        msgParam.value.workflowsId = data.workflowId;
+        msgParam.value.workflowDetailId = data.id;
+        msgType.value = 'build';
+        setMsgShow();
 
-      // }
-      const { data } = await apiAptosBuild(id)
-      msgParam.value.workflowsId = data.workflowId;
-      msgParam.value.workflowDetailId = data.id;
-      msgType.value = 'build';
-      setMsgShow();
-
-      loadView();
-    } else {
+        loadView();
+      }
+    }else {
       buildStatusAction(id, buildData)
     }
 
@@ -433,7 +422,7 @@ const frontendDeploying = async () => {
 const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
 }
-const aptosBuild = async (id: any) => {
+const aptosBuild = async(id:any, formData:any)=>{
   try {
     const { data } = await apiAptosBuild(id.value)
     console.log('aptosbuild::', data)

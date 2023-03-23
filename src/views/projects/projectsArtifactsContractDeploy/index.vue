@@ -88,6 +88,18 @@
     </div>
   </a-modal>
 
+  <a-modal v-model:visible="aptosNetworkVisible" title="Operation Warning" :footer="null" class="modalFormRef col-span-3 mb-[16px]"
+   autocomplete="off" noStyle>
+    <template #closeIcon>
+        <img class="" src="@/assets/icons/closeIcon.svg" />
+      </template>  
+    <p style="margin-bottom: 0;">The selected network is inconsistent with the network selected in the wallet plugin. </p>
+    <p>To complete the transaction deployment properly, please switch to the desired network in the wallet plugin.</p>
+    <div class="text-center">
+      <a-button class="done-btn" style="margin-top: 15px;" @click="handleAptosNetwork">Done</a-button>
+    </div>
+  </a-modal>
+
 
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="cancelStarkNetModal">
   </starkNetModal>
@@ -111,6 +123,10 @@ import { apiProjectsContractDeploy, apiGetProjectsDetail } from "@/apis/projects
 import { Provider, Account, Contract, ec } from "starknet";
 import { connect, getStarknet } from "@argent/get-starknet";
 import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
+import { PetraWallet } from "petra-plugin-wallet-adapter";
+import {WalletCore} from '@aptos-labs/wallet-adapter-core'
+import { BCS,TxnBuilderTypes,HexString,AptosClient} from 'aptos'
+import { nextTick } from "process";
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
@@ -137,14 +153,25 @@ const selectedIndex = ref(0);
 const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
-const chainData = reactive(['Ethereum', 'Polygon', 'BNB Smart Chain']);
-const networkData = ref([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }])
-const projectsContractData = reactive([]);
+const chainData = reactive<any>([]);
+const networkData = ref<any>([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }])
+const projectsContractData = reactive<any>([]);
 const projectName = ref('');
 const abiInputData = ref([]);
 const chainName = ref('');
 const rpcUrl = ref('');
 const currencySymbol = ref('');
+
+// aptos
+const arr = [ new PetraWallet()]
+const aptosWallet:any = new WalletCore(arr)
+const petraAddress = ref('')
+const petraMv = ref<any>([])
+const petraBsc = ref<any>([])
+const aptosContractId = ref<any>([])
+const aptosNetwork = ref('')
+const aptosNetworkVisible = ref(false)
+const abiFn = ref<any>()
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -190,7 +217,7 @@ const deployContract = async (item: any) => {
     }
   } catch (err: any) {
     loading.value = false
-    // console.log('err:', err)
+    console.log('err:', err)
   }
 };
 
@@ -202,13 +229,19 @@ const getVersion = async () => {
 };
 
 const getProjectsContract = async () => {
-  const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
+  const { data } = await apiGetProjectsContract({ id: queryParams.id, version:queryParams.version });
   data.map((item: any) => {
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
     item.abiInfoData = YAML.parse(item.abiInfo);
-    setAbiInfo(item);
+    petraMv.value.push(item.aptosMv);
+    petraBsc.value.push(item.byteCode)
+    aptosContractId.value.push(item.id)
+    // aptos abi不走之前的那一套
+    if(frameType.value!==2){
+      setAbiInfo(item);
+    }
   })
   Object.assign(projectsContractData, data)
 }
@@ -290,6 +323,9 @@ const addToChain = (chainId: string) => {
     }
   }).finally(() => {
     loading.value = false;
+    message.success('success')
+  }).catch((err: any) => {
+    message.success('faild')
   })
 }
 
@@ -307,7 +343,73 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
   return data
 }
 
+// aptos 的网络切换
+const handleAptosNetwork = ()=>{
+  aptosNetworkVisible.value = false
+}
+
+// aptos petra 
+const deploy = () => {
+  console.log('bsc mv',petraBsc.value[0],petraMv.value[0])
+  aptosWallet.connect("Petra").then(async() => {
+    // debugger
+    petraAddress.value = aptosWallet.account.address
+    console.log('petra connected',aptosWallet.network,formState.network)
+    aptosNetwork.value = aptosWallet.network.name;
+    // aptos 的network处理
+    if(aptosNetwork.value != formState.network){
+      aptosNetworkVisible.value = true
+    }else{
+      const codeSerializer = new BCS.Serializer()
+      const modules =  [
+        new TxnBuilderTypes.Module(
+          new HexString(
+            // eslint-disable-next-line max-len
+            petraMv.value[0],
+          ).toUint8Array(),
+        ),
+      ]
+      BCS.serializeVector(modules, codeSerializer)
+      const payload:any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
+          TxnBuilderTypes.EntryFunction.natural(
+              "0x1::code",
+              "publish_package_txn",
+              [],
+              [BCS.bcsSerializeBytes(new HexString(petraBsc.value[0]).toUint8Array()), codeSerializer.getBytes()],
+          ),
+      );
+      await aptosWallet.signAndSubmitTransaction(payload).then(async(tx:any)=> {
+        console.log('send:',tx)
+        // NODE_URL 应该根据网络动态切换
+        const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
+        const petraClient = new AptosClient(NODE_URL);
+        const getaAbiRes:any = await petraClient.getTransactionByHash(tx.hash)
+        abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi?.exposed_functions
+      })
+      const queryJson:any = {
+        id: queryParams.id,
+        contractId: aptosContractId.value[0],
+        projectId: queryParams.id,
+        version: formState.version,
+        network: formState.network,
+        address: petraAddress.value,
+      }
+      if(abiFn.value){
+        queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
+      }
+      const result = await apiProjectsContractDeploy(queryJson)
+      if(result.code===200 && frameType.value ===2){
+        router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+      }
+    }
+    
+  }).catch((error:any)=>{
+    console.log('petra failed',error)
+  })
+}
+
 const deployClick = async () => {
+  // frameType 1.evm 2.aptos 3.ton 4.starkware
   if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
@@ -319,6 +421,13 @@ const deployClick = async () => {
       console.log('Failed:', err);
     }
 
+  } else if(frameType.value === 2){
+    try{
+      await formRef?.value.validateFields();
+      deploy()
+    }catch(error:any){
+      console.log('aptos error',error)
+    }
   } else {
     // 有值说明已连接钱包
     const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
@@ -441,11 +550,25 @@ const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryParams.id);
     frameType.value = data.frameType;
-    if (frameType.value === 4) {
-      Object.assign(chainData, ['StarkWare'])
-      networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
-      const data = await connectWallet();
-      Object.assign(starkWareData, data)
+    switch(frameType.value){
+      case 1:
+        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain'])
+        networkData.value= [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' },{name: 'Hamster Dev', id:'501'}]
+        break;
+      case 2:
+        // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系
+        Object.assign(chainData, ['Aptos'])
+        networkData.value =  [{name: 'Mainnet', id: 'Mainnet'},{name: 'Testnet', id: 'Testnet'},{name: 'Devnet', id: 'Devnet'}]
+        break;
+      case 3:
+        break;
+      case 4:
+        Object.assign(chainData, ['StarkWare'])
+        networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]        
+        const data = await connectWallet();
+        Object.assign(starkWareData, data)
+        break;
+      default: break;
     }
   } catch (err: any) {
 
