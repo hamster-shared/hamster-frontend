@@ -39,18 +39,12 @@ const loginBox = () => {
     myWindow?.focus()
   } else {
     if (userInfo.token) {
-      localStorage.setItem('token', userInfo.token);
       if (localStorage.getItem('firstState') === "0") {
         //第一次登录
         router.push('/welcome')
       } else {
         router.push('/projects')
       }
-    } else {
-      const state = new Date().getTime();
-      const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-      const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-      myWindow?.focus()
     }
   }
 }
