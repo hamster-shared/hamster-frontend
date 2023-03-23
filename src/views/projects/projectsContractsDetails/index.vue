@@ -19,9 +19,9 @@
             </template>
           </template>
         </a-table>
-        <div class="">
+        <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
+          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType" 
             @checkContract="checkContract">
           </ContractList>
         </div>
@@ -32,7 +32,7 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 import Breadcrumb from "../components/Breadcrumb.vue";
@@ -142,7 +142,7 @@ const setRowClassName = (record: any, index: number) => {
   }
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   getContractDeployDetail()

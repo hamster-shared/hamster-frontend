@@ -1,4 +1,10 @@
-<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="10.4204" cy="10.9062" r="5" fill="white"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M10.4204 18.9062C14.8387 18.9062 18.4204 15.3245 18.4204 10.9062C18.4204 6.48797 14.8387 2.90625 10.4204 2.90625C6.00213 2.90625 2.42041 6.48797 2.42041 10.9062C2.42041 15.3245 6.00213 18.9062 10.4204 18.9062ZM13.9507 9.43658C14.2436 9.14369 14.2436 8.66881 13.9507 8.37592C13.6578 8.08303 13.183 8.08303 12.8901 8.37592L9.42041 11.8456L7.95074 10.3759C7.65785 10.083 7.18297 10.083 6.89008 10.3759C6.59719 10.6688 6.59719 11.1437 6.89008 11.4366L8.53653 13.083C9.02468 13.5712 9.81614 13.5712 10.3043 13.083L13.9507 9.43658Z" fill="#56F166"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>success-1</title>
+    <g id="success-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="成功">
+            <rect id="矩形备份" fill="#28C57C" fill-rule="nonzero" x="0" y="0" width="200" height="200" rx="100"></rect>
+            <path d="M60,100.92 L84.2003846,125.12 C85.7026923,126.622308 88.1373077,126.622308 89.6396154,125.12 L140.759615,74" id="路径备份" stroke="#FFFFFF" stroke-width="18.75" stroke-linecap="round"></path>
+        </g>
+    </g>
 </svg>

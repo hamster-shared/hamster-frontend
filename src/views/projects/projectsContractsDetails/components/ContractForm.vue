@@ -9,7 +9,7 @@
         }}</a-button>
       </div>
     </a-form-item>
-    <div v-for="item in inputs">
+    <div v-if="inputs?.length" v-for="item in inputs">
       <a-form-item class="" :name="item.name" :rules="[{ required: true, message: `Please input your ${item.name}` }]">
         <div class="mb-[12px]">
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
@@ -40,6 +40,8 @@ import YAML from "yaml";
 import { message } from 'ant-design-vue';
 import { connect, getStarknet } from "@argent/get-starknet";
 import { stark, number } from "starknet";
+import { PetraWallet } from "petra-plugin-wallet-adapter";
+import {WalletCore} from '@aptos-labs/wallet-adapter-core'
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const props = defineProps({
@@ -47,7 +49,10 @@ const props = defineProps({
   checkValue: String,
   abiInfo: String,
   buttonInfo: String,
-  frameType: Number,
+  frameType: {
+    type:Number,
+    required:true
+  },
   inputs: { type: Array as any, default: () => { return [] } },
 })
 const isSend = ref(false);
@@ -60,8 +65,14 @@ const formState = reactive({
   abiInfo: '',
   frameType: Number,
 });
+
+// aptos
+const arr = [ new PetraWallet()]
+const aptosWallet:any = new WalletCore(arr)
+
 const testData = reactive({});
-const formData = reactive({});
+
+const formData = reactive<any>({});
 const { checkValue, contractAddress, abiInfo, inputs, frameType } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
@@ -195,35 +206,48 @@ const submit = async () => {
 }
 // evm合约方法调用
 const evmDeployFunction = () => {
+  // debugger
   isSend.value = true
   const { ethereum } = window;
   let provider = new ethers.providers.Web3Provider(ethereum);
   let abi = YAML.parse(formState.abiInfo);
   try {
-    let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
-    if (props.buttonInfo === 'Transact') {
-      // send 方法
-      console.log(...(Object.values(formData)), 'data')
-      contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-        tx.wait().then((result: any) => {
-          // isSend.value = false;
-          hashValue.value = tx.hash;
-        }).catch((err: any) => {
-          // console.log(err, 'err')
-          message.error('调用失败')
-          hashValue.value = 'No Data';
-        }).finally(() => {
+    if(frameType.value!=2){
+      let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
+      if (props.buttonInfo === 'Transact') {
+        // send 方法
+        console.log(...(Object.values(formData)), 'data')
+        contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+          tx.wait().then((result: any) => {
+            // isSend.value = false;
+            hashValue.value = tx.hash;
+          }).catch((err: any) => {
+            console.log(err, '调用失败err')
+            message.error('调用失败')
+            hashValue.value = 'No Data';
+          }).finally(() => {
+            isSend.value = false;
+          })
+        })
+      } else {
+        contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+          if (tx._isBigNumber) {
+            hashValue.value = ethers.utils.formatEther(tx._hex);
+          } else {
+            hashValue.value = tx;
+          }
           isSend.value = false;
         })
-      })
-    } else {
-      contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-        if (tx._isBigNumber) {
-          hashValue.value = ethers.utils.formatEther(tx._hex);
-        } else {
-          hashValue.value = tx;
-        }
+      }
+    }else if(frameType.value==2){
+      // debugger
+      console.log(...(Object.values(formData)), 'aptos move fn')
+      // aptos move 回调
+      aptosWallet.connect("Petra").then(async() => {
+        await aptosWallet.signAndSubmitTransaction(Object.values(formData))
+      }).catch((err:any)=>{
         isSend.value = false;
+        console.log('err',err)
       })
     }
   } catch (errorInfo: any) {

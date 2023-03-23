@@ -23,12 +23,8 @@
           v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" />
-            <!-- <img src="@/assets/icons/line-slash.svg" class="h-[16px] mx-4 dark:hidden" />
-            <img src="@/assets/icons/line-slash-b.svg" class="h-[16px] mx-4 hidden dark:inline-block" /> -->
           </label>
           <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
-            <!-- <img src="@/assets/icons/check.svg" class="h-[16px] dark:hidden cursor-default" />
-            <img src="@/assets/icons/check-b.svg" class="h-[16px] hidden dark:inline-block cursor-default" /> -->
             <svg-icon name="check" size="14" />
           </label>
           <label v-else class="action-icon">
@@ -51,8 +47,6 @@
             <a target="_blank" :href="viewInfo.repositoryUrl">{{ showViewInfoRepositoryUrl }}</a>
           </div>
           <div>
-            <!-- <img src="@/assets/icons/white-link.svg" class="h-[16px] mr-1 dark:hidden" />
-            <img src="@/assets/icons/dark-link.svg" class="h-[16px] mr-1 hidden dark:inline-block" /> -->
             <svg-icon name="white-link" size="16" />
             main
           </div>
@@ -65,7 +59,6 @@
           </div>
           <div v-else class="flex items-center my-2 ">
             <img :src="getImageUrl(viewInfo.recentCheck.status)" class="h-[16px] mr-1" />
-            <!-- <svg-icon :name="SvgStatusEnums[viewInfo.recentCheck.status]" size="18" class="mr-1"></svg-icon> -->
             <div class="text-ellipsis">
               {{ RecentStatusEnums[viewInfo.recentCheck.status] }}｜{{
                 fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
@@ -162,7 +155,6 @@
   </div>
   <ContainerParam :containerVisible="containerVisible" :detailId="viewInfo?.id" @hideContainerParam="hideContainerParam"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
-  <AptosParam :aptosVisible="aptosVisible" @hideAptosParam="hideAptosParam"></AptosParam>
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam">
   </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
@@ -187,12 +179,6 @@ import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components
 const theme = useThemeStore()
 
 const router = useRouter();
-
-// const props = defineProps({
-//   viewType: string,
-//   viewInfo: { type: Object, required: true },
-//   projectType: string,
-// });
 
 const props = defineProps<{
   viewType: string,
@@ -277,7 +263,7 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
 
 };
 
-const buildStatusAction = async (id: string, buildData: any)=> {
+const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
     if (projectType?.value === "1") {
       message.info("Executing Now，please wait a moment.");
@@ -302,7 +288,7 @@ const buildStatusAction = async (id: string, buildData: any)=> {
 }
 
 const aptosBuildParams = ref([])
-const projectsBuild = async (id: string, buildData: any, frameType:string) => {
+const projectsBuild = async (id: string, buildData: any, frameType: string) => {
   console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
   const res = await apiCheckSetAptosBuildParams(id)
   const needsParams = res.data.needsParams
@@ -327,7 +313,7 @@ const projectsBuild = async (id: string, buildData: any, frameType:string) => {
     }else {
       buildStatusAction(id, buildData)
     }
-    
+
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
@@ -413,9 +399,6 @@ const goFrontendDeploy = async () => {
 const hideContainerParam = () => {
   containerVisible.value = false;
 }
-const hideAptosParam = () => {
-  aptosVisible.value = false;
-}
 const frontendDeploying = async () => {
   try {
     const params = ref({
@@ -436,21 +419,21 @@ const frontendDeploying = async () => {
   }
 }
 
-const hideAptosBuildVisible = () =>{
+const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
 }
 const aptosBuild = async(id:any)=>{
   try {
     const { data } = await apiAptosBuild(id.value)
-    console.log('aptosbuild::',data)
+    console.log('aptosbuild::', data)
     msgParam.value.workflowsId = data.workflowId;
     msgParam.value.workflowDetailId = data.detailId;
     msgType.value = 'build';
     setMsgShow();
 
     loadView();
-  } catch(err:any) {
-    console.log('err:',err)
+  } catch (err: any) {
+    console.log('err:', err)
   }
 }
 

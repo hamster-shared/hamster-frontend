@@ -23,6 +23,7 @@
     "@web3-onboard/injected-wallets": "^2.4.0",
     "@web3-onboard/vue": "^2.4.1",
     "ant-design-vue": "^3.2.15",
+    "aptos": "^1.7.2",
     "axios": "^1.1.3",
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.6",

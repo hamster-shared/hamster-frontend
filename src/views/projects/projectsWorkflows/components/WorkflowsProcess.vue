@@ -14,8 +14,8 @@
               <div
                 class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] flex"
                 :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
-                <img src="@/assets/icons/start.svg" class="mr-[24px]" v-if="item.status === 99" />
-                <img :src="getImageUrl(item.status)" class="w-[28px] mr-[24px] align-middle"
+                <img src="@/assets/icons/start.svg" class="mr-[24px] h-[24px]" v-if="item.status === 99" />
+                <img :src="getImageUrl(item.status, 'stage')" class="w-[28px] mr-[24px] align-middle"
                   v-else-if="item.status !== 1" />
                 <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle" v-else />
                 <div class="flex align-middle">
@@ -33,7 +33,7 @@
               <div v-for="val in item.stage.steps" @click="checkProcessStep(item.name, val)"
                 class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage cursor-pointer">
                 <div>
-                  <img :src="getImageUrl(val.status)" class="w-[28px] mr-[24px] align-middle inline-block"
+                  <img :src="getImageUrl(val.status, 'step')" class="w-[28px] mr-[24px] align-middle inline-block"
                     v-if="val.status !== 1" />
                   <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle inline-block" v-else />
                 </div>
@@ -60,7 +60,7 @@ import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
 import { formatDurationTime } from "@/utils/time/dateUtils.js";
 import { apiGetDetailStageLogs, apiGetDetailStepLogs } from "@/apis/workFlows";
-import { WorkflowStatusEnum } from "@/enums/statusEnum";
+import { WorkflowStatusEnum, WorkflowStepSvgEnum } from "@/enums/statusEnum";
 BScroll.use(Scrollbar);
 
 interface Process {
@@ -162,8 +162,13 @@ const checkProcessStep = async (stagename: string, val: any) => {
 
 }
 
-const getImageUrl = (status: any) => {
-  let iconName = `${WorkflowStatusEnum[status]}`;
+const getImageUrl = (status: any, type: string,) => {
+  let iconName = ''
+  if (type === 'stage') {
+    iconName = `${WorkflowStatusEnum[status]}`;
+  } else {
+    iconName = `${WorkflowStepSvgEnum[status]}`;
+  }
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };

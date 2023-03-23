@@ -2,7 +2,7 @@
   <div
     class="contractList dark:text-white text-[#121211] grid grid-cols-3 gap-4 border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
     <div class="contractList-left p-[32px]">
-      <div class="mb-[64px]" v-show="sendAbis.length > 0">
+      <div class="mb-[64px]" v-if="sendAbis && sendAbis.length > 0">
         <div class="mb-[16px]">
           <img src="@/assets/icons/send-white.svg" class="mr-[8px] hidden dark:inline-block" />
           <img src="@/assets/icons/send-block.svg" class="mr-[8px] dark:hidden" />
@@ -16,7 +16,7 @@
             {{ val.name }}</div>
         </div>
       </div>
-      <div v-show="callAbis.length > 0">
+      <div v-if="callAbis.length > 0">
         <div class="mb-[16px]">
           <img src="@/assets/icons/send-white.svg" class="mr-[8px] hidden dark:inline-block" />
           <img src="@/assets/icons/send-block.svg" class="mr-[8px] dark:hidden" />
@@ -47,6 +47,7 @@ import { ref, reactive, toRefs } from "vue";
 import YAML from "yaml";
 import ContractForm from "./ContractForm.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import { nextTick } from "process";
 const theme = useThemeStore();
 
 const props = defineProps({
@@ -57,7 +58,7 @@ const props = defineProps({
 
 const { contractAddress, abiInfo, frameType } = toRefs(props);
 
-const sendAbis = reactive([])
+const sendAbis = reactive<any>([])
 const callAbis = reactive([])
 const buttonInfo = ref('');
 const checkValue = ref('');
@@ -67,54 +68,54 @@ const contractForm = ref();
 const abiInfoData = reactive([]);
 
 const data = YAML.parse(abiInfo.value);
-// console.log(data, 'data')
-// if (Object.prototype.toString.call(data) === '[object Object]') {
-//   Object.assign(abiInfoData, data.abi)
-// } else {
-//   Object.assign(abiInfoData, data)
-// }
-
-// console.log(Object.prototype.toString.call(abiInfoData), 'abiInfo.value')
 if (data.abi) {
   Object.assign(abiInfoData, data.abi)
 } else {
   Object.assign(abiInfoData, data)
 }
-
-abiInfoData.map((item: any) => {
-  if (item.type === "function") {
-    if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
-      sendAbis.push(item)
-    } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
-      callAbis.push(item)
+nextTick(()=>{
+  // aptos 目前只有 send 方法
+  if(frameType?.value && frameType?.value===2){
+    Object.assign(sendAbis, data)
+    if (sendAbis.length > 0) {
+      checkValue.value = sendAbis[0]?.name;
+      inputs.value = sendAbis[0]?.params?.filter((item:any)=>{
+        return item != "&signer"
+      }).map((enmu:any,index:number)=>{
+        return {
+          name:`params${index+1}`,
+          internalType:enmu
+        }
+      })
+      buttonInfo.value = 'Transact'
+    } else {
+      checkValue.value = ''
     }
-    // if (Object.prototype.toString.call(data) === '[object Object]') {
-    //   if (!item.stateMutability) {
-    //     sendAbis.push(item)
-    //   } else if (item.stateMutability === 'view') {
-    //     callAbis.push(item)
-    //   }
-    // } else {
-    //   if (item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
-    //     sendAbis.push(item)
-    //   } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
-    //     callAbis.push(item)
-    //   }
-    // }
-  }
+  }else{
+    console.log('others~~~~~~~')
+    abiInfoData.map((item: any) => {
+      if (item.type === "function") {
+        if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+          sendAbis.push(item)
+        } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+          callAbis.push(item)
+        }
+      }
 
-  // console.log(sendAbis, 'sendAbis')
+      // console.log(sendAbis, 'sendAbis')
 
-  if (sendAbis.length > 0) {
-    checkValue.value = sendAbis[0]?.name;
-    inputs.value = sendAbis[0]?.inputs;
-    buttonInfo.value = 'Transact'
-  } else if (sendAbis.length <= 0 && callAbis.length > 0) {
-    checkValue.value = callAbis[0]?.name;
-    inputs.value = callAbis[0]?.inputs;
-    buttonInfo.value = 'Call'
-  } else {
-    checkValue.value = ''
+      if (sendAbis.length > 0) {
+        checkValue.value = sendAbis[0]?.name;
+        inputs.value = sendAbis[0]?.inputs;
+        buttonInfo.value = 'Transact'
+      } else if (sendAbis.length <= 0 && callAbis.length > 0) {
+        checkValue.value = callAbis[0]?.name;
+        inputs.value = callAbis[0]?.inputs;
+        buttonInfo.value = 'Call'
+      } else {
+        checkValue.value = ''
+      }
+    })
   }
 })
 
@@ -122,10 +123,23 @@ abiInfoData.map((item: any) => {
 const emit = defineEmits(["checkContract"])
 
 const checkContract = (name: string, val: any, text: string, index: number) => {
+  console.log('checkContract',val)
   checkValueIndex.value = index;
   // console.log(buttonInfo, 'buttonInfo')
   checkValue.value = name
-  inputs.value = val.inputs
+  // 如果是aptos需要单独处理
+  if(frameType?.value ===2){
+    inputs.value = val.params.filter((item:any)=>{
+      return item != "&signer"
+    }).map((enmu:any,index:number)=>{
+      return {
+        name:`params${index+1}`,
+        internalType:enmu
+      }
+    })
+  }else{
+    inputs.value = val.inputs
+  }
   buttonInfo.value = text
 
   emit("checkContract", inputs, name);
