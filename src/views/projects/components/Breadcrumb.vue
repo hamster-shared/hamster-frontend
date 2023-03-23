@@ -1,8 +1,9 @@
 <template>
   <div class="dark:text-white text-[#121211] text-[24px]">
-    <span @click="backRoute($event)" class="backInfo" :class="isClick? '':'isclick'">
-      <img src="@/assets/icons/back-dark.svg" class="svg-img w-[24px] mr-[8px] hidden dark:inline-block" />
-      <img src="@/assets/icons/back-white.svg" class="svg-img w-[24px] mr-[8px] dark:hidden" />
+    <span @click="backRoute($event)" class="backInfo" :class="isClick ? '' : 'isclick'">
+      <!-- <img src="@/assets/icons/back-dark.svg" class="svg-img w-[24px] mr-[8px] hidden dark:inline-block" />
+      <img src="@/assets/icons/back-white.svg" class="svg-img w-[24px] mr-[8px] dark:hidden" /> -->
+      <svg-icon name="back-white" size="24" class="mr-[8px]" />
       <span class="font-bold align-middle">{{ $t("workFlows.back") }}</span>
     </span>
     <span class="font-bold align-middle">

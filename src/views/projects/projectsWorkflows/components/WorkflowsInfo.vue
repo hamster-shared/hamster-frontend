@@ -6,8 +6,9 @@
           <div class="process-detail-title">{{ $t('workFlows.codeRepository') }}</div>
           <div class="truncate process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
           <div class="process-detail-info">
-            <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
-            <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />
+            <!-- <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
+            <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" /> -->
+            <svg-icon name="white-link" size="16" />
             <span class="align-middle">main</span>
           </div>
         </div>
