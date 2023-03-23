@@ -6,7 +6,7 @@
     "build": "vite build",
     "preview": "vite preview --mode staging",
     "build:staging": "vite build --mode staging",
-    "build:production":  "vite build --mode production",
+    "build:production": "vite build --mode production",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint frontend --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
@@ -36,6 +36,7 @@
     "pinia": "^2.0.23",
     "starknet": "^4.21.0",
     "vue": "^3.2.41",
+    "vue-clipboard3": "^2.0.0",
     "vue-fullscreen": "^3.1.1",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.5",
