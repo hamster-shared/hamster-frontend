@@ -3,19 +3,10 @@
     <div class="text-[24px] text-[#151210] font-bold">Set Build Parameters</div>
     <div class="text-[#73706E] mb-4">set parameters of Aptos Contract for Build this Contract.</div>
 
-    <!-- <a-form :model="formData" layout="vertical" ref="formRef" v-if="aptosBuildParams?.length">
-      <template v-for="(item, index) in aptosBuildParams">
-        <a-input type="hidden" :name="`[${index}].key`" v-model:value="formData[index].key"></a-input>
-        <a-form-item  :label="item.key" :name="`[${index}].value`">
-          <a-input v-model:value="formData[index].value" :disabled="item.value != '_'" allowClear></a-input>
-        </a-form-item>
-      </template>
-    </a-form> -->
-
     <a-form :model="formData" layout="vertical" ref="formRef">
       <template v-for="(item, index) in aptosBuildParams">
         <a-input type="hidden" :name="`[${index}].key`" v-model:value="formData[index].key"></a-input>
-        <a-form-item :label="item.key" :name="`[${index}].value`">
+        <a-form-item :label="item.key" :name="`[${index}].value`" :rules="[{ required: true, message: 'can not be empty!' }]">
           <a-input v-model:value="formData[index].value" allowClear></a-input>
         </a-form-item>
       </template>
@@ -32,10 +23,13 @@
 import { reactive, toRefs, computed, ref, watch } from 'vue'
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { WalletCore } from '@aptos-labs/wallet-adapter-core'
+import useClipboard from 'vue-clipboard3'
 import { apiPostAptosBuild } from '@/apis/projects'
+import { message } from 'ant-design-vue';
 
 const arr = [new PetraWallet()];
 const wallet = new WalletCore(arr)
+const { toClipboard } = useClipboard()
 
 const props = defineProps({
   aptosBuildVisible: Boolean,
@@ -79,15 +73,16 @@ const connectPetraWallet = async()=>{
   await checkAptosWalletInstalled()
   if(!wallet.isConnected()){
     wallet.connect("Petra").then(() => {
-      console.log(wallet.account?.address)
-
+      toClipboard(wallet.account?.address)
+      message.success('copy success')
     }).catch((err:any)=>{
       console.log('failed 00000', err)
     }).finally(()=>{
       connectLoading.value = false
     })
   }else {
-    console.log('66666',wallet.account?.address)
+    toClipboard(wallet.account?.address)
+    message.success('copy success')
     connectLoading.value = false
   }
 }

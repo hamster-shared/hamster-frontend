@@ -1,5 +1,11 @@
-<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M18.0205 10.9062C18.0205 15.3245 14.4388 18.9062 10.0205 18.9062C5.60223 18.9062 2.02051 15.3245 2.02051 10.9062C2.02051 6.48797 5.60223 2.90625 10.0205 2.90625C14.4388 2.90625 18.0205 6.48797 18.0205 10.9062Z" fill="#FFB45B"/>
-<line x1="10.1704" y1="9.65625" x2="10.1704" y2="14.1562" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-<circle cx="10.1704" cy="7.65625" r="0.75" fill="white"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Stop-1</title>
+    <g id="Stop-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组-7">
+            <path d="M199.999875,99.999375 C199.999875,155.228125 155.228625,199.999375 99.999875,199.999375 C44.7715,199.999375 -1.42108547e-14,155.228125 -1.42108547e-14,99.999375 C-1.42108547e-14,44.7715 44.7715,-5.68434189e-14 99.999875,-5.68434189e-14 C155.228625,-5.68434189e-14 199.999875,44.7715 199.999875,99.999375 Z" id="路径备份" fill="#1890FF" fill-rule="nonzero"></path>
+            <line x1="78.5" y1="63.5" x2="78.873625" y2="136.624375" id="路径备份-2" stroke="#FFFFFF" stroke-width="18.75" stroke-linecap="round"></line>
+            <line x1="121.5" y1="63.5" x2="121.873625" y2="136.624375" id="路径备份-4" stroke="#FFFFFF" stroke-width="18.75" stroke-linecap="round"></line>
+        </g>
+    </g>
 </svg>
