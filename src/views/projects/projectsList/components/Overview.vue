@@ -242,7 +242,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
       break;
     case 'Ops':
-      projectsOps(val.id, val);
+      projectsOps(val.id, val.recentDeploy);
       break;
     default: break;
   }
