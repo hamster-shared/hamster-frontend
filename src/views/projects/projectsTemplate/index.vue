@@ -69,6 +69,7 @@
 <script lang='ts' setup>
 import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import NoData from "@/components/NoData.vue";
 import { apiTemplatesCategory, apiTemplatesCategoryById } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import FrontendTemplate from "./components/FrontendTemplate.vue";

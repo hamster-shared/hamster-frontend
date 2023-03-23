@@ -31,11 +31,11 @@ init({
   wallets: [injected],
   chains: [
     {
-      id: '0x501',
-      token: 'M',
-      label: 'Hamster-Moonbean',
+      id: '0x1',
+      token: 'ETH',
+      label: 'Ethereum Mainnet',
       rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
-    },
+    }
   ]
 })
 </script>
