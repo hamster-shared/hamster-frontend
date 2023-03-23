@@ -6,8 +6,8 @@
     <a-form :model="formData" layout="vertical" ref="formRef">
       <template v-for="(item, index) in aptosBuildParams">
         <a-input type="hidden" :name="`[${index}].key`" v-model:value="formData[index].key"></a-input>
-        <a-form-item :label="item.key" :name="`[${index}].value`" :rules="[{ required: true, message: 'can not be empty!' }]">
-          <a-input v-model:value="formData[index].value" allowClear></a-input>
+        <a-form-item :label="item.key" :name="`[${index}].value`">
+          <a-input v-model:value="formData[index].value" allowClear :rules="[{ required: true, trigger: 'change', message: 'can not be empty!' }]"></a-input>
         </a-form-item>
       </template>
     </a-form>
