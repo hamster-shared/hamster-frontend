@@ -5,9 +5,9 @@
 
     <a-form :model="formData" layout="vertical" ref="formRef">
       <template v-for="(item, index) in aptosBuildParams">
-        <a-input type="hidden" :name="`[${index}].key`" v-model:value="formData[index].key"></a-input>
-        <a-form-item :label="item.key" :name="`[${index}].value`">
-          <a-input v-model:value="formData[index].value" allowClear :rules="[{ required: true, trigger: 'change', message: 'can not be empty!' }]"></a-input>
+        <a-input type="hidden" :name="[index, 'key']" v-model:value="formData[index].key"></a-input>
+        <a-form-item :label="item.key" :name="[index, 'value']" :rules="[{ required: true, trigger: 'change', message: 'Cannot be empty' }]" >
+          <a-input v-model:value="formData[index].value" allowClear />
         </a-form-item>
       </template>
     </a-form>
@@ -23,13 +23,11 @@
 import { reactive, toRefs, computed, ref, watch } from 'vue'
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { WalletCore } from '@aptos-labs/wallet-adapter-core'
-import useClipboard from 'vue-clipboard3'
 import { apiPostAptosBuild } from '@/apis/projects'
 import { message } from 'ant-design-vue';
 
 const arr = [new PetraWallet()];
 const wallet = new WalletCore(arr)
-const { toClipboard } = useClipboard()
 
 const props = defineProps({
   aptosBuildVisible: Boolean,
@@ -40,6 +38,7 @@ const { aptosBuildVisible, detailId, aptosBuildParams } = toRefs(props);
 const emit = defineEmits(["hideAptosBuildVisible", "aptosBuild"]);
 
 const formData = ref([])
+const formRef = ref()
 const connectLoading = ref(false)
 const doneLoading = ref(false)
 
@@ -60,6 +59,31 @@ const hideVisible = () => {
   doneLoading.value = false
 }
 
+const copyInfo = async (_items: any) => {
+  // 存储传递过来的数据
+  let OrderNumber = _items;
+  // 创建一个input 元素
+  // createElement() 方法通过指定名称创建一个元素
+  let newInput = document.createElement("input");
+  // 讲存储的数据赋值给input的value值
+  newInput.value = OrderNumber;
+  // appendChild() 方法向节点添加最后一个子节点。
+  document.body.appendChild(newInput);
+  // 选中input元素中的文本
+  // select() 方法用于选择该元素中的文本。
+  newInput.select();
+  // 执行浏览器复制命令
+  try {
+    //  execCommand方法是执行一个对当前文档，当前选择或者给出范围的命令
+    await document.execCommand('Copy') // 执行浏览器复制命令
+    // 清空输入框
+    newInput.remove();
+    message.success("copy success");
+  } catch {
+    message.error("copy failed");
+  }
+}
+
 const checkAptosWalletInstalled = () => {
   if ('aptos' in window) {
     return window.aptos;
@@ -73,22 +97,21 @@ const connectPetraWallet = async()=>{
   await checkAptosWalletInstalled()
   if(!wallet.isConnected()){
     wallet.connect("Petra").then(() => {
-      toClipboard(wallet.account?.address)
-      message.success('copy success')
+      copyInfo(wallet.account?.address.slice(2))
     }).catch((err:any)=>{
       console.log('failed 00000', err)
     }).finally(()=>{
       connectLoading.value = false
     })
   }else {
-    toClipboard(wallet.account?.address)
-    message.success('copy success')
+    copyInfo(wallet.account?.address.slice(2))
     connectLoading.value = false
   }
 }
 
-const handleDone = async()=>{
-  // console.log("formData", formData)
+const handleDone = async () => {
+  console.log("formData", formData)
+  await formRef.value.validate()
   doneLoading.value = true
 
   try {
