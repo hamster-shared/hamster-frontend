@@ -93,7 +93,7 @@
 
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
-            @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType)" v-if="viewInfo.recentBuild.status === 0">Build Now
+            @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType,viewInfo.deployType)" v-if="viewInfo.recentBuild.status === 0">Build Now
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
@@ -196,7 +196,7 @@ const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
   return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
 })
-
+console.log(111111,viewInfo.value)
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
 const aptosBuildVisible = ref(false)
@@ -209,6 +209,8 @@ const msgParam = ref({
   workflowDetailId: viewInfo?.value.recentDeploy.id,
   projectType: projectType?.value
 });
+
+const deployType = ref()
 
 const starknetVisible = ref(false);
 const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
@@ -223,12 +225,13 @@ const goDetail = (id: string, type: string) => {
 }
 
 const projectsAction = (val: any, type: string, e: Event) => {
+  console.log('val3243424',val)
   switch (type) {
     case 'Check':
       projectsCheck(val.id, val.recentCheck.status, e);
       break;
     case 'Build':
-      projectsBuild(val.id, val.recentBuild, val.frameType);
+      projectsBuild(val.id, val.recentBuild, val.frameType,val.depolyType);
       break;
     case 'Deploy':
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
@@ -288,17 +291,17 @@ const buildStatusAction = async (id: string, buildData: any) => {
 }
 
 const aptosBuildParams = ref([])
-const projectsBuild = async (id: string, buildData: any, frameType: string) => {
-  console.log('projectsBuild:::', id, buildData.status, frameType, projectType.value)
+const projectsBuild = async (id: string, buildData: any, frameType: string,deployType?:any) => {
+  console.log('projectsBuild:::', id, buildData, frameType, projectType.value)
   const res = await apiCheckSetAptosBuildParams(id)
   const needsParams = res.data.needsParams
   try {
-    if (frameType == '2' && needsParams) {
+    if (frameType == '2' && deployType==1 && needsParams) {
       aptosBuildVisible.value = true
       const { data } = await apiGetAptosBuildParams(id)
       console.log('apiGetAptosBuildParams:::', data)
       aptosBuildParams.value = data
-    }else if (frameType == '2' && !needsParams){
+    }else if (frameType == '2' && deployType==1 && !needsParams){
       if (buildData.status == 1){
         message.info("Executing Now，please wait a moment.");
       } else {
