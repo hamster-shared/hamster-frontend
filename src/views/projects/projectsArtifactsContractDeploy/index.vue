@@ -384,7 +384,8 @@ const deploy = () => {
         const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
         const petraClient = new AptosClient(NODE_URL);
         const getaAbiRes:any = await petraClient.getTransactionByHash(tx.hash)
-        abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi?.exposed_functions
+        console.log('getaAbiRes',getaAbiRes)
+        abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
       })
       const queryJson:any = {
         id: queryParams.id,

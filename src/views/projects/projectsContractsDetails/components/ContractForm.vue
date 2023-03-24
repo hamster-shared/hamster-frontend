@@ -54,6 +54,8 @@ const props = defineProps({
     required:true
   },
   inputs: { type: Array as any, default: () => { return [] } },
+  aptosName :String,
+  aptosAddress:String
 })
 const isSend = ref(false);
 const hashValue = ref('')
@@ -73,7 +75,7 @@ const aptosWallet:any = new WalletCore(arr)
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs, frameType } = toRefs(props)
+const { checkValue, contractAddress, abiInfo, inputs, frameType,aptosName,aptosAddress } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
@@ -241,10 +243,19 @@ const evmDeployFunction = () => {
       }
     }else if(frameType.value==2){
       // debugger
-      console.log(...(Object.values(formData)), 'aptos move fn')
       // aptos move 回调
       aptosWallet.connect("Petra").then(async() => {
-        await aptosWallet.signAndSubmitTransaction(Object.values(formData))
+        const preload = {
+          type: "entry_function_payload",
+          function: `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`,
+          arguments:[...(Object.values(formData))],
+          type_arguments: []
+        }
+        console.log(preload, 'aptos move fn')
+        const res = await aptosWallet.signAndSubmitTransaction(preload)
+        console.log('res~~~~~',res)
+        hashValue.value = res.hash
+        isSend.value = false;
       }).catch((err:any)=>{
         isSend.value = false;
         console.log('err',err)
