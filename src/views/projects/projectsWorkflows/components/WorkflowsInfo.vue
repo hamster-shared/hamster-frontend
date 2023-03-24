@@ -8,7 +8,7 @@
           <div class="process-detail-info">
             <!-- <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
             <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" /> -->
-            <svg-icon name="white-link" size="16" />
+            <svg-icon name="white-link" size="16" class="mr-[8px]" />
             <span class="align-middle">main</span>
           </div>
         </div>

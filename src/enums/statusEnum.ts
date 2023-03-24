@@ -5,6 +5,13 @@ export enum WorkflowStatusEnum {
   "success",
   "stop",
 }
+export enum WorkflowStagSvgEnum {
+  "nonExecution",
+  "running",
+  "fail",
+  "success",
+  "stop",
+}
 
 export enum WorkflowStepSvgEnum {
   "nonExecution-step",
