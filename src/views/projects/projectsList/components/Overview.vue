@@ -93,7 +93,7 @@
 
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
-            @click="projectsBuild(viewInfo.id, viewInfo.recentBuild)" v-if="viewInfo.recentBuild.status === 0">Build Now
+            @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType)" v-if="viewInfo.recentBuild.status === 0">Build Now
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
@@ -159,7 +159,7 @@
   </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
-  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" v-model:aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
@@ -422,7 +422,7 @@ const frontendDeploying = async () => {
 const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
 }
-const aptosBuild = async(id:any, formData:any)=>{
+const aptosBuild = async(id:any)=>{
   try {
     const { data } = await apiAptosBuild(id.value)
     console.log('aptosbuild::', data)

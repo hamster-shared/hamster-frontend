@@ -240,7 +240,7 @@ const evmDeployFunction = () => {
         })
       }
     }else if(frameType.value==2){
-      debugger
+      // debugger
       console.log(...(Object.values(formData)), 'aptos move fn')
       // aptos move 回调
       aptosWallet.connect("Petra").then(async() => {

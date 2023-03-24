@@ -34,7 +34,7 @@
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
                 <a href="javascript:;">Container</a>
               </a-menu-item>
-              <a-menu-item v-if="projectType === '1' && frameType === 2" @click="aptosBuildVisible = true">
+              <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
                 <a href="javascript:;">Build Setting</a>
               </a-menu-item>
             </a-menu>
@@ -87,7 +87,7 @@
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <ContainerParam containerType="update" :containerVisible="containerVisible" :detailId="detailId"
     @hideContainerParam="containerVisible = false"></ContainerParam>
-  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams"
+  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="detailId" :aptosBuildParams="aptosBuildParams"
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
 </template>
 <script lang='ts' setup>
@@ -109,7 +109,8 @@ import {
   apiDupProjectName,
   apiPostContainer,
   apiGetContainer,
-  apiGetAptosBuildParams
+  apiGetAptosBuildParams,
+  apiAptosBuild
 } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -188,7 +189,6 @@ const getAptosBuildParams = async () => {
 
 onMounted(() => {
   getProjectsDetail();
-  getAptosBuildParams();
 })
 
 onBeforeUnmount(() => {
@@ -292,6 +292,26 @@ const deleteProjects = async () => {
   } finally {
     deleteModal.value = false;
     loading.value = false;
+  }
+}
+
+const getAptosBuild =async()=>{
+  aptosBuildVisible.value = true
+  getAptosBuildParams()
+}
+const hideAptosBuildVisible = () => {
+  aptosBuildVisible.value = false
+}
+const aptosBuild = async(id:any)=>{
+  try {
+    const { data } = await apiAptosBuild(id.value)
+    console.log('aptosbuild::', data)
+    msgParam.value.workflowsId = data.workflowId;
+    msgParam.value.workflowDetailId = data.detailId;
+    msgType.value = 'build';
+    setMsgShow();
+  } catch (err: any) {
+    console.log('err:', err)
   }
 }
 

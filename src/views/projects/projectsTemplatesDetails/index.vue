@@ -82,7 +82,7 @@
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
                 </div>
-                <div class="flex items-center mt-4">
+                <div class="flex items-center mt-4" v-if="frameType !=2">
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
@@ -107,7 +107,7 @@
               </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="Events" v-if="eventAllList.length > 0">
+          <a-tab-pane key="2" tab="Events" v-if="eventAllList.length > 0 && frameType !=2">
             <div class="flex">
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4"><!--  h-[300px] overflow-auto -->
                 <div @click="setEventList(item)" :class="{ '!text-[#E2B578]': item.name === eventName }"
@@ -123,7 +123,7 @@
               </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Sources">
+          <a-tab-pane key="3" tab="Sources" v-if="frameType !=2">
             <div class="p-4">
               <div class="flex justify-between">
                 <div>{{ setText(templatesDetail.codeSources) }}</div>
@@ -168,7 +168,7 @@ const activeKey = ref("1");
 const functionList = ref([]);
 const functionName = ref();
 const callList = ref([]);
-const sendList = ref([]);
+const sendList = ref<any>([]);
 const eventAllList = ref([]);
 const eventName = ref();
 const eventList = ref([]);
@@ -191,6 +191,7 @@ const slectedIndex = ref(0);
 //   { checked: false, label: 'Gasless' },
 // ]);
 const checkboxList = ref([])
+const frameType:any = JSON.parse(localStorage.getItem('createProjectTemp'))?.frameType
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -241,15 +242,31 @@ const getContractTemplatesDetail = async () => {
     checkboxList.value.push(...extensionsList.value)
 
     const ainInfoData = ref([]);
-    if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
-      ainInfoData.value = YAML.parse(data.abiInfo).abi;
-    } else {
-      ainInfoData.value = YAML.parse(data.abiInfo);
+    if(frameType==2){
+      // aptos 单独走一套abi逻辑
+      ainInfoData.value = YAML.parse(data.abiInfo)?.exposed_functions.map((item:any)=>{
+        return {
+          name:item.name,
+          inputs:item.params.filter((i:any)=>{
+            return i!="&signer"
+          }).map((enmu:any,index:number)=>{
+            return {
+              name:`params${index+1}`,
+              type:enmu
+            }
+          }),
+          type:'function'
+        }
+      })
+    }else{
+      if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
+        ainInfoData.value = YAML.parse(data.abiInfo).abi;
+      } else {
+        ainInfoData.value = YAML.parse(data.abiInfo);
+      }
     }
-
-    // console.log(ainInfoData.value, 'ainInfoData.value')
-    setAbiInfoData(ainInfoData.value);
-
+    console.log('ainInfoData.value11111',ainInfoData.value)
+      setAbiInfoData(ainInfoData.value);
 
     // ainInfoData.value.forEach((element: any) => {
     //   if (element.type === 'function') {
@@ -296,7 +313,7 @@ const getContractTemplatesDetail = async () => {
 }
 
 const setAbiInfoData = (abiInfoData: any) => {
-  abiInfoData.forEach((item: AbiInfoDataItem) => {
+  abiInfoData.forEach((item: any) => {
     if (item.type === 'function') {
       // if (item.name === 'approve') {
       //   functionList.value = item.inputs;
