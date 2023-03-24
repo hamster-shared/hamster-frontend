@@ -10,52 +10,45 @@
       <div class="process-scroll-box wrapper" ref="wrapper">
         <div class="process-scroll content mb-[32px]">
           <div class="inline-block align-top execution_process_item" v-for="item in processData" :key="item.name">
-            <div class="inline-block">
-              <div class="">
-                <div
-                  class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] flex"
-                  :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
-                  <img src="@/assets/icons/start.svg" class="mr-[24px] h-[24px]" v-if="item.status === 99" />
-                  <img :src="getImageUrl(item.status, 'stage')" class="w-[24px] h-[24px] mr-[24px] align-middle"
-                    v-else-if="item.status !== 1" />
-                  <img src="@/assets/images/run.gif" class="w-[24px]  h-[24px] mr-[24px] align-middle" v-else />
-                  <div class="flex align-middle">
-                    <div class="text-[16px] font-semibold mr-[24px]">{{ item.name }}</div>
-                    <div class="text-[16px] text-[#7B7D7B]" v-if="item.status !== 0">
-                      {{ formatDurationTime(item.duration, "noThing") }}
-                    </div>
+            <div class="flex">
+              <div
+                class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] flex"
+                :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
+                <img src="@/assets/icons/start.svg" class="mr-[24px] h-[24px]" v-if="item.status === 99" />
+                <img :src="getImageUrl(item.status, 'stage')" class="w-[24px] h-[24px] mr-[24px] align-middle"
+                  v-else-if="item.status !== 1" />
+                <img src="@/assets/images/run.gif" class="w-[24px]  h-[24px] mr-[24px] align-middle" v-else />
+                <div class="flex align-middle">
+                  <div class="text-[16px] font-semibold mr-[24px]">{{ item.name }}</div>
+                  <div class="text-[16px] text-[#7B7D7B]" v-if="item.status !== 0">
+                    {{ formatDurationTime(item.duration, "noThing") }}
                   </div>
                 </div>
-                <!-- <img src="@/assets/icons/arrow-white.svg"
+              </div>
+              <!-- <img src="@/assets/icons/arrow-white.svg"
                 class="w-[28px] space-mark ml-[20px] mr-[20px]  hidden dark:inline-block" />
               <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px] dark:hidden" /> -->
-              </div>
-              <div v-if="item.stage" class="stage-process">
-                <div v-for="val in item.stage.steps" @click="checkProcessStep(item.name, val, $event)"
-                  :class="val.status === 0 ? '' : 'cursorP'"
-                  class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage">
-                  <div>
-                    <img :src="getImageUrl(val.status, 'step')"
-                      class="w-[24px]  h-[24px] mr-[24px] align-middle inline-block" v-if="val.status !== 1" />
-                    <img src="@/assets/images/run.gif" class="w-[24px] h-[24px] mr-[24px] align-middle inline-block"
-                      v-else />
-                  </div>
+            </div>
+            <div v-if="item.stage" class="stage-process">
+              <div v-for="val in item.stage.steps" @click="checkProcessStep(item.name, val, $event)"
+                :class="val.status === 0 ? '' : 'cursorP'"
+                class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage">
+                <div>
+                  <img :src="getImageUrl(val.status, 'step')"
+                    class="w-[24px]  h-[24px] mr-[24px] align-middle inline-block" v-if="val.status !== 1" />
+                  <img src="@/assets/images/run.gif" class="w-[24px] h-[24px] mr-[24px] align-middle inline-block"
+                    v-else />
+                </div>
 
-                  <div class="flex justify-between align-middle item-stage-time">
-                    <div class="text-[16px] font-semibold mr-[24px]">{{ val.name }}</div>
-                    <div class="text-[16px] text-[#7B7D7B]" v-if="val.status !== 0">
-                      {{ formatDurationTime(val.duration, "noThing") }}
-                    </div>
+                <div class="flex justify-between align-middle item-stage-time">
+                  <div class="text-[16px] font-semibold">{{ val.name }}</div>
+                  <div class="text-[16px] text-[#7B7D7B]" v-if="val.status !== 0">
+                    {{ formatDurationTime(val.duration, "noThing") }}
                   </div>
                 </div>
               </div>
             </div>
-            <img src="@/assets/icons/arrow-white.svg"
-              class="w-[28px] space-mark ml-[20px] mr-[20px] mt-[10px] align-top hidden dark:inline-block" />
-            <img src="@/assets/icons/arrow-block.svg"
-              class="w-[28px] space-mark ml-[20px] mt-[10px] align-top mr-[20px] dark:hidden" />
           </div>
-
         </div>
       </div>
     </div>
@@ -191,7 +184,7 @@ watch(
     nextTick(() => {
       bscroll.value && bscroll.value.refresh();
     })
-  }, { deep: true, immediate: true }
+  }, { deep: true }
 );
 
 onMounted(() => {
@@ -286,7 +279,7 @@ html[data-theme='dark'] {
   }
 
   .item-stage {
-    // width: calc(100% - 68px);
+    width: calc(100% - 68px);
     position: relative;
     margin-top: 12px;
 
