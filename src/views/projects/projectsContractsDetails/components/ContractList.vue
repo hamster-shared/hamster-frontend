@@ -2,7 +2,7 @@
   <div
     class="contractList dark:text-white text-[#121211] grid grid-cols-3 gap-4 border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
     <div class="contractList-left p-[32px]">
-      <div class="mb-[64px]" v-if="sendAbis && sendAbis.length > 0">
+      <div class="mb-[64px]" v-if="sendAbis.value && sendAbis.value.length > 0">
         <div class="mb-[16px]">
           <img src="@/assets/icons/send-white.svg" class="mr-[8px] hidden dark:inline-block" />
           <img src="@/assets/icons/send-block.svg" class="mr-[8px] dark:hidden" />
@@ -12,7 +12,7 @@
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
             :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
-            v-for="(val, index) in sendAbis" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
+            v-for="(val, index) in sendAbis.value" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
             {{ val.name }}</div>
         </div>
       </div>
@@ -35,7 +35,7 @@
     <div class="col-span-2 p-[32px]">
       <div>
         <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :abiInfo="abiInfo"
-          :frameType="frameType" :buttonInfo="buttonInfo" ref="contractForm">
+          :frameType="frameType" :buttonInfo="buttonInfo" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress">
         </ContractForm>
       </div>
       <!-- <div v-if="!checkValue">noData</div> -->
@@ -66,6 +66,8 @@ const checkValueIndex = ref(0);
 const inputs = ref([]);
 const contractForm = ref();
 const abiInfoData = reactive([]);
+const aptosName = ref('')
+const aptosAddress = ref('')
 
 const data = YAML.parse(abiInfo.value);
 if (data.abi) {
@@ -74,12 +76,18 @@ if (data.abi) {
   Object.assign(abiInfoData, data)
 }
 nextTick(()=>{
+  // debugger
   // aptos 目前只有 send 方法
   if(frameType?.value && frameType?.value===2){
-    Object.assign(sendAbis, data)
-    if (sendAbis.length > 0) {
-      checkValue.value = sendAbis[0]?.name;
-      inputs.value = sendAbis[0]?.params?.filter((item:any)=>{
+    sendAbis.value = data.exposed_functions
+    console.log('~~~~~~~~',sendAbis.value,data)
+    aptosName.value = data.name
+    aptosAddress.value = data.address
+    if (sendAbis.value.length > 0) {
+      // debugger
+      checkValue.value = sendAbis.value[0]?.name;
+      console.log('checkValue.value',checkValue.value)
+      inputs.value = sendAbis.value[0]?.params?.filter((item:any)=>{
         return item != "&signer"
       }).map((enmu:any,index:number)=>{
         return {
