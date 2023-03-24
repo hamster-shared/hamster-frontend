@@ -263,17 +263,22 @@ const evmDeployFunction = () => {
   }
 }
 const aptosAbiFn = async()=>{
-  const preload = {
-    type: "entry_function_payload",
-    function: `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`,
-    arguments:[...(Object.values(formData))],
-    type_arguments: []
+  try {
+    const preload = {
+      type: "entry_function_payload",
+      function: `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`,
+      arguments:[...(Object.values(formData))],
+      type_arguments: []
+    }
+    console.log(preload, 'aptos move fn')
+    const res = await aptosWallet.signAndSubmitTransaction(preload)
+    console.log('res~~~~~',res)
+    hashValue.value = res.hash
+    isSend.value = false;
+  } catch (error) {
+    isSend.value = false;
   }
-  console.log(preload, 'aptos move fn')
-  const res = await aptosWallet.signAndSubmitTransaction(preload)
-  console.log('res~~~~~',res)
-  hashValue.value = res.hash
-  isSend.value = false;
+  
 }
 const copy = () => {
   let inp = document.createElement("input");
