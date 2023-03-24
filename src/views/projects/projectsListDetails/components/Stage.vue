@@ -9,13 +9,13 @@
           <img src="@/assets/images/run.gif" class="w-[20px] h-[20px]" />
         </div>
         <div v-if="item?.status == 3" class="inline-block">
-          <img :src="successSVG" class="w-[20px] h-[20px]" />
+          <img :src="successSVG" class="w-[16px] h-[16px]" />
         </div>
         <div v-if="item?.status == 2" class="inline-block">
-          <img :src="failedSVG" class="w-[20px] h-[20px]" />
+          <img :src="failedSVG" class="w-[16px] h-[16px]" />
         </div>
         <div v-if="item?.status == 4" class="inline-block">
-          <img :src="stopSVG" class="w-[20px] h-[20px]" />
+          <img :src="stopSVG" class="w-[16px] h-[16px]" />
         </div>
       </div>
       <div v-if="index !== stages.length - 1">
@@ -27,9 +27,9 @@
 
 <script setup lang="ts">
 import { onMounted, toRefs } from "vue";
-import successSVG from "@/assets/icons/pipeline-success.svg";
-import failedSVG from "@/assets/icons/pipeline-failed.svg";
-import stopSVG from "@/assets/icons/pipeline-stop.svg";
+import successSVG from "@/assets/icons/success.svg";
+import failedSVG from "@/assets/icons/fail.svg";
+import stopSVG from "@/assets/icons/stop.svg";
 import nodataSVG from "@/assets/icons/pipeline-no-data.svg";
 import greyArrowSVG from "@/assets/icons/grey-arrow.svg";
 

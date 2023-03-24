@@ -1,5 +1,8 @@
 <template>
   <a-modal v-model:visible="aptosBuildVisible" :footer="null" @cancel="hideVisible">
+    <template #closeIcon>
+      <img class="" src="@/assets/icons/closeIcon.svg" @click="hideVisible" />
+    </template>
     <div class="text-[24px] text-[#151210] font-bold">Set Build Parameters</div>
     <div class="text-[#73706E] mb-4">set parameters of Aptos Contract for Build this Contract.</div>
 
@@ -45,7 +48,7 @@ const doneLoading = ref(false)
 const initFormData = () => {
   console.log("aptosBuildParams", aptosBuildParams)
   if (aptosBuildParams?.value) {
-    formData.value = aptosBuildParams.value.map( obj => ({...obj}))
+    formData.value = aptosBuildParams.value.map(obj => ({ ...obj }))
   } else {
     formData.value = []
   }
@@ -92,15 +95,15 @@ const checkAptosWalletInstalled = () => {
   }
 };
 
-const connectPetraWallet = async()=>{
+const connectPetraWallet = async () => {
   connectLoading.value = true
   await checkAptosWalletInstalled()
-  if(!wallet.isConnected()){
+  if (!wallet.isConnected()) {
     wallet.connect("Petra").then(() => {
       copyInfo(wallet.account?.address.slice(2))
     }).catch((err:any)=>{
       console.log('failed 00000', err)
-    }).finally(()=>{
+    }).finally(() => {
       connectLoading.value = false
     })
   }else {
@@ -115,11 +118,11 @@ const handleDone = async () => {
   doneLoading.value = true
 
   try {
-    const res = await apiPostAptosBuild(detailId?.value, { params:formData.value })
+    const res = await apiPostAptosBuild(detailId?.value, { params: formData.value })
     console.log('res:::', res)
     emit("hideAptosBuildVisible");
     emit('aptosBuild', detailId)
-  } catch(err:any){
+  } catch (err: any) {
     console.log('err:', err)
   } finally {
     doneLoading.value = false

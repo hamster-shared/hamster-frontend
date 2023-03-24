@@ -8,16 +8,16 @@
         </span>
       </div>
       <div class="process-scroll-box wrapper" ref="wrapper">
-        <div class="process-scroll content">
+        <div class="process-scroll content mb-[32px]">
           <div class="inline-block align-top execution_process_item" v-for="item in processData" :key="item.name">
             <div class="flex">
               <div
                 class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] flex"
                 :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
                 <img src="@/assets/icons/start.svg" class="mr-[24px] h-[24px]" v-if="item.status === 99" />
-                <img :src="getImageUrl(item.status, 'stage')" class="w-[28px] mr-[24px] align-middle"
+                <img :src="getImageUrl(item.status, 'stage')" class="w-[24px] h-[24px] mr-[24px] align-middle"
                   v-else-if="item.status !== 1" />
-                <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle" v-else />
+                <img src="@/assets/images/run.gif" class="w-[24px]  h-[24px] mr-[24px] align-middle" v-else />
                 <div class="flex align-middle">
                   <div class="text-[16px] font-semibold mr-[24px]">{{ item.name }}</div>
                   <div class="text-[16px] text-[#7B7D7B]" v-if="item.status !== 0">
@@ -30,12 +30,14 @@
               <img src="@/assets/icons/arrow-block.svg" class="w-[28px] space-mark ml-[20px] mr-[20px] dark:hidden" />
             </div>
             <div v-if="item.stage" class="">
-              <div v-for="val in item.stage.steps" @click="checkProcessStep(item.name, val)"
-                class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage cursor-pointer">
+              <div v-for="val in item.stage.steps" @click="checkProcessStep(item.name, val, $event)"
+                :class="val.status === 0 ? '' : 'cursorP'"
+                class="flex inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] item-stage">
                 <div>
-                  <img :src="getImageUrl(val.status, 'step')" class="w-[28px] mr-[24px] align-middle inline-block"
-                    v-if="val.status !== 1" />
-                  <img src="@/assets/images/run.gif" class="w-[28px] mr-[24px] align-middle inline-block" v-else />
+                  <img :src="getImageUrl(val.status, 'step')"
+                    class="w-[24px]  h-[24px] mr-[24px] align-middle inline-block" v-if="val.status !== 1" />
+                  <img src="@/assets/images/run.gif" class="w-[24px] h-[24px] mr-[24px] align-middle inline-block"
+                    v-else />
                 </div>
 
                 <div class="flex justify-between align-middle item-stage-time">
@@ -60,7 +62,7 @@ import Scrollbar from "@better-scroll/scroll-bar";
 import Processmodal from "./ProcessModal.vue";
 import { formatDurationTime } from "@/utils/time/dateUtils.js";
 import { apiGetDetailStageLogs, apiGetDetailStepLogs } from "@/apis/workFlows";
-import { WorkflowStatusEnum, WorkflowStepSvgEnum } from "@/enums/statusEnum";
+import { WorkflowStatusEnum, WorkflowStagSvgEnum, WorkflowStepSvgEnum } from "@/enums/statusEnum";
 BScroll.use(Scrollbar);
 
 interface Process {
@@ -136,36 +138,39 @@ const getStageLogsData = async (val: any, start = 0) => {
 }
 
 
-const checkProcessStep = async (stagename: string, val: any) => {
+const checkProcessStep = async (stagename: string, val: any, e: Event) => {
   console.log(val)
-  const queryJson = {
-    name: queryParams.workflowsId,
-    id: queryParams.workflowDetailId,
-    stagename: stagename,
-    stepname: val.name,
-  }
-  try {
-    const { data } = await apiGetDetailStepLogs(queryJson);
-    let t = data?.content?.split("\r");
-    if (data.content) {
-      t.forEach((item: any) => {
-        let h = item ? item.split("\n") : '';
-        h.forEach((val: any) => {
-          stagesData.content.push(val)
-        })
-      })
+  if (val.status === 0) {
+    e.stopPropagation();
+  } else {
+    const queryJson = {
+      name: queryParams.workflowsId,
+      id: queryParams.workflowDetailId,
+      stagename: stagename,
+      stepname: val.name,
     }
-    processModalRef.value.showVisible();
-  } catch (err: any) {
-    console.log(err, 'err')
+    try {
+      const { data } = await apiGetDetailStepLogs(queryJson);
+      let t = data?.content?.split("\r");
+      if (data.content) {
+        t.forEach((item: any) => {
+          let h = item ? item.split("\n") : '';
+          h.forEach((val: any) => {
+            stagesData.content.push(val)
+          })
+        })
+      }
+      processModalRef.value.showVisible();
+    } catch (err: any) {
+      console.log(err, 'err')
+    }
   }
-
 }
 
 const getImageUrl = (status: any, type: string,) => {
   let iconName = ''
   if (type === 'stage') {
-    iconName = `${WorkflowStatusEnum[status]}`;
+    iconName = `${WorkflowStagSvgEnum[status]}`;
   } else {
     iconName = `${WorkflowStepSvgEnum[status]}`;
   }
@@ -227,6 +232,11 @@ html[data-theme='dark'] {
 .process {
   width: 100%;
   font-size: 14px;
+  margin-bottom: 24px;
+
+  .cursorP {
+    cursor: pointer;
+  }
 
   .process-scroll-box {
     white-space: nowrap;
@@ -234,11 +244,7 @@ html[data-theme='dark'] {
 
     .process-scroll {
       display: inline-block;
-      margin-bottom: 24px;
 
-      .cursorP {
-        cursor: pointer;
-      }
     }
 
     :deep(.bscroll-horizontal-scrollbar) {
@@ -308,6 +314,5 @@ html[data-theme='dark'] {
       width: 100%;
     }
   }
-
 }
 </style>
