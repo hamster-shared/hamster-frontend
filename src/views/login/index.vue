@@ -1,7 +1,9 @@
 <template>
   <div class="login-box">
     <div class="flex justify-between login-header">
-      <img src="@/assets/images/logo-block.png" class="h-[28px] mt-[16px]" />
+      <a target="_bank" href="https://hamsternet.io/">
+        <img src="@/assets/images/logo-block.png" class="h-[28px] mt-[16px]" />
+      </a>
     </div>
     <div class="text-center login-content ">
       <img src="@/assets/images/logo.png" class="h-[92px]" />
