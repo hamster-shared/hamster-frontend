@@ -178,15 +178,6 @@ const formRules = computed(() => {
   };
 });
 
-const getAptosBuildParams = async () => {
-  try {
-    const { data } = await apiGetAptosBuildParams(params.id)
-    aptosBuildParams.value = data
-  } catch (err: any) {
-    console.info(err)
-  }
-}
-
 onMounted(() => {
   getProjectsDetail();
 })
@@ -278,9 +269,9 @@ const updateName = async () => {
     visibleModal.value = false;
     loading.value = false;
   }
-}
-const deleteProjects = async () => {
+};
 
+const deleteProjects = async () => {
   try {
     loading.value = true;
     const data = await apiDeleteProjects(detailId.value.toString());
@@ -293,16 +284,27 @@ const deleteProjects = async () => {
     deleteModal.value = false;
     loading.value = false;
   }
-}
+};
 
-const getAptosBuild =async()=>{
+const getAptosBuildParams = async () => {
+  try {
+    const { data } = await apiGetAptosBuildParams(params.id)
+    aptosBuildParams.value = data
+  } catch (err: any) {
+    console.info(err)
+  }
+};
+
+const getAptosBuild = async () => {
   aptosBuildVisible.value = true
   getAptosBuildParams()
-}
+};
+
 const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
-}
-const aptosBuild = async(id:any)=>{
+};
+
+const aptosBuild = async (id: any) => {
   try {
     const { data } = await apiAptosBuild(id.value)
     console.log('aptosbuild::', data)
@@ -313,19 +315,19 @@ const aptosBuild = async(id:any)=>{
   } catch (err: any) {
     console.log('err:', err)
   }
-}
+};
 
 const setMsgShow = () => {
   showMsg.value = true;
   setTimeout(function () {
     showMsg.value = false;
   }, 3000)
-
-}
+};
 
 const goBack = () => {
   router.back();
 }
+
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
