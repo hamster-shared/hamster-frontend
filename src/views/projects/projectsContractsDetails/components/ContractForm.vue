@@ -244,28 +244,36 @@ const evmDeployFunction = () => {
     }else if(frameType.value==2){
       // debugger
       // aptos move 回调
-      aptosWallet.connect("Petra").then(async() => {
-        const preload = {
-          type: "entry_function_payload",
-          function: `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`,
-          arguments:[...(Object.values(formData))],
-          type_arguments: []
-        }
-        console.log(preload, 'aptos move fn')
-        const res = await aptosWallet.signAndSubmitTransaction(preload)
-        console.log('res~~~~~',res)
-        hashValue.value = res.hash
-        isSend.value = false;
-      }).catch((err:any)=>{
-        isSend.value = false;
-        console.log('err',err)
-      })
+      console.log('aptosWallet~~~11111',aptosWallet._connected)
+      if(aptosWallet._connected){
+        aptosAbiFn()
+      }else{
+        aptosWallet.connect("Petra").then(async() => {
+          aptosAbiFn()
+        }).catch((err:any)=>{
+          isSend.value = false;
+          console.log('err',err)
+        })
+      }
     }
   } catch (errorInfo: any) {
-    // console.log('errorInfo:' + errorInfo)
+    console.log('errorInfo:' + errorInfo)
     isSend.value = false;
     message.error('调用失败')
   }
+}
+const aptosAbiFn = async()=>{
+  const preload = {
+    type: "entry_function_payload",
+    function: `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`,
+    arguments:[...(Object.values(formData))],
+    type_arguments: []
+  }
+  console.log(preload, 'aptos move fn')
+  const res = await aptosWallet.signAndSubmitTransaction(preload)
+  console.log('res~~~~~',res)
+  hashValue.value = res.hash
+  isSend.value = false;
 }
 const copy = () => {
   let inp = document.createElement("input");
