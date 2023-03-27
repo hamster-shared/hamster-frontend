@@ -12,29 +12,22 @@ interface GetContractDeployDetailParams {
 }
 
 interface GetDetailLogsParams {
-  workflowsId: string,
-  workflowDetailId: string,
+  workflowsId: string;
+  workflowDetailId: string;
 }
 
 interface GetPackageParams {
-  workflowsId: string,
-  workflowDetailId: string,
-  packageId: string,
+  workflowsId: string;
+  workflowDetailId: string;
+  packageId: string;
 }
 
 interface GetDetailStagelogsParams {
-  id: string | number,
+  id: string | number;
   workflowsId: string,
-  workflowDetailId: number,
-  stagename: string,
-  start: number,
-}
-
-interface GetDetailSteplogsParams {
-  id: string,
-  name: string,
-  stagename: string,
-  stepname: string,
+  workflowDetailId: number;
+  stagename: string;
+  start: number;
 }
 
 // templates-category?type=1
@@ -110,14 +103,6 @@ export function apiGetDetailStageLogs(params: GetDetailStagelogsParams) {
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/logs/${params.stagename}`,
     method: "get",
     params: { start: params.start },
-  });
-}
-
-// 获取steps日志
-export function apiGetDetailStepLogs(params: GetDetailSteplogsParams) {
-  return httpRequest({
-    url: `/api/workflows/${params.name}/detail/${params.id}/logs/${params.stagename}/${params.stepname}`,
-    method: "get",
   });
 }
 

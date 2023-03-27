@@ -19,16 +19,19 @@
 
 
       <div>
-        <label class="cursor-pointer group text-center w-[100px] action-button-item"
-          v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
+        <label class="cursor-pointer group text-center w-[100px]" v-for="(item, index) in actionButtonList"
+          @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" />
           </label>
           <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
             <svg-icon name="check" size="14" />
           </label>
-          <label v-else class="action-icon">
-            <svg-icon :name="item.url" size="14" />
+          <label v-else>
+            <img :src="getActionImageUrl(item.url[0])" class="h-[16px] cursor-default dark:hidden group-hover:hidden" />
+            <img :src="getActionImageUrl(item.url[1])"
+              class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+            <img :src="getActionImageUrl(item.url[2])" class="h-[16px] hidden group-hover:inline-block" />
           </label>
           <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer align-middle"
             :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
@@ -159,18 +162,16 @@
   </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
-  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
-import AptosBuildParams from './AptosBuildParams.vue'
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
@@ -187,10 +188,10 @@ const props = defineProps<{
 }>()
 
 const actionButtonList = ref([
-  { name: 'Check', url: 'check' },
-  { name: 'Build', url: 'build' },
-  { name: 'Deploy', url: 'deploy' },
-  { name: 'Ops', url: 'ops' }]);
+  { name: 'Check', url: ['check', 'check-b', 'check-color'] },
+  { name: 'Build', url: ['build', 'build-b', 'build-color'] },
+  { name: 'Deploy', url: ['deploy', 'deploy-b', 'deploy-color'] },
+  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
@@ -198,7 +199,6 @@ const showViewInfoRepositoryUrl = computed(() => {
 })
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
-const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -479,7 +479,7 @@ const setMsgShow = () => {
 
 }
 
-const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
+const goFrontEndDetail = (id: string, recentDeploy: Object) => {
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
   } else {
@@ -558,15 +558,5 @@ html[data-theme='light'] {
   .disabledCheckCss:hover {
     color: #151210;
   }
-}
-
-.action-button-item:hover {
-  .action-icon {
-    .svg-icon {
-      color: #E2B578;
-    }
-  }
-
-
 }
 </style>

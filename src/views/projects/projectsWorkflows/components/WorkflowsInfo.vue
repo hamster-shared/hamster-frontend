@@ -16,8 +16,8 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ title + ' Result' }}</div>
-          <div class="process-detail-info">{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
-          <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
+          <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status] }`) }}</div>
+          <div class="process-detail-info error-info" v-show="title === 'Check'">
             {{ workflowsDetailsData.errorNumber + ' issues found' }}
           </div>
         </div>
@@ -34,30 +34,22 @@
       </a-col>
     </a-row>
   </div>
-</template>
+</template>duration
 <script lang='ts' setup>
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
-import { WorkflowStatusEnum } from "@/enums/statusEnum";
-
-interface WorkflowsDetailsData {
-  repositoryUrl: string,
-  status: number,
-  startTime: string,
-  errorNumber: number,
-  duration: string,
-}
-
-const props = defineProps<{
+const props = defineProps({
   title: String,
   inRunning: Boolean,
-  workflowsDetailsData: WorkflowsDetailsData,
-}>()
+  workflowsDetailsData: { type: Object }
+});
 
-// const props = defineProps({
-//   title: String,
-//   inRunning: Boolean,
-//   workflowsDetailsData: { type: Object }
-// });
+const enum StatusEnum {
+  "nonExecution",
+  "running",
+  "failed",
+  "passed",
+  "stop",
+}
 
 
 </script>

@@ -366,5 +366,4 @@ input:-moz-placeholder,
 input::-moz-placeholder,
 input:-ms-input-placeholder {
   color: #E0DBD2;
-}
-</style>
+}</style>

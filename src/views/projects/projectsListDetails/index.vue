@@ -114,7 +114,6 @@ import {
 } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
-import type { ViewInfoItem } from "@/views/projects/components/data";
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -210,7 +209,7 @@ const getProjectsDetail = async () => {
     const { data } = await apiGetProjectsDetail(detailId.value.toString());
     projectsDetail.value = data;
     frameType.value = data.frameType;
-    // console.log(data, frameType.value, 'projectsDetail.frameType')
+    console.log(data, frameType.value, 'projectsDetail.frameType')
 
     const recentStatusOld = localStorage.getItem('recentStatus' + data.name);
     if (recentStatusOld !== null && recentStatusOld !== undefined) {

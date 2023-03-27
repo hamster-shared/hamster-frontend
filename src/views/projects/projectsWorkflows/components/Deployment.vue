@@ -30,7 +30,7 @@
           <div class="w-1/2">
             <div class="title-text title-m">Status</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">
-              {{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}
+              {{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status]}`) }}
             </div>
             <div class="title-text title-m">Package</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
@@ -60,7 +60,6 @@
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { WorkflowStatusEnum } from "@/enums/statusEnum";
 const router = useRouter();
 
 interface PackageInfo {
@@ -96,13 +95,13 @@ const props = defineProps<{
 //     default: true,
 //   },
 // });
-// const enum StatusEnum {
-//   "nonExecution",
-//   "running",
-//   "failed",
-//   "ready",
-//   "stop",
-// }
+const enum StatusEnum {
+  "nonExecution",
+  "running",
+  "failed",
+  "ready",
+  "stop",
+}
 
 const toDetail = () => {
   router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}/${props.workflowsDetailsData?.packageId}`)
