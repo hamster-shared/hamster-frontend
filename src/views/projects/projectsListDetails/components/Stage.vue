@@ -3,10 +3,10 @@
     <div v-for="(item, index) in stages" :key="index" class="flex">
       <div>
         <div v-if="item?.status == 0" class="inline-block">
-          <img :src="nodataSVG" class="w-[20px] h-[20px]" />
+          <img :src="nodataSVG" class="w-[16px] h-[16px]" />
         </div>
         <div v-if="item?.status == 1" class="inline-block">
-          <img src="@/assets/images/run.gif" class="w-[20px] h-[20px]" />
+          <img src="@/assets/images/run.gif" class="w-[17px] h-[17px]" />
         </div>
         <div v-if="item?.status == 3" class="inline-block">
           <img :src="successSVG" class="w-[16px] h-[16px]" />
@@ -30,7 +30,8 @@ import { onMounted, toRefs } from "vue";
 import successSVG from "@/assets/icons/success.svg";
 import failedSVG from "@/assets/icons/fail.svg";
 import stopSVG from "@/assets/icons/stop.svg";
-import nodataSVG from "@/assets/icons/pipeline-no-data.svg";
+// import nodataSVG from "@/assets/icons/pipeline-no-data.svg";
+import nodataSVG from "@/assets/icons/nonExecution.svg";
 import greyArrowSVG from "@/assets/icons/grey-arrow.svg";
 
 const props = defineProps<{
