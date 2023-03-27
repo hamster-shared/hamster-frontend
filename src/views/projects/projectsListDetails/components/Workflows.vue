@@ -126,7 +126,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'stageInfo',
-    width: '200px'
+    width: '220px'
   },
   {
     title: 'Time',
@@ -160,11 +160,13 @@ const pagination = reactive({
     pagination.current = current;
     pagination.pageSize = pagesize;
     // getApps();
+    getProjectsWorkflows()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     pagination.current = current;
     // getApps();
+    getProjectsWorkflows()
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
