@@ -242,7 +242,7 @@ const evmDeployFunction = () => {
         })
       }
     }else if(frameType.value==2){
-      // debugger
+      if (props.buttonInfo === 'Transact') {}
       // aptos move 回调
       console.log('aptosWallet~~~11111',aptosWallet._connected)
       if(aptosWallet._connected){

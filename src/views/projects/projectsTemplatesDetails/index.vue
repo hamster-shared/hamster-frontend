@@ -82,7 +82,7 @@
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
                 </div>
-                <div class="flex items-center mt-4" v-if="frameType !=2">
+                <div class="flex items-center mt-4">
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
@@ -123,7 +123,7 @@
               </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Sources" v-if="frameType !=2">
+          <a-tab-pane key="3" tab="Sources">
             <div class="p-4">
               <div class="flex justify-between">
                 <div>{{ setText(templatesDetail.codeSources) }}</div>
@@ -167,7 +167,7 @@ const projectType = ref(params.type);
 const activeKey = ref("1");
 const functionList = ref([]);
 const functionName = ref();
-const callList = ref([]);
+const callList = ref<any>([]);
 const sendList = ref<any>([]);
 const eventAllList = ref([]);
 const eventName = ref();
@@ -241,10 +241,10 @@ const getContractTemplatesDetail = async () => {
     extensionsList.value = data.extensions.split(',');
     checkboxList.value.push(...extensionsList.value)
 
-    const ainInfoData = ref([]);
+    const ainInfoData = ref<any>([]);
     if(frameType==2){
       // aptos 单独走一套abi逻辑
-      ainInfoData.value = YAML.parse(data.abiInfo)?.exposed_functions.map((item:any)=>{
+      const aptosSendList:any = YAML.parse(data.abiInfo)?.exposed_functions.map((item:any)=>{
         return {
           name:item.name,
           inputs:item.params.filter((i:any)=>{
@@ -255,9 +255,20 @@ const getContractTemplatesDetail = async () => {
               type:enmu
             }
           }),
-          type:'function'
+          type:'function',
+          isAptosSend:true,
+          isAptosCall:false
         }
       })
+      const aptosCallList:any = YAML.parse(data.abiInfo)?.structs.map((item:any)=>{
+        return {
+          name:item.name,
+          inputs:item.fields,
+          type:'function',
+          isAptosCall:true,
+          isAptosSend:false
+      }})
+      ainInfoData.value = [...aptosSendList,...aptosCallList]
     }else{
       if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
         ainInfoData.value = YAML.parse(data.abiInfo).abi;
@@ -266,37 +277,7 @@ const getContractTemplatesDetail = async () => {
       }
     }
     console.log('ainInfoData.value11111',ainInfoData.value)
-      setAbiInfoData(ainInfoData.value);
-
-    // ainInfoData.value.forEach((element: any) => {
-    //   if (element.type === 'function') {
-    //     if (element.name === 'approve') {
-    //       functionList.value = element.inputs;
-    //       functionName.value = element.name;
-    //     }
-    //     if (Object.prototype.toString.call(ainInfoData) === '[object Object]') {
-    //       if (element.stateMutability === 'nonpayable') {
-    //         sendList.value.push(element)
-    //       } else if (element.stateMutability === 'view') {
-    //         callList.value.push(element)
-    //       }
-    //     } else {
-    //       if (element.stateMutability === 'nonpayable' || element.stateMutability === 'payable') {
-    //         sendList.value.push(element)
-    //       } else if (element.stateMutability === 'view' || element.stateMutability === 'constant') {
-    //         callList.value.push(element)
-    //       }
-    //     }
-
-    //   }
-    //   if (element.type === 'event') {
-    //     eventAllList.value.push(element);
-    //     if (element.name === 'Approval') {
-    //       eventList.value = element.inputs;
-    //       eventName.value = element.name;
-    //     }
-    //   }
-    // });
+    setAbiInfoData(ainInfoData.value);
     axios
       .get(data.codeSources)
       .then(res => {
@@ -313,20 +294,27 @@ const getContractTemplatesDetail = async () => {
 }
 
 const setAbiInfoData = (abiInfoData: any) => {
+  console.log('setAbiInfoData',abiInfoData)
   abiInfoData.forEach((item: any) => {
     if (item.type === 'function') {
-      // if (item.name === 'approve') {
-      //   functionList.value = item.inputs;
-      //   functionName.value = item.name;
-      // }
-
-      if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
-        sendList.value.push(item)
-      } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
-        callList.value.push(item)
+      // debugger
+      console.log('stateMutability',item.stateMutability)
+      // aptos 的 abi 
+      if(frameType==2){
+        if(item.isAptosSend){
+          sendList.value.push(item)
+        }else if(item.isAptosCall){
+          callList.value.push(item)
+        }
+      }else{
+        if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+          sendList.value.push(item)
+        } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+          callList.value.push(item)
+        }
       }
 
-
+      // 默认选中第一项
       if (sendList.value.length > 0) {
         functionList.value = sendList.value[0]?.inputs;
         functionName.value = sendList.value[0]?.name;

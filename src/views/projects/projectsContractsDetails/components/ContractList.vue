@@ -2,7 +2,7 @@
   <div
     class="contractList dark:text-white text-[#121211] grid grid-cols-3 gap-4 border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
     <div class="contractList-left p-[32px]">
-      <div class="mb-[64px]" v-if="sendAbis.value && sendAbis.value.length > 0">
+      <div class="mb-[64px]" v-if="sendAbis.length > 0">
         <div class="mb-[16px]">
           <img src="@/assets/icons/send-white.svg" class="mr-[8px] hidden dark:inline-block" />
           <img src="@/assets/icons/send-block.svg" class="mr-[8px] dark:hidden" />
@@ -12,7 +12,7 @@
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
             :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
-            v-for="(val, index) in sendAbis.value" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
+            v-for="(val, index) in sendAbis" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
             {{ val.name }}</div>
         </div>
       </div>
@@ -59,7 +59,7 @@ const props = defineProps({
 const { contractAddress, abiInfo, frameType } = toRefs(props);
 
 const sendAbis = reactive<any>([])
-const callAbis = reactive([])
+const callAbis = reactive<any>([])
 const buttonInfo = ref('');
 const checkValue = ref('');
 const checkValueIndex = ref(0);
@@ -76,29 +76,14 @@ if (data.abi) {
   Object.assign(abiInfoData, data)
 }
 nextTick(()=>{
-  // debugger
-  // aptos 目前只有 send 方法
-  if(frameType?.value && frameType?.value===2){
-    sendAbis.value = data.exposed_functions
-    console.log('~~~~~~~~',sendAbis.value,data)
+  // debugger send call
+  if(frameType?.value && frameType?.value==2){
+    Object.assign(sendAbis, data.exposed_functions)
+    Object.assign(callAbis, data.structs)
+    console.log('sendAbis',sendAbis,callAbis)
     aptosName.value = data.name
     aptosAddress.value = data.address
-    if (sendAbis.value.length > 0) {
-      // debugger
-      checkValue.value = sendAbis.value[0]?.name;
-      console.log('checkValue.value',checkValue.value)
-      inputs.value = sendAbis.value[0]?.params?.filter((item:any)=>{
-        return item != "&signer"
-      }).map((enmu:any,index:number)=>{
-        return {
-          name:`params${index+1}`,
-          internalType:enmu
-        }
-      })
-      buttonInfo.value = 'Transact'
-    } else {
-      checkValue.value = ''
-    }
+    commonFirst()
   }else{
     console.log('others~~~~~~~')
     abiInfoData.map((item: any) => {
@@ -109,24 +94,40 @@ nextTick(()=>{
           callAbis.push(item)
         }
       }
-
-      // console.log(sendAbis, 'sendAbis')
-
-      if (sendAbis.length > 0) {
-        checkValue.value = sendAbis[0]?.name;
-        inputs.value = sendAbis[0]?.inputs;
-        buttonInfo.value = 'Transact'
-      } else if (sendAbis.length <= 0 && callAbis.length > 0) {
-        checkValue.value = callAbis[0]?.name;
-        inputs.value = callAbis[0]?.inputs;
-        buttonInfo.value = 'Call'
-      } else {
-        checkValue.value = ''
-      }
+      commonFirst()
     })
   }
 })
-
+const commonFirst = ()=>{
+  if (sendAbis.length > 0) {
+    checkValue.value = sendAbis[0]?.name;
+    // aptos send abi需单独处理
+    if(frameType?.value==2){
+      inputs.value = sendAbis[0]?.params?.filter((item:any)=>{
+        return item != "&signer"
+      }).map((enmu:any,index:number)=>{
+        return {
+          name:`params${index+1}`,
+          internalType:enmu
+        }
+      })
+    }else{
+      inputs.value = sendAbis[0]?.inputs;
+    }
+    buttonInfo.value = 'Transact'
+  } else if (sendAbis.length <= 0 && callAbis.length > 0) {
+    checkValue.value = callAbis[0]?.name;
+    // aptos call abi
+    if(frameType?.value==2){
+      inputs.value = callAbis[0]?.fields;
+    }else{
+      inputs.value = callAbis[0]?.inputs;
+    }
+    buttonInfo.value = 'Call'
+  } else {
+    checkValue.value = ''
+  }
+}
 
 const emit = defineEmits(["checkContract"])
 
