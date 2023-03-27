@@ -251,7 +251,7 @@ const getContractTemplatesDetail = async () => {
             return i!="&signer"
           }).map((enmu:any,index:number)=>{
             return {
-              name:`params${index+1}`,
+              name:`param${index+1}`,
               type:enmu
             }
           }),
@@ -276,7 +276,6 @@ const getContractTemplatesDetail = async () => {
         ainInfoData.value = YAML.parse(data.abiInfo);
       }
     }
-    console.log('ainInfoData.value11111',ainInfoData.value)
     setAbiInfoData(ainInfoData.value);
     axios
       .get(data.codeSources)
@@ -294,11 +293,9 @@ const getContractTemplatesDetail = async () => {
 }
 
 const setAbiInfoData = (abiInfoData: any) => {
-  console.log('setAbiInfoData',abiInfoData)
   abiInfoData.forEach((item: any) => {
     if (item.type === 'function') {
       // debugger
-      console.log('stateMutability',item.stateMutability)
       // aptos 的 abi 
       if(frameType==2){
         if(item.isAptosSend){
