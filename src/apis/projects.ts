@@ -319,3 +319,32 @@ export function apiPostContainer(id: String, dataParam?: apiContainerDeployParam
     data: dataParam,
   });
 }
+// 查询aptos是否已设置过参数（build按钮）
+export function apiCheckSetAptosBuildParams(id: String) {
+    return httpRequest({
+      url: `/api/projects/${id}/is-needs-params/aptos`,
+      method: "get",
+    });
+  }
+  // aptos build
+  export function apiAptosBuild(id: String) {
+    return httpRequest({
+      url: `/api/projects/${id}/aptos-build`,
+      method: "get",
+    });
+  }
+  // 获取aptos参数
+  export function apiGetAptosBuildParams(id: String) {
+    return httpRequest({
+      url: `/api/projects/${id}/params/aptos`,
+      method: "get",
+    });
+  }
+  //  更新aptos参数
+  export function apiPostAptosBuild(id: String, dataParam:{}[]) {
+    return httpRequest({
+      url: `/api/projects/${id}/params/aptos`,
+      method: "post",
+      data: dataParam,
+    });
+  }
