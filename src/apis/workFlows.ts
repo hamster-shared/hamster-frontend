@@ -30,6 +30,13 @@ interface GetDetailStagelogsParams {
   start: number;
 }
 
+interface GetDetailSteplogsParams {
+    id: string,
+    name: string,
+    stagename: string,
+    stepname: string,
+  }
+
 // templates-category?type=1
 export function apiGetTemplates(params: GetWorkflowsDetailParams) {
   return httpRequest({
@@ -113,6 +120,15 @@ export function apiGetDetailLogs(params: GetDetailLogsParams) {
     method: "get",
   });
 }
+
+
+// 获取steps日志
+export function apiGetDetailStepLogs(params: GetDetailSteplogsParams) {
+    return httpRequest({
+      url: `/api/workflows/${params.name}/detail/${params.id}/logs/${params.stagename}/${params.stepname}`,
+      method: "get",
+    });
+  }
 
 // 获取workflow下的package 信息====Deployment/Artifact
 export function apiGetPackagesList(params: GetPackageParams) {
