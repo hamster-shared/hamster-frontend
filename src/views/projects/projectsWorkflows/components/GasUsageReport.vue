@@ -169,8 +169,8 @@ const getImageUrl = (iconName: string) => {
   color: #151210;
   font-weight: bold;
 }
-:deep(.dark-css .ant-table-tbody), 
- :deep(.dark-css .ant-table-tbody > tr.ant-table-placeholder:hover > td) {
+:deep(.dark-css .ant-table-tbody),
+:deep(.dark-css .ant-table-tbody > tr.ant-table-placeholder:hover > td) {
   background-color: #000000;
   color: #FFFFFF;
 }

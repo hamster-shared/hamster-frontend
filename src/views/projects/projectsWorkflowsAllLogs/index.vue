@@ -23,4 +23,8 @@ onMounted(() => {
   getDetailLogs()
 })
 </script>
-<style lang='less' scoped></style>
+<style lang='less' scoped>
+// .detailLogs {
+//   min-height: 100vh;
+// }
+</style>
