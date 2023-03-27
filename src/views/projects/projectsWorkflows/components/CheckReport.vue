@@ -116,7 +116,7 @@ const SolhintColumns = [
   {
     title: 'note',
     dataIndex: 'note',
-    align: "center",
+    align: "left",
     key: 'note',
   },
   {
