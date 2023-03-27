@@ -134,7 +134,6 @@ const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const router = useRouter();
 const { t } = useI18n()
-
 const frameType = ref(1);
 const argsMap = new Map();
 const deployTxHash = ref('');
@@ -145,7 +144,6 @@ const queryParams = reactive({
   version: router.currentRoute.value.params?.version,
   contract: router.currentRoute.value.params?.contract,
 })
-
 const loading = ref(false);
 const visible = ref(false);
 const margumentVisible = ref(false);
@@ -180,13 +178,10 @@ const formState = reactive({
   chain: undefined,
   network: undefined,
 });
-
 const starknetVisible = ref(false);
 const hasDeclareHash = ref(false);
 const hasDeployHash = ref(false);
-
 const starkWareData = reactive({});
-
 const connectWallet = async () => {
   const windowStarknet = await connect({
     include: ["argentX"],
@@ -194,7 +189,6 @@ const connectWallet = async () => {
   await windowStarknet?.enable({ starknetVersion: "v4" })
   return windowStarknet
 }
-
 const deployContract = async (item: any) => {
   loading.value = true;
   try {
@@ -205,7 +199,6 @@ const deployContract = async (item: any) => {
       constructorCalldata: []
     })
     setProjectsContractDeploy('', response.contract_address[0], item.id)
-
     const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
     deployAddress.setDeployAddress(starkWareData)
     localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
@@ -220,14 +213,11 @@ const deployContract = async (item: any) => {
     console.log('err:', err)
   }
 };
-
-
 // 查询版本号
 const getVersion = async () => {
   const { data } = await apiGetProjectsVersions({ id: queryParams.id });
   Object.assign(versionData, data)
 };
-
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version:queryParams.version });
   data.map((item: any) => {
@@ -245,8 +235,6 @@ const getProjectsContract = async () => {
   })
   Object.assign(projectsContractData, data)
 }
-
-
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contractId: number) => {
   loading.value = true
@@ -270,12 +258,10 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
     loading.value = false;
   }
 }
-
 const cancelStarkNetModal = () => {
   starknetVisible.value = false;
   hasDeclareHash.value = false;
 }
-
 const switchToChain = async (chainId: string) => {
   loading.value = true;
   window.ethereum && window.ethereum.request({
@@ -290,13 +276,12 @@ const switchToChain = async (chainId: string) => {
       message.info('Please add the network first');
       addToChain(chainId)
     } else {
-      message.error('faild')
+      message.error('faild');
+      loading.value = false;
     }
   })
 }
-
 const addToChain = (chainId: string) => {
-
   window.ethereum && window.ethereum.request({
     method: "wallet_addEthereumChain",
     params: [
@@ -315,7 +300,7 @@ const addToChain = (chainId: string) => {
     message.info('successfully added')
     // console.log(res)
   }).catch((err: any) => {
-    console.log(err.code, 'code')
+    // console.log(err.code, 'code')
     if (err.code === 4001) {
       message.info('Cancel adding a network')
     } else {
@@ -328,7 +313,6 @@ const addToChain = (chainId: string) => {
     message.success('faild')
   })
 }
-
 const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
   const network: any = networkData.value.find(item => { return item.id === formState.network })
   const queryJson = {
@@ -448,7 +432,6 @@ const deployClick = async () => {
         } else {
           setContractFactory(nameData)
         }
-
       } catch (errorInfo) {
         // 表单校验
         console.log('Failed:', errorInfo);
@@ -456,8 +439,6 @@ const deployClick = async () => {
     }
   }
 }
-
-
 const setContractFactory = async (nameData: any) => {
   let promise: any = [];
   nameData.map((item: number) => {
@@ -473,7 +454,6 @@ const setContractFactory = async (nameData: any) => {
   })
   result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : loading.value = false
 }
-
 const setAbiInfo = (selectItem: any) => {
   console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
@@ -484,7 +464,6 @@ const setAbiInfo = (selectItem: any) => {
     selectItem.hasModalFormData = true;
   }
 }
-
 const getModalData = async () => {
   try {
     const modalValues = await modalFormRef?.value.validateFields();
@@ -498,8 +477,6 @@ const getModalData = async () => {
     console.info(err)
   }
 };
-
-
 const selectAargumentName = (val: any, index: number) => {
   selectedIndex.value = index;
   selectId.value = val.id;
@@ -518,22 +495,20 @@ const selectAargumentName = (val: any, index: number) => {
     }
   })
 }
-
 const cancelModal = (val: boolean) => {
   visible.value = val
 }
-
 const changeNetwork = (val: any) => {
   const data = networkData.value.find((item: any) => { return item.id === val });
   chainName.value = data.networkName;
   rpcUrl.value = data.url;
   currencySymbol.value = currencySymbol;
 };
-
 const changeChain = (val: string) => {
   formState.network = undefined;
   if (val === 'Ethereum') {
     // ETH
+    networkData.value = [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }]
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
     networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
@@ -541,12 +516,10 @@ const changeChain = (val: string) => {
     // 货币符号  BNB
     networkData.value = [{ name: 'Mainnet', id: '38', url: 'https://bsc.nodereal.io/', networkName: 'Mainnet' }, { name: 'Testnet', id: '61', url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	', networkName: 'Testnet' }]
 }
-
 const changeVersion = (val: string) => {
   queryParams.version = val
   getProjectsContract()
 }
-
 const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryParams.id);
@@ -572,17 +545,14 @@ const getProjectsDetail = async () => {
       default: break;
     }
   } catch (err: any) {
-
   }
 }
-
 onMounted(async () => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   await getProjectsDetail();
   await getProjectsContract()
 })
-
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
