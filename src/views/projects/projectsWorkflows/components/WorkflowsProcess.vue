@@ -72,24 +72,24 @@ import { apiGetDetailStageLogs, apiGetDetailStepLogs } from "@/apis/workFlows";
 import { WorkflowStatusEnum, WorkflowStagSvgEnum, WorkflowStepSvgEnum } from "@/enums/statusEnum";
 BScroll.use(Scrollbar);
 
-interface Process {
-  name: string,
-  status: number,
-  duration: string,
-  startTime: string,
-}
-
-interface ProcessData extends Process {
-  stage: {
-    steps: Process[],
+const props = defineProps({
+  workflowsId: String,
+  workflowDetailId: String,
+  processData: {
+    type: Array,
+    default: () => {
+      return []
+    }
   },
-}
+});
 
-const props = defineProps<{
-  workflowsId: string,
-  workflowDetailId: string,
-  processData: ProcessData[]
-}>()
+const enum StatusEnum {
+  "nonExecution",
+  "running",
+  "failed",
+  "success",
+  "stop",
+}
 
 
 const queryParams = reactive({
@@ -107,12 +107,12 @@ const stagesData = reactive({
 const stagesTimer = ref();
 const wrapper = ref();
 const processModalRef = ref();
-const bscroll = ref();
+let bscroll = reactive({});
 
 const { processData, workflowsId, workflowDetailId } = toRefs(props);
 Object.assign(queryParams, { workflowsId: workflowsId, workflowDetailId: workflowDetailId });
 
-// console.log(processData, 'processData')
+
 const checkProcess = (item: any, e: Event) => {
   if (item.status === 0 || item.status === 99) {
     e.stopPropagation();
@@ -128,7 +128,7 @@ const checkProcess = (item: any, e: Event) => {
 const getStageLogsData = async (val: any, start = 0) => {
   queryParams.start = start;
   const { data } = await apiGetDetailStageLogs(queryParams);
-
+  
   let t = data?.content?.split("\r");
   if (data.content) {
     t.forEach((item: any) => {
@@ -189,7 +189,7 @@ watch(
   () => props.processData,
   (oldV, newV) => {
     nextTick(() => {
-      bscroll.value && bscroll.value.refresh();
+      bscroll && bscroll.refresh();
     })
   }, { deep: true, immediate: true }
 );
@@ -203,7 +203,7 @@ onUnmounted(() => {
 })
 
 const initScroll = () => {
-  bscroll.value = new BScroll(wrapper.value, {
+  bscroll = new BScroll(wrapper.value, {
     startX: 0,
     scrollX: true,
     scrollY: false,
@@ -223,18 +223,6 @@ const checkAllLogs = () => {
 </script>
 <style lang='less' scoped>
 @backGroundCOlor: #1D1C1A;
-
-html[data-theme='dark'] {
-  .item-stage {
-    &::before {
-      border-color: #434343;
-    }
-
-    &::after {
-      border-color: #434343;
-    }
-  }
-}
 
 .process {
   width: 100%;

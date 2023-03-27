@@ -19,19 +19,22 @@
 
 
       <div>
-        <label class="cursor-pointer group text-center w-[100px] action-button-item"
-          v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
+        <label class="cursor-pointer group text-center w-[100px]" v-for="(item, index) in actionButtonList"
+          @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" />
           </label>
-          <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
+          <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'">
             <svg-icon name="check" size="14" />
           </label>
-          <label v-else class="action-icon">
-            <svg-icon :name="item.url" size="14" />
+          <label v-else>
+            <img :src="getActionImageUrl(item.url[0])" class="h-[16px] cursor-default dark:hidden group-hover:hidden" />
+            <img :src="getActionImageUrl(item.url[1])"
+              class="h-[16px] hidden dark:inline-block dark:group-hover:hidden" />
+            <img :src="getActionImageUrl(item.url[2])" class="h-[16px] hidden group-hover:inline-block" />
           </label>
           <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer align-middle"
-            :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
+            :class="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check' ? 'disabledCheckCss' : ''">
             {{ item.name }}
           </label>
         </label>
@@ -66,7 +69,7 @@
           </div>
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
-            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
+            :class="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
             Check Now</div>
@@ -93,7 +96,7 @@
 
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
-            @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType,viewInfo.deployType)" v-if="viewInfo.recentBuild.status === 0">Build Now
+            @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType,viewInfo.type)" v-if="viewInfo.recentBuild.status === 0">Build Now
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
@@ -159,18 +162,16 @@
   </CustomMsg>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
-  <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
+import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
-import AptosBuildParams from './AptosBuildParams.vue'
 import { useThemeStore } from "@/stores/useTheme";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
@@ -187,19 +188,17 @@ const props = defineProps<{
 }>()
 
 const actionButtonList = ref([
-  { name: 'Check', url: 'check' },
-  { name: 'Build', url: 'build' },
-  { name: 'Deploy', url: 'deploy' },
-  { name: 'Ops', url: 'ops' }]);
+  { name: 'Check', url: ['check', 'check-b', 'check-color'] },
+  { name: 'Build', url: ['build', 'build-b', 'build-color'] },
+  { name: 'Deploy', url: ['deploy', 'deploy-b', 'deploy-color'] },
+  { name: 'Ops', url: ['ops', 'ops-b', 'ops-color'] }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 const showViewInfoRepositoryUrl = computed(() => {
   return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
 })
-console.log(111111,viewInfo.value)
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
-const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -209,8 +208,6 @@ const msgParam = ref({
   workflowDetailId: viewInfo?.value.recentDeploy.id,
   projectType: projectType?.value
 });
-
-const deployType = ref()
 
 const starknetVisible = ref(false);
 const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
@@ -225,13 +222,12 @@ const goDetail = (id: string, type: string) => {
 }
 
 const projectsAction = (val: any, type: string, e: Event) => {
-  console.log('val3243424',val)
   switch (type) {
     case 'Check':
       projectsCheck(val.id, val.recentCheck.status, e);
       break;
     case 'Build':
-      projectsBuild(val.id, val.recentBuild, val.frameType,val.depolyType);
+      projectsBuild(val.id, val.recentBuild, val.frameType,val.type);
       break;
     case 'Deploy':
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
@@ -244,7 +240,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
 }
 
 const projectsCheck = async (id: string, status: Number, e: Event) => {
-  if (props.projectType === '1' && props.viewInfo.frameType === 4) {
+  if (props.projectType === '1' && (props.viewInfo.frameType === 4 || props.viewInfo.frameType === 2)) {
     e.stopPropagation()
   } else {
     disabled.value = false;
@@ -291,17 +287,17 @@ const buildStatusAction = async (id: string, buildData: any) => {
 }
 
 const aptosBuildParams = ref([])
-const projectsBuild = async (id: string, buildData: any, frameType: string,deployType?:any) => {
-  console.log('projectsBuild:::', id, buildData, frameType, projectType.value)
+const projectsBuild = async (id: string, buildData: any, frameType: string,type:any) => {
+  console.log('projectsBuild:::', id, buildData, frameType)
   const res = await apiCheckSetAptosBuildParams(id)
   const needsParams = res.data.needsParams
   try {
-    if (frameType == '2' && deployType==1 && needsParams) {
+    if (frameType == '2' && type == 1 && needsParams) {
       aptosBuildVisible.value = true
       const { data } = await apiGetAptosBuildParams(id)
       console.log('apiGetAptosBuildParams:::', data)
       aptosBuildParams.value = data
-    }else if (frameType == '2' && deployType==1 && !needsParams){
+    }else if (frameType == '2' && type == 1 && !needsParams){
       if (buildData.status == 1){
         message.info("Executing Now，please wait a moment.");
       } else {
@@ -483,7 +479,7 @@ const setMsgShow = () => {
 
 }
 
-const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
+const goFrontEndDetail = (id: string, recentDeploy: Object) => {
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
   } else {
@@ -562,15 +558,5 @@ html[data-theme='light'] {
   .disabledCheckCss:hover {
     color: #151210;
   }
-}
-
-.action-button-item:hover {
-  .action-icon {
-    .svg-icon {
-      color: #E2B578;
-    }
-  }
-
-
 }
 </style>
