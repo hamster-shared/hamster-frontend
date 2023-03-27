@@ -80,7 +80,7 @@ nextTick(()=>{
   if(frameType?.value && frameType?.value==2){
     Object.assign(sendAbis, data.exposed_functions)
     Object.assign(callAbis, data.structs)
-    console.log('sendAbis',sendAbis,callAbis)
+    console.log('sendAbis,callAbis',sendAbis,callAbis)
     aptosName.value = data.name
     aptosAddress.value = data.address
     commonFirst()
@@ -107,7 +107,7 @@ const commonFirst = ()=>{
         return item != "&signer"
       }).map((enmu:any,index:number)=>{
         return {
-          name:`params${index+1}`,
+          name:`param${index+1}`,
           internalType:enmu
         }
       })
@@ -138,14 +138,25 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
   checkValue.value = name
   // 如果是aptos需要单独处理
   if(frameType?.value ===2){
-    inputs.value = val.params.filter((item:any)=>{
-      return item != "&signer"
-    }).map((enmu:any,index:number)=>{
-      return {
-        name:`params${index+1}`,
-        internalType:enmu
-      }
-    })
+    if(val?.abilities){
+      // aptos call
+      inputs.value = val.fields.map((item:any)=>{
+        return {
+          name:item.name,
+          internalType:item.type
+        }
+      })
+    }else{
+      // aptos send
+      inputs.value = val.params.filter((item:any)=>{
+        return item != "&signer"
+      }).map((enmu:any,index:number)=>{
+        return {
+          name:`param${index+1}`,
+          internalType:enmu
+        }
+      })
+    }
   }else{
     inputs.value = val.inputs
   }
