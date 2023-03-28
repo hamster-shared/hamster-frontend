@@ -124,18 +124,13 @@ const router = createRouter({
       ]
     },
     {
-      path: "/node-service",
-      redirect: "/node-service/RPCs",
+      path: "/dashboard",
+      redirect: "/chainlink/dashboard",
       children: [
         {
-          path: "/node-service/RPCs",
-          name: "RPCs",
-          component:() => import('@/views/nodeService/rpcs/index.vue'),
-        },
-        {
-          path: "/node-service/Apps",
-          name: "AppsIndex",
-          component: () => import('@/views/nodeService/apps/index.vue'),
+          path: "/chainlink/dashboard",
+          name: "Dashboard",
+          component:() => import('@/views/chainLink/dashboard/index.vue'),
         }
       ],
     },

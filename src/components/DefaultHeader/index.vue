@@ -10,24 +10,26 @@
         class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
       <a-dropdown>
         <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer" @click.stop>
-          NodeService 
+          MiddleWare 
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
           <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
         </div>
         <template #overlay>
           <a-menu>
-            <a-menu-item @click="goRPCs">
-              <img src="@/assets/icons/RPCs.svg" class="h-[24px]" />
-                RPCs
+            <a-menu-item @click="goDashboard">
+              <!-- <img src="@/assets/icons/RPCs.svg" class="h-[24px]" /> -->
+                Dashboard
             </a-menu-item>
-            <a-menu-item @click="goApps">
-              <img src="@/assets/icons/Apps.svg" class="h-[24px]" />
-                Apps
+            <a-menu-item @click="goMiwaspace">
+              <!-- <img src="@/assets/icons/Apps.svg" class="h-[24px]" /> -->
+                Miwaspace
             </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
+      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Doc</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -137,7 +139,7 @@ const goPrjects = () => {
   isProject.value = true;
 }
 
-const goApps = () => {
+const goMiwaspace = () => {
   const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
   // 如果 local storage 里没有保存的钱包，直接返回
   if (connectedWallets == null || connectedWallets === '[]') {
@@ -148,8 +150,8 @@ const goApps = () => {
     isProject.value = false;
   }
 }
-const goRPCs = () => {
-  router.push("/node-service/RPCs");
+const goDashboard = () => {
+  router.push("/chainlink/dashboard");
 
   isProject.value = false;
 }
