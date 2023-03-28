@@ -160,13 +160,13 @@ const pagination = reactive({
     pagination.current = current;
     pagination.pageSize = pagesize;
     // getApps();
-    getProjectsWorkflows();
+    getProjectsWorkflows()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     pagination.current = current;
     // getApps();
-    getProjectsWorkflows();
+    getProjectsWorkflows()
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });

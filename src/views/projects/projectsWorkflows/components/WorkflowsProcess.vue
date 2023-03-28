@@ -93,6 +93,7 @@ const props = defineProps<{
   processData: ProcessData[]
 }>()
 
+
 const queryParams = reactive({
   id: '',
   stagename: '',
@@ -119,7 +120,7 @@ const checkProcess = (item: any, e: Event) => {
     e.stopPropagation();
   } else {
     stagesData.title = item.name;
-    stagesData.content = []
+    stagesData.content = [];
     queryParams.stagename = item.name;
     processModalRef.value.showVisible();
     getStageLogsData(item);
@@ -148,7 +149,6 @@ const getStageLogsData = async (val: any, start = 0) => {
 
 
 const checkProcessStep = async (stagename: string, val: any, e: Event) => {
-  console.log(val)
   if (val.status === 0) {
     e.stopPropagation();
   } else {
