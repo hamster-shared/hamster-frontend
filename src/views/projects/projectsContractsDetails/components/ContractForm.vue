@@ -41,8 +41,8 @@ import { message } from 'ant-design-vue';
 import { connect, getStarknet } from "@argent/get-starknet";
 import { stark, number } from "starknet";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
-import {WalletCore} from '@aptos-labs/wallet-adapter-core';
-import {AptosClient} from 'aptos'
+import { WalletCore } from '@aptos-labs/wallet-adapter-core';
+import { AptosClient } from 'aptos'
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const props = defineProps({
@@ -51,12 +51,12 @@ const props = defineProps({
   abiInfo: String,
   buttonInfo: String,
   frameType: {
-    type:Number,
-    required:true
+    type: Number,
+    required: true
   },
   inputs: { type: Array as any, default: () => { return [] } },
-  aptosName :String,
-  aptosAddress:String
+  aptosName: String,
+  aptosAddress: String
 })
 const isSend = ref(false);
 const hashValue = ref('')
@@ -70,14 +70,14 @@ const formState = reactive({
 });
 
 // aptos
-const arr = [ new PetraWallet()]
-const aptosWallet:any = new WalletCore(arr)
+const arr = [new PetraWallet()]
+const aptosWallet: any = new WalletCore(arr)
 const aptosNetwork = ref('')
 
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs, frameType,aptosName,aptosAddress } = toRefs(props)
+const { checkValue, contractAddress, abiInfo, inputs, frameType, aptosName, aptosAddress } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
@@ -157,7 +157,7 @@ const evmDeployFunction = () => {
   let provider = new ethers.providers.Web3Provider(ethereum);
   let abi = YAML.parse(formState.abiInfo);
   try {
-    if(frameType.value!=2){
+    if (frameType.value != 2) {
       let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
       if (props.buttonInfo === 'Transact') {
         // send 方法
@@ -184,32 +184,32 @@ const evmDeployFunction = () => {
           isSend.value = false;
         })
       }
-    }else if(frameType.value==2){
+    } else if (frameType.value == 2) {
       if (props.buttonInfo === 'Transact') {
         // aptos move send 回调
-        console.log('aptosWallet~~~11111',aptosWallet._connected)
-        if(aptosWallet._connected){
+        console.log('aptosWallet~~~11111', aptosWallet._connected)
+        if (aptosWallet._connected) {
           aptosSendAbiFn()
-        }else{
-          aptosWallet.connect("Petra").then(async() => {
+        } else {
+          aptosWallet.connect("Petra").then(async () => {
             aptosNetwork.value = aptosWallet.network.name;
             aptosSendAbiFn()
-          }).catch((err:any)=>{
+          }).catch((err: any) => {
             isSend.value = false;
-            console.log('err',err)
+            console.log('err', err)
           })
         }
-      }else{
+      } else {
         // aptos call abi
-        if(aptosWallet._connected){
+        if (aptosWallet._connected) {
           aptosCallAbiFn()
-        }else{
-          aptosWallet.connect("Petra").then(async() => {
+        } else {
+          aptosWallet.connect("Petra").then(async () => {
             aptosNetwork.value = aptosWallet.network.name;
             aptosCallAbiFn()
-          }).catch((err:any)=>{
+          }).catch((err: any) => {
             isSend.value = false;
-            console.log('err',err)
+            console.log('err', err)
           })
         }
       }
@@ -220,31 +220,31 @@ const evmDeployFunction = () => {
     message.error('调用失败')
   }
 }
-const aptosSendAbiFn = async()=>{
+const aptosSendAbiFn = async () => {
   try {
     const preload = {
       type: "entry_function_payload",
       function: `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`,
-      arguments:[...(Object.values(formData))],
+      arguments: [...(Object.values(formData))],
       type_arguments: []
     }
     console.log(preload, 'aptos move fn')
     const res = await aptosWallet.signAndSubmitTransaction(preload)
-    console.log('res~~~~~',res)
+    console.log('res~~~~~', res)
     hashValue.value = res.hash
     isSend.value = false;
   } catch (error) {
     isSend.value = false;
   }
-  
+
 }
-const aptosCallAbiFn = async()=>{
+const aptosCallAbiFn = async () => {
   try {
     // NODE_URL 应该根据网络动态切换
     const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
     const petraClient = new AptosClient(NODE_URL);
-    const res:any = await petraClient.getAccountResource(aptosWallet?._account?.address, `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`);
-    console.log('res~~~~~',res)
+    const res: any = await petraClient.getAccountResource(aptosWallet?._account?.address, `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`);
+    console.log('res~~~~~', res)
     hashValue.value = res.type
     isSend.value = false;
   } catch (error) {
@@ -258,7 +258,7 @@ const copy = () => {
   inp.select();
   document.execCommand("copy", false);
   inp.remove();
-  message.success('复制成功')
+  message.success('copy success')
 }
 watch(
   () => props,

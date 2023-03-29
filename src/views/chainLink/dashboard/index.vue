@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
     <div class="font-bold text-[24px] mb-[24px]">My Middleware</div>
     <div class="grid grid-cols-3 gap-4 ">
       <div v-for="item in dashboardList" :key="item"

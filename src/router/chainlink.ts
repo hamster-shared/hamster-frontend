@@ -29,6 +29,23 @@ const chainlinkRoute = [
                     component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
                 },
             ]
+          },
+          {
+            path: "/chainlink/RPC",
+            name: "RPC",
+            redirect: "/chainlink/RPC",
+            children: [
+              {
+                path: "/chainlink/RPC",
+                name: "RPC",
+                component:() => import('@/views/chainLink/rpc/index.vue'),
+              },
+              {
+                path: "/chainlink/RPC/rpcDetail",
+                name: "rpcDetail",
+                component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
+              }
+            ]
           }
         ],
     },

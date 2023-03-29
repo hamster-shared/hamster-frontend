@@ -45,6 +45,7 @@
           <img src="@/assets/icons/white.svg" class="h-[20px] dark:hidden" />
         </div>
       </div>
+      <selectNetwork></selectNetwork>
       <div>
         <a-button v-if="!isConnectedWallet" @click="showWallet" class="!p-0 ml-8" type="primary">Connect Wallet</a-button>
         <a-dropdown v-if="isConnectedWallet">
@@ -112,6 +113,7 @@ import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
+import selectNetwork from "./components/selectNetwork.vue";
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
