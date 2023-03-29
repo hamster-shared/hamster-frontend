@@ -47,6 +47,15 @@
   </div>
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
+  <a-modal v-model:visible="aptosAbiShow" title="Operation Warning" :footer="null">
+    <template #closeIcon>
+      <img class="" src="@/assets/icons/closeIcon.svg" />
+    </template>
+    <p>Please deploy contract before downloading.</p>
+    <div class="text-center">
+      <a-button class="done-btn" @click="aptosAbiShow=false">Done</a-button>
+    </div>
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -105,6 +114,8 @@ const state = reactive({
   version: router.currentRoute.value.params?.version,
 })
 
+const aptosAbiShow = ref(false)
+
 const starknetVisible = ref(false);
 const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
 // console.log(starknetHashData, 'starknetHashData')
@@ -112,9 +123,10 @@ const deployTxHash = starknetHashData[state.id]?.deployTxHash || '';
 
 const props = defineProps({
   contractListData: Array,
+  frameType:Number
 })
 
-const { contractListData } = toRefs(props)
+const { contractListData,frameType } = toRefs(props)
 
 const toDeployUrl = (val: any) => {
   const contract = val.id || '00';
@@ -126,13 +138,18 @@ const toDetailUrl = (val: any) => {
 }
 
 const downloadAbi = (val: any) => {
-  const str = val.abiInfo;
-  const url = `data:,${str}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${val.name}.json`;
-  a.click();
-  a.remove();
+  // aptos 这一步没有abi信息
+  if(frameType?.value==2){
+    aptosAbiShow.value = true
+  }else{
+    const str = val.abiInfo;
+    const url = `data:,${str}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${val.name}.json`;
+    a.click();
+    a.remove();
+  }
 };
 
 </script>

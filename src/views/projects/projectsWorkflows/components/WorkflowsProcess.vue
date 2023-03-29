@@ -13,14 +13,17 @@
             <div class="inline-block">
               <div class="">
                 <div
-                  class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] flex"
+                  class="inline-block border border-solid border-[#EFEFEF] dark:border-[#434343] p-[11px] rounded-[5px] flex justify-between"
                   :class="(item.status === 0 || item.status === 99) ? '' : 'cursorP'" @click="checkProcess(item, $event)">
-                  <img src="@/assets/icons/start.svg" class="mr-[24px] h-[24px]" v-if="item.status === 99" />
-                  <img :src="getImageUrl(item.status, 'stage')" class="w-[24px] h-[24px] mr-[24px] align-middle"
-                    v-else-if="item.status !== 1" />
-                  <img src="@/assets/images/run.gif" class="w-[24px]  h-[24px] mr-[24px] align-middle" v-else />
+                  <div>
+                    <img src="@/assets/icons/start.svg" class="mr-[24px] h-[24px]" v-if="item.status === 99" />
+                    <img :src="getImageUrl(item.status, 'stage')" class="w-[24px] h-[24px] mr-[24px] align-middle"
+                      v-else-if="item.status !== 1" />
+                    <img src="@/assets/images/run.gif" class="w-[24px]  h-[24px] mr-[24px] align-middle" v-else />
+                    <div class="text-[16px] font-semibold mr-[24px] inline-block">{{ item.name }}</div>
+                  </div>
+
                   <div class="flex align-middle">
-                    <div class="text-[16px] font-semibold mr-[24px]">{{ item.name }}</div>
                     <div class="text-[16px] text-[#7B7D7B]" v-if="item.status !== 0">
                       {{ formatDurationTime(item.duration, "noThing") }}
                     </div>
@@ -55,7 +58,6 @@
             <img src="@/assets/icons/arrow-block.svg"
               class="w-[28px] space-mark ml-[20px] mt-[10px] align-top mr-[20px] dark:hidden" />
           </div>
-
         </div>
       </div>
     </div>
@@ -91,6 +93,7 @@ const props = defineProps<{
   processData: ProcessData[]
 }>()
 
+
 const queryParams = reactive({
   id: '',
   stagename: '',
@@ -117,7 +120,7 @@ const checkProcess = (item: any, e: Event) => {
     e.stopPropagation();
   } else {
     stagesData.title = item.name;
-    stagesData.content = []
+    stagesData.content = [];
     queryParams.stagename = item.name;
     processModalRef.value.showVisible();
     getStageLogsData(item);
@@ -146,7 +149,6 @@ const getStageLogsData = async (val: any, start = 0) => {
 
 
 const checkProcessStep = async (stagename: string, val: any, e: Event) => {
-  console.log(val)
   if (val.status === 0) {
     e.stopPropagation();
   } else {

@@ -41,7 +41,8 @@ import { message } from 'ant-design-vue';
 import { connect, getStarknet } from "@argent/get-starknet";
 import { stark, number } from "starknet";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
-import {WalletCore} from '@aptos-labs/wallet-adapter-core'
+import {WalletCore} from '@aptos-labs/wallet-adapter-core';
+import {AptosClient} from 'aptos'
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const props = defineProps({
@@ -71,6 +72,7 @@ const formState = reactive({
 // aptos
 const arr = [ new PetraWallet()]
 const aptosWallet:any = new WalletCore(arr)
+const aptosNetwork = ref('')
 
 const testData = reactive({});
 
@@ -145,65 +147,6 @@ const submit = async () => {
     }
   } else {
     evmDeployFunction();
-    // isSend.value = true
-    // const { ethereum } = window;
-    // let provider = new ethers.providers.Web3Provider(ethereum);
-    // let abi = YAML.parse(formState.abiInfo);
-    // // const contractAddress = '0x0501Fcb528D4fDe11f6ab5D1a5bd7323d32CC71d';
-    // // console.log(formData, ...(Object.values(formData)), formState.checkValue, 'formData')
-    // try {
-    //   let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
-    //   if (JSON.stringify(formData) == "{}") {
-    //     contract[formState.checkValue]().then((tx: any) => {
-    //       if (tx.hash) {
-    //         hashValue.value = tx.hash;
-    //       } else {
-    //         hashValue.value = tx;
-    //       }
-    //       console.log(tx, 'tx')
-    //       isSend.value = false;
-    //     }).catch((err: any) => {
-    //       message.error('调用失败')
-    //       hashValue.value = 'No Data';
-    //       isSend.value = false;
-    //     })
-    //   } else {
-    //     console.log(...(Object.values(formData)), 'data')
-    //     // let data = ethers.utils.parseEther('1.0')
-    //     // console.log(data, ethers.utils.formatEther(data._hex), 'j')
-    //     // let data = ethers.utils.parseEther('0xe6e2FC7813137332943213cA1EFFd24fEd158cf7')
-    //     contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
-    //       // contract[formState.checkValue](data._hex).then((tx: any) => {
-    //       console.log(tx, ethers.utils.formatEther(tx._hex), 'tx')
-    //       // hashValue.value = ethers.utils.parseEther(tx);
-    //       if (tx._isBigNumber) {
-    //         isSend.value = false;
-    //         hashValue.value = ethers.utils.formatEther(tx._hex);
-    //       } else {
-    //         tx.wait().then((result: any) => {
-    //           isSend.value = false;
-    //           hashValue.value = tx.hash;
-    //           // console.log(result, 'tx send success!')
-    //         }).catch((err: any) => {
-    //           console.log(err, 'err')
-    //           message.error('调用失败')
-    //           hashValue.value = 'No Data';
-    //         })
-    //       }
-    //       console.log(tx, '9090')
-    //     }).catch((err: any) => {
-    //       console.log(err, 'err')
-    //       message.error('调用失败')
-    //       hashValue.value = 'No Data';
-    //       isSend.value = false;
-    //     })
-    //   }
-    // } catch (errorInfo) {
-    //   console.log('errorInfo:' + errorInfo)
-    //   isSend.value = false;
-    //   message.error('调用失败')
-    //   // console.log(errorInfo, 'errorInfo')
-    // }
   }
 }
 // evm合约方法调用
@@ -242,18 +185,33 @@ const evmDeployFunction = () => {
         })
       }
     }else if(frameType.value==2){
-      // debugger
-      // aptos move 回调
-      console.log('aptosWallet~~~11111',aptosWallet._connected)
-      if(aptosWallet._connected){
-        aptosAbiFn()
+      if (props.buttonInfo === 'Transact') {
+        // aptos move send 回调
+        console.log('aptosWallet~~~11111',aptosWallet._connected)
+        if(aptosWallet._connected){
+          aptosSendAbiFn()
+        }else{
+          aptosWallet.connect("Petra").then(async() => {
+            aptosNetwork.value = aptosWallet.network.name;
+            aptosSendAbiFn()
+          }).catch((err:any)=>{
+            isSend.value = false;
+            console.log('err',err)
+          })
+        }
       }else{
-        aptosWallet.connect("Petra").then(async() => {
-          aptosAbiFn()
-        }).catch((err:any)=>{
-          isSend.value = false;
-          console.log('err',err)
-        })
+        // aptos call abi
+        if(aptosWallet._connected){
+          aptosCallAbiFn()
+        }else{
+          aptosWallet.connect("Petra").then(async() => {
+            aptosNetwork.value = aptosWallet.network.name;
+            aptosCallAbiFn()
+          }).catch((err:any)=>{
+            isSend.value = false;
+            console.log('err',err)
+          })
+        }
       }
     }
   } catch (errorInfo: any) {
@@ -262,7 +220,7 @@ const evmDeployFunction = () => {
     message.error('调用失败')
   }
 }
-const aptosAbiFn = async()=>{
+const aptosSendAbiFn = async()=>{
   try {
     const preload = {
       type: "entry_function_payload",
@@ -279,6 +237,24 @@ const aptosAbiFn = async()=>{
     isSend.value = false;
   }
   
+}
+const aptosCallAbiFn = async()=>{
+  try {
+    // NODE_URL 应该根据网络动态切换
+    const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
+    const petraClient = new AptosClient(NODE_URL);
+    try{
+      const res:any = await petraClient.getAccountResource(aptosWallet?._account?.address, `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`);
+      console.log('res~~~~~',res)
+      hashValue.value = JSON.stringify(res.data)
+    }catch(err){
+      isSend.value = false;
+      console.log(err)
+    }
+  } catch (error) {
+    console.log('aptos call error',error)
+    isSend.value = false;
+  }
 }
 const copy = () => {
   let inp = document.createElement("input");

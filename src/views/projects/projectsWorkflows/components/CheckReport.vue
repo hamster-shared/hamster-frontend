@@ -11,13 +11,21 @@
     </div>
     <div v-for="item in checkReportData" :key="item.id"
       class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
-      <img class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
+      <img v-if="frameType!=2" class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
       <a-collapse v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.name">
         <a-collapse-panel v-if="val.issue > 0" :key="val.name + item.id" :header="val.name" :showArrow="false">
-
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
+            v-if="(projectType === '2' || projectType==='1') && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
+            :columns="ESLintColumns" :pagination="false" :showHeader="false">
+            <template #bodyCell="{ column, record, index }">
+              <template v-if="column.dataIndex === 'columnLine'">
+                line {{ record.line }},col {{ record.column }},
+              </template>
+            </template>
+          </a-table>
+          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
+            v-if="projectType==='1' &&  val.message" :dataSource="val.message"
             :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
@@ -76,6 +84,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 import { toRefs } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
+const frameType:any = localStorage.getItem('frameType') || undefined
 
 const activeKey = ref(['1']);
 interface ReportFileData {
@@ -135,7 +144,7 @@ const SolhintColumns = [
   {
     title: 'note',
     dataIndex: 'note',
-    align: "center",
+    align: "left",
     key: 'note',
   },
   {

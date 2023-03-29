@@ -24,7 +24,7 @@
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" />
           </label>
-          <label v-if="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check'">
+          <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'">
             <svg-icon name="check" size="14" />
           </label>
           <label v-else class="action-icon">
