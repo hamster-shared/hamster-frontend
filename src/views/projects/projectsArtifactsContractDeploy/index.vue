@@ -154,7 +154,7 @@ const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
 const chainData = reactive<any>([]);
-const networkData = ref<any>([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }])
+const networkData = ref<any>([{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }])
 const projectsContractData = reactive<any>([]);
 const projectName = ref('');
 const abiInputData = ref([]);
@@ -534,7 +534,7 @@ const changeChain = (val: string) => {
   formState.network = undefined;
   if (val === 'Ethereum') {
     // ETH
-    networkData.value = [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }]
+    networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }]
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
     networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
@@ -556,7 +556,7 @@ const getProjectsDetail = async () => {
       case 1:
         Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain'])
         // { name: 'Hamster Dev', id: '501' }
-        networkData.value = [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }]
+        networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }]
         break;
       case 2:
         // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系
