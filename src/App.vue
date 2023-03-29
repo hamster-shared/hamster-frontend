@@ -34,7 +34,7 @@ init({
       id: '0x501',
       token: 'M',
       label: 'Hamster-Moonbean',
-      rpcUrl: `https://rpc.moonbeam.hamster-test.newtouch.com`,
+      rpcUrl: `https://rpc-moonbeam.hamster.newtouch.com`,
     },
   ]
 })
