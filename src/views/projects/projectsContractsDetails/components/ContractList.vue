@@ -119,7 +119,7 @@ const commonFirst = ()=>{
     checkValue.value = callAbis[0]?.name;
     // aptos call abi
     if(frameType?.value==2){
-      inputs.value = callAbis[0]?.fields;
+      // inputs.value = callAbis[0]?.fields;
     }else{
       inputs.value = callAbis[0]?.inputs;
     }
@@ -132,6 +132,7 @@ const commonFirst = ()=>{
 const emit = defineEmits(["checkContract"])
 
 const checkContract = (name: string, val: any, text: string, index: number) => {
+  inputs.value = []
   console.log('checkContract',val)
   checkValueIndex.value = index;
   // console.log(buttonInfo, 'buttonInfo')
@@ -140,12 +141,12 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
   if(frameType?.value ===2){
     if(val?.abilities){
       // aptos call
-      inputs.value = val.fields.map((item:any)=>{
-        return {
-          name:item.name,
-          internalType:item.type
-        }
-      })
+      // inputs.value = val.fields.map((item:any)=>{
+      //   return {
+      //     name:item.name,
+      //     internalType:item.type
+      //   }
+      // })
     }else{
       // aptos send
       inputs.value = val.params.filter((item:any)=>{

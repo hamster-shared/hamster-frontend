@@ -243,11 +243,16 @@ const aptosCallAbiFn = async()=>{
     // NODE_URL 应该根据网络动态切换
     const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
     const petraClient = new AptosClient(NODE_URL);
-    const res:any = await petraClient.getAccountResource(aptosWallet?._account?.address, `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`);
-    console.log('res~~~~~',res)
-    hashValue.value = res.type
-    isSend.value = false;
+    try{
+      const res:any = await petraClient.getAccountResource(aptosWallet?._account?.address, `${aptosAddress?.value}::${aptosName?.value}::${formState.checkValue}`);
+      console.log('res~~~~~',res)
+      hashValue.value = JSON.stringify(res.data)
+    }catch(err){
+      isSend.value = false;
+      console.log(err)
+    }
   } catch (error) {
+    console.log('aptos call error',error)
     isSend.value = false;
   }
 }

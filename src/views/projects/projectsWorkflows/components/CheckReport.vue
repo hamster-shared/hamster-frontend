@@ -15,9 +15,17 @@
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
       <a-collapse v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.name">
         <a-collapse-panel v-if="val.issue > 0" :key="val.name + item.id" :header="val.name" :showArrow="false">
-
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '2' && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
+            v-if="(projectType === '2' || projectType==='1') && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
+            :columns="ESLintColumns" :pagination="false" :showHeader="false">
+            <template #bodyCell="{ column, record, index }">
+              <template v-if="column.dataIndex === 'columnLine'">
+                line {{ record.line }},col {{ record.column }},
+              </template>
+            </template>
+          </a-table>
+          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
+            v-if="projectType==='1' &&  val.message" :dataSource="val.message"
             :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
