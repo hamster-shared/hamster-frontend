@@ -88,11 +88,11 @@
     </div>
   </a-modal>
 
-  <a-modal v-model:visible="aptosNetworkVisible" title="Operation Warning" :footer="null" class="modalFormRef col-span-3 mb-[16px]"
-   autocomplete="off" noStyle>
+  <a-modal v-model:visible="aptosNetworkVisible" title="Operation Warning" :footer="null"
+    class="modalFormRef col-span-3 mb-[16px]" autocomplete="off" noStyle>
     <template #closeIcon>
-        <img class="" src="@/assets/icons/closeIcon.svg" />
-      </template>  
+      <img class="" src="@/assets/icons/closeIcon.svg" />
+    </template>
     <p style="margin-bottom: 0;">The selected network is inconsistent with the network selected in the wallet plugin. </p>
     <p>To complete the transaction deployment properly, please switch to the desired network in the wallet plugin.</p>
     <div class="text-center">
@@ -124,8 +124,8 @@ import { Provider, Account, Contract, ec } from "starknet";
 import { connect, getStarknet } from "@argent/get-starknet";
 import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
-import {WalletCore} from '@aptos-labs/wallet-adapter-core'
-import { BCS,TxnBuilderTypes,HexString,AptosClient} from 'aptos'
+import { WalletCore } from '@aptos-labs/wallet-adapter-core'
+import { BCS, TxnBuilderTypes, HexString, AptosClient } from 'aptos'
 import { nextTick } from "process";
 
 const formRef = ref<FormInstance>();
@@ -163,8 +163,8 @@ const rpcUrl = ref('');
 const currencySymbol = ref('');
 
 // aptos
-const arr = [ new PetraWallet()]
-const aptosWallet:any = new WalletCore(arr)
+const arr = [new PetraWallet()]
+const aptosWallet: any = new WalletCore(arr)
 const petraAddress = ref('')
 const petraMv = ref<any>([])
 const petraBsc = ref<any>([])
@@ -229,7 +229,7 @@ const getVersion = async () => {
 };
 
 const getProjectsContract = async () => {
-  const { data } = await apiGetProjectsContract({ id: queryParams.id, version:queryParams.version });
+  const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
     item.label = item.name;
     item.value = item.id;
@@ -239,7 +239,7 @@ const getProjectsContract = async () => {
     petraBsc.value.push(item.byteCode)
     aptosContractId.value.push(item.id)
     // aptos abi不走之前的那一套
-    if(frameType.value!==2){
+    if (frameType.value !== 2) {
       setAbiInfo(item);
     }
   })
@@ -344,24 +344,24 @@ const setProjectsContractDeploy = async (chinaId: string, address: string, contr
 }
 
 // aptos 的网络切换
-const handleAptosNetwork = ()=>{
+const handleAptosNetwork = () => {
   aptosNetworkVisible.value = false
 }
 
 // aptos petra 
 const deploy = () => {
-  console.log('bsc mv',petraBsc.value[0],petraMv.value[0])
-  aptosWallet.connect("Petra").then(async() => {
+  console.log('bsc mv', petraBsc.value[0], petraMv.value[0])
+  aptosWallet.connect("Petra").then(async () => {
     // debugger
     petraAddress.value = aptosWallet.account.address
-    console.log('petra connected',aptosWallet.network,formState.network)
+    console.log('petra connected', aptosWallet.network, formState.network)
     aptosNetwork.value = aptosWallet.network.name;
     // aptos 的network处理
-    if(aptosNetwork.value != formState.network){
+    if (aptosNetwork.value != formState.network) {
       aptosNetworkVisible.value = true
-    }else{
+    } else {
       const codeSerializer = new BCS.Serializer()
-      const modules =  [
+      const modules = [
         new TxnBuilderTypes.Module(
           new HexString(
             // eslint-disable-next-line max-len
@@ -370,24 +370,24 @@ const deploy = () => {
         ),
       ]
       BCS.serializeVector(modules, codeSerializer)
-      const payload:any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
-          TxnBuilderTypes.EntryFunction.natural(
-              "0x1::code",
-              "publish_package_txn",
-              [],
-              [BCS.bcsSerializeBytes(new HexString(petraBsc.value[0]).toUint8Array()), codeSerializer.getBytes()],
-          ),
+      const payload: any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
+        TxnBuilderTypes.EntryFunction.natural(
+          "0x1::code",
+          "publish_package_txn",
+          [],
+          [BCS.bcsSerializeBytes(new HexString(petraBsc.value[0]).toUint8Array()), codeSerializer.getBytes()],
+        ),
       );
-      await aptosWallet.signAndSubmitTransaction(payload).then(async(tx:any)=> {
-        console.log('send:',tx)
+      await aptosWallet.signAndSubmitTransaction(payload).then(async (tx: any) => {
+        console.log('send:', tx)
         // NODE_URL 应该根据网络动态切换
         const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
         const petraClient = new AptosClient(NODE_URL);
-        const getaAbiRes:any = await petraClient.getTransactionByHash(tx.hash)
-        console.log('getaAbiRes',getaAbiRes)
+        const getaAbiRes: any = await petraClient.getTransactionByHash(tx.hash)
+        console.log('getaAbiRes', getaAbiRes)
         abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
       })
-      const queryJson:any = {
+      const queryJson: any = {
         id: queryParams.id,
         contractId: aptosContractId.value[0],
         projectId: queryParams.id,
@@ -395,17 +395,17 @@ const deploy = () => {
         network: formState.network,
         address: petraAddress.value,
       }
-      if(abiFn.value){
+      if (abiFn.value) {
         queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
       }
       const result = await apiProjectsContractDeploy(queryJson)
-      if(result.code===200 && frameType.value ===2){
+      if (result.code === 200 && frameType.value === 2) {
         router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
       }
     }
-    
-  }).catch((error:any)=>{
-    console.log('petra failed',error)
+
+  }).catch((error: any) => {
+    console.log('petra failed', error)
   })
 }
 
@@ -422,12 +422,12 @@ const deployClick = async () => {
       console.log('Failed:', err);
     }
 
-  } else if(frameType.value === 2){
-    try{
+  } else if (frameType.value === 2) {
+    try {
       await formRef?.value.validateFields();
       deploy()
-    }catch(error:any){
-      console.log('aptos error',error)
+    } catch (error: any) {
+      console.log('aptos error', error)
     }
   } else {
     // 有值说明已连接钱包
@@ -534,6 +534,7 @@ const changeChain = (val: string) => {
   formState.network = undefined;
   if (val === 'Ethereum') {
     // ETH
+    networkData.value = [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }]
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
     networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
@@ -551,21 +552,22 @@ const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryParams.id);
     frameType.value = data.frameType;
-    switch(frameType.value){
+    switch (frameType.value) {
       case 1:
         Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain'])
-        networkData.value= [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' },{name: 'Hamster Dev', id:'501'}]
+        // { name: 'Hamster Dev', id: '501' }
+        networkData.value = [{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }, { name: 'Sepolia', id: 'aa36a7' }]
         break;
       case 2:
         // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系
         Object.assign(chainData, ['Aptos'])
-        networkData.value =  [{name: 'Mainnet', id: 'Mainnet'},{name: 'Testnet', id: 'Testnet'},{name: 'Devnet', id: 'Devnet'}]
+        networkData.value = [{ name: 'Mainnet', id: 'Mainnet' }, { name: 'Testnet', id: 'Testnet' }, { name: 'Devnet', id: 'Devnet' }]
         break;
       case 3:
         break;
       case 4:
         Object.assign(chainData, ['StarkWare'])
-        networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]        
+        networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
         const data = await connectWallet();
         Object.assign(starkWareData, data)
         break;
