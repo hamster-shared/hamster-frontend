@@ -134,6 +134,17 @@ const router = createRouter({
         }
       ],
     },
+    {
+      path: "/miwaspace",
+      redirect: "/chainlink/miwaspace",
+      children: [
+        {
+          path: "/chainlink/miwaspace",
+          name: "Miwaspace",
+          component:() => import('@/views/chainLink/miwaspace/index.vue'),
+        }
+      ],
+    },
   ],
 });
 
