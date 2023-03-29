@@ -240,7 +240,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
 }
 
 const projectsCheck = async (id: string, status: Number, e: Event) => {
-  if (props.projectType === '1' && (props.viewInfo.frameType === 4 || props.viewInfo.frameType === 2)) {
+  if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
   } else {
     disabled.value = false;
