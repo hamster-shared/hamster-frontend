@@ -29,7 +29,7 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
+      <div @click="goDoc" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Doc</div>
     </div>
     <div class="flex items-center">
@@ -138,6 +138,11 @@ const goHome = () => {
 const goPrjects = () => {
   router.push("/projects");
   isProject.value = true;
+}
+
+// 跳官网文档
+const goDoc = () => {
+  window.open('https://hamsternet.io/docs/')
 }
 
 const goMiwaspace = () => {
