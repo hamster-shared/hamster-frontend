@@ -226,6 +226,7 @@ const getProjectsDetailData = async () => {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
     // console.log("data project:", data);
     Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status })
+    localStorage.setItem('frameType',data.frameType)
   } catch (err: any) {
     console.info(err)
   }
