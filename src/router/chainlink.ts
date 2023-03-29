@@ -32,6 +32,16 @@ const chainlinkRoute = [
           }
         ],
     },
-
+    {
+      path: "/dashboard",
+      redirect: "/chainlink/miwaspace",
+      children:[
+        {
+          path: "/chainlink/miwaspace",
+          name: "Miwaspace",
+          component:() => import('@/views/chainLink/miwaspace/index.vue'),
+        },
+      ]
+    }
 ]
 export default chainlinkRoute
