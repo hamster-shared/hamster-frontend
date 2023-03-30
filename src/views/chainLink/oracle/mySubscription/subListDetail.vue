@@ -41,20 +41,21 @@
         <a-button class="mx-[10px]">Search</a-button>
         <a-button>Reset</a-button>
     </div>
-    <a-table :loading="loading" :dataSource="expenseData" :columns="expenseColumns" class="mb-[64px] mt-[20px]" :pagination="pagination">
+    <a-table :loading="loading" :dataSource="expenseData" :columns="subDetailCol" class="mb-[64px] mt-[20px]" :pagination="pagination">
         <template #bodyCell="{ record, column }">
-        <template v-if="column.key === 'action'">
-            <a>View</a>
-        </template>
+            <!-- <template v-if="column.key === 'action'">
+                <a>View</a>
+            </template> -->
         </template>
     </a-table>
 </template>
 <script setup lang="ts" name="subListDetail">
-import {reactive,ref} from 'vue'
+import {reactive,ref,onMounted} from 'vue'
 import { expenseColumns,depositColumns,consumersColumns } from './utils/colDetail'
 const loading = ref(false)
 const reqName = ref('')
 const tab = ref(1)
+const subDetailCol = ref<any>([])
 const expenseData:any = [
     {
         key: '1',
@@ -121,18 +122,25 @@ const goTxSearch = ()=>{
 // Expense 表单数据
 const getExpense = ()=>{
     tab.value = 1
+    subDetailCol.value = expenseColumns
     console.log('Expense 表单数据')
 }
 // Deposit 表单数据
 const getDeposit = ()=>{
     tab.value = 2
+    subDetailCol.value = depositColumns
     console.log('Deposit 表单数据')
 }
 // Consumers 表单数据
 const getConsumers = ()=>{
     tab.value = 3
+    subDetailCol.value = consumersColumns
     console.log('Consumers 表单数据')
 }
+onMounted(()=>{
+    console.log(111111,expenseColumns,depositColumns,consumersColumns)
+    subDetailCol.value = expenseColumns
+})
 </script>
 <style scoped less>
 .name{

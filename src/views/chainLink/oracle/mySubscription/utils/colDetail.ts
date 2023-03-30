@@ -55,41 +55,23 @@ export const depositColumns:any = [
         title: 'Status',
         dataIndex: 'status',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return '-'
-            }
-        },
     },
     {
         title: 'TxID',
         dataIndex: 'TxID',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return '-'
-            }
-        },
+        customRender: renderTableText(20)
     },
     {
         title: 'Address',
         dataIndex: 'address',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return `<span style="color:red">${text}</span>`
-            }
-        },
+        customRender: renderTableText(20)
     },
     {
         title: 'Amount',
         dataIndex: 'amount',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return `<span style="color:red">${text}</span>`
-            }
-        },
     },
 ]
 
@@ -101,33 +83,30 @@ export const consumersColumns:any = [
         align:'center'
     },
     {
-        title: 'Time',
+        title: 'Added',
         dataIndex: 'time',
         align:'center'
     },
     {
-        title: 'Request Name',
-        dataIndex: 'name',
+        title: 'Status',
+        dataIndex: 'status',
         align:'center'
     },
     {
-        title: 'Consumers',
-        dataIndex: 'consumers',
+        title: 'TxID',
+        dataIndex: 'tx',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return '-'
-            }
-        },
+        customRender: renderTableText(20)
     },
     {
-        title: 'Amount',
-        dataIndex: 'amount',
+        title: 'Address',
+        dataIndex: 'address',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return `<span style="color:red">${text}</span>`
-            }
-        },
+        customRender: renderTableText(20)
     },
+    {
+        title: 'Action',
+        dataIndex: 'operation',
+        slots: { customRender: 'operation' },
+    }
 ]
