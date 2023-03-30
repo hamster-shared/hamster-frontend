@@ -8,9 +8,9 @@
             <a-button class="ml-2">Search</a-button>
         </div>
         <div>
-            <a-button>Created</a-button>
-            <a-button class="mx-2">Add Consumers</a-button>
-            <a-button>Add Funds</a-button>
+            <a-button @click="createSubPop">Created</a-button>
+            <a-button @click="addConsumerPop" class="mx-2">Add Consumers</a-button>
+            <a-button @click="addFundsPop">Add Funds</a-button>
         </div>
     </div>
     <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" class="mb-[64px] mt-[20px]" :pagination="pagination">
@@ -21,14 +21,23 @@
         </template>
         </template>
     </a-table>
+    <createSub v-if="showCreateSub" :showCreateSub="showCreateSub" @getCreateSubInfo="getCreateSubInfo" @closeCreateSub="closeCreateSub"/>
+    <addFunds v-if="showAddFund" :showAddFund="showAddFund" @getAddFundInfo="getAddFundInfo" @closeAddFund="closeAddFund"/>
+    <addConsumers v-if="showAddConsumers" :showAddConsumers="showAddConsumers" @getAddConsumersInfo="getAddConsumersInfo" @closeAddConsumers="closeAddConsumers"/>
 </template>
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
 import { ref,reactive } from 'vue'
+import createSub from './components/createSub.vue'
+import addFunds from './components/addFunds.vue'
+import addConsumers from './components/addConsumers.vue'
 const router = useRouter();
 const netOptions = ref<any>(['All','Ethereum Mainnet','Ethereum Testnet','BSC Mainnet','BSC Testnet'])
 const netName = ref('All')
 const loading = ref(false)
+const showCreateSub = ref(false)
+const showAddFund = ref(false)
+const showAddConsumers = ref(false)
 const setSubNetwork = ()=>{
 
 }
@@ -77,12 +86,7 @@ const subListColumns:any = [
     {
         title: 'Action',
         key: 'action',
-        align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return '-'
-            }
-        },
+        align:'center'
     },
 ]
 const subListData:any = [
@@ -94,7 +98,7 @@ const subListData:any = [
         network:'Test',
         // consumers:'Jack',
         // balance:'12.2345 link',
-        // action:'View'
+        action:'View'
     },
     {
         key: '2',
@@ -104,7 +108,7 @@ const subListData:any = [
         network:'Test',
         // consumers:'Jack',
         // balance:'12.2345 link',
-        // action:'View'
+        action:'View'
     },
     {
         key: '3',
@@ -154,6 +158,55 @@ const pagination = reactive({
 // 获取sub表单数据
 const getSublist = ()=>{
 
+}
+
+// 新增订阅弹框
+const createSubPop = ()=>{
+    btnChange()
+    showCreateSub.value = true
+}
+// 订阅数据接收
+const getCreateSubInfo = (info:any)=>{
+    console.log('订阅数据接收',info)
+}
+// 关闭订阅
+const closeCreateSub = (bool:boolean)=>{
+    showCreateSub.value = bool
+}
+
+// 添加消费者弹框
+const addConsumerPop = ()=>{
+    btnChange()
+    showAddConsumers.value = true
+}
+// 添加消费者数据接收
+const getAddConsumersInfo = (consumersInfo:any)=>{
+    console.log('添加消费者数据接收',consumersInfo)
+}
+// 关闭消费者
+const closeAddConsumers = (bool:boolean)=>{
+    showAddConsumers.value = bool
+}
+
+// 添加资金弹框
+const addFundsPop = ()=>{
+    btnChange()
+    showAddFund.value = true
+}
+// 添加资金数据接收
+const getAddFundInfo = (fundInfo:any)=>{
+    console.log('添加消费者数据接收',fundInfo)
+}
+// 关闭资金
+const closeAddFund = (bool:boolean)=>{
+    showAddFund.value = bool
+}
+
+// 切换按钮改变状态,先关闭所有弹框，再开点击的弹框
+const btnChange = ()=>{
+    showCreateSub.value = false
+    showAddFund.value = false
+    showAddConsumers.value = false
 }
 const goSubDetail = (record:any)=>{
     console.log('goSubDetail',record)

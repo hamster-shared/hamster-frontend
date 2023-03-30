@@ -9,6 +9,11 @@ const chainlinkRoute = [
             component:() => import('@/views/chainLink/dashboard/index.vue'),
           },
           {
+            path: "/chainlink/default/:type",
+            name: "Default",
+            component:() => import('@/views/chainLink/components/rpcAndOracleDefault.vue'),
+          },
+          {
             path: "/chainlink/oracle",
             name: "Oracle",
             redirect: "/chainlink/oracle",

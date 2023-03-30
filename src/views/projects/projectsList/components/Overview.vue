@@ -31,7 +31,7 @@
             <svg-icon :name="item.url" size="14" />
           </label>
           <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer align-middle"
-            :class="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check' ? 'disabledCheckCss' : ''">
+            :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
             {{ item.name }}
           </label>
         </label>
@@ -66,7 +66,7 @@
           </div>
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
-            :class="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) ? 'disabledCheckCss' : ''"
+            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
             Check Now</div>
@@ -240,7 +240,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
 }
 
 const projectsCheck = async (id: string, status: Number, e: Event) => {
-  if (props.projectType === '1' && (props.viewInfo.frameType === 4 || props.viewInfo.frameType === 2)) {
+  if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
   } else {
     disabled.value = false;
