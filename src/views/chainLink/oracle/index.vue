@@ -1,7 +1,9 @@
 <template>
-    <div>Oracle</div>
+  <div>chainlinkFun</div>
+  <rpcAndOracleChart></rpcAndOracleChart>
 </template>
-<script setup lang="ts" name="Oracle">
 
+<script setup lang="ts">
+  import rpcAndOracleChart from '../components/rpcAndOracleChart.vue'
 </script>
-<style scoped less></style>
+
