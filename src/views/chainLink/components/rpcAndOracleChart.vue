@@ -5,7 +5,9 @@
       <a-radio-button value="testNet">TestNet</a-radio-button>
     </a-radio-group>
 
-    <div>chart</div>
+    <!-- <template>
+      <v-chart class="chart" :option="option" />
+    </template> -->
     
     <a-divider type="vertical" class="verticle-divider"/>
     
@@ -26,8 +28,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, provide } from 'vue';
   import { useThemeStore } from "@/stores/useTheme";
+  // import { use } from "echarts/core";
+  // import { CanvasRenderer } from "echarts/renderers";
+  // import { LineChart } from "echarts/charts";
+  // import VChart, { THEME_KEY } from "vue-echarts";
 
   const theme = useThemeStore();
 
