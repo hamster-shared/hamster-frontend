@@ -77,12 +77,7 @@ const subListColumns:any = [
     {
         title: 'Action',
         key: 'action',
-        align:'center',
-        customRender: ({ text }:any) => {
-            if (!text) {
-                return '-'
-            }
-        },
+        align:'center'
     },
 ]
 const subListData:any = [
@@ -94,7 +89,7 @@ const subListData:any = [
         network:'Test',
         // consumers:'Jack',
         // balance:'12.2345 link',
-        // action:'View'
+        action:'View'
     },
     {
         key: '2',
@@ -104,7 +99,7 @@ const subListData:any = [
         network:'Test',
         // consumers:'Jack',
         // balance:'12.2345 link',
-        // action:'View'
+        action:'View'
     },
     {
         key: '3',

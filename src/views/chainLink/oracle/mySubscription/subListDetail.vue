@@ -22,12 +22,16 @@
             <span class="cursor-pointer" @click="goTxSearch">0x836aa7a4d8bfc58d1c1af93a6218cecc661e098a8d9d4102d4053d56597546ac</span>
         </p>
         <p>
+            <span class="name">Status</span>
+            <span>{{subStatus}}</span>
+        </p>
+        <p>
             <span class="name">Consumers</span>
             <span>13</span>
         </p>
         <p>
             <span class="name">amount</span>
-            <span>21.132 link</span>
+            <span class="text-red-600">21.132</span> link
         </p>
     </div>
     <div class="mt-[20px]">
@@ -50,12 +54,13 @@
     </a-table>
 </template>
 <script setup lang="ts" name="subListDetail">
-import {reactive,ref,onMounted} from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { expenseColumns,depositColumns,consumersColumns } from './utils/colDetail'
 const loading = ref(false)
 const reqName = ref('')
 const tab = ref(1)
 const subDetailCol = ref<any>([])
+const subStatus = ref('')
 const expenseData:any = [
     {
         key: '1',
@@ -140,6 +145,8 @@ const getConsumers = ()=>{
 onMounted(()=>{
     console.log(111111,expenseColumns,depositColumns,consumersColumns)
     subDetailCol.value = expenseColumns
+    // 从接口中取订阅状态
+    subStatus.value = 'success'
 })
 </script>
 <style scoped less>
