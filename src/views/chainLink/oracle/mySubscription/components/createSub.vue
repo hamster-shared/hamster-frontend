@@ -1,0 +1,68 @@
+<template>
+    <a-modal v-model:visible="props.showCreateSub" title="Create Subscription" :footer="null">
+        <template #closeIcon>
+            <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelCreateSub"/>
+        </template>
+        <a-form :model="formData" ref="formRef" :rules="formRules" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+            <a-form-item label="Network" name="network" >
+                <a-select @change="setSubNetwork" v-model:value="formData.network" placeholder="Please select Network" autocomplete="off"
+                :options="subNetOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
+            </a-form-item>
+            <a-form-item label="Subscription Name" name="name" >
+                <a-input v-model:value="formData.name" placeholder="Please input Subscription Name" allow-clear autocomplete="off" />
+            </a-form-item>
+        </a-form>
+        <div class="text-center flex justify-center">
+            <a-button class="done-btn" style="margin-right: 20px;" @click="handleCreateSub">Confirm</a-button>
+            <a-button class="done-btn" @click="cancelCreateSub">Cancel</a-button>
+        </div>
+    </a-modal>
+</template>
+<script setup lang="ts" name="createSub">
+import { ref, onMounted, computed, reactive } from 'vue'
+const props = defineProps({
+    showCreateSub:{
+        type:Boolean,
+        default:false
+    }
+})
+const formRef = ref();
+const subNetOptions = ref(['Ethererum Mainnet','Ethererum Testnet','BSC Mainnet','BSC Testnet'])
+const formData = reactive({
+    network: null,
+    name: '',
+});
+const formRules = computed(() => {
+    const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+    return {
+        name: [requiredRule('Name')],
+        network: [requiredRule('Network')],
+    };
+});
+const emit = defineEmits(['closeCreateSub','getCreateSubInfo'])
+console.log('showCreateSub',props.showCreateSub)
+// 设置订阅网络
+const setSubNetwork = (val:any)=>{
+    console.log('设置订阅网络',val)
+    formData.network = val
+}
+// 创建订阅
+const handleCreateSub = async()=>{
+    await formRef.value.validate();
+    emit('getCreateSubInfo',formData)
+    emit('closeCreateSub',false)
+}
+// 取消订阅
+const cancelCreateSub = ()=>{
+    emit('closeCreateSub',false)
+}
+</script>
+<style lang="less" scoped>
+.done-btn {
+    width: 120px;
+    height: 43px;
+}
+&:deep(.ant-select-selection-item){
+    color:#36322D !important;
+}
+</style>
