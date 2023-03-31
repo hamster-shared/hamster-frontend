@@ -1,11 +1,12 @@
 <template>
   <div class="font-bold text-[24px]">RPC</div>
-  <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px]">
+  <div class="text-[16px] dark:text-[#E0DBD2] text-[#73706E] mb-[16px]">Something like that…</div>
+  <div class="">
     <div>
-      <a-radio-group v-model:value="tabNetwork">
-        <a-radio-button value="Mainnet">Mainnet</a-radio-button>
-        <a-radio-button value="Testnet">Testnet</a-radio-button>
-      </a-radio-group>
+      <a-tabs v-model:activeKey="tabNetwork">
+        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
+        <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
+      </a-tabs>
 
     </div>
     <div class="flex justify-between mt-[16px]">
@@ -16,7 +17,7 @@
     </div>
     <!-- 图表 -->
     <div class="w-full h-[500px]">
-      <div class="myChart" ref="myChart"></div>
+      <div class="myChart" ref="myChart" id="myEchart"></div>
     </div>
 
   </div>
@@ -38,15 +39,12 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import * as echarts from 'echarts';
 const timeList = ref([{ name: 'Last 7 days', id: 2 }, { name: 'Last 30 days', id: 3 }, { name: 'Last 90 days', id: 4 }, { name: 'All time', id: 1 }])
 const tiemValue = ref(2);
 const dataSource = ref([]);
-const myChart = ref();
-const myChartShow = ref();
 const tabNetwork = ref('Mainnet');
-
 const columns = [
   {
     title: 'Number',
@@ -89,7 +87,8 @@ const toDetails = (val: any) => {
 }
 
 const initChart = () => {
-  const option = {
+  let myChart = echarts.init(document.getElementById('myEchart') as HTMLElement);
+  myChart.setOption({
     // darkMode: true,
     // title: {
     //   text: 'Stacked Line'
@@ -134,18 +133,14 @@ const initChart = () => {
         data: [150, 232, 201, 154, 190, 330, 410]
       }
     ]
-  }
-
-  myChartShow.value = echarts.init(myChart.value);
-  myChartShow.value.setOption(option);
+  })
+  window.onresize = function () { // 自适应大小
+    myChart.resize();
+  };
 }
 
 onMounted(() => {
   initChart();
-  // window.addEventListener("resize", () => {
-  //   console.log(myChartShow.value, 'kk')
-  //   myChartShow.value.resize();
-  // });
 })
 </script>
 <style lang='less' scoped>

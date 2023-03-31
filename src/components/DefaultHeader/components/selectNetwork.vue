@@ -19,7 +19,15 @@ onMounted(() => {
 })
 </script>
 <style lang='less' scoped>
-// :deep(.ant-select-selector) {
-//   background-color: #E2B578 !important;
-// }
+:deep(.ant-select-selector) {
+  background-color: #E2B578 !important;
+}
+
+:deep(.ant-select-arrow svg) {
+  color: #ffffff !important;
+}
+
+:deep(.ant-select-single.ant-select-open .ant-select-selection-item) {
+  color: #ffffff;
+}
 </style>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ic_eth@2x</title>
+    <g id="确定页面" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="(B)RPC-Details" transform="translate(-584.000000, -210.000000)" fill-rule="nonzero">
+            <g id="ic_eth" transform="translate(584.000000, 210.000000)">
+                <path d="M0,15 C0,23.3333333 6.66666668,30 15,30 C23.3333333,30 30,23.3333333 30,15 C30,6.66666668 23.3333333,0 15,0 C6.66666668,0 0,6.66666668 0,15 Z" id="路径" fill="#627EEA"></path>
+                <polygon id="路径" fill-opacity="0.6" fill="#FFFFFF" points="15.5 3.83333332 15.5 12.1666667 22.5 15.3333333"></polygon>
+                <polygon id="路径" fill="#FFFFFF" points="15.5 3.83333332 8.49999999 15.3166667 15.5 12.15"></polygon>
+                <polygon id="路径" fill-opacity="0.6" fill="#FFFFFF" points="15.5 20.5166667 15.5 26.1833333 22.5 16.5166667"></polygon>
+                <polygon id="路径" fill="#FFFFFF" points="15.5 26.1666667 15.5 20.5 8.49999999 16.5"></polygon>
+                <polygon id="路径" fill-opacity="0.2" fill="#FFFFFF" points="15.5 19.3333333 22.5 15.3333333 15.5 12"></polygon>
+                <polygon id="路径" fill-opacity="0.6" fill="#FFFFFF" points="8.49999999 15.3166667 15.5 19.3166667 15.5 12.15"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

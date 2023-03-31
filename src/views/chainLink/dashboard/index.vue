@@ -1,35 +1,100 @@
 <template>
-  <div class="dashboard dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
-    <div class="font-bold text-[24px] mb-[24px]">My Middleware</div>
-    <div class="grid grid-cols-3 gap-4 ">
-      <div v-for="item in dashboardList" :key="item"
-        class="border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] p-[24px]">
-        <div class="font-bold">{{ item }}</div>
+  <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
+    <div
+      class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
+      <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue">
+        <a-menu-item v-for="item in menuRouterList" :key="item.name" :disabled="item.meta.isTag">
+          <router-link :to="item.path">
+            <!-- <svg-icon :name="item.name" size="20" /> -->
+            <div>
+              <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
+              <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
+              <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
+            </div>
 
-        <div v-if="item === 'RPC'">
-          <div v-for="val in RPCList" :key="val.id" class="grid grid-cols-3 gap-1 pt-[6px]">
-            <div>{{ val.name }}</div>
-            <div class="text-left">{{ val.network }}</div>
-            <div class="cursor-pointer text-[#E2B578] text-right">View</div>
-          </div>
-        </div>
-        <div v-else-if="item === 'Oracle'">
-          <div class="flex justify-between pt-[6px]">
-            <div>Chainlink Functios</div>
-            <div class="cursor-pointer text-[#E2B578]">View</div>
-          </div>
-        </div>
-        <div v-else>
-          <div class="text-center mt-[32px]">The service has not been opened yet</div>
-          <div class="text-center mt-[16px] cursor-pointer text-[#E2B578]">Get service now</div>
-        </div>
-      </div>
+          </router-link>
+        </a-menu-item>
+      </a-menu>
+    </div>
+    <div class="p-[32px] dashboard-index-right">
+      <router-view />
     </div>
   </div>
 </template>
 <script lang="ts" setup name="Dashboard">
-import { ref } from "vue";
-const dashboardList = ref(['RPC', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
-const RPCList = ref([{ name: 'Ethereum', network: 'Mainnet', id: 1 }, { name: 'Ethereum', network: 'Testnet', id: 2 }, { name: 'BSC', network: 'Mainnet', id: 3 }, { name: 'BSC', network: 'Testnet', id: 4 }]);
+import { ref, onBeforeMount, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore();
+const router = useRouter();
+const menuRouterList = ref([]);
+const selectedKeys = ref([]);
+
+// console.log('router', router.options.routes)
+onBeforeMount(() => {
+  const dashboard: any = router.options.routes.find((val) => { return val.path === '/dashboard' });
+  console.log(dashboard, 'dashboard')
+  dashboard.children.map((val: any) => {
+    if (val.meta.isShow) {
+      menuRouterList.value.push(val)
+    }
+  })
+})
+
+watch(() => router.currentRoute.value,
+  (value) => {
+    selectedKeys.value = value.meta.sidebarMap;
+  }, { deep: true, immediate: true }
+)
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.dashboard-index {
+  min-height: calc(100vh - 114px);
+
+  .dashboard-index-right {
+    width: 100%;
+  }
+
+  .come-soon {
+    padding: 4px 10px 6px;
+    background: rgba(226, 181, 120, 0.1);
+    color: #E2B578;
+    border-radius: 0 8px 0 8px;
+  }
+}
+
+:deep(.ant-menu) {
+  border-radius: 12px 0 0 0;
+  height: 100%;
+  max-height: 100%;
+}
+
+:deep(.ant-menu-vertical) {
+  border: none;
+}
+
+:deep(.ant-menu-item) {
+  border-radius: 12px;
+}
+
+:deep(.ant-menu.ant-menu-dark) {
+  background-color: #1D1C1A;
+  ;
+}
+
+:deep(.ant-menu-vertical>.ant-menu-item) {
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 15px;
+}
+
+:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected) {
+  background-color: #FFFAF3;
+
+}
+
+:deep(.ant-menu .ant-menu-item-selected>span>a) {
+  color: #E2B578;
+  font-weight: bold;
+}
+</style>
