@@ -31,7 +31,7 @@
         </p>
         <p>
             <span class="name">amount</span>
-            <span class="text-red-600">21.132</span> link
+            <span class="text-red-600 mr-1">21.132</span>link
         </p>
     </div>
     <div class="mt-[20px]">
