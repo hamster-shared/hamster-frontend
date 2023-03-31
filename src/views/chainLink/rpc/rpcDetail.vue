@@ -1,37 +1,50 @@
 <template>
   <div class="rpc-detail">
     <Breadcrumb :currentName="projectName" :isClick="loading"></Breadcrumb>
-    <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px]">
-      <div class="font-bold text-[20px]">Ethereum</div>
-      <a-radio-group v-model:value="tabNetwork">
-        <a-radio-button value="Mainnet">Mainnet</a-radio-button>
-        <a-radio-button value="Testnet">Testnet</a-radio-button>
-      </a-radio-group>
+    <div
+      class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
+      <div class="">
+        <svg-icon name="rpc-icon" size="30" class="mr-[10px]" />
+        <span class="font-bold text-[24px] mr-[20px] align-middle">Ethereum</span>
+        <span class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px]">Add
+          Network</span>
+      </div>
+      <a-tabs v-model:activeKey="tabNetwork">
+        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
+        <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
+      </a-tabs>
       <div>
         <div></div>
         <div>
-          <div class="font-bold text-[18px] mb-[8px] mt-[24px]">RPC</div>
+          <div class="text-[16px] mb-[12px] mt-[24px]">RPC</div>
           <div
-            class="flex justify-between p-[24px] border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] rounded-[12px] cursor-pointer">
-            <div>111</div>
-            <div class="text-[#E2B578]">Copy</div>
+            class="flex justify-between p-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] cursor-pointer">
+            <div class="font-bold">111</div>
+            <div class="text-[#E2B578] ">
+              <svg-icon name="copy" size="18" class="mr-[4px]" />
+              <span class="text-[16px]">Copy</span>
+            </div>
           </div>
         </div>
         <div>
-          <div class="font-bold text-[18px] mb-[8px] mt-[24px]">Websocket</div>
+          <div class="text-[16px] mb-[12px] mt-[24px]">Websocket</div>
           <div
-            class="flex justify-between p-[24px] border border-solid border-[#E2B578] bg-[#FFFCF9] dark:bg-[#36322D] rounded-[12px] cursor-pointer">
-            <div>222</div>
-            <div class="text-[#E2B578]">Copy</div>
+            class="flex justify-between p-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] cursor-pointer">
+            <div class="font-bold">222</div>
+            <div class="text-[#E2B578]">
+              <svg-icon name="copy" size="18" class="mr-[4px]" />
+              <span class="text-[16px]">Copy</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px]">
+    <div
+      class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="font-bold text-[20px]">Choose a language</div>
-      <a-radio-group v-model:value="tabLanguage">
-        <a-radio-button :value="item" v-for="item in languageList" :key="item">{{ item }}</a-radio-button>
-      </a-radio-group>
+      <a-tabs v-model:activeKey="tabLanguage">
+        <a-tab-pane :tab="item" v-for="item in languageList" :key="item"></a-tab-pane>
+      </a-tabs>
       <div>
         <div class="text-right cursor-pointer text-[#E2B578]" @click="copyInfo">
           <svg-icon name="copy" size="18"></svg-icon>
