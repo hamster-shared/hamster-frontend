@@ -12,13 +12,14 @@
                 <a-input v-model:value="formData.amount" placeholder="Please enter the amount" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
+        <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-blue-400">{{balance}}link</span></div>
         <div class="text-center flex justify-center">
             <a-button class="done-btn" style="margin-right: 20px;" @click="handleFund">Confirm</a-button>
             <a-button class="done-btn" @click="cancelFund">Cancel</a-button>
         </div>
     </a-modal>
 </template>
-<script setup lang="ts" name="createSub">
+<script setup lang="ts" name="addFunds">
 import { ref, onMounted, computed, reactive } from 'vue'
 const props = defineProps({
     showAddFund:{
@@ -32,6 +33,7 @@ const formData = reactive({
     subscription: null,
     amount: '',
 });
+const balance = ref('12.156')
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
