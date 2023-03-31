@@ -33,7 +33,17 @@ const chainlinkRoute = [
                     name: "subListDetail",
                     component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
                 },
+                {
+                    path: "/chainlink/oracle/createRequest",
+                    name: "CreateRequest",
+                    component:() => import('@/views/chainLink/oracle/createRequest/index.vue'),
+                },
             ]
+          },
+          {
+            path: "/chainlink/rpc",
+            name: "Rpc",
+            component:() => import('@/views/chainLink/rpc/index.vue'),
           }
         ],
     },

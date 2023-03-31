@@ -1,3 +1,3 @@
 <template>
-  <div>rpcFun</div>
+  <div>rpc</div>
 </template>
