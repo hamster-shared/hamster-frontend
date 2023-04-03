@@ -1,12 +1,11 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <div class="flex mt-8">
-      <div class="relative">
-        <div style="height:300px;width: 810px;">
+      <div class="relative flex-1">
+        <div style="height: 300px; width: 100%;">
           <v-chart class="chart" :option="option"/>
         </div>
-
-        <div class="absolute top-0 left-[680px]">
+        <div class="absolute top-0 right-[50px]">
           <a-select
             ref="select"
             v-model:value="selectTimeValue"
@@ -19,9 +18,7 @@
           </a-select>
         </div>
       </div>
-      
-      <a-divider type="vertical" class="verticle-divider"/>
-      
+
       <div class="w-60">
         <span class="block mb-6 text-lg">My Subscripion</span>
         <div v-for="item in subscripion">
