@@ -33,13 +33,20 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 
 const routes = useRoute();
 const router = useRouter();
+const type = ref('');
+type.value = routes.params.type;
 
-const type = routes.params.type
-
+watch(() => router.currentRoute.value,
+  (value) => {
+    type.value = value.params.type;
+    // console.log(value, 'value')
+  }, { deep: true, immediate: true }
+)
 </script>
 
 <style scoped lang="less"></style>
