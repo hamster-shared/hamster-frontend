@@ -166,12 +166,14 @@ const goDashboard = () => {
 }
 
 const changeTheme = (val: string) => {
-  theme.setTheme(val)
+  // theme.setTheme(val)
   let htmlRoot = document.getElementById('htmlRoot') || null;
   if (val === 'white') {
+    theme.setTheme('light')
     htmlRoot?.setAttribute('data-theme', 'light');
     document.documentElement.classList.remove('dark')
   } else {
+    theme.setTheme('dark')
     htmlRoot?.setAttribute('data-theme', 'dark');
     document.documentElement.classList.add('dark')
   }
@@ -298,5 +300,15 @@ const setWalletBtn = (val: boolean) => {
 
 :deep(.ant-dropdown-open .up-tran) {
   transform: rotate(0deg);
+}
+
+:deep(.ant-select-selector) {
+  color: #ffffff !important;
+}
+
+html[data-theme='dark'] {
+  :deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+    border: 1px solid #EBEBEB;
+  }
 }
 </style>
