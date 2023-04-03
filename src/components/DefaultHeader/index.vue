@@ -30,7 +30,7 @@
         </template>
       </a-dropdown>
       <div @click="goDoc" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Doc</div>
+        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">

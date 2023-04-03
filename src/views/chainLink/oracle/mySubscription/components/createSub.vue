@@ -3,7 +3,7 @@
         <template #closeIcon>
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelCreateSub"/>
         </template>
-        <a-form :model="formData" ref="formRef" :rules="formRules" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+        <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Network" name="network" >
                 <a-select @change="setSubNetwork" v-model:value="formData.network" placeholder="Please select Network" autocomplete="off"
                 :options="subNetOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
@@ -14,7 +14,7 @@
         </a-form>
         <div class="text-center flex justify-center">
             <a-button class="done-btn" style="margin-right: 20px;" @click="handleCreateSub">Confirm</a-button>
-            <a-button class="done-btn" @click="cancelCreateSub">Cancel</a-button>
+            <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelCreateSub">Cancel</a-button>
         </div>
     </a-modal>
 </template>

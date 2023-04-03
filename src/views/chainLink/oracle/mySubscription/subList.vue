@@ -1,9 +1,9 @@
 <template>
-    <p>My Subscription</p>
-    <div class="flex justify-between items-center">
+    <div class="text-[24px] font-bold">My Subscription</div>
+    <div class="flex justify-between items-center mt-[30px]">
         <div>
-            <span>Network</span>
-            <a-select @change="setSubNetwork" v-model:value="netName" autocomplete="off"
+            <span class="mr-[10px]">Network</span>
+            <a-select class="w-[200px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
             :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
             <a-button class="ml-2">Search</a-button>
         </div>

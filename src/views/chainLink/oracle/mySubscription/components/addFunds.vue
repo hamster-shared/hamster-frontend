@@ -3,7 +3,7 @@
         <template #closeIcon>
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelFund"/>
         </template>
-        <a-form :model="formData" ref="formRef" :rules="formRules" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+        <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
                 <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
@@ -15,7 +15,7 @@
         <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-blue-400">{{balance}}link</span></div>
         <div class="text-center flex justify-center">
             <a-button class="done-btn" style="margin-right: 20px;" @click="handleFund">Confirm</a-button>
-            <a-button class="done-btn" @click="cancelFund">Cancel</a-button>
+            <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelFund">Cancel</a-button>
         </div>
     </a-modal>
 </template>
