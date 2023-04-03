@@ -25,7 +25,7 @@
             </template>
           </a-table>
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType==='1' &&  val.message" :dataSource="val.message"
+            v-if="projectType === '1' && item.checkTool === 'Solhint' &&  val.message" :dataSource="val.message"
             :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
@@ -39,10 +39,10 @@
             :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
           </a-table>
 
-          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
+          <!--<a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
             v-if="item.checkTool === 'Solhint' && val.message" :dataSource="val.message" :columns="SolhintColumns"
             :pagination="false" :showHeader="false">
-          </a-table>
+          </a-table>-->
 
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="table-css"
             v-if="item.checkTool === 'sol-profiler' && val.message" :dataSource="val.message" :columns="columns"
@@ -233,8 +233,8 @@ const columns = [
     key: 'modifiers',
   }
 ];
-
 const { checkReportData, projectType, checkStatus } = toRefs(props)
+console.log("checkReportData:",checkReportData.value);
 
 </script>
 
