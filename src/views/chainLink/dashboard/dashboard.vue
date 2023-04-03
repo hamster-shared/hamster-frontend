@@ -8,14 +8,17 @@
         <div class="text-[16px] font-bold mb-[16px]">{{ item }}</div>
 
         <div v-if="item === 'RPC'">
-          <div v-for="val in RPCList" :key="val.id" class="grid grid-cols-3 gap-1 pt-[6px]">
-            <div>{{ val.name }}</div>
+          <div v-for="val in RPCList" :key="val.id"
+            class="grid grid-cols-3 gap-1 border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6] pb-[14px] mt-[14px]">
+            <div class="mr-[8px]">{{ val.name }}</div>
             <div class="text-left">{{ val.network }}</div>
             <div class="cursor-pointer text-[#E2B578] text-right">View</div>
           </div>
+          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]">More</div>
         </div>
         <div v-else-if="item === 'Oracle'">
-          <div class="flex justify-between pt-[6px]">
+          <div
+            class="flex justify-between pt-[6px] border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6] pb-[14px]">
             <div>Chainlink Functios</div>
             <div class="cursor-pointer text-[#E2B578]">View</div>
           </div>

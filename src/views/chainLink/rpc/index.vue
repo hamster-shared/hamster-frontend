@@ -39,12 +39,15 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, watch } from "vue";
 import * as echarts from 'echarts';
+import { apiGetChains } from "@/apis/rpcs";
+import { useThemeStore } from "@/stores/useTheme";
 const timeList = ref([{ name: 'Last 7 days', id: 2 }, { name: 'Last 30 days', id: 3 }, { name: 'Last 90 days', id: 4 }, { name: 'All time', id: 1 }])
 const tiemValue = ref(2);
 const dataSource = ref([]);
 const tabNetwork = ref('Mainnet');
+const theme = useThemeStore();
 const columns = [
   {
     title: 'Number',
@@ -86,13 +89,15 @@ const toDetails = (val: any) => {
   console.log(val, '点击详情操作')
 }
 
-const initChart = () => {
-  let myChart = echarts.init(document.getElementById('myEchart') as HTMLElement);
+const initRpcChain = async () => {
+  const { data } = await apiGetChains();
+  console.log(data, 'data')
+}
+
+const initChart = (themeValue: string) => {
+  let myChart = echarts.init(document.getElementById('myEchart') as HTMLElement, themeValue);
   myChart.setOption({
-    // darkMode: true,
-    // title: {
-    //   text: 'Stacked Line'
-    // },
+    backgroundColor: '',
     tooltip: {
       trigger: 'axis'
     },
@@ -122,7 +127,7 @@ const initChart = () => {
       },
       {
         name: 'Union Ads',
-        type: 'line',
+        type: 'line', 
         stack: 'Total',
         data: [220, 182, 191, 234, 290, 330, 310]
       },
@@ -140,8 +145,17 @@ const initChart = () => {
 }
 
 onMounted(() => {
-  initChart();
+  initChart(theme.themeValue);
+  initRpcChain();
 })
+
+watch(() => theme.themeValue,
+  (value) => {
+    // console.log(value, 'theme')
+    initChart(value);
+  })
+
+
 </script>
 <style lang='less' scoped>
 .myChart {
