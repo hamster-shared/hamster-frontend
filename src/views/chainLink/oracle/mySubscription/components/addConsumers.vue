@@ -32,7 +32,7 @@
             </a-table>
         </div>
         <div class="text-center flex justify-between mt-[16px]">
-            <a-button style="margin-right: 20px;" @click="goHamster">Create Consumer by Hamster</a-button>
+            <a-button style="margin-right: 20px;background: transparent;color:#E2B578" @click="goHamster">Create Consumer by Hamster</a-button>
             <a-button @click="handleFund">Confirm</a-button>
         </div>
     </a-modal>

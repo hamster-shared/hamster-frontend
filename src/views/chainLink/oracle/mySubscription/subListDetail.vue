@@ -1,49 +1,52 @@
 <template>
-    <div>Basic Information</div>
-    <div>
+    <div class="text-[24px] font-bold">Basic Information</div>
+    <div class="mt-[30px]">
         <p>
             <span class="name">number</span>
-            <span>21</span>
+            <span class="font-bold">21</span>
         </p>
         <p>
             <span class="name">currentName</span>
-            <span>token_price</span>
+            <span class="font-bold">token_price</span>
         </p>
         <p>
             <span class="name">Admin</span>
-            <span>0xdqw423q34wbfdqobfdqobfdqo</span>
+            <span class="font-bold">0xdqw423q34wbfdqobfdqobfdqo</span>
         </p>
         <p>
             <span class="name">Created</span>
-            <span>2023-03-15 15:12:14</span>
+            <span class="font-bold">2023-03-15 15:12:14</span>
         </p>
         <p>
             <span class="name">TxID</span>
-            <span class="cursor-pointer" @click="goTxSearch">0x836aa7a4d8bfc58d1c1af93a6218cecc661e098a8d9d4102d4053d56597546ac</span>
+            <span style="color:#017AFF;border:1px solid #434343;border-radius: 4px;padding:10px">
+                <span class="cursor-pointer font-bold mr-[10px]" @click="goTxSearch">0x836aa7a4d8bfc58d1c1af93a6218cecc661e098a8d9d4102d4053d56597546ac</span>
+                <img src="@/assets/svg/Jump.png"/>
+            </span> 
         </p>
         <p>
             <span class="name">Status</span>
-            <span>{{subStatus}}</span>
+            <span class="font-bold color-[#29C57C ]">{{subStatus}}</span>
         </p>
         <p>
             <span class="name">Consumers</span>
-            <span>13</span>
+            <span class="font-bold">13</span>
         </p>
         <p>
             <span class="name">amount</span>
-            <span class="text-red-600 mr-1">21.132</span>link
+            <span class="text-[#FF4A4A] mr-1 font-bold">21.132</span>link
         </p>
     </div>
-    <div class="mt-[20px]">
-        <span class="cursor-pointer" @click="getExpense">Expense</span>
-        <span class="cursor-pointer mx-[20px]" @click="getDeposit">Deposit</span>
-        <span class="cursor-pointer" @click="getConsumers">Consumers</span>
+    <div class="mt-[40px] pb-[16px] w-[100%]" style="border-bottom: 1px solid #434343;">
+        <span class="cursor-pointer font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==1? '1px solid #E2B578':''}" @click="getExpense">Expense</span>
+        <span class="cursor-pointer mx-[60px] font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==2? '1px solid #E2B578':''}" @click="getDeposit">Deposit</span>
+        <span class="cursor-pointer font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==3? '1px solid #E2B578':''}" @click="getConsumers">Consumers</span>
     </div>
-    <div v-if="tab==1" class="flex items-center mt-[10px]">
+    <div v-if="tab==1" class="flex items-center mt-[20px]">
         <span class="mr-[10px]">Request</span>
         <a-input v-model:value="reqName" class="req-input" placeholder="Please input request name" allow-clear autocomplete="off"/>
         <a-button class="mx-[10px]">Search</a-button>
-        <a-button>Reset</a-button>
+        <a-button style="background: transparent;color:#E2B578">Reset</a-button>
     </div>
     <a-table :loading="loading" :dataSource="expenseData" :columns="subDetailCol" class="mb-[64px] mt-[20px]" :pagination="pagination">
         <template #bodyCell="{ record, column }">
@@ -155,6 +158,7 @@ onMounted(()=>{
     display:inline-block;
     text-align: right;
     margin-right: 30px;
+    font-size: 14px;
 }
 .req-input{
     width:220px;
