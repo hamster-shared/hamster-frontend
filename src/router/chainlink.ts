@@ -46,7 +46,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/subListDetail",
+                  path: "/chainlink/oracle/subList/subListDetail",
                   name: "subListDetail",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
                   meta:{

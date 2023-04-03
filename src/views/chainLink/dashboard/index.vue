@@ -4,14 +4,13 @@
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
       <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue">
         <a-menu-item v-for="item in menuRouterList" :key="item.name" :disabled="item.meta.isTag">
-          <router-link :to="item.path">
-            <!-- <svg-icon :name="item.name" size="20" /> -->
+          <router-link
+            :to="(item.name === 'RPC' || item.name === 'Oracle') ? '/chainlink/default/' + item.name : item.path">
             <div>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
               <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
               <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
             </div>
-
           </router-link>
         </a-menu-item>
       </a-menu>
@@ -33,17 +32,24 @@ const selectedKeys = ref([]);
 // console.log('router', router.options.routes)
 onBeforeMount(() => {
   const dashboard: any = router.options.routes.find((val) => { return val.path === '/dashboard' });
-  console.log(dashboard, 'dashboard')
+
   dashboard.children.map((val: any) => {
     if (val.meta.isShow) {
       menuRouterList.value.push(val)
     }
   })
+  // console.log(dashboard.children, 'dashboard')
 })
 
 watch(() => router.currentRoute.value,
   (value) => {
-    selectedKeys.value = value.meta.sidebarMap;
+    if (value.name === "Default") {
+      selectedKeys.value = [value.params.type];
+    } else {
+      selectedKeys.value = value.meta.sidebarMap;
+    }
+
+    // console.log(value, 'value')
   }, { deep: true, immediate: true }
 )
 </script>
@@ -52,7 +58,8 @@ watch(() => router.currentRoute.value,
   min-height: calc(100vh - 114px);
 
   .dashboard-index-right {
-    width: 100%;
+    // width: 100%;
+    flex: 1;
   }
 
   .come-soon {
@@ -67,6 +74,7 @@ watch(() => router.currentRoute.value,
   border-radius: 12px 0 0 0;
   height: 100%;
   max-height: 100%;
+  transition: background .0s, width .0s cubic-bezier(.0, 0, 0, 1) 0s;
 }
 
 :deep(.ant-menu-vertical) {
