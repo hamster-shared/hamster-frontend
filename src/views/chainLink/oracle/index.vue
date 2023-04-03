@@ -1,21 +1,22 @@
 <template>
   <div class="flex flex-col w-full px-6">
-    <a-tabs v-model:activeKey="activeKey">
-      <a-tab-pane key="1" tab="MainNet"><oracleChart></oracleChart></a-tab-pane>
-      <a-tab-pane key="2" tab="TestNet"><oracleChart></oracleChart></a-tab-pane>
-    </a-tabs>
-
-    <div class="flex flex-col w-[1096px] self-center">
-      <div class="my-4">
-        <div class="mb-4">Create Request</div>
-        <a-button>Create Request</a-button>
-        <a-button class="ml-2">Docs</a-button>
+    <div class="mb-6 text-2xl font-bold">Chainlink Functions</div>
+    <oracleChart></oracleChart>
+    <div class="flex flex-col self-center w-full mt-[32px] container-border">
+      <div class="flex justify-between my-4">
+        <div class="font-bold text-[20px]">Create Request</div>
+        <div>
+          <a-button @click="router.push('/chainlink/oracle/createRequest')">Create Request</a-button>
+          <a-button class="ml-2">Docs</a-button>
+        </div>
       </div>
       <div>
         <a-table :dataSource="oracleListData" :columns="oracleColumns" :pagination="pagination" style="width:100%">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <a-button type="link">Details</a-button>
+              <a-button class="table-btn">Test</a-button>
+              <a-button class="mx-2 table-btn">Edit</a-button>
+              <a-button class="table-btn">Download</a-button>
             </template>
           </template>
         </a-table>
@@ -27,24 +28,26 @@
 
 <script setup lang="ts">
   import { ref, reactive } from 'vue';
-  import oracleChart from '../components/oracleChart.vue'
+  import { useRouter } from 'vue-router'
+  import oracleChart from './oracleChart/index.vue'
 
-  const activeKey = ref('1')
+  const router = useRouter();
+  const oracleListData = ref([])
 
-  const oracleListData = reactive([
-    {
-      key: '1',
-      number: '1',
-      name: 'Weather',
-      time: 32,
-    },
-    {
-      key: '2',
-      number: '2',
-      name: 'Price_PTC',
-      time: 42,
-    },
-  ])
+  // const oracleListData = ref([
+  //   {
+  //     key: '1',
+  //     number: '1',
+  //     name: 'Weather',
+  //     time: 32,
+  //   },
+  //   {
+  //     key: '2',
+  //     number: '2',
+  //     name: 'Price_PTC',
+  //     time: 42,
+  //   },
+  // ])
 
   const oracleColumns = reactive([
     {
@@ -94,4 +97,17 @@
     },
   });
 </script>
+
+<style lang="less" scoped>
+ .container-border {
+  border: 1px solid #EBEBEB;
+  border-radius: 12px;
+  padding: 20px;
+ }
+ .table-btn {
+    background-color: white;
+    color: #E2B578;
+    border-radius: 32px;
+  }
+</style>
 

@@ -53,6 +53,14 @@ const chainlinkRoute = [
                     sidebarMap: ['Oracle'],
                   }
               },
+              {
+                path: "/chainlink/oracle/createRequest",
+                name: "CreateRequest",
+                component:() => import('@/views/chainLink/oracle/createRequest/index.vue'),
+                meta:{
+                  sidebarMap: ['Oracle'],
+                }
+              },
           ]
         },
         {
@@ -163,85 +171,4 @@ const chainlinkRoute = [
     ]
   }
 ]
-
-// const chainlinkRoute = [
-//     {
-//         path: "/dashboard",
-//         redirect: "/chainlink/dashboard",
-//         children: [
-//           {
-//             path: "/chainlink/dashboard",
-//             name: "Dashboard",
-//             component:() => import('@/views/chainLink/dashboard/index.vue'),
-//             meta:{
-//               isShow: true,
-//             }
-//           },
-//           {
-//             path: "/chainlink/default/:type",
-//             name: "Default",
-//             component:() => import('@/views/chainLink/components/rpcAndOracleDefault.vue'),
-//             meta:{
-//               isShow: false,
-//             },
-//           },
-//           {
-//             path: "/chainlink/oracle",
-//             name: "Oracle",
-//             redirect: "/chainlink/oracle",
-//             meta:{
-//               isShow: true,
-//             },
-//             children:[
-//                 {
-//                     path: "/chainlink/oracle",
-//                     name: "Oracle",
-//                     component:() => import('@/views/chainLink/oracle/index.vue'),
-//                 },
-//                 {
-//                     path: "/chainlink/oracle/subList",
-//                     name: "subList",
-//                     component:() => import('@/views/chainLink/oracle/mySubscription/subList.vue'),
-//                 },
-//                 {
-//                     path: "/chainlink/oracle/subListDetail",
-//                     name: "subListDetail",
-//                     component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
-//                 },
-//             ]
-//           },
-//           {
-//             path: "/chainlink/RPC",
-//             name: "RPC",
-//             redirect: "/chainlink/RPC",
-//             meta:{
-//               isShow: true,
-//             },
-//             children: [
-//               {
-//                 path: "/chainlink/RPC",
-//                 name: "RPC",
-//                 component:() => import('@/views/chainLink/rpc/index.vue'),
-//               },
-//               {
-//                 path: "/chainlink/RPC/rpcDetail",
-//                 name: "rpcDetail",
-//                 component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
-//               }
-//             ]
-//           }
-//         ],
-//     },
-//     {
-//       path: "/miwaspace",
-//       redirect: "/chainlink/miwaspace",
-//       children:[
-//         {
-//           path: "/chainlink/miwaspace",
-//           name: "Miwaspace",
-//           component:() => import('@/views/chainLink/miwaspace/index.vue'),
-//         },
-//       ]
-//     }
-// ]
 export default chainlinkRoute
