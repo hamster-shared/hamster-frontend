@@ -21,9 +21,11 @@
         </template>
         </template>
     </a-table>
+    <a-button @click="showTestSub=true">testSub</a-button>
     <createSub v-if="showCreateSub" :showCreateSub="showCreateSub" @getCreateSubInfo="getCreateSubInfo" @closeCreateSub="closeCreateSub"/>
     <addFunds v-if="showAddFund" :showAddFund="showAddFund" @getAddFundInfo="getAddFundInfo" @closeAddFund="closeAddFund"/>
     <addConsumers v-if="showAddConsumers" :showAddConsumers="showAddConsumers" @getAddConsumersInfo="getAddConsumersInfo" @closeAddConsumers="closeAddConsumers"/>
+    <testSub v-if="showTestSub" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
 </template>
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
@@ -31,6 +33,7 @@ import { ref,reactive } from 'vue'
 import createSub from './components/createSub.vue'
 import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
+import testSub from './components/testSub.vue'
 const router = useRouter();
 const netOptions = ref<any>(['All','Ethereum Mainnet','Ethereum Testnet','BSC Mainnet','BSC Testnet'])
 const netName = ref('All')
@@ -38,6 +41,7 @@ const loading = ref(false)
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
+const showTestSub = ref(false)
 const setSubNetwork = ()=>{
 
 }
@@ -202,6 +206,15 @@ const closeAddFund = (bool:boolean)=>{
     showAddFund.value = bool
 }
 
+// 获取testsub数据
+const getTestSubInfo = (testSub:any)=>{
+    console.log('添加消费者数据接收',testSub)
+}
+// 关闭testsub弹框
+const closeTestSub = (bool:boolean)=>{
+    showTestSub.value = bool
+}
+
 // 切换按钮改变状态,先关闭所有弹框，再开点击的弹框
 const btnChange = ()=>{
     showCreateSub.value = false
@@ -210,7 +223,7 @@ const btnChange = ()=>{
 }
 const goSubDetail = (record:any)=>{
     console.log('goSubDetail',record)
-    router.push('/chainlink/oracle/subListDetail')
+    router.push('/chainlink/oracle/subList/subListDetail')
 }
 </script>
 <style scoped less>
