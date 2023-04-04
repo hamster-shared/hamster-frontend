@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="text-right">
-          <a-button type="link">view more</a-button>
+          <a-button type="link" @click="goSublist">view more</a-button>
         </div>
       </div>
     </div>
@@ -55,6 +55,8 @@
   import createSub from '../mySubscription/components/createSub.vue'
   import addFunds from '../mySubscription/components/addFunds.vue'
   import addConsumers from '../mySubscription/components/addConsumers.vue'
+  import { useRouter } from 'vue-router'
+  const router = useRouter();
 
   const theme = useThemeStore();
   const showCreateSub = ref(false)
@@ -188,7 +190,10 @@ const btnChange = ()=>{
     showAddFund.value = false
     showAddConsumers.value = false
 }
-
+// 跳转subList
+const goSublist = ()=>{
+  router.push('/chainlink/oracle/subList')
+}
 onMounted(() => {
   initChart();
 })
