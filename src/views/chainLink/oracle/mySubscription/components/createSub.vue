@@ -20,6 +20,7 @@
 </template>
 <script setup lang="ts" name="createSub">
 import { ref, onMounted, computed, reactive } from 'vue'
+import { ethers } from 'ethers';
 const props = defineProps({
     showCreateSub:{
         type:Boolean,
@@ -48,7 +49,20 @@ const setSubNetwork = (val:any)=>{
 }
 // 创建订阅
 const handleCreateSub = async()=>{
-    await formRef.value.validate();
+    // await formRef.value.validate();
+    // 判断是否安装小狐狸钱包
+    if (window.ethereum) {
+        try{
+            // 请求用户授权
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            await window.ethereum.enable();
+            console.log('成功连接 MetaMask！');
+        }catch(error:any){
+            console.error('无法连接 MetaMask: ', error);
+        }
+    } else {
+        window.open('https://chrome.google.com/webstore/search/metamask')
+    }
     emit('getCreateSubInfo',formData)
     emit('closeCreateSub',false)
 }

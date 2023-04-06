@@ -29,11 +29,12 @@
 </template>
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
-import { ref,reactive } from 'vue'
+import { ref,reactive,onMounted } from 'vue'
 import createSub from './components/createSub.vue'
 import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
 import testSub from './components/testSub.vue'
+import { apiSublist } from '@/apis/chainlink'
 const router = useRouter();
 const netOptions = ref<any>(['All','Ethereum Mainnet','Ethereum Testnet','BSC Mainnet','BSC Testnet'])
 const netName = ref('All')
@@ -225,6 +226,15 @@ const goSubDetail = (record:any)=>{
     console.log('goSubDetail',record)
     router.push('/chainlink/oracle/subList/subListDetail')
 }
+onMounted(async()=>{
+    const params = {
+        page:1,
+        size:10,
+        // network:''
+    }
+    const res = await apiSublist(params)
+    console.log('res',res)
+})
 </script>
 <style scoped less>
 
