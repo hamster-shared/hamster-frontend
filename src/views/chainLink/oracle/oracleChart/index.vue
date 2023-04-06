@@ -1,7 +1,7 @@
 <template>
   <div class="w-full mx-auto container-border" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <div>
-      <a-tabs v-model:activeKey="tabNetwork">
+      <a-tabs v-model:activeKey="tabNetwork" @change="subscripionInfo">
         <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
         <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
       </a-tabs>
@@ -24,12 +24,12 @@
         </div>
 
         <div class="w-full h-[460px]">
-          <div class="myChart" ref="myChart" id="myEchart"></div>
+          <div class="myChart" ref="myChartRef" id="myEchart"></div>
         </div>
       </div>
 
       <div class="self-center pl-4 w-60">
-        <span class="block mb-6 text-lg">My Subscripion</span>
+        <span class="block mb-6 text-lg">My Subscription</span>
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="text-right">
-          <a-button type="link">view more</a-button>
+          <a-button type="link">View More</a-button>
         </div>
       </div>
     </div>
@@ -49,12 +49,13 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, onMounted } from 'vue';
+  import { ref, reactive, onMounted, watch, onBeforeUnmount } from 'vue';
   import * as echarts from 'echarts';
   import { useThemeStore } from "@/stores/useTheme";
   import createSub from '../mySubscription/components/createSub.vue'
   import addFunds from '../mySubscription/components/addFunds.vue'
   import addConsumers from '../mySubscription/components/addConsumers.vue'
+  import { apiGetSubscriptionParams } from '@/apis/chainlink'
 
   const theme = useThemeStore();
   const showCreateSub = ref(false)
@@ -62,13 +63,14 @@
   const showAddConsumers = ref(false)
   const tabNetwork = ref('Mainnet');
 
-  const initChart = () => {
-    let myChart = echarts.init(document.getElementById('myEchart') as HTMLElement);
-    myChart.setOption({
-    // darkMode: true,
-    // title: {
-    //   text: 'Stacked Line'
-    // },
+  // 创建echarts
+  const myChartRef = ref()
+  const myChart = ref()
+  const initChart = (chartElement: HTMLElement, themeValue: string) => {
+    const chart = echarts.init(chartElement, themeValue);
+    chart.setOption({
+      // darkMode: themeValue == 'dark'?true:false,
+      backgroundColor: '',
       tooltip: {
         trigger: 'axis'
       },
@@ -110,22 +112,48 @@
         }
       ]
     })
-    window.onresize = function () { // 自适应大小
-      myChart.resize();
-    };
+
+    myChart.value = chart
   }
 
+  // 监测主题变化，改变echarts主题
+  watch(() => theme.themeValue,
+    (value: any) => {
+      // console.log(value, 'theme')
+      // console.log("dispose", myChart.dispose, value)
+      myChart.value && myChart.value.dispose()
+      initChart(myChartRef.value, value);
+    }
+  )
+
+  // 监测时间变化
   const selectTimeValue = ref('Last 7 days')
-
-  const subscripion = reactive([
-    { title: 'Subscripion', number: '3', btnTitle: 'Create' },
-    { title: 'Consumers', number: '-', btnTitle: 'Add' },
-    { title: 'Funds', number: '11.23link', btnTitle: 'Add' },
-  ])
-
   const handleChange = ()=>{
     console.log('selectTimeValue:',selectTimeValue.value)
   }
+
+  // 获取my subscription的数据
+  const subscripion = reactive([
+    { title: 'Subscription', number: '', btnTitle: 'Create' },
+    { title: 'Consumers', number: '', btnTitle: 'Add' },
+    { title: 'Funds', number: '11.23link', btnTitle: 'Add' },
+  ])
+  const subscripionInfo = async()=>{
+    const token = localStorage.getItem('token')
+    const params = {
+      network: tabNetwork.value,
+      token
+    }
+    try {
+      const { data } = await apiGetSubscriptionParams(params)
+      subscripion[0].number = data.total_subscription
+      subscripion[1].number = data.total_consumers
+      console.log('data:',data)
+    } catch(err:any){
+      console.log('err:',err)
+    }
+  }
+  
   const showPop = (item:string)=>{
     console.log('item',item)
     // 根据title显示对应的弹框
@@ -189,8 +217,19 @@ const btnChange = ()=>{
     showAddConsumers.value = false
 }
 
-onMounted(() => {
-  initChart();
+onMounted(async() => {
+  initChart(myChartRef.value, theme.themeValue);
+
+  // 监测屏幕变化，让echarts自适应宽度
+  const handleWindowResize = () => myChart.value.resize();
+  window.addEventListener("resize", handleWindowResize)
+
+  await subscripionInfo()
+})
+
+onBeforeUnmount(() => {
+  const handleWindowResize = () => myChart.value.resize();
+  window.removeEventListener("resize", handleWindowResize)
 })
 </script>
 
