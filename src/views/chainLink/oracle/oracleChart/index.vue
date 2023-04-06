@@ -233,6 +233,7 @@ onMounted(async() => {
 onBeforeUnmount(() => {
   const handleWindowResize = () => myChart.value.resize();
   window.removeEventListener("resize", handleWindowResize)
+})
 // 跳转subList
 const goSublist = ()=>{
   router.push('/chainlink/oracle/subList')
