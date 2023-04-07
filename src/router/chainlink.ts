@@ -80,7 +80,7 @@ const chainlinkRoute = [
               }
             },
             {
-              path: "/chainlink/RPC/rpcDetail",
+              path: "/chainlink/RPC/rpcDetail/:chain",
               name: "rpcDetail",
               component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
               meta:{

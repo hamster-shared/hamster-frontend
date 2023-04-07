@@ -28,7 +28,7 @@
         <a-tab-pane key="2" tab="FrontEnd">
           <div v-if="totalFrontend > 0">
             <div v-for="(item, index) in frontentList" :key="index">
-              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects"/>
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
             </div>
             <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange"
               @showSizeChange="onShowSizeChange" :current="currentFrontend" :total="totalFrontend" size="small" />
@@ -128,6 +128,7 @@ const handleTabClick = (tab: any) => {
   }
   window.localStorage.setItem("projectActiveKey", tab);
 }
+
 const getProjectsContract = async (type: string | undefined) => {
   try {
     const params = {

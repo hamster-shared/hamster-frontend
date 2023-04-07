@@ -3,17 +3,16 @@
   <div class="text-[16px] dark:text-[#E0DBD2] text-[#73706E] mb-[16px]">Something like that…</div>
   <div class="">
     <div>
-      <a-tabs v-model:activeKey="tabNetwork">
-        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
-        <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
+      <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
+        <a-tab-pane :key="item" :tab="item" v-for="item in networkList"></a-tab-pane>
       </a-tabs>
 
     </div>
     <div class="flex justify-between mt-[16px]">
       <div class="font-bold text-[20px]">Overiew</div>
-      <a-select ref="select" v-model:value="tiemValue" style="width: 120px" @change="handleChange">
+      <!-- <a-select ref="select" v-model:value="tiemValue" style="width: 120px" @change="handleChange">
         <a-select-option :value="item.id" v-for="item in timeList">{{ item.name }}</a-select-option>
-      </a-select>
+      </a-select> -->
     </div>
     <!-- 图表 -->
     <div class="w-full h-[500px]">
@@ -27,7 +26,7 @@
       <a-button>Docs</a-button>
     </div>
     <div class="mt-[24px]">
-      <a-table :dataSource="dataSource" :columns="columns">
+      <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.dataIndex === 'action'">
             <label class="text-[#FF4A4A] ml-2 cursor-pointer" @click="toDetails(record)">Details</label>
@@ -39,21 +38,34 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import * as echarts from 'echarts';
-import { apiGetChains } from "@/apis/rpcs";
+import { apiGetOverview, apiGetMynetwork } from "@/apis/rpcs";
 import { useThemeStore } from "@/stores/useTheme";
+import { formatDateToLocale } from '@/utils/dateUtil';
+const router = useRouter();
 const timeList = ref([{ name: 'Last 7 days', id: 2 }, { name: 'Last 30 days', id: 3 }, { name: 'Last 90 days', id: 4 }, { name: 'All time', id: 1 }])
 const tiemValue = ref(2);
+const rpcData = ref([]);
 const dataSource = ref([]);
-const tabNetwork = ref('Mainnet');
+const networkList = ref([]);
+const tabNetwork = ref('');
+const seriesData = ref([]);
+const legendData = ref([]);
+const xAxisData = ref([]);
+
+const mainnetData = ref([]);
+const testnetData = ref([]);
 const theme = useThemeStore();
+
 const columns = [
   {
     title: 'Number',
-    dataIndex: 'number',
     align: "center",
-    key: 'number',
+    customRender: ({ index }: any) => {
+      return `${index + 1}`
+    },
   },
   {
     title: 'Network',
@@ -63,15 +75,16 @@ const columns = [
   },
   {
     title: 'Add',
-    dataIndex: 'add',
+    dataIndex: 'created_at',
     align: "center",
-    key: 'add',
+    key: 'created_at',
+    customRender: ({ text: date }: any) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Total request',
-    dataIndex: 'totalRequest',
+    dataIndex: 'total_requests_all',
     align: "center",
-    key: 'totalRequest',
+    key: 'total_requests_all',
   },
   {
     title: 'Action',
@@ -81,28 +94,123 @@ const columns = [
   },
 ]
 
-const handleChange = (val: number) => {
+const handleChange = (val: string) => {
   console.log(val, 'val')
+  if (val === 'Mainnet') {
+    setEchartData(mainnetData.value);
+  } else {
+    setEchartData(testnetData.value);
+  }
 }
 
 const toDetails = (val: any) => {
-  console.log(val, '点击详情操作')
+  // console.log(val, '点击详情操作')
+  router.push(`/chainlink/RPC/rpcDetail/${val.chain}`);
 }
 
-const initRpcChain = async () => {
-  const { data } = await apiGetChains();
-  console.log(data, 'data')
+const initRpcOverview = async () => {
+  try {
+    const { data } = await apiGetOverview();
+    rpcData.value = data;
+
+    data.map((item: any) => {
+      if (item.network === 'Mainnet') {
+        networkList.value.push('Mainnet');
+        mainnetData.value.push(item);
+
+      } else {
+        networkList.value.push('Testnet');
+        testnetData.value.push(item);
+
+      }
+    })
+
+    // console.log(mainnetData.value, testnetData.value, 'uuu')
+
+    networkList.value = Array.from(new Set(networkList.value));
+    tabNetwork.value = networkList.value[0];
+    if (mainnetData.value.length > 0) {
+      setEchartData(mainnetData.value);
+    } else {
+      setEchartData(testnetData.value);
+    }
+
+  } catch (err: any) {
+    console.info(err)
+  }
 }
+
+
+const setEchartData = (data: any) => {
+  seriesData.value = [];
+  legendData.value = [];
+  data[0].dayly_requests_7days.map((it: any) => {
+    xAxisData.value.push(formatDateToLocale(it.start_time).format("YYYY/MM/DD"))
+  })
+
+  data.map((item: any) => {
+    legendData.value.push(item.chain);
+    let data = {
+      name: item.chain,
+      type: 'line',
+      stack: 'Total',
+      data: item.dayly_requests_7days.map((val: any) => { return val.request })
+    }
+    seriesData.value.push(data)
+  })
+
+  // console.log(legendData.value, 'legendData.value')
+  // console.log(seriesData.value, 'seriesData.value')
+}
+
+
+const getMynetworkData = async () => {
+  const params = {
+    page: currentPagination.current,
+    size: currentPagination.pageSize,
+  }
+  const { data, pagination } = await apiGetMynetwork(params);
+  dataSource.value = data;
+  currentPagination.total = pagination.total;
+}
+
+const currentPagination = reactive({
+  // 分页配置器
+  pageSize: 5, // 一页的数据限制
+  current: 1, // 当前页
+  total: 0, // 总数
+  size: 'small',
+  position: ['bottomCenter'], //指定分页显示的位置
+  hideOnSinglePage: false, // 只有一页时是否隐藏分页器
+  showQuickJumper: false, // 是否可以快速跳转至某页
+  showSizeChanger: false, // 是否可以改变 pageSize
+  pageSizeOptions: ['5'], // 指定每页可以显示多少条
+  onShowSizeChange: (current: number, pagesize: number) => {
+    // 改变 pageSize时的回调
+    currentPagination.current = current;
+    currentPagination.pageSize = pagesize;
+    getMynetworkData()
+  },
+  onChange: (current: number) => {
+    // 切换分页时的回调，
+    currentPagination.current = current;
+    getMynetworkData()
+  },
+});
+
 
 const initChart = (themeValue: string) => {
+  // console.log(themeValue, 'themeValue')
   let myChart = echarts.init(document.getElementById('myEchart') as HTMLElement, themeValue);
+
   myChart.setOption({
-    backgroundColor: '',
+    // backgroundColor: background,
     tooltip: {
       trigger: 'axis'
     },
     legend: {
-      data: ['Email', 'Union Ads', 'Video Ads']
+      // data: ['Email', 'Union Ads', 'Video Ads']
+      data: legendData.value,
     },
     grid: {
       left: '3%',
@@ -113,45 +221,47 @@ const initChart = (themeValue: string) => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      data: xAxisData.value,
     },
     yAxis: {
       type: 'value'
     },
-    series: [
-      {
-        name: 'Email',
-        type: 'line',
-        stack: 'Total',
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: 'Union Ads',
-        type: 'line', 
-        stack: 'Total',
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Video Ads',
-        type: 'line',
-        stack: 'Total',
-        data: [150, 232, 201, 154, 190, 330, 410]
-      }
-    ]
+    series: seriesData.value,
+    // series: [
+    //   {
+    //     name: 'Email',
+    //     type: 'line',
+    //     stack: 'Total',
+    //     data: [120, 132, 101, 134, 90, 230, 210]
+    //   },
+    //   {
+    //     name: 'Union Ads',
+    //     type: 'line',
+    //     stack: 'Total',
+    //     data: [220, 182, 191, 234, 290, 330, 310]
+    //   },
+    //   {
+    //     name: 'Video Ads',
+    //     type: 'line',
+    //     stack: 'Total',
+    //     data: [150, 232, 201, 154, 190, 330, 410]
+    //   }
+    // ]
   })
   window.onresize = function () { // 自适应大小
     myChart.resize();
   };
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await initRpcOverview();
   initChart(theme.themeValue);
-  initRpcChain();
+  getMynetworkData();
 })
 
 watch(() => theme.themeValue,
   (value) => {
-    // console.log(value, 'theme')
     initChart(value);
   })
 
