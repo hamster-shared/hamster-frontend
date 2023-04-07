@@ -185,7 +185,7 @@ const aptosNetworkVisible = ref(false)
 const abiFn = ref<any>()
 
 // sui
-// const suiWallet = new WalletStandardAdapterProvider()
+const suiWallet = new WalletStandardAdapterProvider()
 
 
 const formState = reactive({
@@ -240,10 +240,10 @@ const deploySuiContract = async ()=> {
 
   loading.value = true
 
-  // const wallets = suiWallet.get()
-  // if(wallets.length === 0){
-  //   message.error(t('common.operateFail'));
-  // }
+  const wallets = suiWallet.get()
+  if(wallets.length === 0){
+    message.error(t('common.operateFail'));
+  }
 
 }
 
