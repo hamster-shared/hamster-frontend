@@ -29,7 +29,7 @@ export class RegistryApi {
   }
 
   async createSubscription(): Promise<any> {
-    return await this.contractApi.sendTransaction('createSubscription', {
+    return this.contractApi.sendTransaction('createSubscription', {
       gasLimit: 1000000,
     });
   }

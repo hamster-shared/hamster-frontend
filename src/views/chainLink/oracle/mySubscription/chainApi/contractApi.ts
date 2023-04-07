@@ -22,7 +22,12 @@ export function createContractApi(
 
   const sendTransaction = async (methodName: string, ...args: any[]): Promise<any> => {
     const tx = await contract[methodName](...args);
-    return tx.wait();
+    //return tx.wait();
+    return new Promise<any>((resolve) => {
+      if (tx) {
+        resolve(tx);
+      }
+    });
   };
 
   const getContract = () => {
