@@ -20,6 +20,7 @@
     "@openzeppelin/contracts-upgradeable": "^4.8.1",
     "@openzeppelin/wizard": "^0.2.0",
     "@vueuse/core": "^9.13.0",
+    "@web3-onboard/core": "^2.16.0",
     "@web3-onboard/injected-wallets": "^2.4.0",
     "@web3-onboard/vue": "^2.4.1",
     "ant-design-vue": "^3.2.15",

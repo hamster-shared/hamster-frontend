@@ -5,7 +5,7 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Network" name="network" >
-                <a-select @change="setSubNetwork" v-model:value="formData.network" placeholder="Please select Network" autocomplete="off"
+                <a-select @change="setSubNetwork" v-model:value="formData.network" placeholder="Choose" autocomplete="off"
                 :options="subNetOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
             </a-form-item>
             <a-form-item label="Subscription Name" name="name" >
@@ -20,7 +20,13 @@
 </template>
 <script setup lang="ts" name="createSub">
 import { ref, onMounted, computed, reactive } from 'vue'
-import { ethers } from 'ethers';
+import { useOnboard } from '@web3-onboard/vue'
+import { ethers,Contract } from 'ethers';
+import { abis } from '../chainApi/contractConfig'
+import { useContractApi } from "@/stores/chainlink";
+import { apiCreateSub } from '@/apis/chainlink'
+import { message } from 'ant-design-vue';
+const contractApi = useContractApi()
 const props = defineProps({
     showCreateSub:{
         type:Boolean,
@@ -28,7 +34,7 @@ const props = defineProps({
     }
 })
 const formRef = ref();
-const subNetOptions = ref(['Ethererum Mainnet','Ethererum Testnet','BSC Mainnet','BSC Testnet'])
+const subNetOptions = ref(['Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const formData = reactive({
     network: null,
     name: '',
@@ -49,21 +55,42 @@ const setSubNetwork = (val:any)=>{
 }
 // 创建订阅
 const handleCreateSub = async()=>{
-    // await formRef.value.validate();
-    // 判断是否安装小狐狸钱包
-    if (window.ethereum) {
-        try{
-            // 请求用户授权
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            await window.ethereum.enable();
-            console.log('成功连接 MetaMask！');
-        }catch(error:any){
-            console.error('无法连接 MetaMask: ', error);
-        }
-    } else {
-        window.open('https://chrome.google.com/webstore/search/metamask')
-    }
-    emit('getCreateSubInfo',formData)
+    await formRef.value.validate();
+    if (contractApi.apiStatus) {
+    // spinning.value = true;
+    // 钱包地址
+    const walletAd = localStorage.getItem('walletAccount');
+    const tx = contractApi.registryApi?.createSubscription();
+    console.log("tx",tx.transactionHash);
+    tx.then(async(receipt:any) => {
+      const events = contractApi.registryApi?.contract.interface.parseLog(receipt.logs[0]);
+        // 订阅id
+      const currentsubscriptionId = events.args[0].toNumber();
+      const chainNetArr = formData?.network?.split(' ')
+      console.log("receipt:",currentsubscriptionId,receipt.transactionHash,chainNetArr,receipt);
+      const params = {
+        chain:chainNetArr[0],
+        network:chainNetArr[1],
+        name:formData.name,
+        subscriptionId:currentsubscriptionId,
+        admin:walletAd,
+        transactionTx:receipt.transactionHash
+      }
+      console.log('params',params)
+        // 创建订阅存入后端接口   
+      const res = await apiCreateSub(params)
+      console.log('创建订阅存入后端接口',res)
+      if(res.code===200){
+        message.success(res.message)
+      }else{
+        message.error(res.data)
+      }
+    }, (error:any) => {
+      console.log('error',error)
+    //   spinning.value = false;
+    });
+  } 
+    // emit('getCreateSubInfo',formData)
     emit('closeCreateSub',false)
 }
 // 取消订阅

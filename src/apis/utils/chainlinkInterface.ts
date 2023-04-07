@@ -8,10 +8,9 @@ export interface sublistParams {
 export interface createSubParams {
     chain?:string;
     network?:string;
-    subscriptionId?:string;
-    admin?:string;
+    subscriptionId?:string | number;
+    admin?:string | null;
     transactionTx?:string;
-    status?:string;
     name?:string;
 }
 // 给订阅号添加消费者参数
@@ -41,4 +40,11 @@ export interface depositListParams {
 export interface consumerListParams {
     page:number;
     size:number;
+}
+// 创建消费者弹框里面的表格参数
+export interface consumerInTableParams {
+    page:number;
+    size:number;
+    chain:string;
+    network:string;
 }
