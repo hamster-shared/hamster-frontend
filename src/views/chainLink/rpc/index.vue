@@ -16,7 +16,7 @@
     </div>
     <!-- 图表 -->
     <div class="w-full h-[500px]">
-      <div class="myChart" ref="myChart" id="myEchart"></div>
+      <div class="myChart" ref="myChartRef" id="myEchart"></div>
     </div>
 
   </div>
@@ -38,7 +38,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
 import * as echarts from 'echarts';
 import { apiGetOverview, apiGetMynetwork } from "@/apis/rpcs";
@@ -54,6 +54,8 @@ const tabNetwork = ref('');
 const seriesData = ref([]);
 const legendData = ref([]);
 const xAxisData = ref([]);
+const myChartRef = ref()
+const myChart = ref();
 
 const mainnetData = ref([]);
 const testnetData = ref([]);
@@ -144,6 +146,7 @@ const initRpcOverview = async () => {
 const setEchartData = (data: any) => {
   seriesData.value = [];
   legendData.value = [];
+  xAxisData.value = [];
   data[0].dayly_requests_7days.map((it: any) => {
     xAxisData.value.push(formatDateToLocale(it.start_time).format("YYYY/MM/DD"))
   })
@@ -158,6 +161,9 @@ const setEchartData = (data: any) => {
     }
     seriesData.value.push(data)
   })
+
+  myChart.value && myChart.value.dispose()
+  initChart(myChartRef.value, theme.themeValue);
 
   // console.log(legendData.value, 'legendData.value')
   // console.log(seriesData.value, 'seriesData.value')
@@ -199,17 +205,16 @@ const currentPagination = reactive({
 });
 
 
-const initChart = (themeValue: string) => {
+const initChart = (chartElement: HTMLElement, themeValue: string) => {
   // console.log(themeValue, 'themeValue')
-  let myChart = echarts.init(document.getElementById('myEchart') as HTMLElement, themeValue);
+  const chart = echarts.init(chartElement, themeValue);
 
-  myChart.setOption({
-    // backgroundColor: background,
+  chart.setOption({
+    backgroundColor: '',
     tooltip: {
       trigger: 'axis'
     },
     legend: {
-      // data: ['Email', 'Union Ads', 'Video Ads']
       data: legendData.value,
     },
     grid: {
@@ -221,48 +226,33 @@ const initChart = (themeValue: string) => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
       data: xAxisData.value,
     },
     yAxis: {
       type: 'value'
     },
     series: seriesData.value,
-    // series: [
-    //   {
-    //     name: 'Email',
-    //     type: 'line',
-    //     stack: 'Total',
-    //     data: [120, 132, 101, 134, 90, 230, 210]
-    //   },
-    //   {
-    //     name: 'Union Ads',
-    //     type: 'line',
-    //     stack: 'Total',
-    //     data: [220, 182, 191, 234, 290, 330, 310]
-    //   },
-    //   {
-    //     name: 'Video Ads',
-    //     type: 'line',
-    //     stack: 'Total',
-    //     data: [150, 232, 201, 154, 190, 330, 410]
-    //   }
-    // ]
   })
-  window.onresize = function () { // 自适应大小
-    myChart.resize();
-  };
+  myChart.value = chart
 }
 
 onMounted(async () => {
   await initRpcOverview();
-  initChart(theme.themeValue);
+  initChart(myChartRef.value, theme.themeValue);
+  const handleWindowResize = () => myChart.value.resize();
+  window.addEventListener("resize", handleWindowResize)
   getMynetworkData();
+})
+
+onBeforeUnmount(() => {
+  const handleWindowResize = () => myChart.value.resize();
+  window.removeEventListener("resize", handleWindowResize)
 })
 
 watch(() => theme.themeValue,
   (value) => {
-    initChart(value);
+    myChart.value && myChart.value.dispose()
+    initChart(myChartRef.value, value);
   })
 
 

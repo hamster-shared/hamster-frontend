@@ -9,9 +9,8 @@
         <span class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px]">Add
           Network</span>
       </div>
-      <a-tabs v-model:activeKey="tabNetwork">
-        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
-        <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
+      <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
+        <a-tab-pane :key="item.network" :tab="item.network" v-for="item in chainsList"></a-tab-pane>
       </a-tabs>
       <div>
         <div>
@@ -26,31 +25,28 @@
             <div>{{ chainData.explorers }}</div>
           </div>
         </div>
-        <div v-for="item in chainsList" :key="item.name">
-          <div>
-            <div class="text-[16px] mb-[12px] mt-[32px]">RPC</div>
-            <div
-              class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
-              <div class="font-bold">{{ item.http_address }}</div>
-              <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(item.http_address)">
-                <svg-icon name="copy" size="18" class="mr-[4px]" />
-                <span class="text-[16px]">Copy</span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <div class="text-[16px] mb-[12px] mt-[24px]">Websocket</div>
-            <div
-              class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
-              <div class="font-bold">{{ item.websocket_address }}</div>
-              <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(item.websocket_address)">
-                <svg-icon name="copy" size="18" class="mr-[4px]" />
-                <span class="text-[16px]">Copy</span>
-              </div>
+        <div>
+          <div class="text-[16px] mb-[12px] mt-[32px]">RPC</div>
+          <div
+            class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
+            <div class="font-bold">{{ newtworkChainsData.http_address }}</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.http_address)">
+              <svg-icon name="copy" size="18" class="mr-[4px]" />
+              <span class="text-[16px]">Copy</span>
             </div>
           </div>
         </div>
-
+        <div>
+          <div class="text-[16px] mb-[12px] mt-[24px]">Websocket</div>
+          <div
+            class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
+            <div class="font-bold">{{ newtworkChainsData.websocket_address }}</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_address)">
+              <svg-icon name="copy" size="18" class="mr-[4px]" />
+              <span class="text-[16px]">Copy</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div
@@ -82,18 +78,20 @@ import CodeEditor from "@/components/CodeEditor.vue";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { message } from "ant-design-vue";
 import { apiGetRPCChain, apiGetrequestLog } from "@/apis/rpcs";
+import { hasChanged } from "@vue/shared";
 const { params } = useRoute()
 const projectName = ref(params.chain);
 const loading = ref(false);
 const dataSource = ref([]);
 const tabLanguage = ref('JavaScript');
-const tabNetwork = ref('Mainnet');
-const languageList = ref(['JavaScript', 'Python', 'JAVA', 'Go']);
+const tabNetwork = ref('');
+const languageList = ref(['JavaScript', 'Python', 'GO', 'CLI']);
 const editHeight = ref("height: 220px");
 const sourceContent = ref("11");
 const chainData = reactive({});
+const newtworkChainsData = reactive({});
 const chainsList = ref([]);
-const codeExamples = ref({});
+const codeExamples = reactive({});
 
 const columns = [
   {
@@ -128,12 +126,20 @@ const getChainData = async () => {
     const { data } = await apiGetRPCChain(params.chain);
     Object.assign(chainData, data);
     chainsList.value = data.chains;
-    codeExamples.value = chainsList.value[0].App.code_examples;
+    Object.assign(codeExamples, chainsList.value[0].App.code_examples);
+    // languageList.value = Object.keys(codeExamples);
+    tabNetwork.value = chainsList.value[0].network;
+    Object.assign(newtworkChainsData, chainsList.value[0])
     // console.log(data, 'data')
   } catch (err) {
     console.log(err)
   }
+}
 
+const handleChange = (val: string) => {
+  const data = chainsList.value.find((item: any) => { return item.network === val });
+  Object.assign(newtworkChainsData, data);
+  getRequestLogData();
 }
 
 const getRequestLogData = async () => {
@@ -142,7 +148,7 @@ const getRequestLogData = async () => {
     size: currentPagination.pageSize,
   }
   try {
-    const { data, pagination } = await apiGetrequestLog(chainsList.value[0].App.api_key, params);
+    const { data, pagination } = await apiGetrequestLog(newtworkChainsData.App.api_key, params);
     dataSource.value = data;
     currentPagination.total = pagination.total;
   } catch (err: any) {
