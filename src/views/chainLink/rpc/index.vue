@@ -23,7 +23,7 @@
   <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[32px]">
     <div class="font-bold text-[20px]">My Network</div>
     <div class="text-right">
-      <a-button>Docs</a-button>
+      <a-button @click="toDocs">Docs</a-button>
     </div>
     <div class="mt-[24px]">
       <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination">
@@ -204,6 +204,9 @@ const currentPagination = reactive({
   },
 });
 
+const toDocs = () => {
+  window.open('https://hamsternet.io/docs/')
+}
 
 const initChart = (chartElement: HTMLElement, themeValue: string) => {
   // console.log(themeValue, 'themeValue')
