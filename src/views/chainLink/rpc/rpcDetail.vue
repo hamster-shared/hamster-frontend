@@ -9,9 +9,8 @@
         <span class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px]">Add
           Network</span>
       </div>
-      <a-tabs v-model:activeKey="tabNetwork">
-        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
-        <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
+      <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
+        <a-tab-pane :key="item.network" :tab="item.network" v-for="item in chainsList"></a-tab-pane>
       </a-tabs>
       <div>
         <div>
@@ -21,17 +20,17 @@
             <div>Explorers</div>
           </div>
           <div class="grid grid-cols-3 gap-1 font-bold mt-[10px] dark:text-[#E0DBD2] text-[#383B46]">
-            <div>1</div>
-            <div>ETH</div>
-            <div>https://etherscan.io</div>
+            <div>{{ chainData.chain_id }}</div>
+            <div>{{ chainData.native_token }}</div>
+            <div>{{ chainData.explorers }}</div>
           </div>
         </div>
         <div>
           <div class="text-[16px] mb-[12px] mt-[32px]">RPC</div>
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
-            <div class="font-bold">111</div>
-            <div class="text-[#E2B578] cursor-pointer">
+            <div class="font-bold">{{ newtworkChainsData.http_address }}</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.http_address)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
               <span class="text-[16px]">Copy</span>
             </div>
@@ -41,8 +40,8 @@
           <div class="text-[16px] mb-[12px] mt-[24px]">Websocket</div>
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
-            <div class="font-bold">222</div>
-            <div class="text-[#E2B578] cursor-pointer">
+            <div class="font-bold">{{ newtworkChainsData.websocket_address }}</div>
+            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_address)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
               <span class="text-[16px]">Copy</span>
             </div>
@@ -66,24 +65,33 @@
         <CodeEditor :readOnly="true" :value="sourceContent"></CodeEditor>
       </div>
       <div class="mt-[32px]">
-        <a-table :dataSource="dataSource" :columns="columns" :pagination="pagination"></a-table>
+        <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination"></a-table>
       </div>
     </div>
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import Breadcrumb from "@/views/projects/components/Breadcrumb.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
+import { formatDateToLocale } from '@/utils/dateUtil';
 import { message } from "ant-design-vue";
-const projectName = ref('Ethereum');
+import { apiGetRPCChain, apiGetrequestLog } from "@/apis/rpcs";
+import { hasChanged } from "@vue/shared";
+const { params } = useRoute()
+const projectName = ref(params.chain);
 const loading = ref(false);
 const dataSource = ref([]);
 const tabLanguage = ref('JavaScript');
-const tabNetwork = ref('Mainnet');
-const languageList = ref(['JavaScript', 'Python', 'JAVA', 'Go']);
+const tabNetwork = ref('');
+const languageList = ref(['JavaScript', 'Python', 'GO', 'CLI']);
 const editHeight = ref("height: 220px");
 const sourceContent = ref("11");
+const chainData = reactive({});
+const newtworkChainsData = reactive({});
+const chainsList = ref([]);
+const codeExamples = reactive({});
 
 const columns = [
   {
@@ -97,22 +105,58 @@ const columns = [
     dataIndex: 'time',
     align: "center",
     key: 'time',
+    customRender: ({ text: date }: any) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Request event',
-    dataIndex: 'requestEvent',
+    dataIndex: 'request_event',
     align: "center",
-    key: 'requestEvent',
+    key: 'request_event',
   },
   {
     title: 'Request result',
-    dataIndex: 'requestResult',
+    dataIndex: 'request_result',
     align: "center",
-    key: 'requestResult',
+    key: 'request_result',
   },
 ]
 
-const pagination = reactive({
+const getChainData = async () => {
+  try {
+    const { data } = await apiGetRPCChain(params.chain);
+    Object.assign(chainData, data);
+    chainsList.value = data.chains;
+    Object.assign(codeExamples, chainsList.value[0].App.code_examples);
+    // languageList.value = Object.keys(codeExamples);
+    tabNetwork.value = chainsList.value[0].network;
+    Object.assign(newtworkChainsData, chainsList.value[0])
+    // console.log(data, 'data')
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+const handleChange = (val: string) => {
+  const data = chainsList.value.find((item: any) => { return item.network === val });
+  Object.assign(newtworkChainsData, data);
+  getRequestLogData();
+}
+
+const getRequestLogData = async () => {
+  const params = {
+    page: currentPagination.current,
+    size: currentPagination.pageSize,
+  }
+  try {
+    const { data, pagination } = await apiGetrequestLog(newtworkChainsData.App.api_key, params);
+    dataSource.value = data;
+    currentPagination.total = pagination.total;
+  } catch (err: any) {
+    console.log(err)
+  }
+}
+
+const currentPagination = reactive({
   // 分页配置器
   pageSize: 5, // 一页的数据限制
   current: 1, // 当前页
@@ -125,24 +169,31 @@ const pagination = reactive({
   pageSizeOptions: ['5'], // 指定每页可以显示多少条
   onShowSizeChange: (current: number, pagesize: number) => {
     // 改变 pageSize时的回调
-    pagination.current = current;
-    pagination.pageSize = pagesize;
+    currentPagination.current = current;
+    currentPagination.pageSize = pagesize;
+    getRequestLogData()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
-    pagination.current = current;
+    currentPagination.current = current;
+    getRequestLogData()
   },
 });
 
 const copyInfo = async (_items: any) => {
   let inp = document.createElement("input");
   document.body.appendChild(inp);
-  inp.value = sourceContent.value;
+  inp.value = _items;
   inp.select();
   document.execCommand("copy", false);
   inp.remove();
   message.success('copy success')
 }
+
+onMounted(async () => {
+  await getChainData();
+  getRequestLogData();
+})
 </script>
 <style lang='less' scoped>
 :deep(.ant-radio-group .ant-radio-button-wrapper) {

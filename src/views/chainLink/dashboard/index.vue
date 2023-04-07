@@ -27,7 +27,7 @@ import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
 const router = useRouter();
 const menuRouterList = ref([]);
-const selectedKeys = ref([]);
+const selectedKeys = ref(['']);
 
 // console.log('router', router.options.routes)
 onBeforeMount(() => {
@@ -46,7 +46,7 @@ watch(() => router.currentRoute.value,
     if (value.name === "Default") {
       selectedKeys.value = [value.params.type];
     } else {
-      selectedKeys.value = value.meta.sidebarMap;
+      selectedKeys.value = value.meta.sidebarMap || [''];
     }
 
     // console.log(value, 'value')
