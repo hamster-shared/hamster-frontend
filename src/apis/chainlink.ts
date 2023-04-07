@@ -1,5 +1,5 @@
 import httpRequest from "@/request";
-import type {sublistParams,createSubParams,payFundParams,consumerAddParams,expenseListParams,depositListParams,consumerListParams}  from './utils/chainlinkInterface'
+import type {sublistParams,createSubParams,payFundParams,consumerAddParams,expenseListParams,depositListParams,consumerListParams,consumerInTableParams}  from './utils/chainlinkInterface'
 
 //订阅列表
 export function apiSublist(params: sublistParams) {
@@ -17,7 +17,7 @@ export function apiExecSub(params: any) {
         data: params,
     });
 }
-// 给订阅号添加消费者
+// 创建订阅
 export function apiCreateSub(params: createSubParams) {
     return httpRequest({
         url: "/api/chainlink/subscription/subscription",
@@ -25,7 +25,7 @@ export function apiCreateSub(params: createSubParams) {
         data: params,
     });
 }
-// 创建订阅
+// 给订阅号添加消费者
 export function apiConsumerAdd(params: consumerAddParams) {
     return httpRequest({
         url: "/api/chainlink/consumer",
@@ -34,7 +34,7 @@ export function apiConsumerAdd(params: consumerAddParams) {
     });
 }
 // funds充值
-export function apiPayFund(id:string,params: payFundParams) {
+export function apiPayFund(id:number,params: payFundParams) {
     return httpRequest({
         url: `/api/chainlink/subscription/${id}/found`,
         method: "post",
@@ -42,14 +42,14 @@ export function apiPayFund(id:string,params: payFundParams) {
     });
 }
 // 订阅详情
-export function apiSublistDetail(id:string) {
+export function apiSublistDetail(id:string|number) {
     return httpRequest({
         url: `/api/chainlink/subscription/${id}`,
         method: "get",
     });
 }
 // expense 列表
-export function apiExpenseList(id:string,params:expenseListParams) {
+export function apiExpenseList(id:number,params:expenseListParams) {
     return httpRequest({
         url: `/api/chainlink/subscription/${id}/expenses`,
         method: "get",
@@ -57,7 +57,7 @@ export function apiExpenseList(id:string,params:expenseListParams) {
     });
 }
 // deposit 列表
-export function apiDepositList(id:string,params:depositListParams) {
+export function apiDepositList(id:number,params:depositListParams) {
     return httpRequest({
         url: `/api/chainlink/subscription/${id}/deposits`,
         method: "get",
@@ -65,7 +65,7 @@ export function apiDepositList(id:string,params:depositListParams) {
     });
 }
 // consumer 列表
-export function apiConsumerList(id:string,params:consumerListParams) {
+export function apiConsumerList(id:number,params:consumerListParams) {
     return httpRequest({
         url: `/api/chainlink/subscription/${id}/consumers`,
         method: "get",
@@ -73,9 +73,31 @@ export function apiConsumerList(id:string,params:consumerListParams) {
     });
 }
 // 删除consumer
-export function apiDelConsumer(id:string,consumerId:string) {
+export function apiDelConsumer(id:number,consumerId:number) {
     return httpRequest({
         url: `/api/chainlink/subscription/${id}/consumer/${consumerId}`,
         method: "delete"
+    });
+}
+// 添加消费者弹框里面的table
+export function consumerTable(Warehouse:string,params:consumerInTableParams) {
+    return httpRequest({
+        url: `/api/chainlink/consumer/${Warehouse}/hamster-consumer`,
+        method: "get",
+        params:params
+    });
+}
+// 添加消费者弹框里面的下拉框可选项目
+export function consumerProjects() {
+    return httpRequest({
+        url: `/api/chainlink/consumer/projects`,
+        method: "get",
+    });
+}
+// 添加消费者弹框里面的下拉框可选项目
+export function consumerSublist() {
+    return httpRequest({
+        url: `/api/chainlink/subscription/valid-subscription`,
+        method: "get",
     });
 }

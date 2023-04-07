@@ -29,6 +29,10 @@
             <a-select class="inline-block" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select the network" autocomplete="off"
                 :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
             <a-table class="mt-[16px]" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
+                <template #address="{ record }">
+                    <a-radio class="inline-block w-[20px]" v-model:checked="record.checked"></a-radio>
+                    <span>{{ record.address }}</span>
+                </template>
             </a-table>
         </div>
         <div class="text-center flex justify-between mt-[16px]">
@@ -41,13 +45,16 @@
 import router from '@/router';
 import { renderTableText } from '@/utils/customRender'
 import { ref, onMounted, computed, reactive } from 'vue'
+import { consumerSublist,consumerProjects,consumerTable,apiConsumerAdd } from '@/apis/chainlink'
+import type { consumerInTableParams } from '@/apis/utils/chainlinkInterface'
 const consumersColumns:any = [
     {
         title: 'Address',
         dataIndex: 'address',
         key:'address',
         align:'center',
-        customRender: renderTableText(30)
+        // customRender: renderTableText(30)
+        slots: { customRender: 'address' },
     },
     {
         title: 'Network',
@@ -56,7 +63,7 @@ const consumersColumns:any = [
     },
     {
         title: 'Deploy Time',
-        dataIndex: 'time',
+        dataIndex: 'deploy_time',
         align:'center'
     },
 ]
@@ -65,28 +72,28 @@ const consumersData:any = [
         key: '1',
         id: '1',
         address:'test',
-        time:'2023-03-28 18:00:00',
+        deploy_time:'2023-03-28 18:00:00',
         network:'Test',
     },
     {
         key: '2',
         id: '2',
         address:'test',
-        time:'2023-03-28 18:00:00',
+        deploy_time:'2023-03-28 18:00:00',
         network:'Test',
     },
     {
         key: '3',
         id: '3',
         address:'test',
-        time:'2023-03-28 18:00:00',
+        deploy_time:'2023-03-28 18:00:00',
         network:'Test',
     },
     {
         key: '4',
         id: '4',
         address:'test',
-        time:'2023-03-28 18:00:00',
+        deploy_time:'2023-03-28 18:00:00',
         network:'Test',
     },
 ]
@@ -119,7 +126,7 @@ const props = defineProps({
     }
 })
 const formRef = ref();
-const subOptions = ref(['Ethererum Mainnet','Ethererum Testnet','BSC Mainnet','BSC Testnet'])
+const subOptions = ref(['Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const formData = reactive({
     subscription: null,
     consumer: '',
@@ -134,9 +141,29 @@ const formRules = computed(() => {
 });
 const emit = defineEmits(['closeAddConsumers','getAddConsumersInfo'])
 console.log('showAddConsumers',props.showAddConsumers)
+// 获取订阅数据
+const getSublistData = async()=>{
+    const res = await consumerSublist()
+    console.log('获取订阅数据',res)
+}
+// 获取项目名称
+const getProjectsData = async()=>{
+    const res = await consumerProjects()
+    console.log('获取项目名称',res)
+}
 // 获取表单数据
-const getlistData = ()=>{
+const getlistData = async()=>{
     console.log('获取表单数据')
+    const params:consumerInTableParams = {
+        page:pagination.current,
+        size:pagination.pageSize,
+        chain:'',
+        network:'',
+    }
+    const res = await consumerTable('',params)
+    if(res.code===200){
+        consumersData.value = res.data
+    }
 }
 // 选择consumer来源于接口
 const selectOrigin = (val:any)=>{
@@ -170,6 +197,10 @@ const handleFund = async()=>{
 const cancelFund = ()=>{
     emit('closeAddConsumers',false)
 }
+onMounted(()=>{
+    getSublistData()
+    getProjectsData()
+})
 
 </script>
 <style lang="less" scoped>
@@ -189,5 +220,8 @@ const cancelFund = ()=>{
 }
 &:deep(.ant-select-selection-item){
     color:#36322D !important;
+}
+&:deep(.ant-radio-wrapper){
+    display: inline-block;
 }
 </style>
