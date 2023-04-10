@@ -53,7 +53,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import createSub from '../mySubscription/components/createSub.vue'
 import addFunds from '../mySubscription/components/addFunds.vue'
 import addConsumers from '../mySubscription/components/addConsumers.vue'
-import { apiGetSubscriptionParams } from '@/apis/chainlink'
+import { apiGetSubscriptionParams, apiGetOracleEchartParams } from '@/apis/chainlink'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
@@ -131,6 +131,16 @@ watch(() => theme.themeValue,
 const selectTimeValue = ref('Last 7 days')
 const handleChange = () => {
   console.log('selectTimeValue:', selectTimeValue.value)
+}
+
+// 获取echart的数据
+const getOracleChart = async ()=> {
+  try {
+    const { data } = await apiGetOracleEchartParams()
+    console.log('getOracleChart-data:', data)
+  } catch(err:any){
+    console.log('getOracleChart-err:', err)
+  }
 }
 
 // 获取my subscription的数据
@@ -219,13 +229,13 @@ const btnChange = () => {
 }
 
 onMounted(async () => {
+  await getOracleChart()
   initChart(myChartRef.value, theme.themeValue);
-
   // 监测屏幕变化，让echarts自适应宽度
   const handleWindowResize = () => myChart.value.resize();
   window.addEventListener("resize", handleWindowResize)
 
-  await subscripionInfo()
+  subscripionInfo()
 })
 
 onBeforeUnmount(() => {

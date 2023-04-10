@@ -7,7 +7,7 @@
         <div class="font-bold text-[20px]">Create Request</div>
         <div>
           <a-button @click="router.push('/chainlink/oracle/createRequest')">Create Request</a-button>
-          <a-button class="ml-2">Docs</a-button>
+          <a-button class="ml-2" @click="toDocs">Docs</a-button>
         </div>
       </div>
       <div>
@@ -15,8 +15,8 @@
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a-button class="table-btn">Test</a-button>
-              <a-button class="mx-2 table-btn">Edit</a-button>
-              <a-button class="table-btn">Download</a-button>
+              <a-button class="mx-2 table-btn" disabled>Edit</a-button>
+              <a-button class="table-btn" disabled>Download</a-button>
             </template>
           </template>
         </a-table>
@@ -27,46 +27,39 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, onMounted } from 'vue';
   import { useRouter } from 'vue-router'
+  import { apiGetOracleTableParams } from '@/apis/chainlink'
+  import { formatDateToLocale } from '@/utils/dateUtil';
   import oracleChart from './oracleChart/index.vue'
 
   const router = useRouter();
-  const oracleListData = ref([])
-
-  // const oracleListData = ref([
-  //   {
-  //     key: '1',
-  //     number: '1',
-  //     name: 'Weather',
-  //     time: 32,
-  //   },
-  //   {
-  //     key: '2',
-  //     number: '2',
-  //     name: 'Price_PTC',
-  //     time: 42,
-  //   },
-  // ])
+  const oracleListData = ref<{
+    id: number,
+    name: string,
+    created: string
+  }[]>([])
 
   const oracleColumns = reactive([
     {
       title: 'Number',
-      dataIndex: 'number',
-      key: 'number',
-      align: 'center'
+      dataIndex: 'id',
+      key: 'id',
+      align: 'center',
+      customRender: ({ index }:any) => index+1,
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      align: 'center'
+      align: 'center',
     },
     {
       title: 'Created',
-      dataIndex: 'time',
-      key: 'time',
-      align: 'center'
+      dataIndex: 'created',
+      key: 'created',
+      align: 'center',
+      customRender: ({ text: date }) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
     },
     {
       title: 'Action',
@@ -90,12 +83,41 @@
       // 改变 pageSize时的回调
       pagination.current = current;
       pagination.pageSize = pagesize;
+      getTableData(current, pagesize)
     },
     onChange: (current: number) => {
       // 切换分页时的回调，
       pagination.current = current;
+      getTableData(current, pagination.pageSize)
     },
   });
+
+  const getTableData = async(page:number = pagination.current, size:number = pagination.pageSize) => {
+    const token = localStorage.getItem('token')
+    const params = {
+      page,
+      size,
+      token
+    }
+    try {
+      const { data } = await apiGetOracleTableParams(params)
+      pagination.total = data.total
+      pagination.current = data.page
+      pagination.pageSize = data.pageSize
+      oracleListData.value = data.data
+      console.log('tableData:', oracleListData.value)
+    } catch(err:any) {
+      console.log('tableDataErr:', err)
+    }
+  }
+
+  const toDocs = () => {
+    window.open('https://hamsternet.io/docs/')
+  }
+
+  onMounted(()=>{
+    getTableData()
+  })
 </script>
 
 <style lang="less" scoped>
