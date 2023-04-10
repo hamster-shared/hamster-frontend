@@ -105,37 +105,27 @@
   </starkNetModal>
 </template>
 <script lang='ts' setup>
-import { reactive, ref, onMounted } from "vue";
-import type { FormInstance } from 'ant-design-vue';
-import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
+import {onMounted, reactive, ref} from "vue";
+import type {FormInstance} from 'ant-design-vue';
+import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
-import starkNetModal from "../components/starkNetModal.vue";
-import { useThemeStore } from "@/stores/useTheme";
-import { useDeployAddressStore } from "@/stores/useDeployAddress";
-import { useI18n } from 'vue-i18n';
-import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiProjectsContractDeploy, apiGetProjectsDetail } from "@/apis/projects";
-import { Provider, Account, Contract, ec } from "starknet";
-import { connect, getStarknet } from "@argent/get-starknet";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
-import { PetraWallet } from "petra-plugin-wallet-adapter";
-import { WalletCore } from '@aptos-labs/wallet-adapter-core'
-import { BCS, TxnBuilderTypes, HexString, AptosClient } from 'aptos'
-import { nextTick } from "process";
+import {useThemeStore} from "@/stores/useTheme";
+import {useDeployAddressStore} from "@/stores/useDeployAddress";
+import {useI18n} from 'vue-i18n';
+import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import {apiGetProjectsDetail, apiProjectsContractDeploy} from "@/apis/projects";
+import {connect} from "@argent/get-starknet";
+import {ContractFrameTypeEnum} from "@/enums/frameTypeEnum";
+import {PetraWallet} from "petra-plugin-wallet-adapter";
+import {WalletCore} from '@aptos-labs/wallet-adapter-core'
+import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
 
-import {
-  Ed25519Keypair,
-  RawSigner,
-  TransactionBlock,
-  normalizeSuiObjectId,
-  fromB64,
-  JsonRpcProvider
-} from '@mysten/sui.js';
+import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
 import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
 
@@ -236,15 +226,117 @@ const deployContract = async (item: any) => {
   }
 };
 
-const deploySuiContract = async ()=> {
+const deploySuiContract = async (item: any)=> {
 
   loading.value = true
+  console.log('deploy sui')
 
   const wallets = suiWallet.get()
   if(wallets.length === 0){
     message.error(t('common.operateFail'));
+    loading.value = false
+    return
   }
 
+  const wallet = wallets[0]
+  try {
+    await wallet.connect()
+  }catch (e) {
+    message.error("refuse connect wallet")
+    loading.value = false
+    return
+  }
+  console.log(wallet)
+
+  let accountAddress = ""
+  let network = ""
+  try {
+    const accounts = await wallet.getAccounts()
+    if( accounts.length === 0 ){
+      message.error("get wallet accounts fail")
+      loading.value = false
+      return
+    }
+    accountAddress = accounts[0].address
+    network = accounts[0].chains[0]
+    console.log("network: ",network)
+
+    if (network !== formState.network){
+      message.error("selected network does not match Sui wallet ")
+      loading.value = false
+      return
+    }
+  }catch (e) {
+    message.error("get wallet accounts fail")
+    loading.value = false
+    return
+  }
+
+  const compiledModulesAndDeps = JSON.parse(item.byteCode)
+  console.log(compiledModulesAndDeps)
+  const tx = new TransactionBlock();
+  const [upgradeCap] = tx.publish(
+      compiledModulesAndDeps.modules.map((m: any) => Array.from(fromB64(m))),
+      compiledModulesAndDeps.dependencies.map((addr: any) =>
+          normalizeSuiObjectId(addr),
+      ),
+  );
+
+
+  tx.transferObjects([upgradeCap], tx.pure(accountAddress));
+  let digest = ""
+  try{
+    const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
+    digest = result.digest
+  }catch (e) {
+    loading.value = false
+    return
+  }
+
+  let rpc = undefined
+
+  // get deployed module address
+  if (network === 'sui:devnet'){
+    rpc  = new JsonRpcProvider()
+  }else{
+    rpc = new JsonRpcProvider(testnetConnection)
+  }
+
+  let txn = undefined
+  for (let i = 0 ;i< 5; i++){
+    try{
+      txn = await rpc.getTransactionBlock({
+        digest: digest,
+        // only fetch the effects field
+        options: {showEffects: true, showObjectChanges: true},
+      })
+      break
+    }catch (e){
+
+    }
+  }
+
+  if (txn === undefined){
+    return
+  }
+
+  console.log("checkTransaction result: ",txn)
+  if( txn != undefined && txn.objectChanges != undefined){
+    const publishChange = txn.objectChanges.find(t => {
+      return t.type === 'published'
+    })
+    if (publishChange === undefined){
+      message.error("cannot get deployed module address")
+      return
+    }
+
+    await setProjectsContractDeploy('',publishChange.packageId,item.id)
+
+  }
+
+  loading.value = false
+
+  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
 // 查询版本号
@@ -446,7 +538,6 @@ const deployClick = async () => {
       // 表单校验
       console.log('Failed:', err);
     }
-
   } else if (frameType.value === 2) { //aptos
     try {
       await formRef?.value.validateFields();
@@ -457,7 +548,10 @@ const deployClick = async () => {
   }else if (frameType.value === 5){ // sui
     try {
       await formRef?.value.validateFields();
-      deploySuiContract()
+      projectsContractData.map((item: any) => {
+        deploySuiContract(item)
+      })
+
     } catch (error: any) {
       console.log('aptos error', error)
     }
@@ -519,7 +613,6 @@ const setAbiInfo = (selectItem: any) => {
 
 const getModalData = async () => {
   try {
-    debugger
     const modalValues = await modalFormRef?.value.validateFields();
     formState.nameData.push(projectsContractData[selectedIndex.value]);
     projectsContractData[selectedIndex.value].hasModalFormData = false;
@@ -587,12 +680,12 @@ const changeChain = (val: string) => {
   } else if (val === 'Sui'){
     networkData.value = [{
       name: 'Devnet',
-      id: 'devnet',
+      id: 'sui:devnet',
       url: 'https://explorer-rpc.devnet.sui.io/',
       networkName: 'Devnet'
     },{
       name: 'Testnet',
-      id: 'testnet',
+      id: 'sui:testnet',
       url: 'https://explorer-rpc.testnet.sui.io/',
       networkName: 'Testnet'
     }]
