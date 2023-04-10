@@ -30,7 +30,7 @@
           </div>
 
           <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The service has not been opened yet</div>
-          <div class="text-center mt-[10px] cursor-pointer text-[#E2B578]">Get service now</div>
+          <div class="text-center mt-[10px] text-[#E2B578]">Get service now</div>
         </div>
       </div>
     </div>

@@ -507,7 +507,7 @@ const setContractFactory = async (nameData: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
-  console.log(selectItem, 'kk')
+  // console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
   if (constructorData && constructorData.inputs.length > 0) {
     selectItem.hasArgument = true;
