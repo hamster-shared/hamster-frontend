@@ -34,7 +34,7 @@
         <div class="leading-[60px] ml-6 text-base font-bold">Pipelinefile Preview</div>
       </div>
       <div :style="editHeight">
-        <CodeEditor :value="pipelinefilePreview" class="request-codeeditor"></CodeEditor>
+        <CodeEditor v-model:value="pipelinefilePreview" class="request-codeeditor"></CodeEditor>
       </div>
       <div class="mt-4 text-center">
         <a-button class="inline-block mr-4 back-btn" @click="router.push('/chainlink/oracle')">Back</a-button>
@@ -103,7 +103,7 @@
   // 创建模板
   const handleCreateTemplate = ()=>{
     if(requestName.value == '') {
-      alertInfo.value = "this is can't empty"
+      alertInfo.value = "Request Name is required"
     } else {
       alertInfo.value = ""
       createTemplate()

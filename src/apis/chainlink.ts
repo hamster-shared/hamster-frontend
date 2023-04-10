@@ -1,5 +1,16 @@
 import httpRequest from "@/request";
-import type {sublistParams,createSubParams,payFundParams,consumerAddParams,expenseListParams,depositListParams,consumerListParams,consumerInTableParams}  from './utils/chainlinkInterface'
+
+import type { 
+    sublistParams,
+    createSubParams,
+    payFundParams,
+    consumerAddParams,
+    expenseListParams,
+    depositListParams,
+    consumerListParams,
+    consumerInTableParams,
+    oracleTableParams
+}  from './utils/chainlinkInterface'
 
 //订阅列表
 export function apiSublist(params: sublistParams) {
@@ -9,6 +20,24 @@ export function apiSublist(params: sublistParams) {
         params: params,
     });
 }
+
+// 获取Chainlink oracle页面table数据
+export function apiGetOracleTableParams(params: oracleTableParams) {
+    return httpRequest({
+        url: "/api/chainlink/requests",
+        method: "get",
+        params: params,
+    });
+}
+
+// 获取Chainlink oracle页面echart数据
+export function apiGetOracleEchartParams() {
+    return httpRequest({
+        url: "/api/chainlink/request/overview",
+        method: "get",
+    });
+}
+
 
 // 获取subscription概览
 interface getSubscriptionParams {

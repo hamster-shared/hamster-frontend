@@ -48,3 +48,9 @@ export interface consumerInTableParams {
     chain:string;
     network:string;
 }
+// oracle table 列表参数
+export interface oracleTableParams {
+    page: number;
+    size: number;
+    token: string | null;
+}
