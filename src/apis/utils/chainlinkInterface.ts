@@ -62,12 +62,12 @@ export interface updateSubParams {
     transactionTx?:string;
     newStatus?:string;
 }
+
 // 获取subscription概览
 export interface getSubscriptionParams {
     network: string;
-    token: string
+    token: string | null
 }
-
 //创建request
 export interface createRequestParams {
     name: string;
@@ -97,4 +97,5 @@ export interface ExecSubParams {
 export interface updateTestSubParams {
     requestId?:string;
     network?:string;
+    paramsCount: string | number
 }

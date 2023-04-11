@@ -15,8 +15,8 @@
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a-button class="table-btn" @click="showTestSubBtn(record)">Test</a-button>
-              <a-button class="mx-2 table-btn" disabled>Edit</a-button>
-              <a-button class="table-btn" disabled>Download</a-button>
+              <a-button class="mx-2 table-btn-disable" disabled>Edit</a-button>
+              <a-button class="table-btn-disable" disabled>Download</a-button>
             </template>
           </template>
         </a-table>
@@ -147,8 +147,13 @@
   padding: 20px;
  }
  .table-btn {
-    background-color: white;
+    background-color: unset;
     color: #E2B578;
+    border-radius: 32px;
+  }
+  .table-btn-disable {
+    background-color: unset;
+    color: #d9d9d9;
     border-radius: 32px;
   }
 </style>

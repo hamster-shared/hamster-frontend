@@ -36,16 +36,21 @@ export function apiGetOracleTableParams(params: oracleTableParams) {
     });
 }
 
-// 获取Chainlink oracle页面echart数据
-export function apiGetOracleEchartParams() {
+// 获取Chainlink oracle页面echart数据 //testnet-mumbai
+export function apiGetOracleEchartParams(network: string) {
     return httpRequest({
-        url: "/api/chainlink/request/overview",
+        url: `/api/chainlink/request/overview/${network}`,
         method: "get",
     });
 }
 
-
-
+// 获取Chainlink rpc页面echart数据
+export function apiGetRpcEchartParams(network: string) {
+    return httpRequest({
+        url: `/api/rpc/overview/${network}`,
+        method: "get",
+    });
+}
 
 export function apiGetSubscriptionParams(params: getSubscriptionParams) {
     return httpRequest({

@@ -77,21 +77,18 @@
 
   // 获取pipelinefile preview展示的代码
   const pipelinefilePreview = ref()
+  const paramsCount = ref()
   const handleUseNow = async(id:number) => {
     try {
       const { data } = await apiGetShowRequestTemplateScript(id)
-      pipelinefilePreview.value = data
+      pipelinefilePreview.value = data.script
+      paramsCount.value = data.paramsCount
       setCodeHeight(pipelinefilePreview.value)
       console.log('data:',data)
     } catch(err) {
       console.log('err:',err)
     }
   }
-
-  // 监测pipelinefile preview里的代码变化
-  // watch(()=>pipelinefilePreview.value,()=>{
-  //   console.log('pipelinefilePreview.value:',pipelinefilePreview.value)
-  // })
 
   // 设置代码展示页面的高度
   const editHeight = ref("height: 220px");
@@ -112,7 +109,8 @@
   const createTemplate = async()=>{
     const params = {
       name: requestName.value,
-      script: pipelinefilePreview.value
+      script: pipelinefilePreview.value,
+      paramsCount: paramsCount.value
     }
 
     try {
