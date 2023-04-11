@@ -261,11 +261,11 @@ const deploySuiContract = async (item: any)=> {
     network = accounts[0].chains[0]
     console.log("network: ",network)
 
-    if (network !== formState.network){
-      message.error("selected network does not match Sui wallet ")
-      loading.value = false
-      return
-    }
+    // if (network !== formState.network){
+    //   message.error("selected network does not match Sui wallet ")
+    //   loading.value = false
+    //   return
+    // }
   }catch (e) {
     message.error("get wallet accounts fail")
     loading.value = false
@@ -286,13 +286,16 @@ const deploySuiContract = async (item: any)=> {
   tx.transferObjects([upgradeCap], tx.pure(accountAddress));
   let digest = ""
   try{
+    console.log('submit tx')
     const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
+    console.log('submit tx result: ', result)
     digest = result.digest
   }catch (e) {
     loading.value = false
     return
   }
 
+  console.log('submit tx success')
   let rpc = undefined
 
   // get deployed module address
@@ -303,7 +306,7 @@ const deploySuiContract = async (item: any)=> {
   }
 
   let txn = undefined
-  for (let i = 0 ;i< 5; i++){
+  for (let i = 0 ;i< 50; i++){
     try{
       txn = await rpc.getTransactionBlock({
         digest: digest,
@@ -317,6 +320,7 @@ const deploySuiContract = async (item: any)=> {
   }
 
   if (txn === undefined){
+    message.error("unable to check transaction")
     return
   }
 
