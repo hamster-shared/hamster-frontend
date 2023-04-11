@@ -30,7 +30,7 @@
         </a-table>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType" 
+          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
             @checkContract="checkContract">
           </ContractList>
         </div>
@@ -43,7 +43,7 @@
                 <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Modules
               </div>
               <div class="pb-4 ">
-                <div @click="setFunctionList(item)" 
+                <div @click="setFunctionList(item)"
                   :class="{ 'active-css': item === moduleName }"
                   class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] dark:!shadow-none py-[16px] pl-[30px]"
                   v-for="(item, index) in moduleList" :key="index">{{ item }}</div>
@@ -100,7 +100,7 @@ import NoData from "@/components/NoData.vue"
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
 import { apiGetProjectsDetail } from "@/apis/projects"
-import { TransactionBlock, JsonRpcProvider, Connection } from '@mysten/sui.js';
+import {TransactionBlock, JsonRpcProvider, Connection, testnetConnection} from '@mysten/sui.js';
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-wallet-standard"
 
 const router = useRouter();
@@ -160,11 +160,21 @@ const setFunctionList = (moduleVal: string) => {
   getFunctionList(moduleVal);
   moduleName.value = moduleVal;
 }
+
+const getSuiRpcConnection = (network: string ) => {
+  if( network === "Testnet") {
+    return new JsonRpcProvider(testnetConnection)
+  }else {
+    return new JsonRpcProvider()
+  }
+}
+
 // 获取package 的所有module
 const getModuleList = async () => {
-  const provider = new JsonRpcProvider();
+  const row = contractInfo[activeKey.value].deployInfo[selectedRow.value]
+  const provider = getSuiRpcConnection(row.network)
   const txn = await provider.getObject({
-    id: "0x125bd3ffe745c58403393155a3a041df2f43f0ac2b6577d74e38846c6f220f0e",
+    id: row.address,
     // fetch the object content field
     options: { showContent: true },
   });
@@ -175,11 +185,9 @@ const getModuleList = async () => {
 }
 // 获取某个package 下的module 的方法区内容
 const getFunctionList = async (moduleName: string)=> {
-  const conn = new Connection({
-    fullnode: "https://explorer-rpc.devnet.sui.io/"
-  })
-  const provider = new JsonRpcProvider(conn);
-  const packageObjectId = '0x8e78537ed13d221d56f74838ddd209ad60e35ddf788d92c40854247e73340543'
+  const row = contractInfo[activeKey.value].deployInfo[selectedRow.value]
+  const provider = getSuiRpcConnection(row.network)
+  const packageObjectId = row.address
   const txn = await provider.getNormalizedMoveModule({
     package: packageObjectId,
     module: moduleName,
@@ -258,10 +266,23 @@ const setParamList = (element: any, typeParamList: any) => {
   return param;
 }
 
+// TODO： 获取当前moduleName ,当前function 区下所有的输入参数
+const getSuiFunctionInputArgs = (moduleName: string, functionName: string) => {
+
+
+  //TODO... 所有方法的输入内容，按顺序以数组返回
+  return ['args1','args2','args3...']
+}
+
 const sendFunction = async (moduleName: string, functionName: string) => {
 
+  const row = contractInfo[activeKey.value].deployInfo[selectedRow.value]
   const tx = new TransactionBlock();
-  const packageObjectId = '0x8e78537ed13d221d56f74838ddd209ad60e35ddf788d92c40854247e73340543'
+  const packageObjectId = row.address
+
+  // 获取当前moduleName ,当前function 区下所有的输入参数
+  const args = getSuiFunctionInputArgs(moduleName,functionName);
+
   tx.moveCall({
     target: `${packageObjectId}::${moduleName}::${functionName}`, // 第一个参数是packageId, 第二个是module Name， 第三个参数是方法名
     arguments: [tx.pure('https://develop.alpha.hamsternet.io/static/Apps.b3f990a1.svg'),tx.pure('Name'),tx.pure('Description')],
@@ -272,13 +293,8 @@ const sendFunction = async (moduleName: string, functionName: string) => {
   })
   console.log(result)
 
-
-
   // 获取交易详情
-  const conn = new Connection({
-    fullnode: "https://explorer-rpc.devnet.sui.io/"
-  })
-  const rpcProvider = new JsonRpcProvider(conn);
+  const rpcProvider = getSuiRpcConnection(row.network)
   const txn = await rpcProvider.getTransactionBlock({
     digest: result.digest,
     // only fetch the effects field
