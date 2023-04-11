@@ -261,11 +261,11 @@ const deploySuiContract = async (item: any)=> {
     network = accounts[0].chains[0]
     console.log("network: ",network)
 
-    // if (network !== formState.network){
-    //   message.error("selected network does not match Sui wallet ")
-    //   loading.value = false
-    //   return
-    // }
+    if (network !== formState.network){
+      message.error("selected network does not match Sui wallet ")
+      loading.value = false
+      return
+    }
   }catch (e) {
     message.error("get wallet accounts fail")
     loading.value = false
