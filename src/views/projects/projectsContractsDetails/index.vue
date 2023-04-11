@@ -63,7 +63,7 @@
                   <div v-for="(val, key) in items.paramList" :key="key" class="text-[#73706E] dark:text-[#E0DBD2]">
                     <div>{{ val.name }}</div>
                     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="my-4">
-                      <a-input v-model:value="val.value" :placeholder="val.value" autocomplete="off" />
+                      <a-input v-model:value="val.value" :placeholder="val.placeholder" autocomplete="off" />
                     </div>
                     <!-- <div class="dark:bg-[#2B2B2B] bg-[#F6F6F6] text-[#C3C4C7] rounded-[8px] p-[16px] my-4 break-all">{{ val.value }}</div> -->
                   </div>
@@ -212,7 +212,8 @@ const getFunctionList = async (moduleName: string)=> {
         })
         list.push({
           "name": 'Type' + index,
-          "value": typeParam
+          "placeholder": typeParam,
+          "value": ''
         })
         typeParamList[index] = typeParam;
       });
@@ -235,7 +236,8 @@ const getFunctionList = async (moduleName: string)=> {
         if (param !== '') {
           list.push({
             "name": 'Arg' + index,
-            "value": param
+            "placeholder": param,
+            "value": ''
           })
         }
       });
@@ -471,11 +473,11 @@ onBeforeMount(() => {
 
 :deep(.ant-input, .ant-input-affix-wrapper){
   padding: 26px 16px;
-  color: #C3C4C7 !important;
 }
 :deep(.dark-css .ant-input, .ant-input-affix-wrapper){
   background-color: #2B2B2B !important;
   border-color: #2B2B2B !important;
+  color: white !important;
 }
 :deep(.white-css .ant-input, .ant-input-affix-wrapper){
   background-color: #F6F6F6 !important;
