@@ -267,11 +267,19 @@ const setParamList = (element: any, typeParamList: any) => {
 }
 
 // TODO： 获取当前moduleName ,当前function 区下所有的输入参数
-const getSuiFunctionInputArgs = (moduleName: string, functionName: string) => {
+const getSuiFunctionInputArgs = (functionName: string) => {
 
-
+  let list: any = [];
+  functionList.value.forEach((element: any) => {
+    if (element.title === functionName) {
+      element.paramList.forEach((ele: any) => {
+        list.push(ele.value);
+      });
+    }
+  });
+  
   //TODO... 所有方法的输入内容，按顺序以数组返回
-  return ['args1','args2','args3...']
+  return list;
 }
 
 const sendFunction = async (moduleName: string, functionName: string) => {
@@ -281,7 +289,7 @@ const sendFunction = async (moduleName: string, functionName: string) => {
   const packageObjectId = row.address
 
   // 获取当前moduleName ,当前function 区下所有的输入参数
-  const args = getSuiFunctionInputArgs(moduleName,functionName);
+  const args = getSuiFunctionInputArgs(functionName);
 
   tx.moveCall({
     target: `${packageObjectId}::${moduleName}::${functionName}`, // 第一个参数是packageId, 第二个是module Name， 第三个参数是方法名
