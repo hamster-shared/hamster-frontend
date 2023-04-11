@@ -29,7 +29,8 @@
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
-            <span>{{ item.number }}</span>
+            <span v-if="item.title=='Funds'">{{ item.number }}link</span>
+            <span v-else>{{ item.number }}</span>
             <a-button type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
           </div>
         </div>
@@ -147,7 +148,7 @@ const getOracleChart = async ()=> {
 const subscripion = reactive([
   { title: 'Subscription', number: '', btnTitle: 'Create' },
   { title: 'Consumers', number: '', btnTitle: 'Add' },
-  { title: 'Funds', number: '11.23link', btnTitle: 'Add' },
+  { title: 'Funds', number: '11.23', btnTitle: 'Add' },
 ])
 const subscripionInfo = async () => {
   const token = localStorage.getItem('token')
@@ -169,7 +170,7 @@ const showPop = (item: string) => {
   console.log('item', item)
   // 根据title显示对应的弹框
   switch (item) {
-    case 'Subscripion':
+    case 'Subscription':
       createSubPop();
       break;
     case 'Consumers':
@@ -244,7 +245,7 @@ onBeforeUnmount(() => {
 })
 // 跳转subList
 const goSublist = () => {
-  router.push('/chainlink/oracle/subList')
+  router.push('/chainlink/oracle/sublist')
 }
 </script>
 

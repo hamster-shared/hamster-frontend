@@ -6,12 +6,12 @@
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
                 <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
-                :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
+                :options="subOptions" allow-clear></a-select>
             </a-form-item>
             <a-form-item label="Consumers" name="consumers" >
-                <a-select @change="setSubscription" show-search v-model:value="formData.consumers" placeholder="Please input contract address" autocomplete="off"
-                :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
-                <div class="w-[100%] bg-[#FFF9F2] p-[10px] mt-[10px]" style="border:1px solid #E2B578;border-radius: 8px;">
+                <a-select @change="setConsumers" show-search v-model:value="formData.consumers" placeholder="Please input contract address" autocomplete="off"
+                :options="conOptions" allow-clear></a-select>
+                <div v-if="false" class="w-[100%] bg-[#FFF9F2] p-[10px] mt-[10px]" style="border:1px solid #E2B578;border-radius: 8px;">
                     The contract address needs to be added to the current Subsripion to complete the test, please ask whether to continue to complete the binding relationship.
                     <div class="text-[#E2B578] flex justify-end cursor-pointer" @click="bind">Binding</div>
                 </div>
@@ -61,21 +61,40 @@
     </a-modal>
 </template>
 <script setup lang="ts" name="testSub">
-import { ref, onMounted, computed, reactive } from 'vue'
+import { ref, onMounted, computed, reactive,watch,shallowRef } from 'vue'
+import { consumerSublist,testConsumerSub,apiExecSub,updateTestSub } from '@/apis/chainlink'
+import { ConsumerApi } from '../chainApi/consumerApi'
+import {  useContractApi } from "@/stores/chainlink";
+// import { encryptWithPublicKey } from "@/utils/encryptSecrets";
+import { networkConfig } from "../chainApi/contractConfig";
+import { ethers } from "ethers";
 const props = defineProps({
     showTestSub:{
         type:Boolean,
         default:false
+    },
+    column:{
+        type:Object,
+        required:true
     }
 })
+const contractApi = useContractApi();
+const consumerApi = shallowRef();
 const formRef = ref();
-const subOptions = ref(['Ethererum Mainnet','Ethererum Testnet','BSC Mainnet','BSC Testnet'])
+const subOptions = ref([])
+const conOptions = ref([])
 const loactionOptions = ref(['Inline','Remote'])
 const addIcon = ref("@/assets/svg/add.svg")
 const confirmShow = ref(false)
+// 订阅id
+const subId = ref()
+// 主键id
+const keyId = ref()
+// record表单数据
+const record = ref<any>({})
 const formData = reactive<any>({
     subscription: null,
-    consumers: '',
+    consumers: null,
     loaction: 'Inline',
     secrets: '',
     secretArr: [
@@ -86,8 +105,12 @@ const formData = reactive<any>({
         }
     ],
     secreturl:'',
-    args: ['Arg1','Arg2','Arg3'],
+    args: [],
+    // paramsCount
 });
+watch(()=>props.column.value,(newVal,oldVal)=>{
+    console.log('watch',newVal)
+})
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -96,13 +119,49 @@ const formRules = computed(() => {
     };
 });
 const emit = defineEmits(['closeTestSub','getTestSubInfo'])
-console.log('showTestSub',props.showTestSub)
+console.log('showTestSub',props.showTestSub,props.column.value)
+// 获取订阅数据
+const getSublistData = async()=>{
+    const res = await consumerSublist()
+    if(res.code===200 && res.data?.length){
+        subOptions.value = res.data.map((item:any)=>{
+            let tem = item.name+'('+item.chain+' '+item.network+')'+'_'+item.chainSubscriptionId
+            return {
+                label:tem,
+                value:item.id
+            }
+        })
+    }
+    console.log('获取订阅数据',res)
+}
 // 绑定
 const bind = ()=>{}
 // 设置订阅号
-const setSubscription = (val:any)=>{
-    console.log('设置订阅号',val)
-    formData.subscription = val
+const setSubscription = (val:any,option:any)=>{
+    console.log('设置订阅号',val,option)
+    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    keyId.value = val
+    getTestConsumerSub(keyId.value)
+    // console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
+}
+// 获取consumer数据
+const getTestConsumerSub = async(id:string|number)=>{
+    const res = await testConsumerSub(id)
+    if(res.code===200 && res.data.length){
+        conOptions.value = res.data.map((item:any)=>{
+            return {
+                label:item,
+                value:item
+            }
+        })
+    }else{
+        conOptions.value = []
+    }
+}
+// 设置consumer地址
+const setConsumers = (val:string,option:any)=>{
+    console.log('设置consumer地址',val,option)
+    consumerApi.value = new ConsumerApi(contractApi.provider, val);
 }
 // 添加secret
 const addSecret = (item:any)=>{
@@ -121,6 +180,13 @@ const addSecret = (item:any)=>{
                 return item
             }
         })
+        if(formData.secretArr.length==0){
+            formData.secretArr.push({
+                secretName:'',
+                secretValue:'',
+                icon:'add'
+            })
+        }
         console.log('aaaaa',formData.secretArr)
     }
     
@@ -141,15 +207,61 @@ const handleFund = async()=>{
 const cancelToCheck = ()=>{
     confirmShow.value = false
 }
+// const buildSecrets = async (secrets:string, secretsURLs:string, secretsLocation:number) => {
+//   const DONPublicKey = networkConfig[contractApi.networkId].functionsPublicKey;
+//   const provider = new ethers.providers.Web3Provider(contractApi.provider)
+//   const singer = provider.getSigner();
+//   if (secretsLocation === 0) {
+//     console.log("secrets", secrets)
+//     if (Array.isArray(secrets) && secrets.length > 0 && secrets[0].key) {
+//       console.log("secrets", secrets)
+//       const obj = secrets.reduce((acc, cur) => {
+//         acc[cur.key] = cur.value;
+//         return acc;
+//       }, {});
+//       const message = JSON.stringify(obj);
+//       const messageHash = ethers.utils.solidityKeccak256(['string'], [message])
+//       const signature = await singer.signMessage(ethers.utils.arrayify(messageHash))
+//       const payload = {
+//         message,
+//         signature,
+//       };
+//       return "0x" + await encryptWithPublicKey(DONPublicKey, JSON.stringify(payload));
+//     }
+//   }
+//   if (secretsLocation === 1) {
+//     if (Array.isArray(secretsURLs) && secretsURLs.length > 0) {
+//       return "0x" + await encryptWithPublicKey(DONPublicKey, secretsURLs.join(" "))
+//     }
+//   }
+//   return "0x";
+// }
 // 确定提交
-const handleConfirm = ()=>{
-    emit('getTestSubInfo',formData)
-    emit('closeTestSub',false)
+const handleConfirm = async()=>{
+    const gasLimit = 100000;
+    consumerApi.value.executeRequest(record.script, '0x', 1, '', subId.value, gasLimit).then(async(tx:any)=>{
+        // const params = {
+
+        // }
+        // const res = await apiExecSub(params)
+        return tx.wait()
+    }).then((receipt:any) => {
+        emit('getTestSubInfo',formData)
+        emit('closeTestSub',false)
+    })
 }
 // 取消订阅
 const cancelFund = ()=>{
     emit('closeTestSub',false)
 }
+onMounted(()=>{
+    getSublistData()
+    record.value = JSON.parse(localStorage.getItem('record'))
+    for(let i=1;i<=record.paramsCount;i++){
+        formData.args.push('Arg'+i)
+    }
+    console.log(11212121,formData.args)
+})
 </script>
 <style lang="less" scoped>
 .done-btn {

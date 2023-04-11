@@ -14,7 +14,7 @@
         <a-table :dataSource="oracleListData" :columns="oracleColumns" :pagination="pagination" style="width:100%">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <a-button class="table-btn">Test</a-button>
+              <a-button class="table-btn" @click="showTestSubBtn(record)">Test</a-button>
               <a-button class="mx-2 table-btn" disabled>Edit</a-button>
               <a-button class="table-btn" disabled>Download</a-button>
             </template>
@@ -23,7 +23,7 @@
       </div>
     </div>
   </div>
-
+  <testSub v-if="showTestSub" :column="column" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
 </template>
 
 <script setup lang="ts">
@@ -32,6 +32,7 @@
   import { apiGetOracleTableParams } from '@/apis/chainlink'
   import { formatDateToLocale } from '@/utils/dateUtil';
   import oracleChart from './oracleChart/index.vue'
+  import testSub from './mySubscription/components/testSub.vue'
 
   const router = useRouter();
   const oracleListData = ref<{
@@ -39,6 +40,8 @@
     name: string,
     created: string
   }[]>([])
+  const showTestSub = ref(false)
+  const column = ref<any>({})
 
   const oracleColumns = reactive([
     {
@@ -118,6 +121,23 @@
   onMounted(()=>{
     getTableData()
   })
+  // 点击表格中的test按钮
+  const showTestSubBtn = (record:any)=>{
+    // 每次点击要先清除缓存中的数据，保证数据的准确性
+    localStorage.removeItem('record')
+    column.value = record
+    localStorage.setItem('record',JSON.stringify(record))
+    console.log('点击表格中的test按钮',column.value)
+    showTestSub.value = true
+  }
+  // 获取testsub数据
+  const getTestSubInfo = (testSub:any)=>{
+      console.log('添加消费者数据接收',testSub)
+  }
+  // 关闭testsub弹框
+  const closeTestSub = (bool:boolean)=>{
+      showTestSub.value = bool
+  }
 </script>
 
 <style lang="less" scoped>

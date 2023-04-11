@@ -17,12 +17,19 @@
         <template #operation="{ record }">
             <a @click="goSubDetail(record)" class="mr-16">View</a>
         </template>
+        <template #id="{ record }">
+            <span v-if="record.status=='success'">{{record.id}}</span>
+            <span v-else>
+                <svg-icon v-if="record.status=='Pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                <svg-icon v-if="record.status=='Failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                <span class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+            </span>
+        </template>
     </a-table>
     <a-button @click="showTestSub=true">testSub</a-button>
     <createSub v-if="showCreateSub" :showCreateSub="showCreateSub" @getCreateSubInfo="getCreateSubInfo" @closeCreateSub="closeCreateSub"/>
     <addFunds v-if="showAddFund" :showAddFund="showAddFund" @getAddFundInfo="getAddFundInfo" @closeAddFund="closeAddFund"/>
     <addConsumers v-if="showAddConsumers" :showAddConsumers="showAddConsumers" @getAddConsumersInfo="getAddConsumersInfo" @closeAddConsumers="closeAddConsumers"/>
-    <testSub v-if="showTestSub" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
 </template>
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
@@ -30,7 +37,6 @@ import { ref,reactive,onMounted } from 'vue'
 import createSub from './components/createSub.vue'
 import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
-import testSub from './components/testSub.vue'
 import { apiSublist } from '@/apis/chainlink'
 import dayjs from "dayjs";
 const router = useRouter();
@@ -49,17 +55,18 @@ const subListColumns:any = [
         title: 'ID',
         dataIndex: 'id',
         key:'id',
-        align:'center'
+        align:'center',
+        slots: { customRender: 'id' },
     },
     {
         title: 'Name',
         dataIndex: 'name',
-        align:'center'
+        align:'left'
     },
     {
         title: 'Created',
         dataIndex: 'created',
-        align:'center',
+        align:'left',
         customRender: ({ text }:any) => {
             return dayjs(text).format('YYYY-MM-DD HH:mm:ss')
           },
@@ -67,7 +74,7 @@ const subListColumns:any = [
     {
         title: 'Network',
         dataIndex: 'network',
-        align:'center'
+        align:'left'
     },
     {
         title: 'Consumers',
@@ -132,7 +139,8 @@ const getSublist = async()=>{
     const params = {
         page:pagination.current,
         size:pagination.pageSize,
-        network:netName.value=='All' ? '':net.slice(1,net.length).join(' ')
+        network:netName.value=='All' ? '':net.slice(1,net.length).join(' '),
+        chain:netName.value=='All' ? '':net.slice(0,1).join(' '),
     }
     const res = await apiSublist(params)
     if(res.code === 200&& res.data?.data?.length){
@@ -202,7 +210,7 @@ const btnChange = ()=>{
 }
 const goSubDetail = (record:any)=>{
     console.log('goSubDetail',record)
-    router.push(`/chainlink/oracle/subList/subListDetail?subId=${record.id}`)
+    router.push(`/chainlink/oracle/subList/sublist-detail?subId=${record.id}`)
 }
 onMounted(async()=>{
     getSublist()

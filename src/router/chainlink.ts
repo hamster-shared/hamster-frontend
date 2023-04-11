@@ -38,7 +38,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/subList",
+                  path: "/chainlink/oracle/sublist",
                   name: "subList",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subList.vue'),
                   meta:{
@@ -46,7 +46,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/subList/subListDetail",
+                  path: "/chainlink/oracle/subList/sublist-detail",
                   name: "subListDetail",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
                   meta:{

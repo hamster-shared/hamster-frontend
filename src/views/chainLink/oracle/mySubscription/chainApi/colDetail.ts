@@ -13,7 +13,7 @@ export const expenseColumns:any = [
     {
         title: 'Time',
         dataIndex: 'created',
-        align:'center',
+        align:'left',
         customRender: ({ text }:any) => {
             return dayjs(text).format('YYYY-MM-DD HH:mm:ss')
           },
@@ -21,12 +21,12 @@ export const expenseColumns:any = [
     {
         title: 'Request Name',
         dataIndex: 'requestName',
-        align:'center'
+        align:'left'
     },
     {
         title: 'Consumers',
         dataIndex: 'consumerAddress',
-        align:'center',
+        align:'left',
         customRender: renderTableText(30)
     },
     {
@@ -50,7 +50,7 @@ export const depositColumns:any = [
     {
         title: 'Time',
         dataIndex: 'created',
-        align:'center',
+        align:'left',
         customRender: ({ text }:any) => {
             return dayjs(text).format('YYYY-MM-DD HH:mm:ss')
           },
@@ -58,13 +58,13 @@ export const depositColumns:any = [
     {
         title: 'Status',
         dataIndex: 'status',
-        align:'center',
+        align:'left',
         slots: { customRender: 'status' },
     },
     {
         title: 'TxID',
         dataIndex: 'transactionTx',
-        align:'center',
+        align:'left',
         slots: { customRender: 'transactionTx' },
     },
     {
@@ -94,7 +94,7 @@ export const consumersColumns:any = [
     {
         title: 'Added',
         dataIndex: 'created',
-        align:'center',
+        align:'left',
         customRender: ({ text }:any) => {
             return dayjs(text).format('YYYY-MM-DD HH:mm:ss')
           },
@@ -102,19 +102,19 @@ export const consumersColumns:any = [
     {
         title: 'Status',
         dataIndex: 'status',
-        align:'center',
+        align:'left',
         slots: { customRender: 'status' },
     },
     {
         title: 'TxID',
         dataIndex: 'transactionTx',
-        align:'center',
+        align:'left',
         slots: { customRender: 'transactionTx' },
     },
     {
         title: 'Address',
         dataIndex: 'consumerAddress',
-        align:'center',
+        align:'left',
         customRender: renderTableText(15)
     },
     {
