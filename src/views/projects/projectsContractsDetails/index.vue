@@ -53,7 +53,7 @@
               <div class="font-bold mb-6">Functions</div>
               <NoData v-if="functionList.length === 0"></NoData>
               <a-collapse class=" dark:!border-[#434343] dark:!shadow-none" v-model:activeKey="collapsectiveKey" v-for="(items, keys) in functionList" :key="keys">
-                <a-collapse-panel :key="keys" :header="items.title" :showArrow="false">
+                <a-collapse-panel :key="String(keys + 1)" :header="items.title" :showArrow="false">
                   <template #extra>
                     <div>
                       <img class="up-tran w-[12px] hidden dark:inline-block" src="@/assets/icons/up-b.svg" />
@@ -186,6 +186,7 @@ const getFunctionList = async (moduleName: string)=> {
   })
   let methods = Object.keys(txn.exposedFunctions)
   functionList.value.length = 0;
+  collapsectiveKey.value.length = 0;
   for (let method of methods) {
     if (txn.exposedFunctions[method].isEntry === true) {
 
