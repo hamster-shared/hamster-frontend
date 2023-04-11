@@ -62,7 +62,10 @@
                   </template>
                   <div v-for="(val, key) in items.paramList" :key="key" class="text-[#73706E] dark:text-[#E0DBD2]">
                     <div>{{ val.name }}</div>
-                    <div class="dark:bg-[#2B2B2B] bg-[#F6F6F6] text-[#C3C4C7] rounded-[8px] p-[16px] my-4 break-all">{{ val.value }}</div>
+                    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="my-4">
+                      <a-input v-model:value="val.value" :placeholder="val.value" autocomplete="off" />
+                    </div>
+                    <!-- <div class="dark:bg-[#2B2B2B] bg-[#F6F6F6] text-[#C3C4C7] rounded-[8px] p-[16px] my-4 break-all">{{ val.value }}</div> -->
                   </div>
                   <div class="text-right mb-4">
                     <a-button type="primary" class="w-[100px]" @click="sendFunction(moduleName, items.title)">Send</a-button>
@@ -117,7 +120,7 @@ const deployType = ref(0);
 const versionData = reactive([]);
 const moduleList = ref<any>([]);
 const functionList = ref<any>([]);
-const moduleName = ref();
+const moduleName = ref('cesh');
 const contractName = ref('');
 const contractAddress = ref('');
 const selectedRow = ref(0);
@@ -161,7 +164,7 @@ const setFunctionList = (moduleVal: string) => {
 const getModuleList = async () => {
   const provider = new JsonRpcProvider();
   const txn = await provider.getObject({
-    id: "0x3472f40c04353703c5d4c4a31a40f9dbed8fdc8be15cc3bc9e0b6712a7e7e6c3",
+    id: "0x125bd3ffe745c58403393155a3a041df2f43f0ac2b6577d74e38846c6f220f0e",
     // fetch the object content field
     options: { showContent: true },
   });
@@ -439,5 +442,18 @@ onBeforeMount(() => {
   background: rgba(226,181,120,0.1);
   box-shadow: 6px 6px 15px 0px rgba(242,238,234,0.1), 6px 6px 15px 0px rgba(242,238,234,0.1);
   border-radius: 5px;
+}
+
+:deep(.ant-input, .ant-input-affix-wrapper){
+  padding: 26px 16px;
+  color: #C3C4C7 !important;
+}
+:deep(.dark-css .ant-input, .ant-input-affix-wrapper){
+  background-color: #2B2B2B !important;
+  border-color: #2B2B2B !important;
+}
+:deep(.white-css .ant-input, .ant-input-affix-wrapper){
+  background-color: #F6F6F6 !important;
+  border-color: #F6F6F6 !important;
 }
 </style>
