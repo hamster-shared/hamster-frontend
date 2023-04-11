@@ -54,3 +54,14 @@ export interface oracleTableParams {
     size: number;
     token: string | null;
 }
+// 获取subscription概览
+export interface getSubscriptionParams {
+    network: string;
+    token: string | null
+}
+//创建request
+export interface createRequestParams {
+    name: string;
+    script: string
+    paramsCount: string | number
+}

@@ -3,10 +3,10 @@
   <div class="text-[16px] dark:text-[#E0DBD2] text-[#73706E] mb-[16px]">Something like that…</div>
   <div class="">
     <div>
-      <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
-        <a-tab-pane :key="item" :tab="item" v-for="item in networkList"></a-tab-pane>
+      <a-tabs v-model:activeKey="tabNetwork" @change="changeNetwork">
+        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
+        <a-tab-pane key="Testnet" tab="Testnet"></a-tab-pane>
       </a-tabs>
-
     </div>
     <div class="flex justify-between mt-[16px]">
       <div class="font-bold text-[20px]">Overiew</div>
@@ -15,7 +15,7 @@
       </a-select> -->
     </div>
     <!-- 图表 -->
-    <div class="w-full h-[500px]">
+    <div class="w-full h-[400px]">
       <div class="myChart" ref="myChartRef" id="myEchart"></div>
     </div>
 
@@ -42,6 +42,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
 import * as echarts from 'echarts';
 import { apiGetOverview, apiGetMynetwork } from "@/apis/rpcs";
+import { apiGetRpcEchartParams } from '@/apis/chainlink'
 import { useThemeStore } from "@/stores/useTheme";
 import { formatDateToLocale } from '@/utils/dateUtil';
 const router = useRouter();
@@ -50,10 +51,7 @@ const tiemValue = ref(2);
 const rpcData = ref([]);
 const dataSource = ref([]);
 const networkList = ref([]);
-const tabNetwork = ref('');
-const seriesData = ref([]);
-const legendData = ref([]);
-const xAxisData = ref([]);
+const tabNetwork = ref('Mainnet');
 const myChartRef = ref()
 const myChart = ref();
 
@@ -110,63 +108,39 @@ const toDetails = (val: any) => {
   router.push(`/chainlink/RPC/rpcDetail/${val.chain}`);
 }
 
-const initRpcOverview = async () => {
-  try {
-    const { data } = await apiGetOverview();
-    rpcData.value = data;
-
-    data.map((item: any) => {
-      if (item.network === 'Mainnet') {
-        networkList.value.push('Mainnet');
-        mainnetData.value.push(item);
-
-      } else {
-        networkList.value.push('Testnet');
-        testnetData.value.push(item);
-
-      }
-    })
-
-    // console.log(mainnetData.value, testnetData.value, 'uuu')
-
-    networkList.value = Array.from(new Set(networkList.value));
-    tabNetwork.value = networkList.value[0];
-    if (mainnetData.value.length > 0) {
-      setEchartData(mainnetData.value);
-    } else {
-      setEchartData(testnetData.value);
-    }
-
-  } catch (err: any) {
-    console.info(err)
-  }
+// 切换网络
+const changeNetwork = ()=>{
+  setEchartData()
 }
 
+// 获取echart的数据
+const legendData = ref<[] | null>()
+const xAxisData = ref([])
+const seriesData = ref<[] | null>()
+const setEchartData = async() => {
+  legendData.value = []
+  xAxisData.value = []
+  seriesData.value = []
+  try {
+    const { data } = await apiGetRpcEchartParams(tabNetwork.value)
+    legendData.value = data.legendData
+    data.xaxisData.map((item:any)=>{
+      xAxisData.value.push(formatDateToLocale(item).format("YYYY/MM/DD"))
+    })
+    const seriesDataInfo =  data.seriesData?.map((item:any) => {
+      item['type'] = 'line'
+      item['stack'] = 'Total'
 
-const setEchartData = (data: any) => {
-  seriesData.value = [];
-  legendData.value = [];
-  xAxisData.value = [];
-  data[0].dayly_requests_7days.map((it: any) => {
-    xAxisData.value.push(formatDateToLocale(it.start_time).format("YYYY/MM/DD"))
-  })
-
-  data.map((item: any) => {
-    legendData.value.push(item.chain);
-    let data = {
-      name: item.chain,
-      type: 'line',
-      stack: 'Total',
-      data: item.dayly_requests_7days.map((val: any) => { return val.request })
-    }
-    seriesData.value.push(data)
-  })
+      return item
+    });
+    seriesData.value = seriesDataInfo
+    console.log('getOracleChart-data:', data)
+  } catch(err:any){
+    console.log('getOracleChart-err:', err)
+  }
 
   myChart.value && myChart.value.dispose()
   initChart(myChartRef.value, theme.themeValue);
-
-  // console.log(legendData.value, 'legendData.value')
-  // console.log(seriesData.value, 'seriesData.value')
 }
 
 
@@ -240,7 +214,7 @@ const initChart = (chartElement: HTMLElement, themeValue: string) => {
 }
 
 onMounted(async () => {
-  await initRpcOverview();
+  await setEchartData();
   initChart(myChartRef.value, theme.themeValue);
   const handleWindowResize = () => myChart.value.resize();
   window.addEventListener("resize", handleWindowResize)
