@@ -557,8 +557,10 @@ const deployClick = async () => {
     }
   } else {
     // 有值说明已连接钱包
-    const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-    if (isWalletAccount == null || isWalletAccount === '[]') {
+    // const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
+    // if (isWalletAccount == null || isWalletAccount === '[]') {
+    const walletAccount = window.localStorage.getItem("walletAccount");
+    if(walletAccount === undefined || walletAccount === null){
       showWallets.value?.onClickConnect();
       // setWalletBtn(true)
     } else {
