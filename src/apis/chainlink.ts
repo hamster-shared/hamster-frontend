@@ -9,7 +9,9 @@ import type {
     depositListParams,
     consumerListParams,
     consumerInTableParams,
-    oracleTableParams
+    oracleTableParams,
+    getSubscriptionParams,
+    createRequestParams
 }  from './utils/chainlinkInterface'
 
 //订阅列表
@@ -30,25 +32,20 @@ export function apiGetOracleTableParams(params: oracleTableParams) {
     });
 }
 
-// 获取Chainlink oracle页面echart数据
-export function apiGetOracleEchartParams() {
+// 获取Chainlink oracle页面echart数据 //testnet-mumbai
+export function apiGetOracleEchartParams(network: string) {
     return httpRequest({
-        url: "/api/chainlink/request/overview",
+        url: `/api/chainlink/request/overview/${network}`,
         method: "get",
     });
 }
 
-
-// 获取subscription概览
-interface getSubscriptionParams {
-    network: string;
-    token: string
-}
-
-//创建request
-interface createRequestParams {
-    name: string;
-    script: string
+// 获取Chainlink rpc页面echart数据
+export function apiGetRpcEchartParams(network: string) {
+    return httpRequest({
+        url: `/api/rpc/overview/${network}`,
+        method: "get",
+    });
 }
 
 export function apiGetSubscriptionParams(params: getSubscriptionParams) {
