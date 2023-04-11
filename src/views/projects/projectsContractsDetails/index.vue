@@ -266,11 +266,23 @@ const setParamList = (element: any, typeParamList: any) => {
   return param;
 }
 
+// TODO： 获取当前moduleName ,当前function 区下所有的输入参数
+const getSuiFunctionInputArgs = (moduleName: string, functionName: string) => {
+
+
+  //TODO... 所有方法的输入内容，按顺序以数组返回
+  return ['args1','args2','args3...']
+}
+
 const sendFunction = async (moduleName: string, functionName: string) => {
 
   const row = contractInfo[activeKey.value].deployInfo[selectedRow.value]
   const tx = new TransactionBlock();
   const packageObjectId = row.address
+
+  // 获取当前moduleName ,当前function 区下所有的输入参数
+  const args = getSuiFunctionInputArgs(moduleName,functionName);
+
   tx.moveCall({
     target: `${packageObjectId}::${moduleName}::${functionName}`, // 第一个参数是packageId, 第二个是module Name， 第三个参数是方法名
     arguments: [tx.pure('https://develop.alpha.hamsternet.io/static/Apps.b3f990a1.svg'),tx.pure('Name'),tx.pure('Description')],
@@ -281,13 +293,8 @@ const sendFunction = async (moduleName: string, functionName: string) => {
   })
   console.log(result)
 
-
-
   // 获取交易详情
-  const conn = new Connection({
-    fullnode: "https://explorer-rpc.devnet.sui.io/"
-  })
-  const rpcProvider = new JsonRpcProvider(conn);
+  const rpcProvider = getSuiRpcConnection(row.network)
   const txn = await rpcProvider.getTransactionBlock({
     digest: result.digest,
     // only fetch the effects field
