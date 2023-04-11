@@ -82,8 +82,9 @@
             deployed contracts.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
-          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4"><!-- template-height -->
+          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4 template-height">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
+              :class="{'h-1/2':showList.length < 3}"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
                 <div class="relative flex-1">

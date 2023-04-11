@@ -57,6 +57,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
+import { message } from 'ant-design-vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import {
   apiGetProjectsContract,
@@ -68,8 +69,9 @@ import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 const router = useRouter();
 const props = defineProps({
   detailId: String,
+  frameType: Number,
 });
-const { detailId } = toRefs(props);
+const { detailId, frameType } = toRefs(props);
 
 const contractList = ref(["All Contract"]);
 const contract = ref("All Contract");
@@ -220,13 +222,17 @@ const getProjectsContractName = async () => {
 };
 
 const downloadAbi = (val: any) => {
-  const str = val.abiInfo;
-  const url = `data:,${str}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${val.name}.json`;
-  a.click();
-  a.remove();
+  if (frameType?.value === 5) { //sui
+    message.info("Sorry, Sui contract currently does not support ABI file download.");
+  } else {
+    const str = val.abiInfo;
+    const url = `data:,${str}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${val.name}.json`;
+    a.click();
+    a.remove();
+  }
 };
 
 const goContractDetail = async (version: String) => {
