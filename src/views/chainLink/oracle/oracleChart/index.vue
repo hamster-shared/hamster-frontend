@@ -29,7 +29,7 @@
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
-            <span v-if="item.title=='Funds'">{{ item.number }}link</span>
+            <span v-if="item.title=='Funds'" :title="item.number">{{ item.number.slice(0,4) }}...link</span>
             <span v-else>{{ item.number }}</span>
             <a-button type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
           </div>
@@ -50,11 +50,12 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watch, onBeforeUnmount } from 'vue';
 import * as echarts from 'echarts';
+import { ethers } from 'ethers';
 import { useThemeStore } from "@/stores/useTheme";
 import createSub from '../mySubscription/components/createSub.vue'
 import addFunds from '../mySubscription/components/addFunds.vue'
 import addConsumers from '../mySubscription/components/addConsumers.vue'
-import { apiGetSubscriptionParams, apiGetOracleEchartParams } from '@/apis/chainlink'
+import { apiGetSubscriptionParams, apiGetOracleEchartParams, getCustomerBalance } from '@/apis/chainlink'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
@@ -165,6 +166,22 @@ const getSubscripionInfo = async () => {
   }
 }
 
+// 获取用户所有订阅金额
+const balance = ref(0)
+const getBalance = async()=> {
+  try {
+    const { data } = await getCustomerBalance()
+    console.log('balance-data:', data)
+    data.forEach((item:any) => {
+      balance.value = item.balance*1 + balance.value
+    });
+    const testNumber = ethers.BigNumber.from(balance.value+'')
+    subscripion[2].number = ethers.utils.formatEther(testNumber);
+  } catch(err:any) {
+    console.log('balance-err:',err)
+  }
+}
+
 // 切换网络
 const changeNetwork = ()=>{
   console.log('tabNetwork',tabNetwork.value)
@@ -243,6 +260,7 @@ onMounted(async () => {
   window.addEventListener("resize", handleWindowResize)
 
   getSubscripionInfo()
+  getBalance()
 })
 
 onBeforeUnmount(() => {

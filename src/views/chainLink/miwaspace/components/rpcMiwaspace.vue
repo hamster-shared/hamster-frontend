@@ -10,39 +10,65 @@
       </div>
     </div>
 
-    <div class="ethereum-container">
-      <div>
-        <img src="@/assets/svg/miwaspace-eth.svg" class="h-6"/>
-        <span class="ml-2 text-base font-bold align-middle">Ethereum</span>
-      </div>
-      <div class="flex justify-between text-sm">
-        <div class="flex flex-col">
-          <span class="inline-block mb-2.5 mt-5">Chain ID</span>
-          <span class="self-center">1</span>
+    <div class="grid grid-cols-3 gap-12">
+      <div class="ethereum-container" v-for="(item,index) in currentPageInfo" :key="index">
+        <div>
+          <img src="@/assets/svg/miwaspace-eth.svg" class="h-6"/>
+          <span class="ml-2 text-base font-bold align-middle">Ethereum</span>
         </div>
-        <div class="flex flex-col">
-          <span class="inline-block mb-2.5 mt-5">Native Token</span>
-          <span class="self-center">ETH</span>
+        <div class="flex justify-between text-sm">
+          <div class="flex flex-col">
+            <span class="inline-block mb-2.5 mt-5">Chain ID</span>
+            <span class="self-center">{{ item.chain_id }}</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="inline-block mb-2.5 mt-5">Native Token</span>
+            <span class="self-center">{{ item.native_token }}</span>
+          </div>
         </div>
+        <div>
+          <div class="my-5 text-sm">RPC URL</div>
+          <a-input placeholder="Please input your RPC URL" v-model:value="item.http_address">
+            <template #suffix>
+              <img class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.http_address)"/>
+              <span class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.http_address)">Copy</span>
+            </template>
+          </a-input>
+        </div>
+        <a-button class="w-full mt-5 !h-[43px]" @click="router.push('/chainlink/rpc')">Get Service Now</a-button>
       </div>
-      <div>
-        <div class="my-5 text-sm">RPC URL</div>
-        <a-input placeholder="Please input your RPC URL">
-          <template #suffix>
-            <img src="@/assets/svg/miwaspace-copy.svg" />
-            <span class="text-[#E2B578] ml-1">Copy</span>
-          </template>
-        </a-input>
-      </div>
-      <a-button class="w-full mt-5 !h-[43px]">Get Service Now</a-button>
     </div>
+
   </div>
 </template>
 
+<script lang="ts" setup>
+  import { toRefs, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { message } from 'ant-design-vue';
+
+  const router = useRouter()
+  const props = defineProps({
+    currentPageInfo:Array
+  })
+  const { currentPageInfo } = toRefs(props)
+
+  const copyInfo = async (_items: any) => {
+  let inp = document.createElement("input");
+  document.body.appendChild(inp);
+  inp.value = _items;
+  inp.select();
+  document.execCommand("copy", false);
+  inp.remove();
+  message.success('copy success')
+}
+
+</script>
+
 <style lang="less" scoped>
   .ethereum-container {
-    width: 403px;
     height: 326px;
+    min-width: 330px;
     padding: 30px;
     background: rgba(226,181,120,0.1);
     border-radius: 12px;
