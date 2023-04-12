@@ -102,9 +102,11 @@ import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workF
 import { apiGetProjectsDetail } from "@/apis/projects"
 import {TransactionBlock, JsonRpcProvider, Connection, testnetConnection} from '@mysten/sui.js';
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-wallet-standard"
+import {useI18n} from "vue-i18n";
 
 const router = useRouter();
 const theme = useThemeStore();
+const { t } = useI18n()
 
 const queryJson = reactive({
   id: router.currentRoute.value.params?.id,
@@ -268,7 +270,7 @@ const setParamList = (element: any, typeParamList: any) => {
   return param;
 }
 
-// TODO： 获取当前moduleName ,当前function 区下所有的输入参数
+// 获取当前moduleName ,当前function 区下所有的输入参数
 const getSuiFunctionInputArgs = (functionName: string) => {
 
   let list: any = [];
@@ -279,23 +281,60 @@ const getSuiFunctionInputArgs = (functionName: string) => {
       });
     }
   });
-  
-  //TODO... 所有方法的输入内容，按顺序以数组返回
+
+  // 所有方法的输入内容，按顺序以数组返回
   return list;
 }
 
 const sendFunction = async (moduleName: string, functionName: string) => {
 
   const row = contractInfo[activeKey.value].deployInfo[selectedRow.value]
+
+  const wallets = providers.get()
+  if(wallets.length === 0){
+    message.error(t('common.operateFail'));
+    return
+  }
+
+  const wallet = wallets[0]
+  let accountAddress = ""
+  let network = ""
+  try {
+    const accounts = await wallet.getAccounts()
+    if( accounts.length === 0 ){
+      message.error("get wallet accounts fail")
+      return
+    }
+    accountAddress = accounts[0].address
+    network = accounts[0].chains[0]
+    console.log("network: ",network)
+
+    if (network.replace("sui:","") !== row.network.toLowerCase() ){
+      message.error("selected network does not match Sui wallet ")
+      return
+    }
+  }catch (e) {
+    message.error("get wallet accounts fail")
+    return
+  }
+
+
   const tx = new TransactionBlock();
   const packageObjectId = row.address
 
   // 获取当前moduleName ,当前function 区下所有的输入参数
   const args = getSuiFunctionInputArgs(functionName);
+  console.log("args:", args)
+
+  let txArgs = []
+
+  for( let arg of args){
+    txArgs.push(tx.pure(arg))
+  }
 
   tx.moveCall({
     target: `${packageObjectId}::${moduleName}::${functionName}`, // 第一个参数是packageId, 第二个是module Name， 第三个参数是方法名
-    arguments: [tx.pure('https://develop.alpha.hamsternet.io/static/Apps.b3f990a1.svg'),tx.pure('Name'),tx.pure('Description')],
+    arguments: txArgs,
   });
   console.log("target:",`${packageObjectId}::${moduleName}::${functionName}`)
   const result = await provider.signAndExecuteTransactionBlock({
@@ -305,11 +344,21 @@ const sendFunction = async (moduleName: string, functionName: string) => {
 
   // 获取交易详情
   const rpcProvider = getSuiRpcConnection(row.network)
-  const txn = await rpcProvider.getTransactionBlock({
-    digest: result.digest,
-    // only fetch the effects field
-    options: {},
-  });
+
+  let txn = undefined
+
+  for (let i = 0 ;i< 50 ; i++) {
+    try {
+      txn = await rpcProvider.getTransactionBlock({
+        digest: result.digest,
+        // only fetch the effects field
+        options: {},
+      });
+      break
+    } catch (e) {
+
+    }
+  }
 
   console.log(txn)
 
