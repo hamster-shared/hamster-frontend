@@ -124,6 +124,7 @@ import {ContractFrameTypeEnum} from "@/enums/frameTypeEnum";
 import {PetraWallet} from "petra-plugin-wallet-adapter";
 import {WalletCore} from '@aptos-labs/wallet-adapter-core'
 import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
+import {sleep} from "@/utils/tool"
 
 import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
@@ -294,8 +295,11 @@ const deploySuiContract = async (item: any)=> {
     loading.value = false
     return
   }
-
   console.log('submit tx success')
+
+  message.loading("submit tx success, checking transaction ... ")
+
+
   let rpc = undefined
 
   // get deployed module address
@@ -305,14 +309,17 @@ const deploySuiContract = async (item: any)=> {
     rpc = new JsonRpcProvider(testnetConnection)
   }
 
+
   let txn = undefined
-  for (let i = 0 ;i< 50; i++){
+  for (let i = 0 ;i< 30; i++){
+    await sleep(1000)
     try{
       txn = await rpc.getTransactionBlock({
         digest: digest,
         // only fetch the effects field
         options: {showEffects: true, showObjectChanges: true},
       })
+
       break
     }catch (e){
 

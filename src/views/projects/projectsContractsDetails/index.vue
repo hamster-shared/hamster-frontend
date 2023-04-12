@@ -103,6 +103,7 @@ import { apiGetProjectsDetail } from "@/apis/projects"
 import {TransactionBlock, JsonRpcProvider, Connection, testnetConnection} from '@mysten/sui.js';
 import { WalletStandardAdapterProvider } from "@mysten/wallet-adapter-wallet-standard"
 import {useI18n} from "vue-i18n";
+import {sleep} from "@/utils/tool";
 
 const router = useRouter();
 const theme = useThemeStore();
@@ -347,8 +348,9 @@ const sendFunction = async (moduleName: string, functionName: string) => {
 
   let txn = undefined
 
-  for (let i = 0 ;i< 50 ; i++) {
+  for (let i = 0 ;i< 30 ; i++) {
     try {
+      await sleep(1000)
       txn = await rpcProvider.getTransactionBlock({
         digest: result.digest,
         // only fetch the effects field
