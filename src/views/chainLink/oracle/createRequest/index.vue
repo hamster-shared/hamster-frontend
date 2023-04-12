@@ -116,7 +116,7 @@
 
     try {
       const { data } = await apiPostCreateRequest(params)
-      router.push('/chainlink/RPC')
+      router.push('/chainlink/oracle')
       console.log('createTemplate-data:',data)
     } catch(err:any) {
       message.error(err.message)

@@ -40,13 +40,13 @@
             <a-form-item v-if="formData.loaction=='Remote'" label="SecretURL" name="secreturl" >
                 <a-input v-model:value="formData.secreturl" allow-clear autocomplete="off" />
             </a-form-item>
-            <a-form-item v-for="(item,index) in formData.args" :label="item" >
-                <a-input v-model:value="item.args" allow-clear autocomplete="off" />
+            <a-form-item v-for="(item,index) in formData.args" :label="item.key" >
+                <a-input v-model:value="item.value" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
         <div class="text-center flex justify-center">
-            <a-button class="done-btn" style="margin-right: 20px;" @click="handleFund">Send</a-button>
             <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelFund">Cancel</a-button>
+            <a-button class="done-btn" style="margin-left: 20px;" @click="handleSend">Send</a-button>
         </div>
     </a-modal>
     <a-modal v-model:visible="confirmShow" title="Confirm again" :footer="null">
@@ -55,7 +55,7 @@
         </template>
         <div>Please confirm the information is correct.</div>
         <div class="text-center flex justify-center mt-[20px]">
-            <a-button class="done-btn" style="margin-right: 20px;" @click="cancelToCheck">Recheck</a-button>
+            <a-button class="done-btn" style="margin-right: 20px;background: transparent;color:#E2B578" @click="cancelToCheck">Recheck</a-button>
             <a-button class="done-btn" @click="handleConfirm">Confirm</a-button>
         </div>
     </a-modal>
@@ -207,9 +207,10 @@ const setLoaction = (val:any)=>{
     console.log('设置loaction',val)
     formData.loaction = val
 }
-// 给订阅号添加资金
-const handleFund = async()=>{
+// 发送
+const handleSend = async()=>{
     await formRef.value.validate();
+    console.log('handleSend',formData)
     confirmShow.value = true
 }
 // 返回检查
@@ -279,21 +280,21 @@ const handleConfirm = async()=>{
         return tx.wait()
     }).then(async(receipt:any) => {
         console.log('receipt~~~~~',receipt)
-        consumerApi.value.latestRequestId().then(async(execId:any) => {
-            console.log('execId',execId)
-            const params = {
-                requestId:execId,
-                network:network.value
-            }
-            const res = await updateTestSub(temId.value,params)
-            if(res.code===200){
-                message.success(res.data)
-            }else{
-                message.error(res.data)
-            }
-            emit('getTestSubInfo',formData)
-            emit('closeTestSub',false)
-        })
+        // consumerApi.value.latestRequestId().then(async(execId:any) => {
+        //     console.log('execId',execId)
+        //     const params = {
+        //         requestId:execId,
+        //         network:network.value
+        //     }
+        //     const res = await updateTestSub(temId.value,params)
+        //     if(res.code===200){
+        //         message.success(res.data)
+        //     }else{
+        //         message.error(res.data)
+        //     }
+        //     emit('getTestSubInfo',formData)
+        //     emit('closeTestSub',false)
+        // })
     })
 }
 // 取消订阅
@@ -304,7 +305,10 @@ onMounted(()=>{
     getSublistData()
     record.value = JSON.parse(localStorage.getItem('record'))
     for(let i=1;i<=record.value.paramsCount;i++){
-        formData.args.push('Arg'+i)
+        formData.args.push({
+            key:'Arg'+i,
+            value:''
+        })
     }
     console.log(11212121,formData.args)
 })

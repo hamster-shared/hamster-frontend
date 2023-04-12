@@ -41,7 +41,7 @@ import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { apiChains } from '@/apis/chainlink'
 const dashboardList = ref(['RPC', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
-const RPCList = ref([{ name: 'Ethereum', network: 'Mainnet', id: 1 }, { name: 'Ethereum', network: 'Testnet', id: 2 }, { name: 'BSC', network: 'Mainnet', id: 3 }, { name: 'BSC', network: 'Testnet', id: 4 }]);
+const RPCList = ref<any>([]);
 const router = useRouter();
 const networkClick = (val: any) => {
   console.log('networkClick',val)
