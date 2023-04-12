@@ -81,7 +81,6 @@ const setSubscription = (val:any,option:any)=>{
     console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
     registryApi?.getSubscription(subId.value).then((t:any) => {
         subBalance.value = ethers.utils.formatEther(t.balance);
-        console.log(1111111,ethers.utils.formatEther(t.balance))
     })
 }
 // 给订阅号添加资金

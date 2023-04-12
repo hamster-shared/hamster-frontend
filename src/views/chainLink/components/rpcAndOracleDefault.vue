@@ -1,4 +1,5 @@
 <template>
+  <!-- 1:RPC, 2:Oracle, 3:Storage, 4:Graph, 5:ZKP, 6:Others-->
   <div v-if="type == 'RPC'" class="mt-12">
     <div class="relative text-center">
       <img src="@/assets/images/Rpc.png" class="w-[300px]" />
@@ -10,7 +11,7 @@
         In order to enable developers to obtain efficient and stable node services,
         Miwago provides RPC services to meet the development needs of developers for various ecological projects .
       </span>
-      <a-button @click="router.push('/miwaspace?key=RPC')">Get service now</a-button>
+      <a-button @click="router.push('/miwaspace?key=1')">Get service now</a-button>
     </div>
   </div>
 
@@ -27,7 +28,7 @@
         In order to allow developers to quickly access more suitable oracle services with zero code or low code,
         the Hamster platform aggregates various oracle solution middleware on the market.
       </span>
-      <a-button @click="router.push('/miwaspace?key=oracle')">Get service now</a-button>
+      <a-button @click="router.push('/miwaspace?key=2')">Get service now</a-button>
     </div>
   </div>
 </template>

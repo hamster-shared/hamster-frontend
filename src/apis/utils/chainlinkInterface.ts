@@ -51,7 +51,7 @@ export interface consumerInTableParams {
 export interface oracleTableParams {
     page: number;
     size: number;
-    token: string | null;
+    token?: string | null;
 }
 // 修改订阅状态参数
 export interface updateSubParams {

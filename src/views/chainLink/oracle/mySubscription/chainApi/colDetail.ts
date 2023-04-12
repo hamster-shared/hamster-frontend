@@ -19,8 +19,8 @@ export const expenseColumns:any = [
           },
     },
     {
-        title: 'Request Name',
-        dataIndex: 'requestName',
+        title: 'Request ID',
+        dataIndex: 'requestId',
         align:'left'
     },
     {

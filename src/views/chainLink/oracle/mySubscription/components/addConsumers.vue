@@ -43,7 +43,7 @@
 <script setup lang="ts" name="addConsumers">
 import router from '@/router';
 import { renderTableText } from '@/utils/customRender'
-import { ref, onMounted, computed, reactive } from 'vue'
+import { ref, onMounted, computed, reactive,watch } from 'vue'
 import { consumerSublist,consumerProjects,consumerTable,apiConsumerAdd,updateConsumer } from '@/apis/chainlink'
 import type { consumerInTableParams } from '@/apis/utils/chainlinkInterface'
 import dayjs from "dayjs";
@@ -78,7 +78,7 @@ const pagination = reactive({
     // 分页配置器
     pageSize: 3, // 一页的数据限制
     current: 1, // 当前页
-    // total: 10, // 总数
+    total: 0, // 总数
     size: 'small',
     position: ['bottomCenter'], //指定分页显示的位置
     hideOnSinglePage: false, // 只有一页时是否隐藏分页器
@@ -104,7 +104,7 @@ const props = defineProps({
 })
 const formRef = ref();
 const subOptions = ref<any>([])
-const subOptionsNet = ref('Network')
+const subOptionsNet = ref()
 const projectOptions = ref<any>([])
 const formData = reactive({
     subscription: null,
@@ -155,6 +155,11 @@ const getProjectsData = async()=>{
     }
     console.log('获取项目名称',res)
 }
+watch(()=>[formData.project,subOptionsNet.value],([n1,n2],[o1,o2])=>{
+    if(n2!=o2 || n1!=o1){
+        getlistData() 
+    }
+})
 // 获取表单数据
 const getlistData = async()=>{
     loading.value = true
@@ -171,6 +176,7 @@ const getlistData = async()=>{
     console.log('res',res.data.data)
     if(res.code===200){
         consumersData.value = res.data.data
+        pagination.total = res.data.total
     }else{
         consumersData.value = []
     }
@@ -200,7 +206,6 @@ const setSubscription = (val:any,option:any)=>{
 const setProject = (val:any,option:any)=>{
     console.log('设置项目名称',val,option)
     formData.project = val
-    getlistData()
 }
 // 跳转hamster
 const goHamster = ()=>{
