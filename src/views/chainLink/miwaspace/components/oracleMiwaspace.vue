@@ -31,8 +31,8 @@
           </div>
         </div>
         <div class="mt-4">
-          <a-button class="!h-[43px] w-[169px]">Get Service Now</a-button>
-          <a-button class="ml-4 !h-[43px] w-[169px]">Enter Now</a-button>
+          <a-button class="!h-[43px] w-[169px]" @click="router.push('/chainlink/oracle')">Get Service Now</a-button>
+          <a-button class="ml-4 !h-[43px] w-[169px]" @click="router.push('/chainlink/oracle')">Enter Now</a-button>
         </div>
 
         <div class="absolute top-0 left-0 viewmore-container " v-if="showMore" @click="showMore = false">
@@ -46,6 +46,9 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue'
+  import { useRouter } from 'vue-router';
+
+  const router = useRouter()
 
   const showMore = ref(false)
 </script>

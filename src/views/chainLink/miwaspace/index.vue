@@ -6,12 +6,12 @@
         deployment.
       </div>
     </div>
-    <a-tabs v-model:activeKey="activeKey" type="card" class="miwaspace-tab">
+    <a-tabs v-model:activeKey="activeKey" type="card" class="miwaspace-tab" @change="getCurrentShowPageInfo">
       <a-tab-pane key="RPC" tab="RPC">
-        <rpcMiwaspace />
+        <rpcMiwaspace :currentPageInfo="currentPageInfo"/>
       </a-tab-pane>
-      <a-tab-pane key="Oracle" tab="Oracle" force-render>
-        <oracleMiwaspace />
+      <a-tab-pane key="Oracle" tab="Oracle">
+        <oracleMiwaspace :currentPageInfo="currentPageInfo"/>
       </a-tab-pane>
       <a-tab-pane key="Storage" tab="Storage">
         <storageMiwaspace />
@@ -30,8 +30,10 @@
 </template>
 
 <script lang='ts' setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
+  import { useRouter } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
+  import { apiGetMiddleWareRpc } from '@/apis/middleWare'
   import graphMiwaspace from "./components/graphMiwaspace.vue";
   import oracleMiwaspace from "./components/oracleMiwaspace.vue";
   import othersMiwaspace from "./components/othersMiwaspace.vue";
@@ -39,9 +41,54 @@
   import storageMiwaspace from "./components/storageMiwaspace.vue";
   import zkpMiwaspace from "./components/zkpMiwaspace.vue";
 
+  const router = useRouter()
   const theme = useThemeStore();
 
-  const activeKey = ref('RPC')
+  const nowRouter = router.currentRoute.value.query.key
+  const activeKey = ref()
+
+  // 确认对应界面并展示
+  const showJumpPage = (query:any) => {
+    switch(query) {
+      case '1':
+        activeKey.value = 'RPC';
+        break;
+      case '2':
+        activeKey.value = 'Oracle';
+        break;
+      default: break;
+    }
+  }
+
+  // 获取现在展示页面的数据
+  const currentPageInfo = ref()
+  const getCurrentShowPageInfo =(type:string) => {
+    switch (type) {
+      case 'RPC':
+        getRpcInfo();
+        break;
+      case 'Oracle':
+        console.log('oracle')
+        break;
+      default: break;
+    }
+  }
+
+  // 获取rpc页面的数据
+  const getRpcInfo = async() => {
+    try {
+      const { data } = await apiGetMiddleWareRpc()
+      currentPageInfo.value = data
+      console.log('rpc-data:', data)
+    } catch(err:any) {
+      console.log('rpc-err:', err)
+    }
+  }
+
+  onMounted( async() => {
+    await showJumpPage(nowRouter)
+    getCurrentShowPageInfo(activeKey.value)
+  })
 </script>
 
 <style lang='less' scoped>

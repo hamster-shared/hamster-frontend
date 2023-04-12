@@ -223,3 +223,11 @@ export function apiChains() {
         method: "get",
     });
 }
+
+// 获取用户所有订阅金额
+export function getCustomerBalance() {
+    return httpRequest({
+        url: `/api/chainlink/subscription/balance`,
+        method: "get",
+    });
+}
