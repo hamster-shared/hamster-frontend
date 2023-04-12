@@ -77,7 +77,7 @@
                         <img src="@/assets/icons/copy.svg" />Copy
                       </span>
                     </div>
-                    <div class="bg-white rounded-[5px] text-[#E2B578] p-[20px]" :id="`send${moduleName}${items.title}`">werqwerqwerwqerwqrqwr</div>
+                    <div class="bg-white rounded-[5px] text-[#E2B578] p-[20px] break-all" :id="`send${moduleName}${items.title}`"></div>
                   </div>
                 </a-collapse-panel>
               </a-collapse>
