@@ -457,16 +457,6 @@ const getContractTemplatesDetail = async () => {
   }
 }
 
-const getSourceContent = (sources: string) => {
-  axios.get(sources).then(res => {
-    if (res.data) {
-    console.log("res.data:",res.data);
-      return res.data;
-    }
-  });
-  return "";
-}
-
 const setAbiInfoData = (abiInfoData: any) => {
   abiInfoData.forEach((item: any) => {
     if (item.type === 'function') {
@@ -513,7 +503,7 @@ const setAbiInfoData = (abiInfoData: any) => {
 }
 
 const setCodeHeight = (content: string) => {
-  let codeIndex = content.split('\n').length; console.log("codeIndex:",codeIndex);
+  let codeIndex = content.split('\n').length; 
   editHeight.value = 'height: ' + codeIndex * 22 + 'px';
 }
 
