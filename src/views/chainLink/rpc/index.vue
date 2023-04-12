@@ -156,7 +156,7 @@ const getMynetworkData = async () => {
 
 const currentPagination = reactive({
   // 分页配置器
-  pageSize: 5, // 一页的数据限制
+  pageSize: 10, // 一页的数据限制
   current: 1, // 当前页
   total: 0, // 总数
   size: 'small',
