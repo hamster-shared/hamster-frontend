@@ -142,11 +142,13 @@ const getSublistData = async()=>{
 const bind = ()=>{}
 // 设置订阅号
 const setSubscription = (val:any,option:any)=>{
-    console.log('设置订阅号',val,option)
+    const subOptionsNet = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
+    const net = subOptionsNet.split(' ') 
+    network.value=net.slice(1,net.length).join(' '),
     subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
     keyId.value = val
     getTestConsumerSub(keyId.value)
-    // console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
+    console.log('设置订阅号',val,option,network.value)
 }
 // 获取consumer数据
 const getTestConsumerSub = async(id:string|number)=>{
@@ -165,10 +167,7 @@ const getTestConsumerSub = async(id:string|number)=>{
 // 设置consumer地址
 const setConsumers = (val:string,option:any)=>{
     consumerAddress.value = val
-    const subOptionsNet = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
-    const net = subOptionsNet.split(' ') 
-    network.value=net.slice(1,net.length).join(' '),
-    console.log('设置consumer地址',val,option,network.value)
+    console.log('设置consumer地址',val,option)
     consumerApi.value = new ConsumerApi(contractApi.provider, val);
     console.log('11111111设置consumer地址',consumerApi.value)
 }
@@ -200,8 +199,6 @@ const addSecret = (item:any)=>{
     }
     
 }
-// 减少secret
-const removeSecret = ()=>{}
 // 设置loaction
 const setLoaction = (val:any)=>{
     console.log('设置loaction',val)
@@ -210,7 +207,7 @@ const setLoaction = (val:any)=>{
 // 发送
 const handleSend = async()=>{
     await formRef.value.validate();
-    console.log('handleSend',formData)
+    console.log('handleSend',formData,network.value)
     confirmShow.value = true
 }
 // 返回检查
@@ -250,19 +247,32 @@ const cancelToCheck = ()=>{
 const handleConfirm = async()=>{
     const gasLimit = 100000;
     console.log('确定提交')
-    consumerApi.value.executeRequest(record.value.script, '0x', 1, [], subId.value, gasLimit).then(async(tx:any)=>{
-        const secretsloction = formData.loaction == 'Inline' ? 0:1
-        // secretUrl 根据secretsloction 判断
-        // 如果secretsloction='Inline' secretUrl是页面的key:value，Json.strifgy转成字符串
-        // 如果secretsloction='Remote' secretUrl是页面的input框收集的数据
-        const secretUrl = formData.loaction == 'Inline' ? 0 : formData.secretUrl
-        // 多个请求参数是用 ，分隔开，拼成一个字符串
-        const args = ''
+    let secretsloction = formData.loaction == 'Inline' ? 0:1
+    const argsArray = formData.args.map((item:any)=>{
+        return item.value
+    })
+    const secretArr = formData.secretArr.map((item:any)=>{
+        return {
+            secretName:item.secretName,
+            secretValue:item.secretValue,
+        }
+    })
+    // secretUrl 根据secretsloction 判断
+    // 如果secretsloction='Inline' secretUrl是页面的key:value，Json.strifgy转成字符串
+    // 如果secretsloction='Remote' secretUrl是页面的input框收集的数据
+    // 多个请求参数是用 ，分隔开，拼成一个字符串
+    let secretUrl = ''
+    if(formData.loaction == 'Inline'){
+        secretUrl = JSON.stringify(secretArr)
+    }else{
+        secretUrl = formData.secreturl
+    }
+    consumerApi.value.executeRequest(record.value.script, '0x', secretsloction, argsArray, subId.value, gasLimit).then(async(tx:any)=>{
         const params = {
             subscriptionId:parseInt(subId.value),
             secretsloction,
-            secretUrl:'',
-            args:'',
+            secretUrl,
+            args:argsArray.length ? argsArray.join(','):'',
             requestName:record.value.name,
             requestId:'',
             amount:0,
@@ -280,21 +290,21 @@ const handleConfirm = async()=>{
         return tx.wait()
     }).then(async(receipt:any) => {
         console.log('receipt~~~~~',receipt)
-        // consumerApi.value.latestRequestId().then(async(execId:any) => {
-        //     console.log('execId',execId)
-        //     const params = {
-        //         requestId:execId,
-        //         network:network.value
-        //     }
-        //     const res = await updateTestSub(temId.value,params)
-        //     if(res.code===200){
-        //         message.success(res.data)
-        //     }else{
-        //         message.error(res.data)
-        //     }
-        //     emit('getTestSubInfo',formData)
-        //     emit('closeTestSub',false)
-        // })
+        consumerApi.value.latestRequestId().then(async(execId:any) => {
+            console.log('execId',execId)
+            const params = {
+                requestId:execId,
+                network:network.value
+            }
+            const res = await updateTestSub(temId.value,params)
+            if(res.code===200){
+                message.success(res.data)
+            }else{
+                message.error(res.data)
+            }
+            emit('getTestSubInfo',formData)
+            emit('closeTestSub',false)
+        })
     })
 }
 // 取消订阅
@@ -310,7 +320,7 @@ onMounted(()=>{
             value:''
         })
     }
-    console.log(11212121,formData.args)
+    console.log(11212121,formData.args,record.value)
 })
 </script>
 <style lang="less" scoped>

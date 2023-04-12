@@ -18,7 +18,7 @@
             <a @click="goSubDetail(record)" class="mr-16">View</a>
         </template>
         <template #id="{ record }">
-            <span v-if="record.status=='success'">{{record.id}}</span>
+            <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
             <span v-else>
                 <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
                 <svg-icon v-if="record.status?.toLowerCase()=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
