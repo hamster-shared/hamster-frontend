@@ -44,6 +44,7 @@ export class RegistryApi {
     return this.contractApi.events('SubscriptionCreated', fromBlock, toBlock);
   }
 
+  // 查询订阅号钱等信息
   async getSubscription(subscriptionId: number): Promise<any> {
     return await this.contractApi.query('getSubscription', subscriptionId);
   }

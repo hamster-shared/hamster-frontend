@@ -6,7 +6,7 @@
       <div class="flex justify-between my-4">
         <div class="font-bold text-[20px]">Create Request</div>
         <div>
-          <a-button @click="router.push('/chainlink/oracle/createRequest')">Create Request</a-button>
+          <a-button @click="router.push('/chainlink/oracle/create-request')">Create Request</a-button>
           <a-button class="ml-2" @click="toDocs">Docs</a-button>
         </div>
       </div>
@@ -23,7 +23,7 @@
       </div>
     </div>
   </div>
-  <testSub v-if="showTestSub" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
+  <testSub v-if="showTestSub" :column="column" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
 </template>
 
 <script setup lang="ts">
@@ -41,6 +41,7 @@
     created: string
   }[]>([])
   const showTestSub = ref(false)
+  const column = ref<any>({})
 
   const oracleColumns = reactive([
     {
@@ -122,7 +123,11 @@
   })
   // 点击表格中的test按钮
   const showTestSubBtn = (record:any)=>{
-    console.log('点击表格中的test按钮',record)
+    // 每次点击要先清除缓存中的数据，保证数据的准确性
+    localStorage.removeItem('record')
+    column.value = record
+    localStorage.setItem('record',JSON.stringify(record))
+    console.log('点击表格中的test按钮',column.value)
     showTestSub.value = true
   }
   // 获取testsub数据

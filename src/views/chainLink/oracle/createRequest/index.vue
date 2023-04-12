@@ -50,6 +50,7 @@
   import { useThemeStore } from "@/stores/useTheme";
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
+  import { message } from 'ant-design-vue';
 
   const router = useRouter()
   const theme = useThemeStore();
@@ -115,8 +116,10 @@
 
     try {
       const { data } = await apiPostCreateRequest(params)
+      router.push('/chainlink/RPC')
       console.log('createTemplate-data:',data)
     } catch(err:any) {
+      message.error(err.message)
       console.log('createTemplate-err:',err)
     }
   }

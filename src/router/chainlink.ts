@@ -38,7 +38,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/subList",
+                  path: "/chainlink/oracle/sublist",
                   name: "subList",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subList.vue'),
                   meta:{
@@ -46,7 +46,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/subList/subListDetail",
+                  path: "/chainlink/oracle/subList/sublist-detail",
                   name: "subListDetail",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
                   meta:{
@@ -54,7 +54,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                path: "/chainlink/oracle/createRequest",
+                path: "/chainlink/oracle/create-request",
                 name: "CreateRequest",
                 component:() => import('@/views/chainLink/oracle/createRequest/index.vue'),
                 meta:{
@@ -80,7 +80,7 @@ const chainlinkRoute = [
               }
             },
             {
-              path: "/chainlink/RPC/rpcDetail/:chain",
+              path: "/chainlink/RPC/rpc-detail/:chain",
               name: "rpcDetail",
               component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
               meta:{

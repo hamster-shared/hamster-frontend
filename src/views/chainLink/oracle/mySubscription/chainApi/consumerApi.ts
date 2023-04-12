@@ -1,7 +1,7 @@
 import { createContractApi } from './contractApi'
 import { abis } from './contractConfig';
 import { ethers } from 'ethers';
-import { EIP1193Provider } from '@web3-onboard/core';
+import type { EIP1193Provider } from '@web3-onboard/core';
 
 export class ConsumerApi {
   private contractApi;
