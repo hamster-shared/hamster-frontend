@@ -50,6 +50,7 @@
   import { useThemeStore } from "@/stores/useTheme";
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
+  import { message } from 'ant-design-vue';
 
   const router = useRouter()
   const theme = useThemeStore();
@@ -77,21 +78,18 @@
 
   // 获取pipelinefile preview展示的代码
   const pipelinefilePreview = ref()
+  const paramsCount = ref()
   const handleUseNow = async(id:number) => {
     try {
       const { data } = await apiGetShowRequestTemplateScript(id)
-      pipelinefilePreview.value = data
+      pipelinefilePreview.value = data.script
+      paramsCount.value = data.paramsCount
       setCodeHeight(pipelinefilePreview.value)
       console.log('data:',data)
     } catch(err) {
       console.log('err:',err)
     }
   }
-
-  // 监测pipelinefile preview里的代码变化
-  // watch(()=>pipelinefilePreview.value,()=>{
-  //   console.log('pipelinefilePreview.value:',pipelinefilePreview.value)
-  // })
 
   // 设置代码展示页面的高度
   const editHeight = ref("height: 220px");
@@ -112,13 +110,16 @@
   const createTemplate = async()=>{
     const params = {
       name: requestName.value,
-      script: pipelinefilePreview.value
+      script: pipelinefilePreview.value,
+      paramsCount: paramsCount.value
     }
 
     try {
       const { data } = await apiPostCreateRequest(params)
+      router.push('/chainlink/oracle')
       console.log('createTemplate-data:',data)
     } catch(err:any) {
+      message.error(err.message)
       console.log('createTemplate-err:',err)
     }
   }

@@ -6,7 +6,7 @@
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
                 <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
-                :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
+                :options="subOptions" allow-clear></a-select>
             </a-form-item>
             
             <a-form-item label="Consumer" :name="!isOrigin ? 'consumer':''" >
@@ -24,14 +24,13 @@
             </a-form-item>
         </a-form>
         <div v-if="isOrigin" class="-mt-[10px]">
-            <a-select class="inline-block" style="margin-right:10px" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
-                :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
-            <a-select class="inline-block" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select the network" autocomplete="off"
-                :options="subOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
-            <a-table class="mt-[16px]" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
+            <a-select class="inline-block" style="margin-right:10px;width: 220px;" @change="setProject" v-model:value="formData.project" placeholder="Please select a subscription" autocomplete="off"
+                allow-clear :options="projectOptions"></a-select>
+            <a-select class="inline-block" :placeholder="subOptionsNet" disabled></a-select>
+            <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
-                    <a-radio class="inline-block w-[20px]" v-model:checked="record.checked"></a-radio>
-                    <span>{{ record.address }}</span>
+                    <a-radio class="inline-block w-[20px] radio-normal" v-model:checked="record.checked" @click="getProjectInfo(record.address)"></a-radio>
+                    <span :title="record.address">{{ record.address.slice(0,10) }}</span>
                 </template>
             </a-table>
         </div>
@@ -45,15 +44,19 @@
 import router from '@/router';
 import { renderTableText } from '@/utils/customRender'
 import { ref, onMounted, computed, reactive } from 'vue'
-import { consumerSublist,consumerProjects,consumerTable,apiConsumerAdd } from '@/apis/chainlink'
+import { consumerSublist,consumerProjects,consumerTable,apiConsumerAdd,updateConsumer } from '@/apis/chainlink'
 import type { consumerInTableParams } from '@/apis/utils/chainlinkInterface'
+import dayjs from "dayjs";
+import { message } from 'ant-design-vue';
+import { useContractApi } from "@/stores/chainlink";
+const contractApi = useContractApi()
+const { registryApi, linkTokenApi, walletAddress } = useContractApi()
 const consumersColumns:any = [
     {
         title: 'Address',
         dataIndex: 'address',
         key:'address',
         align:'center',
-        // customRender: renderTableText(30)
         slots: { customRender: 'address' },
     },
     {
@@ -63,40 +66,14 @@ const consumersColumns:any = [
     },
     {
         title: 'Deploy Time',
-        dataIndex: 'deploy_time',
-        align:'center'
+        dataIndex: 'deployTime',
+        align:'center',
+        customRender: ({ text }:any) => {
+            return dayjs(text).format('YYYY-MM-DD HH:mm:ss')
+          },
     },
 ]
-const consumersData:any = [
-    {
-        key: '1',
-        id: '1',
-        address:'test',
-        deploy_time:'2023-03-28 18:00:00',
-        network:'Test',
-    },
-    {
-        key: '2',
-        id: '2',
-        address:'test',
-        deploy_time:'2023-03-28 18:00:00',
-        network:'Test',
-    },
-    {
-        key: '3',
-        id: '3',
-        address:'test',
-        deploy_time:'2023-03-28 18:00:00',
-        network:'Test',
-    },
-    {
-        key: '4',
-        id: '4',
-        address:'test',
-        deploy_time:'2023-03-28 18:00:00',
-        network:'Test',
-    },
-]
+const consumersData = ref([])
 const pagination = reactive({
     // 分页配置器
     pageSize: 3, // 一页的数据限制
@@ -126,12 +103,22 @@ const props = defineProps({
     }
 })
 const formRef = ref();
-const subOptions = ref(['Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
+const subOptions = ref<any>([])
+const subOptionsNet = ref('Network')
+const projectOptions = ref<any>([])
 const formData = reactive({
     subscription: null,
+    project:undefined,
     consumer: '',
 });
+const loading = ref(false)
 const isOrigin = ref(true)
+// 订阅id
+const subId = ref()
+// 主键id
+const keyId = ref()
+// Penning id
+const temId = ref()
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -144,26 +131,50 @@ console.log('showAddConsumers',props.showAddConsumers)
 // 获取订阅数据
 const getSublistData = async()=>{
     const res = await consumerSublist()
+    if(res.code===200 && res.data?.length){
+        subOptions.value = res.data.map((item:any)=>{
+            let tem = item.name+'('+item.chain+' '+item.network+')'+'_'+item.chainSubscriptionId
+            return {
+                label:tem,
+                value:item.id
+            }
+        })
+    }
     console.log('获取订阅数据',res)
 }
 // 获取项目名称
 const getProjectsData = async()=>{
     const res = await consumerProjects()
+    if(res.code===200 && res.data?.length){
+        projectOptions.value = res.data.map((item:any)=>{
+            return {
+                label:item.name,
+                value:item.id
+            }
+        })
+    }
     console.log('获取项目名称',res)
 }
 // 获取表单数据
 const getlistData = async()=>{
-    console.log('获取表单数据')
+    loading.value = true
+    console.log('获取表单数据',formData.subscription)
+    const net = subOptionsNet.value.split(' ') 
     const params:consumerInTableParams = {
         page:pagination.current,
         size:pagination.pageSize,
-        chain:'',
-        network:'',
+        chain:net.slice(0,1).join(' '),
+        network:net.slice(1,net.length).join(' '),
     }
-    const res = await consumerTable('',params)
+    console.log('121212',params)
+    const res = await consumerTable(formData.project,params)
+    console.log('res',res.data.data)
     if(res.code===200){
-        consumersData.value = res.data
+        consumersData.value = res.data.data
+    }else{
+        consumersData.value = []
     }
+    loading.value = false
 }
 // 选择consumer来源于接口
 const selectOrigin = (val:any)=>{
@@ -178,9 +189,18 @@ const selectManul = (val:any)=>{
     console.log('selectManul',val.target.value)
 }
 // 设置订阅号
-const setSubscription = (val:any)=>{
-    console.log('设置订阅号',val)
-    formData.subscription = val
+const setSubscription = (val:any,option:any)=>{
+    // formData.subscription = val
+    subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
+    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    keyId.value = val
+    console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
+}
+// 设置项目名称
+const setProject = (val:any,option:any)=>{
+    console.log('设置项目名称',val,option)
+    formData.project = val
+    getlistData()
 }
 // 跳转hamster
 const goHamster = ()=>{
@@ -190,12 +210,52 @@ const goHamster = ()=>{
 // 给订阅号添加资金
 const handleFund = async()=>{
     await formRef.value.validate();
-    emit('getAddConsumersInfo',formData)
-    emit('closeAddConsumers',false)
+    console.log(' id 是订阅Id addConsumerAddress 合约地址',parseInt(subId.value),formData.consumer)
+    if (contractApi.apiStatus) {
+        // id 是订阅Id addConsumerAddress 合约地址
+        registryApi?.addConsumer(parseInt(subId.value), formData.consumer).then(async(tx:any)=>{
+            console.log('tx~~~~~',tx)
+            const params = {
+                subscriptionId:keyId.value,
+                consumerAddress:formData.consumer,
+                transactionTx:tx.hash
+            }
+            const res = await apiConsumerAdd(params)
+            if(res.code===200){
+                temId.value = res.data
+                message.success(res.message)
+            }else{
+                message.error(res.message)
+            }
+            return tx.wait()
+        }).then(async(receipt:any) => {
+            const params = {
+                id:temId.value,
+                subscriptionId:keyId.value,
+                transactionTx:receipt.transactionHash,
+                consumerAddress:formData.consumer,
+                newStatus:'success'
+            }
+            const res = await updateConsumer(params)
+            if(res.code===200){
+                message.success(res.message)
+            }else{
+                message.error(res.data)
+            }
+            console.log("addConsumer", receipt);
+            emit('getAddConsumersInfo',formData)
+            emit('closeAddConsumers',false)
+        })
+    }
 }
 // 取消订阅
 const cancelFund = ()=>{
     emit('closeAddConsumers',false)
+}
+// 选中表格中的项目
+const getProjectInfo = (add:string)=>{
+    formData.consumer = add
+    console.log('选中表格中的项目',add)
 }
 onMounted(()=>{
     getSublistData()
@@ -223,5 +283,8 @@ onMounted(()=>{
 }
 &:deep(.ant-radio-wrapper){
     display: inline-block;
+}
+.radio-normal{
+
 }
 </style>

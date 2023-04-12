@@ -10,6 +10,9 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 
 // https://vitejs.dev/config/
 export default ({ mode }:ConfigEnv) => defineConfig({
+  define: {
+    'process.env': {}
+  },
   build: {
     outDir: 'dist', // 打包文件的输出目录
     assetsDir: 'static', // 静态资源的存放目录

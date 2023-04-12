@@ -6,7 +6,7 @@
       <div class="flex justify-between my-4">
         <div class="font-bold text-[20px]">Create Request</div>
         <div>
-          <a-button @click="router.push('/chainlink/oracle/createRequest')">Create Request</a-button>
+          <a-button @click="router.push('/chainlink/oracle/create-request')">Create Request</a-button>
           <a-button class="ml-2" @click="toDocs">Docs</a-button>
         </div>
       </div>
@@ -14,16 +14,16 @@
         <a-table :dataSource="oracleListData" :columns="oracleColumns" :pagination="pagination" style="width:100%">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <a-button class="table-btn">Test</a-button>
-              <a-button class="mx-2 table-btn" disabled>Edit</a-button>
-              <a-button class="table-btn" disabled>Download</a-button>
+              <a-button class="table-btn" @click="showTestSubBtn(record)">Test</a-button>
+              <a-button class="mx-2 table-btn-disable" disabled>Edit</a-button>
+              <a-button class="table-btn-disable" disabled>Download</a-button>
             </template>
           </template>
         </a-table>
       </div>
     </div>
   </div>
-
+  <testSub v-if="showTestSub" :column="column" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
 </template>
 
 <script setup lang="ts">
@@ -32,6 +32,7 @@
   import { apiGetOracleTableParams } from '@/apis/chainlink'
   import { formatDateToLocale } from '@/utils/dateUtil';
   import oracleChart from './oracleChart/index.vue'
+  import testSub from './mySubscription/components/testSub.vue'
 
   const router = useRouter();
   const oracleListData = ref<{
@@ -39,6 +40,8 @@
     name: string,
     created: string
   }[]>([])
+  const showTestSub = ref(false)
+  const column = ref<any>({})
 
   const oracleColumns = reactive([
     {
@@ -118,6 +121,23 @@
   onMounted(()=>{
     getTableData()
   })
+  // 点击表格中的test按钮
+  const showTestSubBtn = (record:any)=>{
+    // 每次点击要先清除缓存中的数据，保证数据的准确性
+    localStorage.removeItem('record')
+    column.value = record
+    localStorage.setItem('record',JSON.stringify(record))
+    console.log('点击表格中的test按钮',column.value)
+    showTestSub.value = true
+  }
+  // 获取testsub数据
+  const getTestSubInfo = (testSub:any)=>{
+      console.log('添加消费者数据接收',testSub)
+  }
+  // 关闭testsub弹框
+  const closeTestSub = (bool:boolean)=>{
+      showTestSub.value = bool
+  }
 </script>
 
 <style lang="less" scoped>
@@ -127,8 +147,13 @@
   padding: 20px;
  }
  .table-btn {
-    background-color: white;
+    background-color: unset;
     color: #E2B578;
+    border-radius: 32px;
+  }
+  .table-btn-disable {
+    background-color: unset;
+    color: #d9d9d9;
     border-radius: 32px;
   }
 </style>

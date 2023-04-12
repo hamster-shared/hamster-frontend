@@ -20,12 +20,11 @@
 </template>
 <script setup lang="ts" name="createSub">
 import { ref, onMounted, computed, reactive } from 'vue'
-import { useOnboard } from '@web3-onboard/vue'
-import { ethers,Contract } from 'ethers';
-import { abis } from '../chainApi/contractConfig'
 import { useContractApi } from "@/stores/chainlink";
-import { apiCreateSub } from '@/apis/chainlink'
+import { apiCreateSub,updateSub } from '@/apis/chainlink'
 import { message } from 'ant-design-vue';
+// 用于后端映射创建和更新订阅
+const id = ref<number>()
 const contractApi = useContractApi()
 const props = defineProps({
     showCreateSub:{
@@ -60,9 +59,23 @@ const handleCreateSub = async()=>{
     // spinning.value = true;
     // 钱包地址
     const walletAd = localStorage.getItem('walletAccount');
-    const tx = contractApi.registryApi?.createSubscription();
-    console.log("tx",tx.transactionHash);
-    tx.then(async(receipt:any) => {
+    const tx = contractApi.registryApi?.createSubscription().then(async(tx:any)=>{
+        const chainNetArr = formData?.network?.split(' ')
+        const params = {
+            chain:chainNetArr[0],
+            network:chainNetArr.slice(1,chainNetArr.length).join(' '),
+            name:formData.name,
+            // subscriptionId:'',
+            admin:walletAd,
+            transactionTx:tx.hash
+        } 
+        console.log('tx111111',tx)
+        // 创建订阅存入后端接口   
+        const res = await apiCreateSub(params)
+        console.log('创建订阅存入后端接口',res)
+        id.value = res.data
+        return tx.wait()
+    }).then(async(receipt:any) => {
       const events = contractApi.registryApi?.contract.interface.parseLog(receipt.logs[0]);
         // 订阅id
       const currentsubscriptionId = events.args[0].toNumber();
@@ -70,26 +83,26 @@ const handleCreateSub = async()=>{
       console.log("receipt:",currentsubscriptionId,receipt.transactionHash,chainNetArr,receipt);
       const params = {
         chain:chainNetArr[0],
-        network:chainNetArr[1],
-        name:formData.name,
-        subscriptionId:currentsubscriptionId,
-        admin:walletAd,
+        network:chainNetArr.slice(1,chainNetArr.length).join(' '),
+        id:id.value,
+        chainSubscriptionId:currentsubscriptionId,
+        newStatus:'success',
         transactionTx:receipt.transactionHash
       }
       console.log('params',params)
-        // 创建订阅存入后端接口   
-      const res = await apiCreateSub(params)
-      console.log('创建订阅存入后端接口',res)
+      const res = await updateSub(params)
       if(res.code===200){
-        message.success(res.message)
-      }else{
-        message.error(res.data)
-      }
+            message.success(res.message)
+        }else{
+            message.error(res.data)
+        }
     }, (error:any) => {
       console.log('error',error)
     //   spinning.value = false;
     });
-  } 
+    } else{
+        console.log(123456)
+    }
     // emit('getCreateSubInfo',formData)
     emit('closeCreateSub',false)
 }

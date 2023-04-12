@@ -57,13 +57,13 @@
             <span class="mr-16 text-[#FF4A4A]">{{ record.amount }}link</span>
         </template>
         <template #status="{ record }">
-            <svg-icon v-if="record.status=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
-            <svg-icon v-if="record.status=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
-            <span class="mr-16 text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+            <svg-icon v-if="record.status=='pending'" name="Pending" size="20"/>
+            <svg-icon v-if="record.status=='failed'" name="chainFailed" size="20" />
+            <span class=" text-[#FF4A4A] inline-block ml-[2px]" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
         </template>
         <template #transactionTx="{ record }">
-            <img v-if="detailInfo.transactionTx" src="@/assets/svg/Jump.png" style="display:inline-block"/>
-            <span @click="goTxSearch(record)" class="inline-block mx-16 text-[#017AFF] cursor-pointer">{{ record.transactionTx }}</span>
+            <img v-if="record.transactionTx" src="@/assets/svg/Jump.png" style="display:inline-block"/>
+            <span v-if="record.transactionTx" @click="goTxSearch(record)" class="inline-block text-[#017AFF] cursor-pointer" :title="record.transactionTx">{{ record.transactionTx?.slice(0,10) }}...</span>
         </template>
     </a-table>
 </template>
@@ -143,6 +143,7 @@ const getExpense = async()=>{
     const res = await apiExpenseList(id,params)
     if(res.code === 200&& res.data?.data?.length){
         tableData.value = res?.data?.data
+        pagination.total = res.data.total
         console.log(1121221,tableData.value)
     }else{
         tableData.value = []
@@ -159,6 +160,7 @@ const resetExpense = async()=>{
     const res = await apiExpenseList(id,params)
     if(res.code === 200 && res.data?.data?.length){
         tableData.value = res?.data?.data
+        pagination.total = res.data.total
     }else{
         tableData.value = []
     }
@@ -177,6 +179,7 @@ const getDeposit = async()=>{
     const res = await apiDepositList(id,params)
     if(res.code === 200&& res.data?.data?.length){
         tableData.value = res?.data?.data
+        pagination.total = res.data.total
     }else{
         tableData.value = []
     }
