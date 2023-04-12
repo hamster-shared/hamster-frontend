@@ -477,12 +477,12 @@ onBeforeMount(() => {
 }
 
 .up-tran {
-  transform: rotate(180deg);
+  transform: rotate(90deg);
   transition: all .3s, visibility 0s;
 }
 
 :deep(.ant-collapse-item-active .up-tran) {
-  transform: rotate(0deg);
+  transform: rotate(180deg);
 }
 :deep(.ant-collapse-item-active){
   border: 1px solid #E2B578;
