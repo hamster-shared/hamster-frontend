@@ -68,6 +68,7 @@ import {  useContractApi } from "@/stores/chainlink";
 // import { encryptWithPublicKey } from "@/utils/encryptSecrets";
 import { networkConfig } from "../chainApi/contractConfig";
 import { ethers } from "ethers";
+import { message } from 'ant-design-vue';
 const props = defineProps({
     showTestSub:{
         type:Boolean,
@@ -90,6 +91,10 @@ const confirmShow = ref(false)
 const subId = ref()
 // 主键id
 const keyId = ref()
+// 临时id
+const temId = ref()
+const consumerAddress = ref()
+const network = ref()
 // record表单数据
 const record = ref<any>({})
 const formData = reactive<any>({
@@ -106,7 +111,6 @@ const formData = reactive<any>({
     ],
     secreturl:'',
     args: [],
-    // paramsCount
 });
 watch(()=>props.column.value,(newVal,oldVal)=>{
     console.log('watch',newVal)
@@ -160,8 +164,13 @@ const getTestConsumerSub = async(id:string|number)=>{
 }
 // 设置consumer地址
 const setConsumers = (val:string,option:any)=>{
-    console.log('设置consumer地址',val,option)
+    consumerAddress.value = val
+    const subOptionsNet = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
+    const net = subOptionsNet.split(' ') 
+    network.value=net.slice(1,net.length).join(' '),
+    console.log('设置consumer地址',val,option,network.value)
     consumerApi.value = new ConsumerApi(contractApi.provider, val);
+    console.log('11111111设置consumer地址',consumerApi.value)
 }
 // 添加secret
 const addSecret = (item:any)=>{
@@ -239,15 +248,52 @@ const cancelToCheck = ()=>{
 // 确定提交
 const handleConfirm = async()=>{
     const gasLimit = 100000;
-    consumerApi.value.executeRequest(record.script, '0x', 1, '', subId.value, gasLimit).then(async(tx:any)=>{
-        // const params = {
-
-        // }
-        // const res = await apiExecSub(params)
+    console.log('确定提交')
+    consumerApi.value.executeRequest(record.value.script, '0x', 1, [], subId.value, gasLimit).then(async(tx:any)=>{
+        const secretsloction = formData.loaction == 'Inline' ? 0:1
+        // secretUrl 根据secretsloction 判断
+        // 如果secretsloction='Inline' secretUrl是页面的key:value，Json.strifgy转成字符串
+        // 如果secretsloction='Remote' secretUrl是页面的input框收集的数据
+        const secretUrl = formData.loaction == 'Inline' ? 0 : formData.secretUrl
+        // 多个请求参数是用 ，分隔开，拼成一个字符串
+        const args = ''
+        const params = {
+            subscriptionId:parseInt(subId.value),
+            secretsloction,
+            secretUrl:'',
+            args:'',
+            requestName:record.value.name,
+            requestId:'',
+            amount:0,
+            transactionTx: tx.hash,
+            consumerAddress: consumerAddress.value,
+            network:network.value
+        }
+        const res = await apiExecSub(params)
+        if(res.code===200){
+            temId.value = res.data
+        }else{
+            message.error(res.data)
+        }
+        console.log("~~~~~tx",tx)
         return tx.wait()
-    }).then((receipt:any) => {
-        emit('getTestSubInfo',formData)
-        emit('closeTestSub',false)
+    }).then(async(receipt:any) => {
+        console.log('receipt~~~~~',receipt)
+        consumerApi.value.latestRequestId().then(async(execId:any) => {
+            console.log('execId',execId)
+            const params = {
+                requestId:execId,
+                network:network.value
+            }
+            const res = await updateTestSub(temId.value,params)
+            if(res.code===200){
+                message.success(res.data)
+            }else{
+                message.error(res.data)
+            }
+            emit('getTestSubInfo',formData)
+            emit('closeTestSub',false)
+        })
     })
 }
 // 取消订阅
@@ -257,7 +303,7 @@ const cancelFund = ()=>{
 onMounted(()=>{
     getSublistData()
     record.value = JSON.parse(localStorage.getItem('record'))
-    for(let i=1;i<=record.paramsCount;i++){
+    for(let i=1;i<=record.value.paramsCount;i++){
         formData.args.push('Arg'+i)
     }
     console.log(11212121,formData.args)

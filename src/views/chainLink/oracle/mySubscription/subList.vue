@@ -20,8 +20,8 @@
         <template #id="{ record }">
             <span v-if="record.status=='success'">{{record.id}}</span>
             <span v-else>
-                <svg-icon v-if="record.status=='Pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
-                <svg-icon v-if="record.status=='Failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                <svg-icon v-if="record.status?.toLowerCase()=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
                 <span class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
             </span>
         </template>
@@ -145,6 +145,7 @@ const getSublist = async()=>{
     const res = await apiSublist(params)
     if(res.code === 200&& res.data?.data?.length){
         subListData.value = res.data?.data
+        pagination.total = res.data.total
     }else{
         subListData.value = []
     }

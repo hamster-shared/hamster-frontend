@@ -97,5 +97,4 @@ export interface ExecSubParams {
 export interface updateTestSubParams {
     requestId?:string;
     network?:string;
-    paramsCount: string | number
 }

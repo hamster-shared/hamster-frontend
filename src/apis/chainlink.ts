@@ -216,3 +216,10 @@ export function testConsumerSub(id:string|number) {
         method: "get",
     });
 }
+// dashboard概览即获取可用链
+export function apiChains() {
+    return httpRequest({
+        url: `/api/rpc/chains`,
+        method: "get",
+    });
+}

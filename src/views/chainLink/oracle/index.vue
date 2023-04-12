@@ -6,7 +6,7 @@
       <div class="flex justify-between my-4">
         <div class="font-bold text-[20px]">Create Request</div>
         <div>
-          <a-button @click="router.push('/chainlink/oracle/createRequest')">Create Request</a-button>
+          <a-button @click="router.push('/chainlink/oracle/create-request')">Create Request</a-button>
           <a-button class="ml-2" @click="toDocs">Docs</a-button>
         </div>
       </div>
