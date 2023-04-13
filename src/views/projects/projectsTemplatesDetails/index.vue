@@ -425,6 +425,9 @@ const getContractTemplatesDetail = async () => {
         ainInfoData.value = YAML.parse(data.abiInfo);
       }
     }
+    if (frameType !== '5') {
+      setAbiInfoData(ainInfoData.value);
+    }
     axios
       .get(data.codeSources)
       .then(res => {
