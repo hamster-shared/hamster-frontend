@@ -24,7 +24,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
-    <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool"
+    <AiAnalysis v-if="workflowsDetailsData.frameType === 5 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool"
       :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
@@ -142,7 +142,7 @@ const getCheckReport = async () => {
       openAiInfo.value = item
     }
   })
-
+  console.log("openAiInfo.value:",openAiInfo.value);
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);

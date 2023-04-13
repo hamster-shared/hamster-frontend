@@ -61,6 +61,7 @@
 <script setup lang="ts">
 import { reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
+import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 
@@ -139,9 +140,13 @@ const toDetailUrl = (val: any) => {
 
 const downloadAbi = (val: any) => {
   // aptos 这一步没有abi信息
-  if(frameType?.value==2){
+  if (frameType?.value == 2) {
     aptosAbiShow.value = true
-  }else{
+  }
+  else if (frameType?.value === 5) { //sui
+    message.info("Sorry, Sui contract currently does not support ABI file download.");
+  }
+  else {
     const str = val.abiInfo;
     const url = `data:,${str}`;
     const a = document.createElement('a');
