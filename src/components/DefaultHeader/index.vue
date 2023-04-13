@@ -51,8 +51,8 @@
           </div>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="visibleDisconnect = true">
+              <a-menu-item @click="visibleDisconnect = true">
+                <a href="javascript:;">
                   <img src="@/assets/icons/disconnect.svg" class="h-[24px]" />
                   Disconnect
                 </a>
@@ -193,19 +193,23 @@ onMounted(() => {
 });
 
 watch(
-  () => walletAddress.walletAddress,
-  (value, newV) => {
-    if (value) {
+  () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
+  (oldValue, newV) => {
+    if (oldValue) {
       // console.log(walletAccount.value, 'kkkk')
-      isConnectedWallet.value = true
-      walletAccount.value = walletAddress.walletAddress?.substring(0, 5) + "..." + walletAddress.walletAddress?.substring(walletAddress.walletAddress.length - 4);
+      isConnectedWallet.value = true;
+      walletAccount.value = oldValue?.substring(0, 5) + "..." + oldValue?.substring(oldValue.length - 4);
+    } else {
+      isConnectedWallet.value = false
     }
   }, { deep: true, immediate: true }
 );
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
+  window.localStorage.removeItem("walletAccount");
   visibleDisconnect.value = false;
+  isConnectedWallet.value = false
 }
 const showWallet = () => {
   // visibleWallet.value = true;
@@ -213,7 +217,7 @@ const showWallet = () => {
 }
 const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
-  const account = window.localStorage.getItem("walletAccount");
+  // const account = window.localStorage.getItem("walletAccount");
   // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
 }
 </script>
