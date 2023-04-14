@@ -81,8 +81,8 @@ const initChart = (chartElement: HTMLElement, themeValue: string) => {
       data: legendData.value
     },
     grid: {
-      left: '3%',
-      right: '4%',
+      left: '5%',
+      right: '5%',
       bottom: '3%',
       containLabel: true
     },
