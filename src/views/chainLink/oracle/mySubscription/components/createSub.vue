@@ -23,6 +23,7 @@ import { ref, onMounted, computed, reactive } from 'vue'
 import { useContractApi } from "@/stores/chainlink";
 import { apiCreateSub,updateSub } from '@/apis/chainlink'
 import { message } from 'ant-design-vue'
+import { switchToChain } from '@/utils/changeNetwork'
 const { ethereum } = window;
 // 用于后端映射创建和更新订阅
 const id = ref<number>()
@@ -34,9 +35,11 @@ const props = defineProps({
     }
 })
 const formRef = ref();
+const chainName = ref()
+const rpcUrl = ref()
 // ETH
 // networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }, {name: 'Testnet/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
-const subNetOptions = ref([{ label: 'Ethereum Sepolia Testnet', value: 'aa36a7' },{ label: 'Polygon Mumbai Testnet', value: '13881' },{label: 'Hamster Moonbeam',networkName: 'Hamster Moonbeam', value: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}])
+const subNetOptions = ref([{ label: 'Ethereum Sepolia Testnet', value: 'aa36a7',url:'https://eth-sepolia.g.alchemy.com/v2/demo' },{ label: 'Polygon Mumbai Testnet', value: '13881',url:'https://rpc-mumbai.maticvigil.com' },{label: 'Hamster Moonbeam Testnet',networkName: 'Hamster Moonbeam', value: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}])
 const formData = reactive({
     network: null,
     name: '',
@@ -51,16 +54,16 @@ const formRules = computed(() => {
 const emit = defineEmits(['closeCreateSub','getCreateSubInfo'])
 console.log('showCreateSub',props.showCreateSub)
 // 设置订阅网络
-const setSubNetwork = (val:any)=>{
-    console.log('设置订阅网络',val)
-    formData.network = val
-    const network = `0x${formData.network}`
+const setSubNetwork = (val:any,option:any)=>{
+    console.log('设置订阅网络',val,option)
+    formData.network = option.label
+    const network = `0x${val}`
+    chainName.value = option.label
+    rpcUrl.value = option.url
     console.log('~~~~',ethereum.chainId,network)
     // 如果网络id不一样，需要调小狐狸进行网络切换
     if (ethereum.chainId !== network) {
-    // switchToChain(formData.network)
-    } else {
-        // setContractFactory('')
+        switchToChain(network,chainName.value,rpcUrl.value)
     }
 }
 // 创建订阅
@@ -107,6 +110,7 @@ const handleCreateSub = async()=>{
         }else{
             message.error(res.data)
         }
+        emit('closeCreateSub',false)
     }, (error:any) => {
       console.log('error',error)
     //   spinning.value = false;
@@ -115,76 +119,11 @@ const handleCreateSub = async()=>{
         console.log(123456)
     }
     // emit('getCreateSubInfo',formData)
-    emit('closeCreateSub',false)
 }
 // 取消订阅
 const cancelCreateSub = ()=>{
     emit('closeCreateSub',false)
 }
-// const switchToChain = async (chainId: string) => {
-//   window.ethereum && window.ethereum.request({
-//     method: "wallet_switchEthereumChain",
-//     params: [{ chainId: `0x${chainId}` }],
-//   }).then((res: any) => {
-//     loading.value = false;
-//     message.success('success');
-//     // console.info(res, '成功')
-//   }).catch((err: any) => {
-//     if (err.code === 4902) {
-//       message.info('Please add the network first');
-//       addToChain(chainId)
-//     } else {
-//       message.error('faild')
-//     }
-//   })
-// }
-// const addToChain = (chainId: string) => {
-//     window.ethereum && window.ethereum.request({
-//     method: "wallet_addEthereumChain",
-//     params: [
-//         {
-//         chainId: `0x${chainId}`,
-//         chainName: chainName.value,
-//         rpcUrls: [rpcUrl.value],
-//         // nativeCurrency: {
-//         //   name: 'Hm',
-//         //   symbol: 'M',
-//         //   decimals: 18,
-//         // },
-//         },
-//     ],
-//     }).then((res: any) => {
-//     message.info('successfully added')
-//     // console.log(res)
-//     }).catch((err: any) => {
-//     console.log(err.code, 'code')
-//     if (err.code === 4001) {
-//         message.info('Cancel adding a network')
-//     } else {
-//         message.info('faild')
-//     }
-//     }).finally(() => {
-//     loading.value = false;
-//     message.success('success')
-//     }).catch((err: any) => {
-//     message.success('faild')
-//     })
-// }
-// const setContractFactory = async (nameData: any) => {
-//   let promise: any = [];
-//   nameData.map((item: number) => {
-//     formState.name.push(item.id);
-//     let selectItem: any = projectsContractData.find(val => { return val.id === item.id });
-//     // console.log(selectItem, 'selectItem')
-//     promise.push(contractFactory(selectItem.abiInfoData, selectItem.byteCode, argsMap.get(selectId.value), item.id));
-//   })
-//   const res = await Promise.all(promise)
-//   loading.value = false;
-//   const result = res.some(it => {
-//     return it !== undefined
-//   })
-//   result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : loading.value = false
-// }
 </script>
 <style lang="less" scoped>
 .done-btn {

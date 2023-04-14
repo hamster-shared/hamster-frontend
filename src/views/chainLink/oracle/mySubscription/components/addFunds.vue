@@ -26,7 +26,9 @@ import { consumerSublist,apiPayFund,updateFund } from '@/apis/chainlink'
 import { useContractApi } from "@/stores/chainlink";
 import { ethers } from "ethers";
 import { message } from 'ant-design-vue';
-const subOptionsNet = ref('Network')
+import { switchToChain } from '@/utils/changeNetwork'
+const { ethereum } = window;
+const subOptionsNet = ref()
 // 订阅id
 const subId = ref()
 // 主键id
@@ -65,10 +67,12 @@ const getSublistData = async()=>{
     console.log('获取订阅数据',res)
     if(res.code===200 && res.data?.length){
         subOptions.value = res.data.map((item:any)=>{
-            let tem = item.name+'('+item.chain+' '+item.network+')'+'_'+item.id
+            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.chainSubscriptionId
             return {
                 label:tem,
-                value:item.id
+                value:item.id,
+                subNetName:item.chainAndNetwork,
+                subNetId:item.networkId
             }
         })
     }
@@ -78,10 +82,14 @@ const setSubscription = (val:any,option:any)=>{
     subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
     subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
     keyId.value = val
-    console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
+    const netId = `0x${option.subNetId}`
+    if (ethereum.chainId !== netId) {
+        switchToChain(netId,option.subNetName,option.networkUrl)
+    }
     registryApi?.getSubscription(subId.value).then((t:any) => {
         subBalance.value = ethers.utils.formatEther(t.balance);
     })
+    console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
 }
 // 给订阅号添加资金
 const handleFund = async()=>{
@@ -90,9 +98,11 @@ const handleFund = async()=>{
     const weiValue = ethers.utils.parseEther(formData.amount.toString());
     if (contractApi.apiStatus) {
         linkTokenApi?.transferAndCall(registryApi?.contract.address, weiValue, data).then(async(tx:any)=>{
+            const walletAccount = localStorage.getItem('walletAccount') 
             const params = {
                 transactionTx:tx.hash,
-                incr:formData.amount
+                incr:formData.amount,
+                address:walletAccount
             }
             console.log('tx',tx,'params',params)
             const res = await apiPayFund(keyId.value,params)
@@ -112,10 +122,10 @@ const handleFund = async()=>{
             }else{
                 message.error(res.data)
             }
+            emit('closeAddFund',false)
         })
     }
-    emit('getAddFundInfo',formData)
-    emit('closeAddFund',false)
+    // emit('getAddFundInfo',formData)
 }
 // 取消订阅
 const cancelFund = ()=>{

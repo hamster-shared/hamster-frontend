@@ -69,6 +69,8 @@ import {  useContractApi } from "@/stores/chainlink";
 import { networkConfig } from "../chainApi/contractConfig";
 import { ethers } from "ethers";
 import { message } from 'ant-design-vue';
+import { switchToChain } from '@/utils/changeNetwork'
+const { ethereum } = window;
 const props = defineProps({
     showTestSub:{
         type:Boolean,
@@ -129,10 +131,12 @@ const getSublistData = async()=>{
     const res = await consumerSublist()
     if(res.code===200 && res.data?.length){
         subOptions.value = res.data.map((item:any)=>{
-            let tem = item.name+'('+item.chain+' '+item.network+')'+'_'+item.chainSubscriptionId
+            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.chainSubscriptionId
             return {
                 label:tem,
-                value:item.id
+                value:item.id,
+                subNetName:item.chainAndNetwork,
+                subNetId:item.networkId
             }
         })
     }
@@ -147,6 +151,10 @@ const setSubscription = (val:any,option:any)=>{
     network.value=net.slice(1,net.length).join(' '),
     subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
     keyId.value = val
+    const netId = `0x${option.subNetId}`
+    if (ethereum.chainId !== netId) {
+        switchToChain(netId,option.subNetName,option.networkUrl)
+    }
     getTestConsumerSub(keyId.value)
     console.log('设置订阅号',val,option,network.value)
 }
