@@ -1,6 +1,6 @@
 <template>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <div class="my-20">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''" class="rounded-xl bg-white dark:bg-[#1D1C1A] p-[58px]">
+    <div class="mb-20">
       <div class="font-bold text-center text-5xl text-[#E2B578] mb-5">Find your MiddleWare</div>
       <div class="text-2xl text-center">By using middleware provided by Hamster, you can achieve fast development and
         deployment.
@@ -8,10 +8,10 @@
     </div>
     <a-tabs v-model:activeKey="activeKey" type="card" class="miwaspace-tab" @change="getCurrentShowPageInfo">
       <a-tab-pane key="RPC" tab="RPC">
-        <rpcMiwaspace :currentPageInfo="currentPageInfo"/>
+        <rpcMiwaspace :rpcPageInfo="rpcPageInfo"/>
       </a-tab-pane>
       <a-tab-pane key="Oracle" tab="Oracle">
-        <oracleMiwaspace :currentPageInfo="currentPageInfo"/>
+        <oracleMiwaspace :openService="openService"/>
       </a-tab-pane>
       <a-tab-pane key="Storage" tab="Storage">
         <storageMiwaspace />
@@ -33,7 +33,7 @@
   import { ref, onMounted } from "vue";
   import { useRouter } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
-  import { apiGetMiddleWareRpc } from '@/apis/middleWare'
+  import { apiGetMiddleWareRpc, apiGetIfOpenService } from '@/apis/middleWare'
   import graphMiwaspace from "./components/graphMiwaspace.vue";
   import oracleMiwaspace from "./components/oracleMiwaspace.vue";
   import othersMiwaspace from "./components/othersMiwaspace.vue";
@@ -61,27 +61,39 @@
   }
 
   // 获取现在展示页面的数据
-  const currentPageInfo = ref()
   const getCurrentShowPageInfo =(type:string) => {
     switch (type) {
       case 'RPC':
         getRpcInfo();
         break;
       case 'Oracle':
-        console.log('oracle')
+        checkIfOpenService();
         break;
       default: break;
     }
   }
 
   // 获取rpc页面的数据
+  const rpcPageInfo = ref()
   const getRpcInfo = async() => {
     try {
       const { data } = await apiGetMiddleWareRpc()
-      currentPageInfo.value = data
+      rpcPageInfo.value = data
       console.log('rpc-data:', data)
     } catch(err:any) {
       console.log('rpc-err:', err)
+    }
+  }
+
+  // oracle界面判断用户是否开通了服务
+  const openService = ref()
+  const checkIfOpenService = async()=> {
+    try {
+      const { data } = await apiGetIfOpenService('oracle')
+      openService.value = data
+      console.log('oracle-data:', data)
+    } catch(err:any) {
+      console.log('oracle-err:', err)
     }
   }
 

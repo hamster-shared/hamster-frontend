@@ -11,7 +11,7 @@
     </div>
 
     <div class="grid grid-cols-3 gap-12">
-      <div class="ethereum-container" v-for="(item,index) in currentPageInfo" :key="index">
+      <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div>
           <img src="@/assets/svg/miwaspace-eth.svg" class="h-6"/>
           <span class="ml-2 text-base font-bold align-middle">Ethereum</span>
@@ -49,9 +49,9 @@
 
   const router = useRouter()
   const props = defineProps({
-    currentPageInfo:Array
+    rpcPageInfo:Array
   })
-  const { currentPageInfo } = toRefs(props)
+  const { rpcPageInfo } = toRefs(props)
 
   const copyInfo = async (_items: any) => {
   let inp = document.createElement("input");
