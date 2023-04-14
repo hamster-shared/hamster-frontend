@@ -69,7 +69,7 @@ export const depositColumns:any = [
     },
     {
         title: 'Address',
-        dataIndex: 'consumerAddress',
+        dataIndex: 'address',
         align:'left',
         customRender: renderTableText(15)
     },

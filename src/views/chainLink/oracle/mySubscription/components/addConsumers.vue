@@ -258,6 +258,8 @@ const handleFund = async()=>{
             console.log("addConsumer", receipt);
             emit('getAddConsumersInfo',formData)
             emit('closeAddConsumers',false)
+        }).catch((err:any)=>{
+            console.log('err111111',err)
         })
     }
 }
