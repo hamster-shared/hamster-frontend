@@ -1,4 +1,6 @@
 <template>
+    <BreadCrumb currentName="My Subscription" :isClick="breadCrumbLoading" class="mb-6"/>
+
     <div class="text-[24px] font-bold">My Subscription</div>
     <div class="flex justify-between items-center mt-[30px]">
         <div>
@@ -33,6 +35,7 @@
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
 import { ref,reactive,onMounted } from 'vue'
+import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
 import createSub from './components/createSub.vue'
 import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
@@ -42,6 +45,7 @@ const router = useRouter();
 const netOptions = ref<any>(['All','Hamster Moonbeam Testnet','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const netName = ref('All')
 const loading = ref(false)
+const breadCrumbLoading = ref(false)
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
