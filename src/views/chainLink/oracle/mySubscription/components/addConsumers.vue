@@ -49,6 +49,8 @@ import type { consumerInTableParams } from '@/apis/utils/chainlinkInterface'
 import dayjs from "dayjs";
 import { message } from 'ant-design-vue';
 import { useContractApi } from "@/stores/chainlink";
+import { switchToChain } from '@/utils/changeNetwork'
+const { ethereum } = window;
 const contractApi = useContractApi()
 const { registryApi, linkTokenApi, walletAddress } = useContractApi()
 const consumersColumns:any = [
@@ -133,10 +135,12 @@ const getSublistData = async()=>{
     const res = await consumerSublist()
     if(res.code===200 && res.data?.length){
         subOptions.value = res.data.map((item:any)=>{
-            let tem = item.name+'('+item.chain+' '+item.network+')'+'_'+item.chainSubscriptionId
+            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.chainSubscriptionId
             return {
                 label:tem,
-                value:item.id
+                value:item.id,
+                subNetName:item.chainAndNetwork,
+                subNetId:item.networkId
             }
         })
     }
@@ -200,7 +204,11 @@ const setSubscription = (val:any,option:any)=>{
     subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
     subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
     keyId.value = val
-    console.log('设置订阅号',subOptionsNet.value,111111,subId.value)
+    const netId = `0x${option.subNetId}`
+    if (ethereum.chainId !== netId) {
+        switchToChain(netId,option.subNetName,option.networkUrl)
+    }
+    console.log('设置订阅号',subOptionsNet.value,111111,subId.value,option)
 }
 // 设置项目名称
 const setProject = (val:any,option:any)=>{

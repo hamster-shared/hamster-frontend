@@ -23,6 +23,7 @@ export interface consumerAddParams {
 export interface payFundParams {
     transactionTx:string;
     incr?:string;
+    address?:string;
 }
 // expense 列表参数
 export interface expenseListParams {
