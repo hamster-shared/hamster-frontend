@@ -94,7 +94,7 @@ const chainData = reactive<any>({});
 const newtworkChainsData = reactive({});
 const chainsList = ref([]);
 const codeExamples = reactive<any>({});
-const activeKey = ref("js");
+const activeKey = ref("JavaScript");
 const { ethereum } = window;
 const addNetInfo = reactive<any>({
   chainId:'',

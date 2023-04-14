@@ -14,7 +14,7 @@
     <div class="storage-container">
       <span class="text-base font-bold">Filecoin</span>
       <div class="mt-5 text-sm mb-7">The decentralized storage network provides users with a storage and retrieval market.</div>
-      <a-button class="!h-[43px] w-[169px]">Coming Soon</a-button>
+      <a-button class="!h-[43px] w-[169px] !cursor-default">Coming Soon</a-button>
     </div>
   </div>
 </template>

@@ -52,7 +52,7 @@
     </div>
     <a-table :loading="loading" :dataSource="tableData.value" :columns="subDetailCol" class="mb-[64px] mt-[20px]" :pagination="pagination">
         <template #operation="{ record }">
-            <span @click="delConsumer(record)" class="mr-16 text-[#FF4A4A] cursor-pointer">Delete</span>
+            <span @click="delConsumer(record)" class="mr-16 text-[#FF4A4A] !cursor-pointer">Delete</span>
         </template>
         <template #amount="{ record }">
             <span class="mr-16 text-[#FF4A4A]">{{ record.amount }}link</span>
