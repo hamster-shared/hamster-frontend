@@ -14,31 +14,37 @@
             </label>
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
           </div>
+          <!-- 这里 -->
+          <div v-if="viewInfo.labelDisplay" 
+            class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]"
+          >
+            <label>{{ viewInfo.labelDisplay }}</label>
+          </div>
         </div>
       </div>
 
-
-      <div>
-        <label class="cursor-pointer group text-center w-[100px] action-button-item"
+      <div class="label-button">
+        <label class="cursor-pointer group text-center w-[50px] action-button-item"
           v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
-            <svg-icon name="line-slash" size="16" class="mx-4" />
+            <svg-icon name="line-slash" size="15" />
           </label>
-          <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'">
-            <svg-icon name="check" size="14" />
+          <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
+            <svg-icon name="check" size="13" />
           </label>
-          <label v-else class="action-icon">
-            <svg-icon :name="item.url" size="14" />
+          <label v-else class="action-icon mx-[8px]">
+            <svg-icon :name="item.url" size="15" />
           </label>
-          <label class="group-hover:text-[#E2B578] ml-1 cursor-pointer align-middle"
+          <!-- 按钮 -->
+          <label class="group-hover:text-[#E2B578] ml-1 align-middle"
+          @click="check"
             :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
             {{ item.name }}
           </label>
         </label>
       </div>
+      
     </div>
-
-
     <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="grid grid-cols-4 gap-4">
         <div>
@@ -65,24 +71,29 @@
             </div>
           </div>
 
+          <!-- <div class="text-[#E2B578] cursor-pointer inline-block"
+            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
+            @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)">
+            Check Now
+          </div> -->
+
           <div class="text-[#E2B578] cursor-pointer inline-block"
             :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
-            Check Now</div>
+            Check Now
+          </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
             v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View
-            Result</div>
+            Now</div>
         </div>
-
 
         <div>
           <div class="text-[16px] font-bold">Recent Build</div>
-          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentBuild.status] }}
-          </div>
+          <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentBuild.status] }}</div>
           <div v-else class="flex items-center my-2 ">
             <img :src="getImageUrl(viewInfo.recentBuild.status)" class="h-[16px] mr-1" />
             <div class="text-ellipsis">
@@ -90,7 +101,6 @@
                 fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
             </div>
           </div>
-
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType,viewInfo.type)" v-if="viewInfo.recentBuild.status === 0">Build Now
@@ -100,12 +110,14 @@
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
-            v-else-if="viewInfo.recentBuild.status === 2">View Result</div>
+            v-else-if="viewInfo.recentBuild.status === 2">
+            View Now
+            </div>
           <div v-else>
             <div v-if="projectType === '1'">
               <div class="text-[#E2B578] cursor-pointer inline-block"
                 @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)">
-                View Result
+                View Now
               </div>
             </div>
             <div class="text-[#E2B578] cursor-pointer inline-block"
@@ -161,6 +173,7 @@
   </starkNetModal>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 </template>
+
 <script lang='ts' setup>
 import { ref, toRefs, computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
@@ -172,10 +185,12 @@ import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
 import AptosBuildParams from './AptosBuildParams.vue'
 import { useThemeStore } from "@/stores/useTheme";
-import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
+import { ActionButtonEnum, ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components/data";
+import {useI18n} from "vue-i18n";
 
+const { t } = useI18n()
 const theme = useThemeStore()
 
 const router = useRouter();
@@ -184,6 +199,7 @@ const props = defineProps<{
   viewType: string,
   projectType: string,
   viewInfo: ViewInfoItem,
+  // labelDisplay:string
 }>()
 
 const actionButtonList = ref([
@@ -193,9 +209,12 @@ const actionButtonList = ref([
   { name: 'Ops', url: 'ops' }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
+
+console.log(11111,viewInfo.value)
 const showViewInfoRepositoryUrl = computed(() => {
   return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
 })
+
 const emit = defineEmits(["loadProjects"]);
 const containerVisible = ref(false);
 const aptosBuildVisible = ref(false)
@@ -220,7 +239,6 @@ const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/details/" + type);
 }
-
 const projectsAction = (val: any, type: string, e: Event) => {
   switch (type) {
     case 'Check':
@@ -239,6 +257,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
   }
 }
 
+// check
 const projectsCheck = async (id: string, status: Number, e: Event) => {
   if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
@@ -246,10 +265,14 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
     disabled.value = false;
     try {
       if (status === 1) {
-        message.info("Executing Now，please wait a moment.");
+        // 点击check按钮，提示
+        message.info(t('project.pipeline_executing_now'));
       } else {
+        message.info("The workflow of checking is running, view now.")
+        // router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
+
         const res = await apiProjectsCheck(id);
-        message.success(res.message);
+        // message.success(res.message);
         loadView();
       }
     } catch (error: any) {
@@ -259,13 +282,14 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
       // loading.value = false;
     }
   }
-
 };
 
 const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
     if (projectType?.value === "1") {
-      message.info("Executing Now，please wait a moment.");
+      // message.info("Executing Now，please wait a moment.");
+      // message.info("The workflow of building is running, view now.")
+      message.info(t('project.pipeline_buiding_now'));
     } else {
       msgParam.value.workflowsId = buildData.workflowId;
       msgParam.value.workflowDetailId = buildData.id;
@@ -275,7 +299,7 @@ const buildStatusAction = async (id: string, buildData: any) => {
   } else {
     const res = await apiProjectsBuild(id);
     if (projectType?.value === "1") {
-      message.success(res.message);
+      // message.success(res.message);
     } else {
       msgParam.value.workflowsId = res.workflowId;
       msgParam.value.workflowDetailId = res.detailId;
@@ -320,25 +344,36 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
     // loading.value = false;
   }
 };
+
 const projectsDeploy = async (id: string, version: string, status: Number) => {
+  // message.info("The workflow of deploying is running, view now.")
   if (projectType?.value === '1') {
     if (status === 0 || status === 1 || version === "") {
-      message.info("Smart contract not avaliable.");
-    } else {
+      // message.info("Smart contract not avaliable.");
+      message.info(t('Smart contract not avaliable.'));
+    } 
+    else {
       goContractDeploy(id, version);
     }
-  } else {
+  } 
+  else {
     if (status === 3) {
       goFrontendDeploy();
-    } else {
+    } 
+    else {
       message.info("FrontEnd image not avaliable");
     }
   }
+  // if(viewInfo.labelDisplay===""){
+  //   message.info("Smart contract not available.")
+  // }
 };
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
-      message.info("Smart contract not avaliable.");
+      // message.info("Smart contract not avaliable.");
+      // message.info(t('Smart contract not avaliable.'));
+      message.info(t('Smart contract not avaliable.'));
     } else {
       goContractDetail(id, recentDeploy.version);
     }
@@ -354,19 +389,28 @@ const goContractCheck = async (id: string, workflowId: string, detailId: string)
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
+  message.info("Executing Now，please wait a moment.")
 };
+
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
+  message.info("Executing Now，please wait a moment.")
 };
+
 const goContractDeploy = async (id: string, status: string | Number) => {
-  if (localStorage.getItem('projectActiveKey') == '1') {
+  if (localStorage.getItem('projectActiveKey') == '1') 
+  {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
-  } else if (localStorage.getItem('projectActiveKey') == '2') {
-    if (status === 3) {
+  } 
+  else if 
+  (
+    localStorage.getItem('projectActiveKey') == '2') 
+    {
+      if (status === 3) {
       goFrontendDeploy();
     }
   }
@@ -566,8 +610,19 @@ html[data-theme='light'] {
     .svg-icon {
       color: #E2B578;
     }
-  }
-
-
+  };
 }
+
+// .label-button{
+//   width: 400px;
+//   height: 30px;
+//   background: skyblue;
+// }
+// .label-button label{
+//   width: 60px;
+//   background: red;
+//   margin: 1px;
+// }
+
+
 </style>

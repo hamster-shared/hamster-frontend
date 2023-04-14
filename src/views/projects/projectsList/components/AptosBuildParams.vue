@@ -14,7 +14,7 @@
         </a-form-item>
       </template>
     </a-form>
-
+    
     <div class="flex justify-between">
       <a-button @click="connectPetraWallet" :loading="connectLoading">Connect Petra Wallet to get address</a-button>
       <a-button @click="handleDone" :loading="doneLoading">Done</a-button>

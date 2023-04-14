@@ -90,6 +90,8 @@
                   <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]" />
                   <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]" />
                 </div>
+                <!-- 按钮 -->
+                <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
                 <div class="flex">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
@@ -323,5 +325,16 @@ onMounted(() => {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+.btn{
+  width: 70px;
+  height: 20px;
+  background: blue;
+  line-height: 20px;
+  border: none;
+  border-radius: 15px 15px 15px 15px;
+  color: #fff;
+  bottom: 50px;
+  left: -3px;
 }
 </style>

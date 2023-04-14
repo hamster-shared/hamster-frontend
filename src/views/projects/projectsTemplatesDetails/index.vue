@@ -415,6 +415,7 @@ const createProject = async () => {
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,
       templateUrl: templatesDetail.value.repositoryUrl,
+      labelDisplay: templatesDetail.value.labelDisplay,
     }
     if (projectType.value == '2') {
       params.frameType = templatesDetail.value.templateType - 0;

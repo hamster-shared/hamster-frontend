@@ -8,11 +8,12 @@ export enum ContractFrameTypeEnum {
   'Aptos' = 2,
   'TON' = 3,
   'StarkWare' = 4,
+  'Chainlink' = 5,
 }
-
 export enum FrontEndFrameTypeEnum {
 
 }
+
 
 export enum ActionButtonEnum {
   'Check' = '1',
@@ -25,4 +26,5 @@ export enum FrontEndDeployTypeEnum {
   'FrontEnd' = 0,
   'IPFS' = 1,
   'Container' = 2,
+  'Chainlink'=3,
 }
