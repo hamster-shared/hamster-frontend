@@ -105,28 +105,30 @@
   </starkNetModal>
 </template>
 <script lang='ts' setup>
-import { reactive, ref, onMounted } from "vue";
-import type { FormInstance } from 'ant-design-vue';
-import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
+import {onMounted, reactive, ref} from "vue";
+import type {FormInstance} from 'ant-design-vue';
+import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
-import starkNetModal from "../components/starkNetModal.vue";
-import { useThemeStore } from "@/stores/useTheme";
-import { useDeployAddressStore } from "@/stores/useDeployAddress";
-import { useI18n } from 'vue-i18n';
-import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiProjectsContractDeploy, apiGetProjectsDetail } from "@/apis/projects";
-import { Provider, Account, Contract, ec } from "starknet";
-import { connect, getStarknet } from "@argent/get-starknet";
-import { ContractFrameTypeEnum } from "@/enums/frameTypeEnum";
-import { PetraWallet } from "petra-plugin-wallet-adapter";
-import { WalletCore } from '@aptos-labs/wallet-adapter-core'
-import { BCS, TxnBuilderTypes, HexString, AptosClient } from 'aptos'
-import { nextTick } from "process";
+import {useThemeStore} from "@/stores/useTheme";
+import {useDeployAddressStore} from "@/stores/useDeployAddress";
+import {useI18n} from 'vue-i18n';
+import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import {apiGetProjectsDetail, apiProjectsContractDeploy} from "@/apis/projects";
+import {connect} from "@argent/get-starknet";
+import {ContractFrameTypeEnum} from "@/enums/frameTypeEnum";
+import {PetraWallet} from "petra-plugin-wallet-adapter";
+import {WalletCore} from '@aptos-labs/wallet-adapter-core'
+import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
+import {sleep} from "@/utils/tool"
+
+import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
+
+import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
@@ -172,6 +174,10 @@ const aptosContractId = ref<any>([])
 const aptosNetwork = ref('')
 const aptosNetworkVisible = ref(false)
 const abiFn = ref<any>()
+
+// sui
+const suiWallet = new WalletStandardAdapterProvider()
+
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -221,6 +227,128 @@ const deployContract = async (item: any) => {
   }
 };
 
+const deploySuiContract = async (item: any)=> {
+
+  loading.value = true
+  console.log('deploy sui')
+
+  const wallets = suiWallet.get()
+  if(wallets.length === 0){
+    message.error(t('common.operateFail'));
+    loading.value = false
+    return
+  }
+
+  const wallet = wallets[0]
+  try {
+    await wallet.connect()
+  }catch (e) {
+    message.error("refuse connect wallet")
+    loading.value = false
+    return
+  }
+  console.log(wallet)
+
+  let accountAddress = ""
+  let network = ""
+  try {
+    const accounts = await wallet.getAccounts()
+    if( accounts.length === 0 ){
+      message.error("get wallet accounts fail")
+      loading.value = false
+      return
+    }
+    accountAddress = accounts[0].address
+    network = accounts[0].chains[0]
+    console.log("network: ",network)
+
+    if (network !== formState.network){
+      message.error("selected network does not match Sui wallet ")
+      loading.value = false
+      return
+    }
+  }catch (e) {
+    message.error("get wallet accounts fail")
+    loading.value = false
+    return
+  }
+
+  const compiledModulesAndDeps = JSON.parse(item.byteCode)
+  console.log(compiledModulesAndDeps)
+  const tx = new TransactionBlock();
+  const [upgradeCap] = tx.publish(
+      compiledModulesAndDeps.modules.map((m: any) => Array.from(fromB64(m))),
+      compiledModulesAndDeps.dependencies.map((addr: any) =>
+          normalizeSuiObjectId(addr),
+      ),
+  );
+
+
+  tx.transferObjects([upgradeCap], tx.pure(accountAddress));
+  let digest = ""
+  try{
+    console.log('submit tx')
+    const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
+    console.log('submit tx result: ', result)
+    digest = result.digest
+  }catch (e) {
+    loading.value = false
+    return
+  }
+  console.log('submit tx success')
+
+  message.loading("submit tx success, checking transaction ... ")
+
+
+  let rpc = undefined
+
+  // get deployed module address
+  if (network === 'sui:devnet'){
+    rpc  = new JsonRpcProvider()
+  }else{
+    rpc = new JsonRpcProvider(testnetConnection)
+  }
+
+
+  let txn = undefined
+  for (let i = 0 ;i< 30; i++){
+    await sleep(1000)
+    try{
+      txn = await rpc.getTransactionBlock({
+        digest: digest,
+        // only fetch the effects field
+        options: {showEffects: true, showObjectChanges: true},
+      })
+
+      break
+    }catch (e){
+
+    }
+  }
+
+  if (txn === undefined){
+    message.error("unable to check transaction")
+    return
+  }
+
+  console.log("checkTransaction result: ",txn)
+  if( txn != undefined && txn.objectChanges != undefined){
+    const publishChange = txn.objectChanges.find(t => {
+      return t.type === 'published'
+    })
+    if (publishChange === undefined){
+      message.error("cannot get deployed module address")
+      return
+    }
+
+    await setProjectsContractDeploy('',publishChange.packageId,item.id)
+
+  }
+
+  loading.value = false
+
+  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+}
 
 // 查询版本号
 const getVersion = async () => {
@@ -239,7 +367,7 @@ const getProjectsContract = async () => {
     petraBsc.value.push(item.byteCode)
     aptosContractId.value.push(item.id)
     // aptos abi不走之前的那一套
-    if (frameType.value !== 2) {
+    if (frameType.value !== 2 && frameType.value !== 5) {
       setAbiInfo(item);
     }
   })
@@ -348,7 +476,7 @@ const handleAptosNetwork = () => {
   aptosNetworkVisible.value = false
 }
 
-// aptos petra 
+// aptos petra
 const deploy = () => {
   console.log('bsc mv', petraBsc.value[0], petraMv.value[0])
   aptosWallet.connect("Petra").then(async () => {
@@ -410,7 +538,7 @@ const deploy = () => {
 }
 
 const deployClick = async () => {
-  // frameType 1.evm 2.aptos 3.ton 4.starkware
+  // frameType 1.evm 2.aptos 3.ton 4.starkware,5: sui
   if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
@@ -421,18 +549,29 @@ const deployClick = async () => {
       // 表单校验
       console.log('Failed:', err);
     }
-
-  } else if (frameType.value === 2) {
+  } else if (frameType.value === 2) { //aptos
     try {
       await formRef?.value.validateFields();
       deploy()
     } catch (error: any) {
       console.log('aptos error', error)
     }
+  }else if (frameType.value === 5){ // sui
+    try {
+      await formRef?.value.validateFields();
+      projectsContractData.map((item: any) => {
+        deploySuiContract(item)
+      })
+
+    } catch (error: any) {
+      console.log('aptos error', error)
+    }
   } else {
     // 有值说明已连接钱包
-    const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-    if (isWalletAccount == null || isWalletAccount === '[]') {
+    // const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
+    // if (isWalletAccount == null || isWalletAccount === '[]') {
+    const walletAccount = window.localStorage.getItem("walletAccount");
+    if(walletAccount === undefined || walletAccount === null){
       showWallets.value?.onClickConnect();
       // setWalletBtn(true)
     } else {
@@ -540,9 +679,32 @@ const changeChain = (val: string) => {
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
     networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
-  } else if (val === 'BNB Smart Chain')
+  } else if (val === 'BNB Smart Chain') {
     // 货币符号  BNB
-    networkData.value = [{ name: 'Mainnet', id: '38', url: 'https://bsc.nodereal.io/', networkName: 'Mainnet' }, { name: 'Testnet', id: '61', url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	', networkName: 'Testnet' }]
+    networkData.value = [{
+      name: 'Mainnet',
+      id: '38',
+      url: 'https://bsc.nodereal.io/',
+      networkName: 'Mainnet'
+    }, {
+      name: 'Testnet',
+      id: '61',
+      url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	',
+      networkName: 'Testnet'
+    }]
+  } else if (val === 'Sui'){
+    networkData.value = [{
+      name: 'Devnet',
+      id: 'sui:devnet',
+      url: 'https://explorer-rpc.devnet.sui.io/',
+      networkName: 'Devnet'
+    },{
+      name: 'Testnet',
+      id: 'sui:testnet',
+      url: 'https://explorer-rpc.testnet.sui.io/',
+      networkName: 'Testnet'
+    }]
+  }
 }
 
 const changeVersion = (val: string) => {
@@ -572,6 +734,10 @@ const getProjectsDetail = async () => {
         networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
         const data = await connectWallet();
         Object.assign(starkWareData, data)
+        break;
+      case 5:
+        Object.assign(chainData, ['Sui'])
+        networkData.value= [{name: 'Devnet', id: 'devnet', networkName: 'Devnet'},{name: 'Testnet',id:'testnet',networkName: 'Testnet'}]
         break;
       default: break;
     }

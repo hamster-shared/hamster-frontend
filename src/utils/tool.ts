@@ -1,3 +1,4 @@
+
 function dispatchEventStroage() {
   const signSetItem = localStorage.setItem;
   localStorage.setItem = function (key, val) {
@@ -10,3 +11,8 @@ function dispatchEventStroage() {
 }
 
 export default dispatchEventStroage;
+
+
+export function sleep(millseconds: number) : Promise<void> {
+  return new Promise<void>((resolve) => setTimeout(resolve,millseconds))
+}

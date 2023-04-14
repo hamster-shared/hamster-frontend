@@ -31,8 +31,8 @@
           </div>
         </div>
         <div class="mt-4">
-          <a-button class="!h-[43px] w-[169px]" @click="router.push('/chainlink/oracle')">Get Service Now</a-button>
-          <a-button class="ml-4 !h-[43px] w-[169px]" @click="router.push('/chainlink/oracle')">Enter Now</a-button>
+          <a-button class="!h-[43px] w-[169px]" v-if="openService" @click="router.push('/chainlink/oracle')">Enter Now</a-button>
+          <a-button class="!h-[43px] w-[169px]" v-else @click="handleOpenService">Get Service Now</a-button>
         </div>
 
         <div class="absolute top-0 left-0 viewmore-container " v-if="showMore" @click="showMore = false">
@@ -45,12 +45,28 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, toRefs } from 'vue'
   import { useRouter } from 'vue-router';
+  import { apiPostCustomerOpenService } from '@/apis/middleWare'
 
   const router = useRouter()
+  const props = defineProps({
+    openService:Array
+  })
+  const { openService } = toRefs(props)
 
   const showMore = ref(false)
+
+  // 为用户开通服务
+  const handleOpenService = async()=> {
+    router.push('/chainlink/oracle')
+    // try {
+    //   const { data } = await apiPostCustomerOpenService('oracle')
+    //   console.log('handleOpenService-data:', data)
+    // } catch(err:any) {
+    //   console.log('handleOpenService-err:', err)
+    // }
+  }
 </script>
 
 <style lang="less" scoped>

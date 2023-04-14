@@ -172,7 +172,7 @@ const getBalance = async()=> {
   try {
     const { data } = await getCustomerBalance()
     console.log('balance-data:', data)
-    data.forEach((item:any) => {
+    data?.forEach((item:any) => {
       balance.value = item.balance*1 + balance.value
     });
     const testNumber = ethers.BigNumber.from(balance.value+'')

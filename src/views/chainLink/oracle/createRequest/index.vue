@@ -1,5 +1,7 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
+    <BreadCrumb :breadcrumbUrl="breadcrumbUrl" />
+
     <div class="mb-4 text-2xl font-bold">Create Request</div>
 
     <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB]">
@@ -48,11 +50,13 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
+  import BreadCrumb from '../../components/Breadcrumb.vue'
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
   import { message } from 'ant-design-vue';
 
   const router = useRouter()
+  const breadcrumbUrl = router.currentRoute.value.path
   const theme = useThemeStore();
 
   const requestName = ref('')
