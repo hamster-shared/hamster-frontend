@@ -51,6 +51,9 @@
               <a-radio :style="radioStyle" value="4">StarkWare
                 <div class="radio-sub">Build application based on Starkware and Cairo language</div>
               </a-radio>
+              <a-radio :style="radioStyle" value="5">Sui
+                <div class="radio-sub">Build application based on Sui  and Move language</div>
+              </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
               <a-radio value="8">Angular</a-radio> -->
@@ -81,6 +84,7 @@
             most deployed FrontEnd.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4 template-height">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
+              :class="{'h-1/2':showList.length < 3}"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
                 <div class="relative flex-1">

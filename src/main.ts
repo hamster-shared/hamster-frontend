@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import Antd from "ant-design-vue";
 import i18n from "./lang/index";
-import tool from './utils/tool.js'
+import tool from './utils/tool'
 
 import App from "./App.vue";
 import router from "./router";

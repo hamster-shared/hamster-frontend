@@ -24,10 +24,15 @@
       </div>
 
       <div class="label-button">
-        <label class="cursor-pointer group text-center w-[50px] action-button-item"
-          v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
+        <label class="cursor-pointer group text-center w-[50px] action-button-item" v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="15" />
+          </label>
+        </label>
+      <div>
+        <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
+          <label v-if="index !== 0">
+            <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
           </label>
           <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
             <svg-icon name="check" size="13" />
@@ -36,9 +41,8 @@
             <svg-icon :name="item.url" size="15" />
           </label>
           <!-- 按钮 -->
-          <label class="group-hover:text-[#E2B578] ml-1 align-middle"
-          @click="check"
-            :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
+          <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label>
+          <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
             {{ item.name }}
           </label>
         </label>

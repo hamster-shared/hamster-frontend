@@ -14,7 +14,7 @@
             <div class="text-left">{{ val.network }}</div>
             <div class="cursor-pointer text-[#E2B578] text-right" @click="networkClick(val)">View</div>
           </div>
-          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]">More</div>
+          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goRPC">More</div>
         </div>
         <div v-else-if="item === 'Oracle'">
           <div
@@ -37,17 +37,33 @@
   </div>
 </template>
 <script lang="ts" setup name="Dashboard">
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { apiChains } from '@/apis/chainlink'
 const dashboardList = ref(['RPC', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
-const RPCList = ref([{ name: 'Ethereum', network: 'Mainnet', id: 1 }, { name: 'Ethereum', network: 'Testnet', id: 2 }, { name: 'BSC', network: 'Mainnet', id: 3 }, { name: 'BSC', network: 'Testnet', id: 4 }]);
+const RPCList = ref<any>([]);
 const router = useRouter();
 const networkClick = (val: any) => {
+  console.log('networkClick',val)
+  router.push(`/chainlink/RPC/rpc-detail/${val.name}`)
+}
+// more 跳转rpc
+const goRPC = ()=>{
   router.push('/chainlink/RPC')
 }
 
 const oracleClick = () => {
   router.push('/chainlink/Oracle')
 }
+const getChains = async()=>{
+  const res = await apiChains()
+  if(res.code===200){
+    console.log('getChains',res)
+    RPCList.value = res.data.splice(0,5)
+  }
+}
+onMounted(()=>{
+  getChains()
+})
 </script>
 <style scoped lang="less"></style>

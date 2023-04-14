@@ -8,7 +8,8 @@ export enum ContractFrameTypeEnum {
   'Aptos' = 2,
   'TON' = 3,
   'StarkWare' = 4,
-  'Chainlink' = 5,
+  'Sui' = 5,
+  'Chainlink' = 6,
 }
 export enum FrontEndFrameTypeEnum {
 
@@ -28,3 +29,4 @@ export enum FrontEndDeployTypeEnum {
   'Container' = 2,
   'Chainlink'=3,
 }
+

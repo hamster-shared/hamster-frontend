@@ -10,11 +10,15 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 
 // https://vitejs.dev/config/
 export default ({ mode }:ConfigEnv) => defineConfig({
+  define: {
+    'process.env': {}
+  },
   build: {
     outDir: 'dist', // 打包文件的输出目录
     assetsDir: 'static', // 静态资源的存放目录
     assetsInlineLimit: 4096, // 图片转 base64 编码的阈值
     // minify: 'terser', // 混淆器，terser构建后文件体积更小
+    target: ['es2020', 'safari14'],
   },
   plugins: [
     vue(),
@@ -58,7 +62,10 @@ export default ({ mode }:ConfigEnv) => defineConfig({
     host:true,//同一局域网可以访问本地服务
   },
   // 强制预构建插件包
-  // optimizeDeps: {
-  //   include: ['axios'],
-  // },
+  optimizeDeps: {
+    include: ['axios'],
+    esbuildOptions: {
+      target: ['es2020', 'safari14'],
+    },
+  },
 });

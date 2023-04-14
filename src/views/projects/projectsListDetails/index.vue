@@ -60,7 +60,7 @@
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
-          <Contract ref="contractRef" :detailId="detailId" />
+          <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" />
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
