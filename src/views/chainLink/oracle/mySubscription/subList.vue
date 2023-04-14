@@ -42,7 +42,7 @@ import addConsumers from './components/addConsumers.vue'
 import { apiSublist } from '@/apis/chainlink'
 import dayjs from "dayjs";
 const router = useRouter();
-const netOptions = ref<any>(['All','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
+const netOptions = ref<any>(['All','Hamster Moonbeam Testnet','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const netName = ref('All')
 const loading = ref(false)
 const breadCrumbLoading = ref(false)

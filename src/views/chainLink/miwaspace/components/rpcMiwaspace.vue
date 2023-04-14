@@ -19,19 +19,19 @@
         <div class="flex justify-between text-sm">
           <div class="flex flex-col">
             <span class="inline-block mb-2.5 mt-5">Chain ID</span>
-            <span class="self-center">{{ item.chain_id }}</span>
+            <span class="self-center">{{ item.chainID }}</span>
           </div>
           <div class="flex flex-col">
             <span class="inline-block mb-2.5 mt-5">Native Token</span>
-            <span class="self-center">{{ item.native_token }}</span>
+            <span class="self-center">{{ item.nativeToken }}</span>
           </div>
         </div>
         <div>
           <div class="my-5 text-sm">RPC URL</div>
-          <a-input placeholder="Please input your RPC URL" v-model:value="item.http_address">
+          <a-input placeholder="Please input your RPC URL" v-model:value="item.httpAddress">
             <template #suffix>
-              <img class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.http_address)"/>
-              <span class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.http_address)">Copy</span>
+              <img class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
+              <span class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span>
             </template>
           </a-input>
         </div>
