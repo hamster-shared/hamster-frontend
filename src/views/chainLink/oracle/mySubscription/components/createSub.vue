@@ -71,7 +71,7 @@ const handleCreateSub = async()=>{
     await formRef.value.validate();
     // 钱包地址
     const walletAdr = localStorage.getItem('walletAccount');
-    console.log('walletAdr',walletAdr,contractApi.apiStatus)
+    console.log('walletAdr',walletAdr,contractApi)
     const tx = contractApi.registryApi?.createSubscription().then(async(tx:any)=>{
         const chainNetArr = formData?.network?.split(' ')
         const params = {
