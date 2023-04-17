@@ -59,13 +59,13 @@
 
   // 为用户开通服务
   const handleOpenService = async()=> {
-    router.push('/chainlink/oracle')
-    // try {
-    //   const { data } = await apiPostCustomerOpenService('oracle')
-    //   console.log('handleOpenService-data:', data)
-    // } catch(err:any) {
-    //   console.log('handleOpenService-err:', err)
-    // }
+    try {
+      const { data } = await apiPostCustomerOpenService('oracle')
+      console.log('handleOpenService-data:', data)
+      router.push('/chainlink/oracle')
+    } catch(err:any) {
+      console.log('handleOpenService-err:', err)
+    }
   }
 </script>
 

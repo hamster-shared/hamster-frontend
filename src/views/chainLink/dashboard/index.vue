@@ -24,8 +24,7 @@
 import { ref, onBeforeMount, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
-import { apiGetOracleTableParams } from '@/apis/chainlink'
-import { apiGetMynetwork } from "@/apis/rpcs";
+import { apiGetIfOpenService } from '@/apis/middleWare'
 const theme = useThemeStore();
 const router = useRouter();
 const menuRouterList = ref<any>([]);
@@ -46,18 +45,10 @@ onBeforeMount(() => {
 })
 
 onMounted(async()=>{
-  const params = {
-    page: 1,
-    size: 10,
-  }
-  const rpcRes  = await apiGetMynetwork(params);
-  if(rpcRes?.data?.length){
-    isRpcDefault.value = true
-  }
-  const oracleRes = await apiGetOracleTableParams(params)
-  if(oracleRes?.data?.data?.length){
-    isOracleDefault.value = true
-  }
+  const rpcRes = await apiGetIfOpenService('rpc');
+  isRpcDefault.value = rpcRes.data
+  const oracleRes = await apiGetIfOpenService('oracle')
+  isOracleDefault.value = oracleRes.data
 })
 
 watch(() => router.currentRoute.value,

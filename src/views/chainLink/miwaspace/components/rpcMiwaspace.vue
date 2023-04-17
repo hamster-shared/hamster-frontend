@@ -19,7 +19,7 @@
         <div class="flex justify-between text-sm">
           <div class="flex flex-col">
             <span class="inline-block mb-2.5 mt-5">Chain ID</span>
-            <span class="self-center">{{ item.chainID }}</span>
+            <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
           </div>
           <div class="flex flex-col">
             <span class="inline-block mb-2.5 mt-5">Native Token</span>
@@ -68,7 +68,7 @@
 <style lang="less" scoped>
   .ethereum-container {
     height: 326px;
-    min-width: 330px;
+    min-width: 300px;
     padding: 30px;
     background: rgba(226,181,120,0.1);
     border-radius: 12px;
