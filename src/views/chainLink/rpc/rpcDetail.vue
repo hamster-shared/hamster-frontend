@@ -20,7 +20,7 @@
             <div>Explorers</div>
           </div>
           <div class="grid grid-cols-3 gap-1 font-bold mt-[10px] dark:text-[#E0DBD2] text-[#383B46]">
-            <div>{{ chainData.chainID }}</div>
+            <div>{{ parseInt(chainData.chainID,16) }}</div>
             <div>{{ chainData.nativeToken }}</div>
             <div>{{ chainData.explorerUrl }}</div>
           </div>
