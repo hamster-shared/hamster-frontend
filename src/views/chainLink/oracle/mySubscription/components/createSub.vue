@@ -69,10 +69,9 @@ const setSubNetwork = (val:any,option:any)=>{
 // 创建订阅
 const handleCreateSub = async()=>{
     await formRef.value.validate();
-    if (contractApi.apiStatus) {
-    // spinning.value = true;
     // 钱包地址
-    const walletAd = localStorage.getItem('walletAccount');
+    const walletAdr = localStorage.getItem('walletAccount');
+    console.log('walletAdr',walletAdr,contractApi.apiStatus)
     const tx = contractApi.registryApi?.createSubscription().then(async(tx:any)=>{
         const chainNetArr = formData?.network?.split(' ')
         const params = {
@@ -80,7 +79,7 @@ const handleCreateSub = async()=>{
             network:chainNetArr.slice(1,chainNetArr.length).join(' '),
             name:formData.name,
             // subscriptionId:'',
-            admin:walletAd,
+            admin:walletAdr,
             transactionTx:tx.hash
         } 
         console.log('tx111111',tx)
@@ -115,9 +114,6 @@ const handleCreateSub = async()=>{
       console.log('error',error)
     //   spinning.value = false;
     });
-    } else{
-        console.log(123456)
-    }
     // emit('getCreateSubInfo',formData)
 }
 // 取消订阅
