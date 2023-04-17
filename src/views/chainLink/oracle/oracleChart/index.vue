@@ -166,6 +166,11 @@ const getSubscripionInfo = async () => {
       subscripion[1].number = data.total_consumers
       subscripion[1].disabled = false
     }
+    if(!subscripion[0].number){
+      subscripion[1].disabled = true
+    }else{
+      subscripion[1].disabled = false
+    }
     console.log('data:', data)
   } catch (err: any) {
     console.log('err:', err)
@@ -184,9 +189,12 @@ const getBalance = async()=> {
     const testNumber = ethers.BigNumber.from(balance.value+'')
     if(!parseInt(subscripion[2].number)){
       subscripion[2].number = '-'
-      subscripion[2].disabled = true
     }else{
       subscripion[2].number = ethers.utils.formatEther(testNumber);
+    }
+    if(!subscripion[0].number){
+      subscripion[2].disabled = true
+    }else{
       subscripion[2].disabled = false
     }
   } catch(err:any) {
