@@ -872,19 +872,19 @@ const changeChain = (val: string) => {
   formState.network = undefined;
   if (val === "Ethereum") {
     // ETH
-    networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }, {name: 'Testnet/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
+    networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }, {name: 'Ethereum/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
-    networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
+    networkData.value = [{ name: 'Polygon/Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Polygon/Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
   } else if (val === 'BNB Smart Chain') {
     // 货币符号  BNB
     networkData.value = [{
-      name: 'Mainnet',
+      name: 'Bsc/Mainnet',
       id: '38',
       url: 'https://bsc.nodereal.io/',
       networkName: 'Mainnet'
     }, {
-      name: 'Testnet',
+      name: 'Bsc/Testnet',
       id: '61',
       url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	',
       networkName: 'Testnet'

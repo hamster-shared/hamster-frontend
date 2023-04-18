@@ -218,7 +218,7 @@ const setProject = (val:any,option:any)=>{
 // 跳转hamster
 const goHamster = ()=>{
     emit('closeAddConsumers',false)
-    router.push('/projects')
+    window.open('/projects', '_blank')
 }
 // 给订阅号添加资金
 const handleFund = async()=>{
@@ -258,6 +258,8 @@ const handleFund = async()=>{
             console.log("addConsumer", receipt);
             emit('getAddConsumersInfo',formData)
             emit('closeAddConsumers',false)
+        }).catch((err:any)=>{
+            console.log('err111111',err)
         })
     }
 }

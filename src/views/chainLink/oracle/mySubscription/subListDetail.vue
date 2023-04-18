@@ -1,4 +1,5 @@
 <template>
+    <BreadCrumb currentName="Basic Information" :isClick="breadCrumbLoading" class="mb-6"/>
     <div class="text-[24px] font-bold">Basic Information</div>
     <div class="mt-[30px]">
         <p>
@@ -51,7 +52,7 @@
     </div>
     <a-table :loading="loading" :dataSource="tableData.value" :columns="subDetailCol" class="mb-[64px] mt-[20px]" :pagination="pagination">
         <template #operation="{ record }">
-            <span @click="delConsumer(record)" class="mr-16 text-[#FF4A4A] cursor-pointer">Delete</span>
+            <span @click="delConsumer(record)" class="mr-16 text-[#FF4A4A] !cursor-pointer">Delete</span>
         </template>
         <template #amount="{ record }">
             <span class="mr-16 text-[#FF4A4A]">{{ record.amount }}link</span>
@@ -71,6 +72,7 @@
 import dayjs from "dayjs";
 import { renderTableText } from '@/utils/customRender'
 import { reactive, ref, onMounted } from 'vue'
+import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
 import { expenseColumns,depositColumns,consumersColumns } from './chainApi/colDetail'
 import {apiSublistDetail,apiExpenseList,apiDepositList,apiConsumerList,apiDelConsumer} from '@/apis/chainlink'
 import { useRoute } from "vue-router";
@@ -79,6 +81,7 @@ const route = useRoute()
 const id:any = route.query.subId
 console.log('router~~~~~',route.query.subId)
 const loading = ref(false)
+const breadCrumbLoading = ref(false)
 const reqName = ref('')
 const tab = ref(1)
 const subDetailCol = ref<any>([])

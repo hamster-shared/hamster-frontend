@@ -14,7 +14,7 @@
     <div class="graph-container">
       <span class="text-base font-bold">The Graph</span>
       <div class="mt-5 text-sm mb-7">The most widely used chain data index standard in the industry.</div>
-      <a-button class="!h-[43px] w-[169px]">Coming Soon</a-button>
+      <a-button class="!h-[43px] w-[169px] !cursor-default">Coming Soon</a-button>
     </div>
   </div>
 </template>

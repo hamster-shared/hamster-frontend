@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <BreadCrumb :breadcrumbUrl="breadcrumbUrl" />
+    <BreadCrumb currentName="Create Request" :isClick="loading" class="mb-6"/>
 
     <div class="mb-4 text-2xl font-bold">Create Request</div>
 
@@ -50,17 +50,18 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
-  import BreadCrumb from '../../components/Breadcrumb.vue'
+  import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
   import { message } from 'ant-design-vue';
 
   const router = useRouter()
-  const breadcrumbUrl = router.currentRoute.value.path
+  // const breadcrumbUrl = router.currentRoute.value.path
   const theme = useThemeStore();
 
   const requestName = ref('')
   const alertInfo = ref('')
+  const loading = ref(false);
 
   const requestTemplateInfo = ref<{
     id: number,

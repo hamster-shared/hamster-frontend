@@ -29,9 +29,9 @@
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
-            <span v-if="item.title=='Funds'" :title="item.number">{{ item.number.slice(0,4) }}...link</span>
+            <span v-if="item.title=='Funds'" :title="item.number">{{ item.number.slice(0,4) }}<span v-if="parseInt(item.number)">...link</span></span>
             <span v-else>{{ item.number }}</span>
-            <a-button type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
+            <a-button class="is-show-btn" :disabled="item.disabled" type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
           </div>
         </div>
         <div class="text-right">
@@ -64,7 +64,7 @@ const theme = useThemeStore();
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
-const tabNetwork = ref('testnet-mumbai');
+const tabNetwork = ref('testnet');
 
 // 创建echarts
 const myChartRef = ref()
@@ -81,8 +81,8 @@ const initChart = (chartElement: HTMLElement, themeValue: string) => {
       data: legendData.value
     },
     grid: {
-      left: '3%',
-      right: '4%',
+      left: '5%',
+      right: '5%',
       bottom: '3%',
       containLabel: true
     },
@@ -145,10 +145,10 @@ const getOracleChart = async ()=> {
 }
 
 // 获取my subscription的数据
-const subscripion = reactive([
-  { title: 'Subscription', number: '', btnTitle: 'Create' },
-  { title: 'Consumers', number: '', btnTitle: 'Add' },
-  { title: 'Funds', number: '', btnTitle: 'Add' },
+const subscripion = reactive<any>([
+  { title: 'Subscription', number: '', btnTitle: 'Create',disabled:false },
+  { title: 'Consumers', number: '', btnTitle: 'Add',disabled:false },
+  { title: 'Funds', number: '', btnTitle: 'Add',disabled:false },
 ])
 const getSubscripionInfo = async () => {
   const token = localStorage.getItem('token')
@@ -158,8 +158,19 @@ const getSubscripionInfo = async () => {
   }
   try {
     const { data } = await apiGetSubscriptionParams(params)
-    subscripion[0].number = data.total_subscription
-    subscripion[1].number = data.total_consumers
+    subscripion[0].number = data.total_subscription?data.total_subscription:'-'
+    if(!data.total_consumers){
+      subscripion[1].number = '-'
+      subscripion[1].disabled = true
+    }else{
+      subscripion[1].number = data.total_consumers
+      subscripion[1].disabled = false
+    }
+    if(!subscripion[0].number){
+      subscripion[1].disabled = true
+    }else{
+      subscripion[1].disabled = false
+    }
     console.log('data:', data)
   } catch (err: any) {
     console.log('err:', err)
@@ -176,7 +187,16 @@ const getBalance = async()=> {
       balance.value = item.balance*1 + balance.value
     });
     const testNumber = ethers.BigNumber.from(balance.value+'')
-    subscripion[2].number = ethers.utils.formatEther(testNumber);
+    if(!parseInt(subscripion[2].number)){
+      subscripion[2].number = '-'
+    }else{
+      subscripion[2].number = ethers.utils.formatEther(testNumber);
+    }
+    if(!subscripion[0].number){
+      subscripion[2].disabled = true
+    }else{
+      subscripion[2].disabled = false
+    }
   } catch(err:any) {
     console.log('balance-err:',err)
   }
@@ -216,6 +236,7 @@ const getCreateSubInfo = (info: any) => {
 // 关闭订阅
 const closeCreateSub = (bool: boolean) => {
   showCreateSub.value = bool
+  getSubscripionInfo()
 }
 
 // 添加消费者弹框
@@ -230,6 +251,7 @@ const getAddConsumersInfo = (consumersInfo: any) => {
 // 关闭消费者
 const closeAddConsumers = (bool: boolean) => {
   showAddConsumers.value = bool
+  getSubscripionInfo()
 }
 
 // 添加资金弹框
@@ -244,6 +266,7 @@ const getAddFundInfo = (fundInfo: any) => {
 // 关闭资金
 const closeAddFund = (bool: boolean) => {
   showAddFund.value = bool
+  getBalance()
 }
 // 切换按钮改变状态,先关闭所有弹框，再开点击的弹框
 const btnChange = () => {
@@ -309,5 +332,11 @@ span{
 
 .subscripion-divider {
   margin: 16px auto;
+}
+&:deep(.is-show-btn){
+  color: #E2B578;
+  &:hover{
+    color: #E2B578;
+  }
 }
 </style>
