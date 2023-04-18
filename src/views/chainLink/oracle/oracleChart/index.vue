@@ -186,8 +186,8 @@ const getBalance = async()=> {
     data?.forEach((item:any) => {
       balance.value = item.balance*1 + balance.value
     });
-    const testNumber = ethers.BigNumber.from(balance.value+'')
-    if(!parseInt(subscripion[2].number)){
+    const testNumber:any = ethers.BigNumber.from(balance.value+'')
+    if(!parseInt(testNumber,16)){
       subscripion[2].number = '-'
     }else{
       subscripion[2].number = ethers.utils.formatEther(testNumber);

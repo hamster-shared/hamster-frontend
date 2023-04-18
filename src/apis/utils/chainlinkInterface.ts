@@ -99,3 +99,8 @@ export interface updateTestSubParams {
     requestId?:string;
     network?:string;
 }
+// 项目列表参数
+export interface projectsParams {
+    chain:string,
+    network:string,
+}

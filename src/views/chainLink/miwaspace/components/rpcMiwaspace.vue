@@ -13,8 +13,8 @@
     <div class="grid grid-cols-3 gap-12">
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div>
-          <img src="@/assets/svg/miwaspace-eth.svg" class="h-6"/>
-          <span class="ml-2 text-base font-bold align-middle">Ethereum</span>
+          <img :src="item.image" class="h-6"/>
+          <span class="ml-2 text-base font-bold align-middle">{{item.name}}</span>
         </div>
         <div class="flex justify-between text-sm">
           <div class="flex flex-col">

@@ -147,8 +147,13 @@ const getSublistData = async()=>{
     console.log('获取订阅数据',res)
 }
 // 获取项目名称
-const getProjectsData = async()=>{
-    const res = await consumerProjects()
+const getProjectsData = async(network:any)=>{
+    const net = network.split(' ')
+    const params = {
+        chain:net.slice(0,1).join(' '),
+        network:net.slice(1,net.length).join(' '),
+    }
+    const res = await consumerProjects(params)
     if(res.code===200 && res.data?.length){
         projectOptions.value = res.data.map((item:any)=>{
             return {
@@ -202,6 +207,7 @@ const selectManul = (val:any)=>{
 const setSubscription = (val:any,option:any)=>{
     // formData.subscription = val
     subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
+    getProjectsData(subOptionsNet.value)
     subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
     keyId.value = val
     const netId = `0x${option.subNetId}`
@@ -274,7 +280,6 @@ const getProjectInfo = (add:string)=>{
 }
 onMounted(()=>{
     getSublistData()
-    getProjectsData()
 })
 
 </script>
