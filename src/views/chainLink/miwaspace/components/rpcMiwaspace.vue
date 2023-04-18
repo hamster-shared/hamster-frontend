@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-12">
+    <div class="box">
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div>
           <img src="@/assets/svg/miwaspace-eth.svg" class="h-6"/>
@@ -66,6 +66,13 @@
 </script>
 
 <style lang="less" scoped>
+.box{
+  width: 1200px; 
+  display: flex;
+  margin-top: 10px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
   .ethereum-container {
     height: 326px;
     min-width: 300px;
@@ -73,5 +80,6 @@
     background: rgba(226,181,120,0.1);
     border-radius: 12px;
     border: 1px solid #EBEBEB;
+    margin: 10px;
   }
 </style>
