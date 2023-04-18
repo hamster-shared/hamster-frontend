@@ -1,6 +1,6 @@
 <template>
   <div class="ml-[32px]">
-    <a-select ref="select" v-model:value="networkValue" style="width: 120px" @change="handleChange">
+    <a-select ref="select" v-model:value="networkValue" style="width: 160px" @change="handleChange">
       <a-select-option :value="item" v-for="item in networkList" :key="item">{{ item }}</a-select-option>
     </a-select>
   </div>

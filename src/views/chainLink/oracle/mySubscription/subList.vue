@@ -13,7 +13,7 @@
             <a-button @click="addFundsPop">Add Funds</a-button>
         </div>
     </div>
-    <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" class="mb-[64px] mt-[20px]" :pagination="pagination">
+    <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
         <template #operation="{ record }">
             <a @click="goSubDetail(record)" class="mr-16">View</a>
         </template>
@@ -217,5 +217,9 @@ onMounted(async()=>{
 })
 </script>
 <style scoped less>
+.table{
+    margin-bottom: 64px;
+    margin-top: 20px;
+}
 
 </style>

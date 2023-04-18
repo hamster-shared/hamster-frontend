@@ -9,14 +9,14 @@
         <span class="items-center self-center font-bold">You can choose the following templates to quickly create a Request</span>
         <a-button type="link">View All</a-button>
       </div>
-      
+  
       <div class="relative template-scrollbar overflow-x-auto w-full h-[330px]">
         <div class="absolute top-0 left-0 flex gap-4">
           <div v-for=" (item,index) in requestTemplateInfo " :key="index" class="flex flex-col shrink-0 grow-0 basis-[400px] h-[300px] template-container">
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
-              <span>Submitted by: {{ item.author }}</span>
-              <div class="mt-2 template-description">{{ item.description }}</div>
+              <span class="sub">Submitted by: {{ item.author }}</span>
+              <div class="item">{{ item.description }}</div>
             </div>
             <div class="mt-2">
               <a-button @click="handleUseNow(item.id)">Use Now</a-button>
@@ -166,7 +166,16 @@
     }
   }
   .back-btn {
-    background-color: white;
+    background-color: #1D1C1A;
     color: #E2B578;
   }
+  .item{
+    margin-top: 10px;
+    color: #AAAAAA	;
+    font-weight: 300;
+  }
+  .sub{
+    color: #DDDDDD;
+  }
+
 </style>

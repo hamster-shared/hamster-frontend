@@ -169,6 +169,7 @@
       </div>
     </div>
   </div>
+  </div>
   <ContainerParam :containerVisible="containerVisible" :detailId="viewInfo?.id" @hideContainerParam="hideContainerParam"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam">

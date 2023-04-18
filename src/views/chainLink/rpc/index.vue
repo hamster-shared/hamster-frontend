@@ -29,7 +29,7 @@
       <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination">
         <template #bodyCell="{ column, record, index }">
           <template v-if="column.dataIndex === 'action'">
-            <label class="text-[#FF4A4A] ml-2 cursor-pointer" @click="toDetails(record)">Details</label>
+            <label class="text-[#F5B50D] ml-2 cursor-pointer" @click="toDetails(record)">View</label>
           </template>
         </template>
       </a-table>

@@ -7,11 +7,11 @@
         <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
       <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown>
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer"
-          @click.stop>
-          MiddleWare
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
+          @click.stop id="middle">
+          Middleware
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
           <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
@@ -30,7 +30,7 @@
         </template>
       </a-dropdown>
       <div @click="goDoc" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Docs</div>
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -237,7 +237,15 @@ const setWalletBtn = (val: boolean) => {
 
 <style lang="less" scoped>
 @btnColor: #E2B578;
-
+#docs:hover{
+  border-bottom: 3px solid #E2B578;
+}
+#middle:hover{
+  border-bottom: 3px solid #E2B578;
+}
+#pro:hover{
+  border-bottom: 3px solid #E2B578;
+}
 .default-header {
   position: fixed;
   top: 0;

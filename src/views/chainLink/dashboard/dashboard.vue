@@ -8,11 +8,10 @@
         <div class="text-[16px] font-bold mb-[16px]">{{ item }}</div>
 
         <div v-if="item === 'RPC'">
-          <div v-for="val in RPCList" :key="val.id"
-            class="grid grid-cols-3 gap-1 border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6] pb-[14px] mt-[14px]">
-            <div class="mr-[8px]">{{ val.name }}</div>
-            <div class="text-left">{{ val.network }}</div>
-            <div class="cursor-pointer text-[#E2B578] text-right" @click="networkClick(val)">View</div>
+          <div v-for="val in RPCList" :key="val.id" class="box">
+            <div class="name">{{ val.name }}</div>
+            <div class="network">{{ val.network }}</div>
+            <div class="view" @click="networkClick(val)">View</div>
           </div>
           <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goRPC">More</div>
         </div>
@@ -66,4 +65,35 @@ onMounted(()=>{
   getChains()
 })
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.box{
+  border-bottom: 1px solid #434343;
+}
+.box div{
+  margin: -5px;
+  left: 5px;
+}
+.name{
+  float: left;
+  padding-top: 15px;
+}
+.network{
+  display: flex;
+  clear: both;
+  flex-wrap: wrap;
+  color: #ccc;
+  font-weight: 100;
+  padding-top: 10px;
+  bottom: 5px;
+
+}
+.view{
+  width: 50px;
+  height: 40px;
+  cursor: pointer;
+  color:#E2B578; 
+  text-align: right;
+  float: right;
+  top: -40px;
+}
+</style>
