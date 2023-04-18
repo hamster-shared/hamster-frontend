@@ -65,7 +65,7 @@
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelToCheck"/>
         </template>
         <p>The test request has been sent successfully, and the result will be sent to your #mail address# mailbox, please check it.</p>
-        <div style="width:100%;display:flex;justify-content: center;">
+        <div style="width:100%;display:flex;justify-content: center;margin-top: 20px;">
             <a-button @click="closeMessageModal">Got it</a-button>
         </div>
     </a-modal>
