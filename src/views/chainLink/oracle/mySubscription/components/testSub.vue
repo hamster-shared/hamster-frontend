@@ -107,7 +107,7 @@ const keyId = ref()
 const temId = ref()
 const consumerAddress = ref()
 const network = ref()
-const showMessage = ref()
+const showMessage = ref(false)
 // record表单数据
 const record = ref<any>({})
 const formData = reactive<any>({
@@ -321,12 +321,12 @@ const handleConfirm = async()=>{
             const res = await updateTestSub(temId.value,params)
             if(res.code===200){
                 message.success(res.data)
+                showMessage.value = true
             }else{
                 message.error(res.data)
             }
             emit('getTestSubInfo',formData)
             emit('closeTestSub',false)
-            showMessage.value = true
         })
     }).catch((err:any)=>{
         message.error("Failed")
