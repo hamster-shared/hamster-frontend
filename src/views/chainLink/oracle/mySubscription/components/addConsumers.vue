@@ -30,7 +30,7 @@
             <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
                     <a-radio class="inline-block w-[20px] radio-normal" v-model:checked="record.checked" @click="getProjectInfo(record.address)"></a-radio>
-                    <span :title="record.address">{{ record.address.slice(0,10) }}</span>
+                    1223222132<span :title="record.address">{{ record.address.slice(0,10) }}</span>
                 </template>
             </a-table>
         </div>

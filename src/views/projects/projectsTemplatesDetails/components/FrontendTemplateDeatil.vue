@@ -4,7 +4,7 @@
       <img :src="frontendTemplateDetail.image"
         class="w-2/4 rounded-[12px] mr-[64px] mb-[64px] border border-solid dark:border-[#434343] border-[#EBEBEB]" />
       <div>
-        <div class="text-[24px] font-bold">{{ frontendTemplateDetail.name }}</div>
+        <div class="text-[24px] font-bold">{{ frontendTemplateDetail.name }}</div>        
         <div class="mt-[8px] mb-[24px] dark:text-[#E0DBD2] text-[#73706E]">{{ frontendTemplateDetail.description }}
         </div>
         <a-button @click="viewDemo">View Demo</a-button>

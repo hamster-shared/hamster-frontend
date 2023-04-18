@@ -155,6 +155,8 @@
     background-color: unset;
     color: #d9d9d9;
     border-radius: 32px;
+    border-color: #E2B578;
+    color: #E2B578;
   }
 </style>
 

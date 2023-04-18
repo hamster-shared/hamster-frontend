@@ -165,6 +165,7 @@ const createProject = async () => {
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       fileName: optsERC20.value.name,
       content: contractERC20.value,
+      // labelDisplay:
     }
     if (activeKey.value === 'ERC721') {
       params.fileName = optsERC721.value.name

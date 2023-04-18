@@ -27,6 +27,8 @@
 <script lang='ts' setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
+
 const router = useRouter()
 
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
@@ -69,6 +71,16 @@ onMounted(() => {
   }
 })
 
+onMounted(()=>{
+  if(localStorage.getItem('token')){
+    if(localStorage.getItem('firstState')==="0"){
+      router.push('/welcome')
+    }
+    else{
+      router.push('/projects')
+    }
+  }
+})
 </script>
 <style lang='less' scoped>
 .login-box {

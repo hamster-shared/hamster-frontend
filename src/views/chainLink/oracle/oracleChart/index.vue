@@ -25,7 +25,7 @@
       </div>
 
       <div class="self-center pl-4 w-60">
-        <span class="block mb-6 text-lg">My Subscription</span>
+        <p class="block mb-6 text-lg">My Subscription</p>
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
@@ -302,7 +302,9 @@ const goSublist = () => {
   border-radius: 12px;
   padding: 20px;
 }
-
+span{
+  color: rgb(128, 128, 128);
+}
 .myChart {
   width: 100%;
   height: 100%;
