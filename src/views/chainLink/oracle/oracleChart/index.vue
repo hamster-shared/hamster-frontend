@@ -64,7 +64,7 @@ const theme = useThemeStore();
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
-const tabNetwork = ref('testnet');
+const tabNetwork = ref('testnet-mumbai');
 
 // 创建echarts
 const myChartRef = ref()

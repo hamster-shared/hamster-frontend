@@ -123,6 +123,9 @@ const handleFund = async()=>{
                 message.error(res.data)
             }
             emit('closeAddFund',false)
+        }).catch((err:any)=>{
+            message.error('Failed')
+            console.log(err)
         })
     }
     // emit('getAddFundInfo',formData)

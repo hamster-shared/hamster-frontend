@@ -328,6 +328,9 @@ const handleConfirm = async()=>{
             emit('closeTestSub',false)
             showMessage.value = true
         })
+    }).catch((err:any)=>{
+        message.error("Failed")
+        console.log(err)
     })
 }
 // 取消订阅

@@ -111,6 +111,7 @@ const handleCreateSub = async()=>{
         }
         emit('closeCreateSub',false)
     }, (error:any) => {
+      message.error('Failed')
       console.log('error',error)
     //   spinning.value = false;
     });
