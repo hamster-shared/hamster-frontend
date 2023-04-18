@@ -64,7 +64,7 @@ const theme = useThemeStore();
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
-const tabNetwork = ref('testnet-mumbai');
+const tabNetwork = ref('testnet');
 
 // 创建echarts
 const myChartRef = ref()
@@ -125,7 +125,7 @@ const getOracleChart = async ()=> {
   xAxisData.value = []
   seriesData.value = []
   try {
-    const { data } = await apiGetOracleEchartParams(tabNetwork.value)
+    const { data } = await apiGetOracleEchartParams('testnet-mumbai')
     legendData.value = data.legendData
     xAxisData.value = data.xaxisData
     const seriesDataInfo =  data.seriesData?.map((item:any) => {
