@@ -299,7 +299,4 @@ onMounted(()=>{
 &:deep(.ant-radio-wrapper){
     display: inline-block;
 }
-.radio-normal{
-
-}
 </style>
