@@ -15,7 +15,8 @@ import type {
     updateSubParams,
     updateConsumerParams,
     ExecSubParams,
-    updateTestSubParams
+    updateTestSubParams,
+    projectsParams
 }  from './utils/chainlinkInterface'
 
 //订阅列表
@@ -164,10 +165,11 @@ export function consumerTable(id:string,params:consumerInTableParams) {
     });
 }
 // 添加消费者弹框里面的下拉框可选项目
-export function consumerProjects() {
+export function consumerProjects(params:projectsParams) {
     return httpRequest({
         url: `/api/chainlink/consumer/projects`,
         method: "get",
+        params:params
     });
 }
 // 添加消费者弹框里面的下拉框可选订阅
