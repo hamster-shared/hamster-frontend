@@ -59,6 +59,16 @@
             <a-button class="done-btn" @click="handleConfirm">Confirm</a-button>
         </div>
     </a-modal>
+    <a-modal v-model:visible="showMessage" :footer="null">
+        <p style="font-weight: 700;font-size: 16px;">Success</p>
+        <template #closeIcon>
+            <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelToCheck"/>
+        </template>
+        <p>The test request has been sent successfully, and the result will be sent to your #mail address# mailbox, please check it.</p>
+        <div style="width:100%;display:flex;justify-content: center;">
+            <a-button @click="closeMessageModal">Got it</a-button>
+        </div>
+    </a-modal>
 </template>
 <script setup lang="ts" name="testSub">
 import { ref, onMounted, computed, reactive,watch,shallowRef } from 'vue'
@@ -97,6 +107,7 @@ const keyId = ref()
 const temId = ref()
 const consumerAddress = ref()
 const network = ref()
+const showMessage = ref()
 // record表单数据
 const record = ref<any>({})
 const formData = reactive<any>({
@@ -126,6 +137,9 @@ const formRules = computed(() => {
 });
 const emit = defineEmits(['closeTestSub','getTestSubInfo'])
 console.log('showTestSub',props.showTestSub,props.column.value)
+const closeMessageModal = ()=>{
+    showMessage.value = false
+}
 // 获取订阅数据
 const getSublistData = async()=>{
     const res = await consumerSublist()
@@ -277,7 +291,7 @@ const handleConfirm = async()=>{
     }
     consumerApi.value.executeRequest(record.value.script, '0x', secretsloction, argsArray, subId.value, gasLimit).then(async(tx:any)=>{
         const params = {
-            subscriptionId:parseInt(subId.value),
+            subscriptionId:parseInt(keyId.value),
             secretsloction,
             secretUrl,
             args:argsArray.length ? argsArray.join(','):'',
@@ -312,6 +326,7 @@ const handleConfirm = async()=>{
             }
             emit('getTestSubInfo',formData)
             emit('closeTestSub',false)
+            showMessage.value = true
         })
     })
 }
