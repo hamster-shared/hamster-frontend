@@ -1,5 +1,5 @@
 <template>
-    <a-modal v-model:visible="props.showAddConsumers" title="Add Consumers" :footer="null">
+    <a-modal v-model:visible="props.showAddConsumers" width="600px" title="Add Consumers" :footer="null">
         <template #closeIcon>
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelFund"/>
         </template>
