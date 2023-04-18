@@ -2,7 +2,7 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
     class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[12px] p-[32px]">
     <div class="flex justify-between">
-      <div class="mb-[32px] items-center">
+      <div class="first">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
           <div class="project-title text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
@@ -21,15 +21,16 @@
             <label>{{ viewInfo.labelDisplay }}</label>
           </div>
         </div>
-      </div>
+      <!-- </div> -->
 
       <div class="label-button">
-        <label class="cursor-pointer group text-center w-[50px] action-button-item" v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)">
-          <label v-if="index !== 0">
+        <!-- <label class="cursor-pointer group text-center w-[50px] action-button-item" v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)"> -->
+          <!-- <label v-if="index !== 0">
             <svg-icon name="line-slash" size="15" />
-          </label>
-        </label>
+          </label> -->
+        <!-- </label> -->
       <div>
+
         <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
@@ -47,9 +48,10 @@
           </label>
         </label>
       </div>
+      </div>
       
     </div>
-    <div class="p-[32px] dark:bg-[#36322D] rounded-[12px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
+    <div class="center">
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
@@ -550,6 +552,25 @@ const getImageUrl = (status: any) => {
 };
 </script>
 <style lang='less' scoped>
+
+.center{
+  width: 100%;
+  padding: 32px;
+  border-radius: 12px;
+  background: #36322D;
+  border: 1px solid #ccc;
+  border-color: #434343;
+  margin-top: 60px;
+}
+
+.first{
+  justify-content: space-between;
+  margin-bottom: 32px;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  position: absolute;
+}
 @baseColor: #E2B578;
 
 html[data-theme='dark'] {
@@ -617,17 +638,5 @@ html[data-theme='light'] {
     }
   };
 }
-
-// .label-button{
-//   width: 400px;
-//   height: 30px;
-//   background: skyblue;
-// }
-// .label-button label{
-//   width: 60px;
-//   background: red;
-//   margin: 1px;
-// }
-
 
 </style>
