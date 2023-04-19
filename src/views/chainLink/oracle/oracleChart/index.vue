@@ -125,7 +125,7 @@ const getOracleChart = async ()=> {
   xAxisData.value = []
   seriesData.value = []
   try {
-    const { data } = await apiGetOracleEchartParams('testnet-mumbai')
+    const { data } = await apiGetOracleEchartParams(tabNetwork.value)
     legendData.value = data.legendData
     xAxisData.value = data.xaxisData
     const seriesDataInfo =  data.seriesData?.map((item:any) => {
