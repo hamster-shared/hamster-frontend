@@ -27,6 +27,9 @@
     <div class="mt-[24px]">
       <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination">
         <template #bodyCell="{ column, record, index }">
+          <template v-if="column.dataIndex === 'chainNetwork'">
+            <label>{{record.chain}} {{record.network}}</label>
+          </template>
           <template v-if="column.dataIndex === 'action'">
             <label class="text-[#F5B50D] ml-2 cursor-pointer" @click="toDetails(record)">View</label>
           </template>
@@ -68,7 +71,7 @@ const columns = [
   },
   {
     title: 'Network',
-    dataIndex: 'network',
+    dataIndex: 'chainNetwork',
     align: "center",
     key: 'network',
   },
