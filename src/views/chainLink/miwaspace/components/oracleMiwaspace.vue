@@ -60,7 +60,11 @@
   // 为用户开通服务
   const handleOpenService = async()=> {
     try {
-      const { data } = await apiPostCustomerOpenService('oracle')
+      const params = {
+        chain:'',
+        network:''
+      }
+      const { data } = await apiPostCustomerOpenService('oracle',params)
       console.log('handleOpenService-data:', data)
       router.push('/chainlink/oracle')
     } catch(err:any) {

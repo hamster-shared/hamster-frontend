@@ -65,7 +65,7 @@ watch(() => router.currentRoute.value,
 </script>
 <style scoped lang="less">
 .dashboard-index {
-  min-height: calc(100vh - 114px);
+  min-height: calc(100% - 114px);
 
   .dashboard-index-right {
     // width: 100%;
