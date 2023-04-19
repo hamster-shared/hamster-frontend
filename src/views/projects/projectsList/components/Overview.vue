@@ -396,14 +396,14 @@ const goContractCheck = async (id: string, workflowId: string, detailId: string)
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
-  message.info("Executing Now，please wait a moment.")
+  // message.info("Executing Now，please wait a moment.")
 };
 
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
-  message.info("Executing Now，please wait a moment.")
+  // message.info("Executing Now，please wait a moment.")
 };
 
 const goContractDeploy = async (id: string, status: string | Number) => {
