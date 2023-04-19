@@ -29,7 +29,10 @@
             <a-select class="inline-block" :placeholder="subOptionsNet" disabled></a-select>
             <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
-                    <a-radio class="inline-block w-[20px] radio-normal" v-model:checked="record.checked" @click="getProjectInfo(record.address)"></a-radio>
+                     <a-radio-group v-model:checked="record.checked">
+                        <a-radio :value="1" @click="getProjectInfo(record.address)"></a-radio>
+                    </a-radio-group>
+                    <!-- <a-radio class="inline-block w-[20px] radio-normal" v-model:checked="record.checked" @click="getProjectInfo(record.address)"></a-radio> -->
                     <span :title="record.address">{{ record.address.slice(0,10) }}</span>
                 </template>
             </a-table>

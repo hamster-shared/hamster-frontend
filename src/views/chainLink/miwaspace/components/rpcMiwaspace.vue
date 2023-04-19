@@ -10,11 +10,11 @@
       </div>
     </div>
 
-    <div class="box">
+    <div>
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div>
           <img :src="item.image" class="h-6"/>
-          <span class="ml-2 text-base font-bold align-middle">{{item.name}}</span>
+          <span class="ml-2 text-base font-bold align-middle">{{item.fullname}}</span>
         </div>
         <div class="flex justify-between text-sm">
           <div class="flex flex-col">
@@ -35,7 +35,7 @@
             </template>
           </a-input>
         </div>
-        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService">Get Service Now</a-button>
+        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network)">Get Service Now</a-button>
       </div>
     </div>
 
@@ -47,6 +47,8 @@
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import { apiPostCustomerOpenService } from '@/apis/middleWare'
+  import type { projectsParams } from "@/apis/utils/chainlinkInterface";
+
   const router = useRouter()
   const props = defineProps({
     rpcPageInfo:Array
@@ -63,9 +65,13 @@
   message.success('copy success')
 }
 // 开通rpc需要调接口
-const handleOpenRpcService = async()=>{
+const handleOpenRpcService = async(chain:string,network:string)=>{
   try {
-      const { data } = await apiPostCustomerOpenService('rpc')
+    const params:projectsParams = {
+      chain:chain,
+      network:network
+    }
+      const { data } = await apiPostCustomerOpenService('rpc',params)
       console.log('handleOpenRpcService-data:', data)
       router.push('/chainlink/rpc')
     } catch(err:any) {
@@ -76,14 +82,8 @@ const handleOpenRpcService = async()=>{
 </script>
 
 <style lang="less" scoped>
-.box{
-  width: 1200px; 
-  display: flex;
-  margin-top: 10px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
   .ethereum-container {
+    display: inline-block;
     height: 326px;
     min-width: 300px;
     padding: 30px;

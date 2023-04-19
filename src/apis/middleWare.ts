@@ -1,5 +1,6 @@
 // 导入axios实例
 import httpRequest from "@/request";
+import type { projectsParams } from "./utils/chainlinkInterface";
 
 // 获取中间件页面rpc数据
 export function apiGetMiddleWareRpc() {
@@ -17,10 +18,11 @@ export function apiGetIfOpenService(serverName:string) {
   });
 }
 
-// 为用户开通服务
-export function apiPostCustomerOpenService(serverName:string) {
+// 为用户开通服务,
+export function apiPostCustomerOpenService(serverName:string,params:projectsParams ) {
   return httpRequest({
       url: `/api/middleware/active/${serverName}`,
       method: "post",
+      data: params
   });
 }
