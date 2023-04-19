@@ -38,34 +38,37 @@ const reportTableList = ref([]);
 
 const reportTableColumns = computed<any[]>(() => [
   {
-    title: 'Report Name',
+    title:'Report',
+    // title: 'Report Name',
     dataIndex: 'name',
     align: 'center',
     ellipsis: 'fixed',
     key: 'name',
   },
   {
-    title: 'Report Type',
+    title:'Check Tools',
+    // title: 'Report Type',
     dataIndex: 'type',
     align: 'center',
     ellipsis: 'fixed',
     key: 'type',
   },
   {
-    title: 'Check Tool',
+    title:'issues',
+    // title: 'Check Tool',
     dataIndex: 'checkTool',
     key: 'checkTool',
     ellipsis: 'fixed',
     align: 'center',
   },
-  {
-    title: 'Result',
-    dataIndex: 'result',
-    align: 'center',
-    ellipsis: 'fixed',
-    key: 'result',
-    width: '200px'
-  },
+  // {
+  //   title: 'Result',
+  //   dataIndex: 'result',
+  //   align: 'center',
+  //   ellipsis: 'fixed',
+  //   key: 'result',
+  //   width: '200px'
+  // },
   {
     title: 'Check Time',
     dataIndex: 'checkTime',

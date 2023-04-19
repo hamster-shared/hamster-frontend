@@ -1,7 +1,6 @@
 <template>
   <div class="dashboard dark:bg-[#1D1C1A] bg-[#FFFFFF]">
     <div class="font-bold text-[24px] mb-[8px]">My Middleware</div>
-    <div class="text-[16px] dark:text-[#E0DBD2] text-[#73706E] mb-[16px]">Something like that…</div>
     <div class="grid grid-cols-3 gap-4 ">
       <div v-for="item in dashboardList" :key="item"
         class="border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] p-[24px] dark:bg-[#36322D] bg-[#ffffff]">

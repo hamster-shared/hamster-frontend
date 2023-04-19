@@ -204,7 +204,6 @@ const getTestSubInfo = (testSub:any)=>{
 // 关闭testsub弹框
 const closeTestSub = (bool:boolean)=>{
     showTestSub.value = bool
-    console.log('关闭testsub弹框',bool)
 }
 
 // 切换按钮改变状态,先关闭所有弹框，再开点击的弹框
@@ -223,6 +222,7 @@ onMounted(async()=>{
 </script>
 <style scoped less>
 .table{
+    width: 100%;
     margin-bottom: 64px;
     margin-top: 20px;
 }
