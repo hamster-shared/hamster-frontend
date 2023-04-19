@@ -14,7 +14,7 @@
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div>
           <img :src="item.image" class="h-6"/>
-          <span class="ml-2 text-base font-bold align-middle">{{item.name}}</span>
+          <span class="ml-2 text-base font-bold align-middle">{{item.fullname}}</span>
         </div>
         <div class="flex justify-between text-sm">
           <div class="flex flex-col">
