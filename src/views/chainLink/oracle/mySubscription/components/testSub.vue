@@ -308,8 +308,8 @@ const handleConfirm = async()=>{
             const res = await updateTestSub(temId.value,params)
             if(res.code===200){
                 message.success(res.data)
-                emit('getTestSubInfo',formData)
                 emit('closeTestSub',false)
+                emit('getTestSubInfo',formData)
             }else{
                 message.error(res.data)
             }
