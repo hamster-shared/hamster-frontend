@@ -75,6 +75,7 @@ const handleOpenRpcService = async(chain:string,network:string)=>{
       console.log('handleOpenRpcService-data:', data)
       router.push('/chainlink/rpc')
     } catch(err:any) {
+      message.error(err.message)
       console.log('handleOpenRpcService-err:', err)
     }
 }
