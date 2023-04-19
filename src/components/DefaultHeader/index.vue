@@ -6,11 +6,11 @@
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
         <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
-      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
+      <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown>
         <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
-          @click.stop id="middle">
+          @click.stop id="middle" style="height:64px;line-height:64px">
           Middleware
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
@@ -29,7 +29,7 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" :class="{ '!text-[#E2B578]': isProject }"
+      <div @click="goDoc" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">

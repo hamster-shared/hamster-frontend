@@ -222,6 +222,7 @@ onMounted(async()=>{
 </script>
 <style scoped less>
 .table{
+    width: 100%;
     margin-bottom: 64px;
     margin-top: 20px;
 }

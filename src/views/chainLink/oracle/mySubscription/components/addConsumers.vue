@@ -1,5 +1,5 @@
 <template>
-    <a-modal v-model:visible="props.showAddConsumers" title="Add Consumers" :footer="null">
+    <a-modal v-model:visible="props.showAddConsumers" title="Add Consumers" :footer="null" width="600px">
         <template #closeIcon>
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelFund"/>
         </template>
@@ -30,7 +30,7 @@
             <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
                     <a-radio class="inline-block w-[20px] radio-normal" v-model:checked="record.checked" @click="getProjectInfo(record.address)"></a-radio>
-                    1223222132<span :title="record.address">{{ record.address.slice(0,10) }}</span>
+                    <span :title="record.address">{{ record.address.slice(0,10) }}</span>
                 </template>
             </a-table>
         </div>
