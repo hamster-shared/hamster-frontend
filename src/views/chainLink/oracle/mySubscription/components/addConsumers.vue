@@ -265,6 +265,7 @@ const handleFund = async()=>{
             emit('getAddConsumersInfo',formData)
             emit('closeAddConsumers',false)
         }).catch((err:any)=>{
+            message.error('Failed')
             console.log('err111111',err)
         })
     }

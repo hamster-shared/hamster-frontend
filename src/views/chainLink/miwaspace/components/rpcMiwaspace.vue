@@ -35,7 +35,7 @@
             </template>
           </a-input>
         </div>
-        <a-button class="w-full mt-5 !h-[43px]" @click="router.push('/chainlink/rpc')">Get Service Now</a-button>
+        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService">Get Service Now</a-button>
       </div>
     </div>
 
@@ -46,7 +46,7 @@
   import { toRefs, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
-
+  import { apiPostCustomerOpenService } from '@/apis/middleWare'
   const router = useRouter()
   const props = defineProps({
     rpcPageInfo:Array
@@ -61,6 +61,16 @@
   document.execCommand("copy", false);
   inp.remove();
   message.success('copy success')
+}
+// 开通rpc需要调接口
+const handleOpenRpcService = async()=>{
+  try {
+      const { data } = await apiPostCustomerOpenService('rpc')
+      console.log('handleOpenRpcService-data:', data)
+      router.push('/chainlink/rpc')
+    } catch(err:any) {
+      console.log('handleOpenRpcService-err:', err)
+    }
 }
 
 </script>

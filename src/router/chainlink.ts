@@ -22,6 +22,32 @@ const chainlinkRoute = [
           },
         },
         {
+          path: "/chainlink/RPC",
+          name: "RPC",
+          redirect: "/chainlink/RPC",
+          meta:{
+            isShow: true,
+          },
+          children: [
+            {
+              path: "/chainlink/RPC",
+              name: "RPC",
+              component:() => import('@/views/chainLink/rpc/index.vue'),
+              meta:{
+                sidebarMap: ['RPC'],
+              }
+            },
+            {
+              path: "/chainlink/RPC/rpc-detail/:chain",
+              name: "rpcDetail",
+              component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
+              meta:{
+                sidebarMap: ['RPC'],
+              }
+            }
+          ]
+        },
+        {
           path: "/chainlink/oracle",
           name: "Oracle",
           redirect: "/chainlink/oracle",
@@ -61,32 +87,6 @@ const chainlinkRoute = [
                   sidebarMap: ['Oracle'],
                 }
               },
-          ]
-        },
-        {
-          path: "/chainlink/RPC",
-          name: "RPC",
-          redirect: "/chainlink/RPC",
-          meta:{
-            isShow: true,
-          },
-          children: [
-            {
-              path: "/chainlink/RPC",
-              name: "RPC",
-              component:() => import('@/views/chainLink/rpc/index.vue'),
-              meta:{
-                sidebarMap: ['RPC'],
-              }
-            },
-            {
-              path: "/chainlink/RPC/rpc-detail/:chain",
-              name: "rpcDetail",
-              component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
-              meta:{
-                sidebarMap: ['RPC'],
-              }
-            }
           ]
         },
         {
