@@ -7,7 +7,7 @@
     <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB]">
       <div class="flex justify-between mb-4">
         <span class="items-center self-center font-bold">You can choose the following templates to quickly create a Request</span>
-        <a-button type="link">View All</a-button>
+        <a-button v-if="false" type="link">View All</a-button>
       </div>
   
       <div class="relative template-scrollbar overflow-x-auto w-full h-[330px]">

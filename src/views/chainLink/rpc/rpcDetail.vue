@@ -4,8 +4,8 @@
     <div
       class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="">
-        <svg-icon name="rpc-icon" size="30" class="mr-[10px] cursor-default" />
-        <span class="font-bold text-[24px] mr-[20px] align-middle">Ethereum</span>
+        <img :src="imageUrl" class="h-6;"/>
+        <span class="font-bold text-[24px] mr-[20px] align-middle" style="margin-left: 10px;">{{name}}</span>
         <span @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
           Network</span>
       </div>
@@ -96,6 +96,8 @@ const chainsList = ref([]);
 const codeExamples = reactive<any>({});
 const activeKey = ref("JavaScript");
 const { ethereum } = window;
+const name = ref('')
+const imageUrl = ref('')
 const addNetInfo = reactive<any>({
   chainId:'',
   chainName:'',
@@ -134,6 +136,8 @@ const getChainData = async () => {
   try {
     const { data } = await apiGetRPCChain(params.chain);
     chainsList.value = data.chains;
+    name.value = data.name;
+    imageUrl.value = data.image;
     Object.assign(codeExamples, chainsList.value[0].App.code_examples);
     addNetInfo.chainId = chainsList.value[0].chainID
     addNetInfo.chainName = chainsList.value[0].networkName
