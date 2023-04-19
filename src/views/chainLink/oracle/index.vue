@@ -24,6 +24,16 @@
     </div>
   </div>
   <testSub v-if="showTestSub" :column="column" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
+  <a-modal v-model:visible="showMessage" :footer="null">
+        <p style="font-weight: 700;font-size: 16px;">Success</p>
+        <template #closeIcon>
+            <img class="" src="@/assets/icons/closeIcon.svg" @click="closeMessageModal"/>
+        </template>
+        <p>The test request has been sent successfully, and the result will be sent to your #mail address# mailbox, please check it.</p>
+        <div style="width:100%;display:flex;justify-content: center;margin-top: 20px;">
+            <a-button @click="closeMessageModal">Got it</a-button>
+        </div>
+    </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -42,6 +52,7 @@
   }[]>([])
   const showTestSub = ref(false)
   const column = ref<any>({})
+  const showMessage = ref(false)
 
   const oracleColumns = reactive([
     {
@@ -113,6 +124,9 @@
       console.log('tableDataErr:', err)
     }
   }
+  const closeMessageModal = ()=>{
+    showMessage.value = false
+  }
 
   const toDocs = () => {
     window.open('https://hamsternet.io/docs/')
@@ -137,6 +151,7 @@
   // 关闭testsub弹框
   const closeTestSub = (bool:boolean)=>{
       showTestSub.value = bool
+      showMessage.value = true
   }
 </script>
 
