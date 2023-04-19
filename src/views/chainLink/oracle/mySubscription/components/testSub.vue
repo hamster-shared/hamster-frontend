@@ -289,7 +289,7 @@ const handleConfirm = async()=>{
     }else{
         secretUrl = formData.secreturl
     }
-    consumerApi.value.executeRequest(record.value.script, '0x', secretsloction, argsArray, subId.value, gasLimit).then(async(tx:any)=>{
+    consumerApi.value.executeRequest(record.value.script, '0x', secretsloction, argsArray, subId.value, gasLimit).then((tx:any)=>{
         const params = {
             subscriptionId:parseInt(keyId.value),
             secretsloction,
@@ -302,15 +302,16 @@ const handleConfirm = async()=>{
             consumerAddress: consumerAddress.value,
             network:network.value
         }
-        const res = await apiExecSub(params)
-        if(res.code===200){
-            temId.value = res.data
-        }else{
-            message.error(res.data)
-        }
-        console.log("~~~~~tx",tx)
+       apiExecSub(params).then((res)=>{
+            if(res.code===200){
+                temId.value = res.data
+            }else{
+                message.error(res.data)
+            }
+            console.log("~~~~~tx",tx)
+        })
         return tx.wait()
-    }).then(async(receipt:any) => {
+    }).then((receipt:any) => {
         console.log('receipt~~~~~',receipt)
         consumerApi.value.latestRequestId().then(async(execId:any) => {
             console.log('execId',execId)
@@ -321,12 +322,12 @@ const handleConfirm = async()=>{
             const res = await updateTestSub(temId.value,params)
             if(res.code===200){
                 message.success(res.data)
+                emit('getTestSubInfo',formData)
+                emit('closeTestSub',false)
                 showMessage.value = true
             }else{
                 message.error(res.data)
             }
-            emit('getTestSubInfo',formData)
-            emit('closeTestSub',false)
         })
     }).catch((err:any)=>{
         message.error("Failed")
