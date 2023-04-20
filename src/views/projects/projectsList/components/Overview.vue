@@ -51,7 +51,7 @@
       </div>
       
     </div>
-    <div class="center">
+    <div class="center"> 
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
@@ -557,9 +557,9 @@ const getImageUrl = (status: any) => {
   width: 100%;
   padding: 32px;
   border-radius: 12px;
-  background: #36322D;
-  border: 1px solid #ccc;
-  border-color: #434343;
+  // background: #36322D;
+  // border: 1px solid #ccc;
+  // border-color: #434343;
   margin-top: 60px;
 }
 
