@@ -6,7 +6,7 @@
       <div class="">
         <img :src="imageUrl" class="h-6;"/>
         <span class="font-bold text-[24px] mr-[20px] align-middle" style="margin-left: 10px;">{{name}}</span>
-        <span @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
+        <span v-if="parseInt(chainData.chainID,16)" @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
           Network</span>
       </div>
       <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
@@ -15,12 +15,12 @@
       <div>
         <div>
           <div class="grid grid-cols-3 gap-1">
-            <div>Chain ID</div>
+            <div v-if="parseInt(chainData.chainID,16)">Chain ID</div>
             <div>Native Token</div>
             <div>Explorers</div>
           </div>
           <div class="grid grid-cols-3 gap-1 font-bold mt-[10px] dark:text-[#E0DBD2] text-[#383B46]">
-            <div>{{ parseInt(chainData.chainID,16) }}</div>
+            <div v-if="parseInt(chainData.chainID,16)">{{ parseInt(chainData.chainID,16) }}</div>
             <div>{{ chainData.nativeToken }}</div>
             <div>{{ chainData.explorerUrl }}</div>
           </div>
@@ -110,6 +110,9 @@ const columns = [
     dataIndex: 'number',
     align: "center",
     key: 'number',
+    customRender: ({ index }:any) => {
+      return index+1
+    },
   },
   {
     title: 'Time',

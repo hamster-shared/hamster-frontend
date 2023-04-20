@@ -16,7 +16,7 @@
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
               <span class="sub">Submitted by: {{ item.author }}</span>
-              <div class="item">{{ item.description }}</div>
+              <div class="item h-[120px] overflow-y-auto">{{ item.description }}</div>
             </div>
             <div class="mt-2">
               <a-button @click="handleUseNow(item.id)">Use Now</a-button>
@@ -48,14 +48,16 @@
 
 <script lang="ts" setup>
   import { ref, reactive, onMounted, watch } from 'vue';
-  import { useRouter } from 'vue-router'
+  import { useRouter,useRoute } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
   import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
-  import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest } from '@/apis/chainlink'
+  import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest,apiDetailRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
   import { message } from 'ant-design-vue';
 
   const router = useRouter()
+  const route = useRoute()
+  const id:any = route.query?.id
   // const breadcrumbUrl = router.currentRoute.value.path
   const theme = useThemeStore();
 
@@ -128,9 +130,20 @@
       console.log('createTemplate-err:',err)
     }
   }
-
+  // id 查请求详情
+  const getDetailInfo = async()=>{
+    const res = await apiDetailRequest(id)
+    if(res.code===200){
+      console.log('id 查请求详情',res)
+      requestName.value = res.data.name
+      pipelinefilePreview.value = res.data.script
+    }
+  }
   onMounted(async()=>{
     await getTemplateInfo()
+    if(id){
+      getDetailInfo()
+    }
   })
 </script>
 

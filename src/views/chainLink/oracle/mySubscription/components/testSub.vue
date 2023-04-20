@@ -291,9 +291,11 @@ const handleConfirm = async()=>{
        apiExecSub(params).then((res)=>{
             if(res.code===200){
                 temId.value = res.data
+                message.success(res.message)
             }else{
-                message.error(res.data)
+                message.error('Failed '+res.message)
             }
+            emit('closeTestSub',false)
             console.log("~~~~~tx",tx)
         })
         return tx.wait()
@@ -308,7 +310,6 @@ const handleConfirm = async()=>{
             const res = await updateTestSub(temId.value,params)
             if(res.code===200){
                 message.success(res.data)
-                emit('closeTestSub',false)
                 emit('getTestSubInfo',formData)
             }else{
                 message.error(res.data)
@@ -316,6 +317,7 @@ const handleConfirm = async()=>{
         })
     }).catch((err:any)=>{
         message.error("Failed")
+        emit('closeTestSub',false)
         console.log(err)
     })
 }
