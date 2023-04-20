@@ -309,7 +309,7 @@ const handleConfirm = async()=>{
             }
             const res = await updateTestSub(temId.value,params)
             if(res.code===200){
-                message.success(res.data)
+                message.success('The test request has been sent successfully, and the result will be sent to your #mail address# mailbox, please check it.')
                 emit('getTestSubInfo',formData)
             }else{
                 message.error(res.data)
