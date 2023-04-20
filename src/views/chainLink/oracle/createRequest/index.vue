@@ -16,7 +16,7 @@
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
               <span class="sub">Submitted by: {{ item.author }}</span>
-              <div class="item">{{ item.description }}</div>
+              <div class="item h-[120px] overflow-y-auto">{{ item.description }}</div>
             </div>
             <div class="mt-2">
               <a-button @click="handleUseNow(item.id)">Use Now</a-button>

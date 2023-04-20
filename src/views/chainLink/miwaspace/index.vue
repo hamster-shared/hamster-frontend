@@ -90,8 +90,13 @@
   const getRpcInfo = async() => {
     try {
       const { data } = await apiGetMiddleWareRpc()
-      rpcPageInfo.value = data
-      console.log('rpc-data:', data)
+      rpcPageInfo.value = data.map((item:any)=>{
+        if(!item.userActive){
+          item.httpAddress = ''
+        }
+        return item
+      })
+      console.log('rpc-data:', rpcPageInfo.value)
     } catch(err:any) {
       console.log('rpc-err:', err)
     }

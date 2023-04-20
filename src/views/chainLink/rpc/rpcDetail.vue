@@ -110,6 +110,9 @@ const columns = [
     dataIndex: 'number',
     align: "center",
     key: 'number',
+    customRender: ({ index }:any) => {
+      return index+1
+    },
   },
   {
     title: 'Time',

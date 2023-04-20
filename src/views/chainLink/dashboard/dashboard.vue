@@ -12,7 +12,7 @@
             <div class="network">{{ val.network }}</div>
             <div class="view" @click="networkClick(val)">View</div>
           </div>
-          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goRPC" v-if="RPCList.length>5">More</div>
+          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goRPC" v-if="RPCList.length>4">More</div>
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
