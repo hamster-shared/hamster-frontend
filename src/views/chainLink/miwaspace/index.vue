@@ -107,7 +107,7 @@
   const checkIfOpenService = async()=> {
     try {
       const { data } = await apiGetIfOpenService('oracle')
-      openService.value = data
+      openService.value = data.isActive
       console.log('oracle-data:', data)
     } catch(err:any) {
       console.log('oracle-err:', err)

@@ -46,9 +46,9 @@ onBeforeMount(() => {
 
 onMounted(async()=>{
   const rpcRes = await apiGetIfOpenService('rpc');
-  isRpcDefault.value = rpcRes.data
+  isRpcDefault.value = rpcRes.data.isActive
   const oracleRes = await apiGetIfOpenService('oracle')
-  isOracleDefault.value = oracleRes.data
+  isOracleDefault.value = oracleRes.data.isActive
 })
 
 watch(() => router.currentRoute.value,
