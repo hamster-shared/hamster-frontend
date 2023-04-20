@@ -130,17 +130,6 @@ import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, Trans
 
 import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
 
-import {
-  Ed25519Keypair,
-  RawSigner,
-  TransactionBlock,
-  normalizeSuiObjectId,
-  fromB64,
-  JsonRpcProvider
-} from '@mysten/sui.js';
-
-import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
-
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
