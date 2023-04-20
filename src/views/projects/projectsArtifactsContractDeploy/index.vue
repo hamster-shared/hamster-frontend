@@ -637,7 +637,6 @@ const setAbiInfo = (selectItem: any) => {
 
 const getModalData = async () => {
   try {
-    debugger
     const modalValues = await modalFormRef?.value.validateFields();
     formState.nameData.push(projectsContractData[selectedIndex.value]);
     projectsContractData[selectedIndex.value].hasModalFormData = false;

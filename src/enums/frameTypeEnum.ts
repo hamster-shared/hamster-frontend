@@ -27,10 +27,6 @@ export enum FrontEndDeployTypeEnum {
   'FrontEnd' = 0,
   'IPFS' = 1,
   'Container' = 2,
-<<<<<<< HEAD
-}
-=======
-  'Chainlink'=3,
+  'Chainlink' = 3,
 }
 
->>>>>>> f42e72134945f8bf266e760cd34ff160fb0be676
