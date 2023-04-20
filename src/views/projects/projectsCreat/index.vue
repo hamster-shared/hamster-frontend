@@ -28,7 +28,7 @@
           </a-form-item>
           <a-form-item class="new-label" label="Code Repositiory">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
-              <a-radio :style="radioStyle" value="1">Creat a new repository by template
+              <a-radio :style="radioStyle" value="1">Create a new repository by template
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
