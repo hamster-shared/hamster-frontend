@@ -145,7 +145,7 @@ const getCheckReport = async () => {
       openAiInfo.value = item
     }
   })
-  console.log("openAiInfo.value:",openAiInfo.value);
+  
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
@@ -163,6 +163,7 @@ const yamlData = (list: any[], issue: number, dataType: string) => {
         issue += val.issue
       }
     })
+    item.errorNumber = issue;
   })
   return issue;
 }
