@@ -55,8 +55,12 @@
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
+          
           <div class="my-2">
-            <a target="_blank" :href="viewInfo.repositoryUrl">{{ showViewInfoRepositoryUrl }}</a>
+            <a target="_blank" :href="viewInfo.repositoryUrl" class="flex">
+              <div class="text-over-css">{{ viewInfo.repositoryUrl }}</div>
+              <div>{{ showViewInfoRepositoryUrl }}</div>
+            </a>
           </div>
           <div>
             <svg-icon name="white-link" size="16" />
@@ -219,7 +223,8 @@ const { viewType, viewInfo, projectType } = toRefs(props);
 
 console.log(11111,viewInfo.value)
 const showViewInfoRepositoryUrl = computed(() => {
-  return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
+  // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
+  return viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
 })
 
 const emit = defineEmits(["loadProjects"]);
@@ -637,6 +642,12 @@ html[data-theme='light'] {
       color: #E2B578;
     }
   };
+}
+
+.text-over-css{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 </style>
