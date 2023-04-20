@@ -1,9 +1,9 @@
 <template>
   <div class="w-full mx-auto container-border" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <div>
-      <a-tabs v-model:activeKey="tabNetwork" @change="subscripionInfo">
-        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
-        <a-tab-pane key="Testnet" tab="Testnet" force-render></a-tab-pane>
+      <a-tabs v-model:activeKey="tabNetwork" @change="changeNetwork">
+        <a-tab-pane key="Mainnet" tab="Mainnet" disabled></a-tab-pane>
+        <a-tab-pane key="testnet-mumbai" tab="Testnet"></a-tab-pane>
       </a-tabs>
     </div>
 
@@ -11,26 +11,27 @@
       <div class="flex-1">
         <div class="flex justify-between">
           <div class="font-bold text-[20px]">Overiew</div>
-          <a-select ref="select" v-model:value="selectTimeValue" style="width: 120px; margin-right: 20px;"
+          <!-- <a-select ref="select" v-model:value="selectTimeValue" style="width: 120px; margin-right: 20px;"
             @change="handleChange">
             <a-select-option value="1">Last 1 days</a-select-option>
             <a-select-option value="2">Last 3 days</a-select-option>
             <a-select-option value="3">Last 7 days</a-select-option>
-          </a-select>
+          </a-select> -->
         </div>
 
-        <div class="w-full h-[460px]">
+        <div class="w-full h-full">
           <div class="myChart" ref="myChartRef" id="myEchart"></div>
         </div>
       </div>
 
       <div class="self-center pl-4 w-60">
-        <span class="block mb-6 text-lg">My Subscription</span>
+        <p class="block mb-6 text-lg">My Subscription</p>
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
-            <span>{{ item.number }}</span>
-            <a-button type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
+            <span v-if="item.title=='Funds'" :title="item.number">{{ item.number.slice(0,4) }}<span v-if="parseInt(item.number)">...link</span></span>
+            <span v-else>{{ item.number }}</span>
+            <a-button class="is-show-btn" :disabled="item.disabled" type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
           </div>
         </div>
         <div class="text-right">
@@ -49,11 +50,12 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watch, onBeforeUnmount } from 'vue';
 import * as echarts from 'echarts';
+import { ethers } from 'ethers';
 import { useThemeStore } from "@/stores/useTheme";
 import createSub from '../mySubscription/components/createSub.vue'
 import addFunds from '../mySubscription/components/addFunds.vue'
 import addConsumers from '../mySubscription/components/addConsumers.vue'
-import { apiGetSubscriptionParams } from '@/apis/chainlink'
+import { apiGetSubscriptionParams, apiGetOracleEchartParams, getCustomerBalance } from '@/apis/chainlink'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
@@ -62,7 +64,7 @@ const theme = useThemeStore();
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
-const tabNetwork = ref('Mainnet');
+const tabNetwork = ref('testnet');
 
 // 创建echarts
 const myChartRef = ref()
@@ -76,42 +78,23 @@ const initChart = (chartElement: HTMLElement, themeValue: string) => {
       trigger: 'axis'
     },
     legend: {
-      data: ['Email', 'Union Ads', 'Video Ads']
+      data: legendData.value
     },
     grid: {
-      left: '3%',
-      right: '4%',
+      left: '5%',
+      right: '5%',
       bottom: '3%',
       containLabel: true
     },
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      data: xAxisData.value
     },
     yAxis: {
       type: 'value'
     },
-    series: [
-      {
-        name: 'Email',
-        type: 'line',
-        stack: 'Total',
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: 'Union Ads',
-        type: 'line',
-        stack: 'Total',
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Video Ads',
-        type: 'line',
-        stack: 'Total',
-        data: [150, 232, 201, 154, 190, 330, 410]
-      }
-    ]
+    series: seriesData.value
   })
 
   myChart.value = chart
@@ -128,18 +111,46 @@ watch(() => theme.themeValue,
 )
 
 // 监测时间变化
-const selectTimeValue = ref('Last 7 days')
-const handleChange = () => {
-  console.log('selectTimeValue:', selectTimeValue.value)
+// const selectTimeValue = ref('Last 7 days')
+// const handleChange = () => {
+//   console.log('selectTimeValue:', selectTimeValue.value)
+// }
+
+// 获取echart的数据
+const legendData = ref<[] | null>()
+const xAxisData = ref([])
+const seriesData = ref<[] | null>()
+const getOracleChart = async ()=> {
+  legendData.value = []
+  xAxisData.value = []
+  seriesData.value = []
+  try {
+    const { data } = await apiGetOracleEchartParams(tabNetwork.value)
+    legendData.value = data.legendData
+    xAxisData.value = data.xaxisData
+    const seriesDataInfo =  data.seriesData?.map((item:any) => {
+      item['type'] = 'line'
+      item['stack'] = 'Total'
+
+      return item
+    });
+    seriesData.value = seriesDataInfo
+    console.log('getOracleChart-data:', data)
+  } catch(err:any){
+    console.log('getOracleChart-err:', err)
+  }
+
+  myChart.value && myChart.value.dispose()
+  initChart(myChartRef.value, theme.themeValue);
 }
 
 // 获取my subscription的数据
-const subscripion = reactive([
-  { title: 'Subscription', number: '', btnTitle: 'Create' },
-  { title: 'Consumers', number: '', btnTitle: 'Add' },
-  { title: 'Funds', number: '11.23link', btnTitle: 'Add' },
+const subscripion = reactive<any>([
+  { title: 'Subscription', number: '', btnTitle: 'Create',disabled:false },
+  { title: 'Consumers', number: '', btnTitle: 'Add',disabled:false },
+  { title: 'Funds', number: '', btnTitle: 'Add',disabled:false },
 ])
-const subscripionInfo = async () => {
+const getSubscripionInfo = async () => {
   const token = localStorage.getItem('token')
   const params = {
     network: tabNetwork.value,
@@ -147,19 +158,62 @@ const subscripionInfo = async () => {
   }
   try {
     const { data } = await apiGetSubscriptionParams(params)
-    subscripion[0].number = data.total_subscription
-    subscripion[1].number = data.total_consumers
+    subscripion[0].number = data.total_subscription?data.total_subscription:'-'
+    if(!data.total_consumers){
+      subscripion[1].number = '-'
+      subscripion[1].disabled = true
+    }else{
+      subscripion[1].number = data.total_consumers
+      subscripion[1].disabled = false
+    }
+    if(!subscripion[0].number){
+      subscripion[1].disabled = true
+    }else{
+      subscripion[1].disabled = false
+    }
     console.log('data:', data)
   } catch (err: any) {
     console.log('err:', err)
   }
 }
 
+// 获取用户所有订阅金额
+const balance = ref(0)
+const getBalance = async()=> {
+  try {
+    const { data } = await getCustomerBalance()
+    console.log('balance-data:', data)
+    data?.forEach((item:any) => {
+      balance.value = item.balance*1 + balance.value
+    });
+    const testNumber:any = ethers.BigNumber.from(balance.value+'')
+    if(!parseInt(testNumber,16)){
+      subscripion[2].number = '-'
+    }else{
+      subscripion[2].number = ethers.utils.formatEther(testNumber);
+    }
+    if(!subscripion[0].number){
+      subscripion[2].disabled = true
+    }else{
+      subscripion[2].disabled = false
+    }
+  } catch(err:any) {
+    console.log('balance-err:',err)
+  }
+}
+
+// 切换网络
+const changeNetwork = ()=>{
+  console.log('tabNetwork',tabNetwork.value)
+  getOracleChart()
+  getSubscripionInfo()
+}
+
 const showPop = (item: string) => {
   console.log('item', item)
   // 根据title显示对应的弹框
   switch (item) {
-    case 'Subscripion':
+    case 'Subscription':
       createSubPop();
       break;
     case 'Consumers':
@@ -182,6 +236,7 @@ const getCreateSubInfo = (info: any) => {
 // 关闭订阅
 const closeCreateSub = (bool: boolean) => {
   showCreateSub.value = bool
+  getSubscripionInfo()
 }
 
 // 添加消费者弹框
@@ -196,6 +251,7 @@ const getAddConsumersInfo = (consumersInfo: any) => {
 // 关闭消费者
 const closeAddConsumers = (bool: boolean) => {
   showAddConsumers.value = bool
+  getSubscripionInfo()
 }
 
 // 添加资金弹框
@@ -210,6 +266,7 @@ const getAddFundInfo = (fundInfo: any) => {
 // 关闭资金
 const closeAddFund = (bool: boolean) => {
   showAddFund.value = bool
+  getBalance()
 }
 // 切换按钮改变状态,先关闭所有弹框，再开点击的弹框
 const btnChange = () => {
@@ -219,13 +276,14 @@ const btnChange = () => {
 }
 
 onMounted(async () => {
+  await getOracleChart()
   initChart(myChartRef.value, theme.themeValue);
-
   // 监测屏幕变化，让echarts自适应宽度
   const handleWindowResize = () => myChart.value.resize();
   window.addEventListener("resize", handleWindowResize)
 
-  await subscripionInfo()
+  getSubscripionInfo()
+  getBalance()
 })
 
 onBeforeUnmount(() => {
@@ -234,7 +292,7 @@ onBeforeUnmount(() => {
 })
 // 跳转subList
 const goSublist = () => {
-  router.push('/chainlink/oracle/subList')
+  router.push('/chainlink/oracle/sublist')
 }
 </script>
 
@@ -244,10 +302,18 @@ const goSublist = () => {
   border-radius: 12px;
   padding: 20px;
 }
-
+span{
+  color: rgb(128, 128, 128);
+}
 .myChart {
   width: 100%;
   height: 100%;
+}
+
+.dark-css {
+  :deep(.ant-tabs-tab.ant-tabs-tab-disabled) {
+    color:grey;
+  }
 }
 
 :deep(.radio-class, .ant-radio-group) {
@@ -266,5 +332,11 @@ const goSublist = () => {
 
 .subscripion-divider {
   margin: 16px auto;
+}
+&:deep(.is-show-btn){
+  color: #E2B578;
+  &:hover{
+    color: #E2B578;
+  }
 }
 </style>

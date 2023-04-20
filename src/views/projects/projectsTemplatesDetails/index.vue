@@ -69,7 +69,34 @@
       <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
         class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
         <a-tabs v-model:activeKey="activeKey">
-          <a-tab-pane key="1" tab="Functions">
+          <a-tab-pane key="1" tab="Modules" v-if="frameType === '5'">
+            <div class="flex">
+              <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
+                <div class="pb-4 "><!-- h-[120px] overflow-auto -->
+                  <div @click="setFunctionsList(item)"
+                    :class="[{ '!text-[#E2B578]': item.name === moduleName },{'mt-4': index != 0}]"
+                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px]"
+                    v-for="(item, index) in moduleList" :key="index">{{ item.name }}</div>
+                </div>
+              </div>
+              <div class="w-3/4 p-4">
+                <div class="text-[16px] font-bold mb-8">Functions</div>
+                <NoData v-if="functionsList.length === 0"></NoData>
+                <a-collapse class=" dark:!border-[#434343] dark:!shadow-none" v-model:activeKey="collapsectiveKey" v-for="(items, keys) in functionsList" :key="keys">
+                  <a-collapse-panel :key="String(keys + 1)" :header="items.title" :showArrow="false">
+                    <template #extra>
+                      <div>
+                        <img class="up-tran w-[12px] hidden dark:inline-block" src="@/assets/icons/up-b.svg" />
+                        <img class="up-tran w-[12px] dark:hidden" src="@/assets/icons/up.svg" />
+                      </div>
+                    </template>
+                    <a-table class="my-4" :columns="tableColumns" :dataSource="items.paramList" :pagination="false"></a-table>
+                  </a-collapse-panel>
+                </a-collapse>
+              </div>
+            </div>
+          </a-tab-pane>
+          <a-tab-pane key="1" tab="Functions"  v-if="frameType !== '5'">
             <div class="flex">
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
                 <div class="flex items-center ">
@@ -124,7 +151,26 @@
             </div>
           </a-tab-pane>
           <a-tab-pane key="3" tab="Sources">
-            <div class="p-4">
+            <div class="p-4" v-if="frameType === '5'">
+              <NoData v-if="sourceList.length === 0"></NoData>
+              <a-collapse class=" dark:!border-[#434343] dark:!shadow-none" v-model:activeKey="sourceActiveKey" v-for="(items, keys) in sourceList" :key="keys">
+                <a-collapse-panel :key="String(keys + 1)" :header="items.title" :showArrow="false">
+                  <template #extra>
+                    <div>
+                      <img class="up-tran w-[12px] hidden dark:inline-block" src="@/assets/icons/up-b.svg" />
+                      <img class="up-tran w-[12px] dark:hidden" src="@/assets/icons/up.svg" />
+                    </div>
+                  </template>
+                  <div class="text-right">
+                    <img @click="copyInfo(items.content)" src="@/assets/icons/copy.svg" class="h-[19px] cursor-pointer" />
+                  </div>
+                  <div class="mt-4" :style="items.editHeight">
+                    <CodeEditor :readOnly="true" :value="items.content"></CodeEditor>
+                  </div>
+                </a-collapse-panel>
+              </a-collapse>
+            </div>
+            <div class="p-4" v-else>
               <div class="flex justify-between">
                 <div>{{ setText(templatesDetail.codeSources) }}</div>
                 <img @click="copyInfo(sourceContent)" src="@/assets/icons/copy.svg" class="h-[19px] cursor-pointer" />
@@ -144,6 +190,7 @@
 import { computed, onMounted, ref, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
+import NoData from "@/components/NoData.vue"
 import { apiAddProjects, apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesDetail, apiFrontendTemplatesDetail } from "@/apis/templates";
 import { message } from 'ant-design-vue';
@@ -191,7 +238,13 @@ const slectedIndex = ref(0);
 //   { checked: false, label: 'Gasless' },
 // ]);
 const checkboxList = ref([])
-const frameType:any = JSON.parse(localStorage.getItem('createProjectTemp'))?.frameType
+const frameType: any = JSON.parse(localStorage.getItem('createProjectTemp') || '')?.frameType;
+const collapsectiveKey = ref([])
+const sourceActiveKey = ref([])
+const moduleList = ref<any>([]);
+const functionsList = ref<any>([]);
+const moduleName = ref('');
+const sourceList = ref<any>([]);
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -234,6 +287,98 @@ const getTemplatesDetail = async () => {
 
 };
 
+const setFunctionsList = (element: any) => {
+  functionsList.value = element.functions;
+  moduleName.value = element.name;
+  collapsectiveKey.value.length = 0;
+}
+
+const setModulesList = (exposedFunctions: any) => {
+  functionsList.value.length = 0;
+  let methods = Object.keys(exposedFunctions);
+  methods.forEach((method: any, index: number) => {
+    let functions = Object.keys(exposedFunctions[method]);
+    let fucList: any[] = [];
+    for (let func of functions) {
+      if (exposedFunctions[method][func].isEntry === true) {
+
+        let typeParameters = exposedFunctions[method][func].typeParameters;
+        let parameters: any[] = exposedFunctions[method][func].parameters;
+        
+        let list: any[] = [];
+        let typeParamList: any = [];
+        typeParameters.forEach((element: any, index: number) => {
+          let typeParam = "T" + index ;
+          element.abilities.forEach((ele: any, ind: number) => {
+            if (ind === 0) typeParam += ": ";
+            if (ind > 0) typeParam += "+";
+            typeParam += ele;
+          })
+          list.push({
+            "name": 'Type' + index,
+            "type": typeParam
+          })
+          typeParamList[index] = typeParam;
+        });
+        parameters.forEach((element, index) => {
+          let param = "";
+          if (element.Struct) {
+            let ele = element.Struct;
+            param = setParamList(ele, typeParamList);
+          }
+          else if (element.MutableReference) {
+            let ele = element.MutableReference.Struct;
+            param = setParamList(ele, typeParamList);
+          } else if(element.Vector) {
+            param = `Vector<${element.Vector}>`;
+          } else if(element.TypeParameter !== undefined) {
+            param = typeParamList[element.TypeParameter];
+          } else {
+            param = element;
+          }
+          if (param !== '') {
+            list.push({
+              "name": 'Arg' + index,
+              "type": param
+            })
+          }
+        });
+        fucList.push({
+          "paramList": list,
+          "title": func
+        })
+      }
+    }
+    if (index === 0) {
+      functionsList.value = fucList;
+      moduleName.value = method;
+    }
+    moduleList.value.push({
+      "name": method,
+      "functions": fucList
+    });
+  });
+}
+
+const setParamList = (element: any, typeParamList: any) => {
+  let param = "";
+  if (element.module != 'tx_context') {
+    param = element.address + "::" + element.module + "::" + element.name;
+    if (element.typeArguments.length > 0) {
+      param += "<";
+      element.typeArguments.forEach((ele: any) => {
+        if (ele.Struct) {
+          param += ele.Struct.address + "::" + ele.Struct.module + "::" + ele.Struct.name;
+        } else {
+          param += typeParamList[ele.TypeParameter]
+        }
+      });
+      param += ">";
+    }
+  }
+  return param;
+}
+
 const getContractTemplatesDetail = async () => {
   try {
     const { data } = await apiTemplatesDetail(templateId.value.toString());
@@ -242,7 +387,11 @@ const getContractTemplatesDetail = async () => {
     checkboxList.value.push(...extensionsList.value)
 
     const ainInfoData = ref<any>([]);
-    if(frameType==2){
+    if (frameType === '5') { //sui
+      let abiInfoData = JSON.parse(data.abiInfo)
+      setModulesList(abiInfoData.result.data.content.disassembled);
+    }
+    else if(frameType==2){
       // aptos 单独走一套abi逻辑
       const aptosSendList:any = YAML.parse(data.abiInfo)?.exposed_functions.map((item:any)=>{
         return {
@@ -276,13 +425,32 @@ const getContractTemplatesDetail = async () => {
         ainInfoData.value = YAML.parse(data.abiInfo);
       }
     }
-    setAbiInfoData(ainInfoData.value);
+    if (frameType !== '5') {
+      setAbiInfoData(ainInfoData.value);
+    }
     axios
       .get(data.codeSources)
       .then(res => {
         if (res.data) {
-          sourceContent.value = res.data;
-          setCodeHeight(sourceContent.value);
+          if (frameType === '5') {
+            res.data.forEach((ele: any) => {
+              axios
+                .get(ele.download_url)
+                .then(res => {
+                  if (res.data) {
+                    setCodeHeight(res.data);
+                    sourceList.value.push({
+                      title: ele.name,
+                      content: res.data,
+                      editHeight: editHeight.value
+                    });
+                  }
+                });
+            });
+          } else {
+            sourceContent.value = res.data;
+            setCodeHeight(sourceContent.value);
+          }
         }
       });
   } catch (error: any) {
@@ -338,7 +506,7 @@ const setAbiInfoData = (abiInfoData: any) => {
 }
 
 const setCodeHeight = (content: string) => {
-  let codeIndex = content.split('\n').length;
+  let codeIndex = content.split('\n').length; 
   editHeight.value = 'height: ' + codeIndex * 22 + 'px';
 }
 
@@ -415,6 +583,7 @@ const createProject = async () => {
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,
       templateUrl: templatesDetail.value.repositoryUrl,
+      labelDisplay: templatesDetail.value.labelDisplay,
     }
     if (projectType.value == '2') {
       params.frameType = templatesDetail.value.templateType - 0;
@@ -538,6 +707,31 @@ ul {
 pre {
   word-wrap: break-word;
   white-space: pre-wrap;
+}
+
+.up-tran {
+  transform: rotate(90deg);
+  transition: all .3s, visibility 0s;
+}
+
+:deep(.ant-collapse-item-active .up-tran) {
+  transform: rotate(180deg);
+}
+:deep(.ant-collapse-item-active){
+  border: 1px solid #E2B578;
+  border-radius: 8px !important;
+}
+:deep(.ant-collapse-item:last-child>.ant-collapse-content){
+  border-radius: 0 0 8px 8px !important;
+}
+:deep(.ant-collapse){
+  box-shadow: 6px 6px 15px 0px rgba(242,238,234,0.1);
+  border-radius: 8px;
+  border: 1px solid #EBEBEB;
+  margin-bottom: 30px;
+}
+:deep(.ant-collapse>.ant-collapse-item>.ant-collapse-header){
+  font-weight: bold;
 }
 </style>
 

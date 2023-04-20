@@ -173,6 +173,9 @@ const evmDeployFunction = () => {
           }).finally(() => {
             isSend.value = false;
           })
+        }).catch((err:any)=>{
+          message.error(err.message)
+          isSend.value = false;
         })
       } else {
         contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
@@ -181,6 +184,9 @@ const evmDeployFunction = () => {
           } else {
             hashValue.value = tx;
           }
+          isSend.value = false;
+        }).catch((e:any)=>{
+          console.log('eeeeeeeeee',e)
           isSend.value = false;
         })
       }

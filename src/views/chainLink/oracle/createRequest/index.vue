@@ -1,20 +1,22 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
+    <BreadCrumb currentName="Create Request" :isClick="loading" class="mb-6"/>
+
     <div class="mb-4 text-2xl font-bold">Create Request</div>
 
     <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB]">
       <div class="flex justify-between mb-4">
         <span class="items-center self-center font-bold">You can choose the following templates to quickly create a Request</span>
-        <a-button type="link">View All</a-button>
+        <a-button v-if="false" type="link">View All</a-button>
       </div>
-      
+  
       <div class="relative template-scrollbar overflow-x-auto w-full h-[330px]">
         <div class="absolute top-0 left-0 flex gap-4">
           <div v-for=" (item,index) in requestTemplateInfo " :key="index" class="flex flex-col shrink-0 grow-0 basis-[400px] h-[300px] template-container">
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
-              <span>Submitted by: {{ item.author }}</span>
-              <div class="mt-2 template-description">{{ item.description }}</div>
+              <span class="sub">Submitted by: {{ item.author }}</span>
+              <div class="item">{{ item.description }}</div>
             </div>
             <div class="mt-2">
               <a-button @click="handleUseNow(item.id)">Use Now</a-button>
@@ -34,7 +36,7 @@
         <div class="leading-[60px] ml-6 text-base font-bold">Pipelinefile Preview</div>
       </div>
       <div :style="editHeight">
-        <CodeEditor :value="pipelinefilePreview" class="request-codeeditor"></CodeEditor>
+        <CodeEditor v-model:value="pipelinefilePreview" class="request-codeeditor"></CodeEditor>
       </div>
       <div class="mt-4 text-center">
         <a-button class="inline-block mr-4 back-btn" @click="router.push('/chainlink/oracle')">Back</a-button>
@@ -48,14 +50,18 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
+  import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
+  import { message } from 'ant-design-vue';
 
   const router = useRouter()
+  // const breadcrumbUrl = router.currentRoute.value.path
   const theme = useThemeStore();
 
   const requestName = ref('')
   const alertInfo = ref('')
+  const loading = ref(false);
 
   const requestTemplateInfo = ref<{
     id: number,
@@ -77,21 +83,18 @@
 
   // 获取pipelinefile preview展示的代码
   const pipelinefilePreview = ref()
+  const paramsCount = ref()
   const handleUseNow = async(id:number) => {
     try {
       const { data } = await apiGetShowRequestTemplateScript(id)
-      pipelinefilePreview.value = data
+      pipelinefilePreview.value = data.script
+      paramsCount.value = data.paramsCount
       setCodeHeight(pipelinefilePreview.value)
       console.log('data:',data)
     } catch(err) {
       console.log('err:',err)
     }
   }
-
-  // 监测pipelinefile preview里的代码变化
-  // watch(()=>pipelinefilePreview.value,()=>{
-  //   console.log('pipelinefilePreview.value:',pipelinefilePreview.value)
-  // })
 
   // 设置代码展示页面的高度
   const editHeight = ref("height: 220px");
@@ -103,7 +106,7 @@
   // 创建模板
   const handleCreateTemplate = ()=>{
     if(requestName.value == '') {
-      alertInfo.value = "this is can't empty"
+      alertInfo.value = "Request Name is required"
     } else {
       alertInfo.value = ""
       createTemplate()
@@ -112,13 +115,16 @@
   const createTemplate = async()=>{
     const params = {
       name: requestName.value,
-      script: pipelinefilePreview.value
+      script: pipelinefilePreview.value,
+      paramsCount: paramsCount.value
     }
 
     try {
       const { data } = await apiPostCreateRequest(params)
+      router.push('/chainlink/oracle')
       console.log('createTemplate-data:',data)
     } catch(err:any) {
+      message.error(err.message)
       console.log('createTemplate-err:',err)
     }
   }
@@ -161,7 +167,16 @@
     }
   }
   .back-btn {
-    background-color: white;
+    background-color: #1D1C1A;
     color: #E2B578;
   }
+  .item{
+    margin-top: 10px;
+    color: #AAAAAA	;
+    font-weight: 300;
+  }
+  .sub{
+    color: #DDDDDD;
+  }
+
 </style>

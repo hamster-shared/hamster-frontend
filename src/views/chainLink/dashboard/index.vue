@@ -5,7 +5,7 @@
       <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue">
         <a-menu-item v-for="item in menuRouterList" :key="item.name" :disabled="item.meta.isTag">
           <router-link
-            :to="(item.name === 'RPC' || item.name === 'Oracle') ? '/chainlink/default/' + item.name : item.path">
+            :to="((item.name === 'RPC' && !isRpcDefault) || (item.name === 'Oracle' && !isOracleDefault)) ? '/chainlink/default/' + item.name : item.path">
             <div>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
               <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
@@ -21,13 +21,16 @@
   </div>
 </template>
 <script lang="ts" setup name="Dashboard">
-import { ref, onBeforeMount, watch } from "vue";
+import { ref, onBeforeMount, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
+import { apiGetIfOpenService } from '@/apis/middleWare'
 const theme = useThemeStore();
 const router = useRouter();
-const menuRouterList = ref([]);
-const selectedKeys = ref(['']);
+const menuRouterList = ref<any>([]);
+const selectedKeys = ref<any>(['']);
+const isRpcDefault = ref(false)
+const isOracleDefault = ref(false)
 
 // console.log('router', router.options.routes)
 onBeforeMount(() => {
@@ -39,6 +42,13 @@ onBeforeMount(() => {
     }
   })
   // console.log(dashboard.children, 'dashboard')
+})
+
+onMounted(async()=>{
+  const rpcRes = await apiGetIfOpenService('rpc');
+  isRpcDefault.value = rpcRes.data
+  const oracleRes = await apiGetIfOpenService('oracle')
+  isOracleDefault.value = oracleRes.data
 })
 
 watch(() => router.currentRoute.value,
@@ -55,7 +65,7 @@ watch(() => router.currentRoute.value,
 </script>
 <style scoped lang="less">
 .dashboard-index {
-  min-height: calc(100vh - 114px);
+  min-height: calc(100% - 114px);
 
   .dashboard-index-right {
     // width: 100%;

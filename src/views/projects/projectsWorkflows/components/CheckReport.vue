@@ -43,7 +43,7 @@
             v-if="item.checkTool === 'Solhint' && val.message" :dataSource="val.message" :columns="SolhintColumns"
             :pagination="false" :showHeader="false">
           </a-table>-->
-
+          
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="table-css"
             v-if="item.checkTool === 'sol-profiler' && val.message" :dataSource="val.message" :columns="columns"
             :pagination="false">

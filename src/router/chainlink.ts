@@ -22,48 +22,6 @@ const chainlinkRoute = [
           },
         },
         {
-          path: "/chainlink/oracle",
-          name: "Oracle",
-          redirect: "/chainlink/oracle",
-          meta:{
-            isShow: true,
-          },
-          children:[
-              {
-                  path: "/chainlink/oracle",
-                  name: "Oracle",
-                  component:() => import('@/views/chainLink/oracle/index.vue'),
-                  meta:{
-                    sidebarMap: ['Oracle'],
-                  }
-              },
-              {
-                  path: "/chainlink/oracle/subList",
-                  name: "subList",
-                  component:() => import('@/views/chainLink/oracle/mySubscription/subList.vue'),
-                  meta:{
-                    sidebarMap: ['Oracle'],
-                  }
-              },
-              {
-                  path: "/chainlink/oracle/subList/subListDetail",
-                  name: "subListDetail",
-                  component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
-                  meta:{
-                    sidebarMap: ['Oracle'],
-                  }
-              },
-              {
-                path: "/chainlink/oracle/createRequest",
-                name: "CreateRequest",
-                component:() => import('@/views/chainLink/oracle/createRequest/index.vue'),
-                meta:{
-                  sidebarMap: ['Oracle'],
-                }
-              },
-          ]
-        },
-        {
           path: "/chainlink/RPC",
           name: "RPC",
           redirect: "/chainlink/RPC",
@@ -80,13 +38,55 @@ const chainlinkRoute = [
               }
             },
             {
-              path: "/chainlink/RPC/rpcDetail/:chain",
+              path: "/chainlink/RPC/rpc-detail/:chain",
               name: "rpcDetail",
               component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
               meta:{
                 sidebarMap: ['RPC'],
               }
             }
+          ]
+        },
+        {
+          path: "/chainlink/oracle",
+          name: "Oracle",
+          redirect: "/chainlink/oracle",
+          meta:{
+            isShow: true,
+          },
+          children:[
+              {
+                  path: "/chainlink/oracle",
+                  name: "Oracle",
+                  component:() => import('@/views/chainLink/oracle/index.vue'),
+                  meta:{
+                    sidebarMap: ['Oracle'],
+                  }
+              },
+              {
+                  path: "/chainlink/oracle/sublist",
+                  name: "subList",
+                  component:() => import('@/views/chainLink/oracle/mySubscription/subList.vue'),
+                  meta:{
+                    sidebarMap: ['Oracle'],
+                  }
+              },
+              {
+                  path: "/chainlink/oracle/subList/sublist-detail",
+                  name: "subListDetail",
+                  component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
+                  meta:{
+                    sidebarMap: ['Oracle'],
+                  }
+              },
+              {
+                path: "/chainlink/oracle/create-request",
+                name: "CreateRequest",
+                component:() => import('@/views/chainLink/oracle/createRequest/index.vue'),
+                meta:{
+                  sidebarMap: ['Oracle'],
+                }
+              },
           ]
         },
         {

@@ -28,7 +28,7 @@
           </a-form-item>
           <a-form-item class="new-label" label="Code Repositiory">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
-              <a-radio :style="radioStyle" value="1">Creat a new repository by template
+              <a-radio :style="radioStyle" value="1">Create a new repository by template
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
@@ -50,6 +50,9 @@
               </a-radio>
               <a-radio :style="radioStyle" value="4">StarkWare
                 <div class="radio-sub">Build application based on Starkware and Cairo language</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="5">Sui
+                <div class="radio-sub">Build application based on Sui  and Move language</div>
               </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
@@ -81,6 +84,7 @@
             most deployed FrontEnd.</div>
           <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4 template-height">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
+              :class="{'h-1/2':showList.length < 3}"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
                 <div class="relative flex-1">
@@ -90,6 +94,8 @@
                   <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]" />
                   <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]" />
                 </div>
+                <!-- 按钮 -->
+                <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
                 <div class="flex">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
@@ -323,5 +329,16 @@ onMounted(() => {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+.btn{
+  width: 70px;
+  height: 20px;
+  background: blue;
+  line-height: 20px;
+  border: none;
+  border-radius: 15px 15px 15px 15px;
+  color: #fff;
+  bottom: 50px;
+  left: -3px;
 }
 </style>

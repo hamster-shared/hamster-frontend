@@ -24,12 +24,11 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
-    <AiAnalysis v-show="workflowsDetailsData.frameType === 1 && openAiInfo.checkTool" :checkTool="openAiInfo.checkTool"
-      :reportFile="openAiInfo.reportFile" />
+    <AiAnalysis v-if="isShowAiAnalysis" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
 import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetDeployInfo } from "@/apis/workFlows";
@@ -82,6 +81,10 @@ const workflowsDetailsData = reactive({
   deployType: 0,
   checkStatus: 0,
 });
+
+const isShowAiAnalysis = computed(() => {
+  return [5, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
+})
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
@@ -142,7 +145,7 @@ const getCheckReport = async () => {
       openAiInfo.value = item
     }
   })
-
+  console.log("openAiInfo.value:",openAiInfo.value);
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);

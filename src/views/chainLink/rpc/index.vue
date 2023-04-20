@@ -1,12 +1,11 @@
 <template>
   <div class="font-bold text-[24px]">RPC</div>
-  <div class="text-[16px] dark:text-[#E0DBD2] text-[#73706E] mb-[16px]">Something like that…</div>
   <div class="">
     <div>
-      <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
-        <a-tab-pane :key="item" :tab="item" v-for="item in networkList"></a-tab-pane>
+      <a-tabs v-model:activeKey="tabNetwork" @change="changeNetwork">
+        <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>
+        <a-tab-pane key="Testnet" tab="Testnet"></a-tab-pane>
       </a-tabs>
-
     </div>
     <div class="flex justify-between mt-[16px]">
       <div class="font-bold text-[20px]">Overiew</div>
@@ -15,7 +14,7 @@
       </a-select> -->
     </div>
     <!-- 图表 -->
-    <div class="w-full h-[500px]">
+    <div class="w-full h-[400px]">
       <div class="myChart" ref="myChartRef" id="myEchart"></div>
     </div>
 
@@ -23,13 +22,16 @@
   <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[32px]">
     <div class="font-bold text-[20px]">My Network</div>
     <div class="text-right">
-      <a-button>Docs</a-button>
+      <a-button v-if="false" @click="toDocs">Docs</a-button>
     </div>
     <div class="mt-[24px]">
       <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination">
         <template #bodyCell="{ column, record, index }">
+          <template v-if="column.dataIndex === 'chainNetwork'">
+            <label>{{record.chain}} {{record.network}}</label>
+          </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="text-[#FF4A4A] ml-2 cursor-pointer" @click="toDetails(record)">Details</label>
+            <label class="text-[#F5B50D] ml-2 cursor-pointer" @click="toDetails(record)">View</label>
           </template>
         </template>
       </a-table>
@@ -42,6 +44,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
 import * as echarts from 'echarts';
 import { apiGetOverview, apiGetMynetwork } from "@/apis/rpcs";
+import { apiGetRpcEchartParams } from '@/apis/chainlink'
 import { useThemeStore } from "@/stores/useTheme";
 import { formatDateToLocale } from '@/utils/dateUtil';
 const router = useRouter();
@@ -50,10 +53,7 @@ const tiemValue = ref(2);
 const rpcData = ref([]);
 const dataSource = ref([]);
 const networkList = ref([]);
-const tabNetwork = ref('');
-const seriesData = ref([]);
-const legendData = ref([]);
-const xAxisData = ref([]);
+const tabNetwork = ref('Mainnet');
 const myChartRef = ref()
 const myChart = ref();
 
@@ -71,7 +71,7 @@ const columns = [
   },
   {
     title: 'Network',
-    dataIndex: 'network',
+    dataIndex: 'chainNetwork',
     align: "center",
     key: 'network',
   },
@@ -107,66 +107,42 @@ const handleChange = (val: string) => {
 
 const toDetails = (val: any) => {
   // console.log(val, '点击详情操作')
-  router.push(`/chainlink/RPC/rpcDetail/${val.chain}`);
+  router.push(`/chainlink/RPC/rpc-detail/${val.chain}`);
 }
 
-const initRpcOverview = async () => {
+// 切换网络
+const changeNetwork = ()=>{
+  setEchartData()
+}
+
+// 获取echart的数据
+const legendData = ref<[] | null>()
+const xAxisData = ref([])
+const seriesData = ref<[] | null>()
+const setEchartData = async() => {
+  legendData.value = []
+  xAxisData.value = []
+  seriesData.value = []
   try {
-    const { data } = await apiGetOverview();
-    rpcData.value = data;
-
-    data.map((item: any) => {
-      if (item.network === 'Mainnet') {
-        networkList.value.push('Mainnet');
-        mainnetData.value.push(item);
-
-      } else {
-        networkList.value.push('Testnet');
-        testnetData.value.push(item);
-
-      }
+    const { data } = await apiGetRpcEchartParams(tabNetwork.value)
+    legendData.value = data.legendData
+    data.xaxisData.map((item:any)=>{
+      xAxisData.value.push(formatDateToLocale(item).format("YYYY/MM/DD"))
     })
+    const seriesDataInfo =  data.seriesData?.map((item:any) => {
+      item['type'] = 'line'
+      item['stack'] = 'Total'
 
-    // console.log(mainnetData.value, testnetData.value, 'uuu')
-
-    networkList.value = Array.from(new Set(networkList.value));
-    tabNetwork.value = networkList.value[0];
-    if (mainnetData.value.length > 0) {
-      setEchartData(mainnetData.value);
-    } else {
-      setEchartData(testnetData.value);
-    }
-
-  } catch (err: any) {
-    console.info(err)
+      return item
+    });
+    seriesData.value = seriesDataInfo
+    console.log('getOracleChart-data:', data)
+  } catch(err:any){
+    console.log('getOracleChart-err:', err)
   }
-}
-
-
-const setEchartData = (data: any) => {
-  seriesData.value = [];
-  legendData.value = [];
-  xAxisData.value = [];
-  data[0].dayly_requests_7days.map((it: any) => {
-    xAxisData.value.push(formatDateToLocale(it.start_time).format("YYYY/MM/DD"))
-  })
-
-  data.map((item: any) => {
-    legendData.value.push(item.chain);
-    let data = {
-      name: item.chain,
-      type: 'line',
-      stack: 'Total',
-      data: item.dayly_requests_7days.map((val: any) => { return val.request })
-    }
-    seriesData.value.push(data)
-  })
 
   myChart.value && myChart.value.dispose()
   initChart(myChartRef.value, theme.themeValue);
-
-  // console.log(legendData.value, 'legendData.value')
-  // console.log(seriesData.value, 'seriesData.value')
 }
 
 
@@ -182,7 +158,7 @@ const getMynetworkData = async () => {
 
 const currentPagination = reactive({
   // 分页配置器
-  pageSize: 5, // 一页的数据限制
+  pageSize: 10, // 一页的数据限制
   current: 1, // 当前页
   total: 0, // 总数
   size: 'small',
@@ -204,6 +180,9 @@ const currentPagination = reactive({
   },
 });
 
+const toDocs = () => {
+  window.open('https://hamsternet.io/docs/')
+}
 
 const initChart = (chartElement: HTMLElement, themeValue: string) => {
   // console.log(themeValue, 'themeValue')
@@ -237,7 +216,7 @@ const initChart = (chartElement: HTMLElement, themeValue: string) => {
 }
 
 onMounted(async () => {
-  await initRpcOverview();
+  await setEchartData();
   initChart(myChartRef.value, theme.themeValue);
   const handleWindowResize = () => myChart.value.resize();
   window.addEventListener("resize", handleWindowResize)

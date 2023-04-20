@@ -1,11 +1,13 @@
 <template>
+    <BreadCrumb currentName="My Subscription" :isClick="breadCrumbLoading" class="mb-6"/>
+
     <div class="text-[24px] font-bold">My Subscription</div>
     <div class="flex justify-between items-center mt-[30px]">
         <div>
             <span class="mr-[10px]">Network</span>
             <a-select class="w-[200px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
             :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
-            <a-button class="ml-2">Search</a-button>
+            <a-button class="ml-2" @click="getSublist">Search</a-button>
         </div>
         <div>
             <a-button @click="createSubPop">Created</a-button>
@@ -13,32 +15,37 @@
             <a-button @click="addFundsPop">Add Funds</a-button>
         </div>
     </div>
-    <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" class="mb-[64px] mt-[20px]" :pagination="pagination">
-        <template #bodyCell="{ record, column }">
-        <template v-if="column.key === 'action'">
-            <a v-if="record.action" @click.stop="goSubDetail(record)">View</a>
-            <span v-else>-</span>
+    <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
+        <template #operation="{ record }">
+            <a @click="goSubDetail(record)" class="mr-16">View</a>
         </template>
+        <template #id="{ record }">
+            <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
+            <span v-else>
+                <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                <svg-icon v-if="record.status?.toLowerCase()=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                <span class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+            </span>
         </template>
     </a-table>
-    <a-button @click="showTestSub=true">testSub</a-button>
     <createSub v-if="showCreateSub" :showCreateSub="showCreateSub" @getCreateSubInfo="getCreateSubInfo" @closeCreateSub="closeCreateSub"/>
     <addFunds v-if="showAddFund" :showAddFund="showAddFund" @getAddFundInfo="getAddFundInfo" @closeAddFund="closeAddFund"/>
     <addConsumers v-if="showAddConsumers" :showAddConsumers="showAddConsumers" @getAddConsumersInfo="getAddConsumersInfo" @closeAddConsumers="closeAddConsumers"/>
-    <testSub v-if="showTestSub" :showTestSub="showTestSub" @getTestSubInfo="getTestSubInfo" @closeTestSub="closeTestSub"/>
 </template>
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
 import { ref,reactive,onMounted } from 'vue'
+import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
 import createSub from './components/createSub.vue'
 import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
-import testSub from './components/testSub.vue'
 import { apiSublist } from '@/apis/chainlink'
+import dayjs from "dayjs";
 const router = useRouter();
-const netOptions = ref<any>(['All','Ethereum Mainnet','Ethereum Testnet','BSC Mainnet','BSC Testnet'])
+const netOptions = ref<any>(['All','Hamster Moonbeam Testnet','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const netName = ref('All')
 const loading = ref(false)
+const breadCrumbLoading = ref(false)
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
@@ -51,29 +58,35 @@ const subListColumns:any = [
         title: 'ID',
         dataIndex: 'id',
         key:'id',
-        align:'center'
+        align:'center',
+        slots: { customRender: 'id' },
     },
     {
         title: 'Name',
         dataIndex: 'name',
-        align:'center'
+        align:'left'
     },
     {
         title: 'Created',
-        dataIndex: 'time',
-        align:'center'
+        dataIndex: 'created',
+        align:'left',
+        customRender: ({ text }:any) => {
+            return dayjs(text).format('YYYY-MM-DD HH:mm:ss')
+          },
     },
     {
         title: 'Network',
         dataIndex: 'network',
-        align:'center'
+        align:'left'
     },
     {
         title: 'Consumers',
         dataIndex: 'consumers',
         align:'center',
         customRender: ({ text }:any) => {
-            if (!text) {
+            if (typeof text == 'number') {
+                return text
+            }else{
                 return '-'
             }
         },
@@ -83,59 +96,20 @@ const subListColumns:any = [
         dataIndex: 'balance',
         align:'center',
         customRender: ({ text }:any) => {
-            if (!text) {
+            if (typeof text == 'number') {
+                return text
+            }else{
                 return '-'
             }
         },
     },
     {
         title: 'Action',
-        key: 'action',
-        align:'center'
-    },
+        dataIndex: 'operation',
+        slots: { customRender: 'operation' },
+    }
 ]
-const subListData:any = [
-    {
-        key: '1',
-        id: '1',
-        name:'test',
-        time:'2023-03-28 18:00:00',
-        network:'Test',
-        // consumers:'Jack',
-        // balance:'12.2345 link',
-        action:'View'
-    },
-    {
-        key: '2',
-        id: '2',
-        name:'test',
-        time:'2023-03-28 18:00:00',
-        network:'Test',
-        // consumers:'Jack',
-        // balance:'12.2345 link',
-        action:'View'
-    },
-    {
-        key: '3',
-        id: '3',
-        name:'test',
-        time:'2023-03-28 18:00:00',
-        network:'Test',
-        consumers:'Jack',
-        balance:'12.2345 link',
-        action:'View'
-    },
-    {
-        key: '4',
-        id: '4',
-        name:'test',
-        time:'2023-03-28 18:00:00',
-        network:'Test',
-        consumers:'Jack',
-        balance:'12.2345 link',
-        action:'View'
-    },
-]
+const subListData = ref<any>([])
 const pagination = reactive({
     // 分页配置器
     pageSize: 10, // 一页的数据限制
@@ -161,8 +135,24 @@ const pagination = reactive({
     // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
 // 获取sub表单数据
-const getSublist = ()=>{
-
+const getSublist = async()=>{
+    loading.value = true
+    const net = netName.value.split(' ')
+    // console.log(11111,net.slice(1,net.length).join(' '))
+    const params = {
+        page:pagination.current,
+        size:pagination.pageSize,
+        network:netName.value=='All' ? '':net.slice(1,net.length).join(' '),
+        chain:netName.value=='All' ? '':net.slice(0,1).join(' '),
+    }
+    const res = await apiSublist(params)
+    if(res.code === 200&& res.data?.data?.length){
+        subListData.value = res.data?.data
+        pagination.total = res.data.total
+    }else{
+        subListData.value = []
+    }
+    loading.value = false
 }
 
 // 新增订阅弹框
@@ -224,18 +214,17 @@ const btnChange = ()=>{
 }
 const goSubDetail = (record:any)=>{
     console.log('goSubDetail',record)
-    router.push('/chainlink/oracle/subList/subListDetail')
+    router.push(`/chainlink/oracle/subList/sublist-detail?subId=${record.id}`)
 }
 onMounted(async()=>{
-    const params = {
-        page:1,
-        size:10,
-        // network:''
-    }
-    const res = await apiSublist(params)
-    console.log('res',res)
+    getSublist()
 })
 </script>
 <style scoped less>
+.table{
+    width: 100%;
+    margin-bottom: 64px;
+    margin-top: 20px;
+}
 
 </style>

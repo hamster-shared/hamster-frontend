@@ -6,12 +6,12 @@
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
         <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
-      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
+      <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown>
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer"
-          @click.stop>
-          MiddleWare
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
+          @click.stop id="middle" style="height:64px;line-height:64px">
+          Middleware
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
           <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
@@ -29,8 +29,8 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Docs</div>
+      <div @click="goDoc" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -55,8 +55,8 @@
           </div>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="visibleDisconnect = true">
+              <a-menu-item @click="visibleDisconnect = true">
+                <a href="javascript:;">
                   <img src="@/assets/icons/disconnect.svg" class="h-[24px]" />
                   Disconnect
                 </a>
@@ -148,7 +148,7 @@ const goDoc = () => {
 }
 
 const goMiwaspace = () => {
-  router.push("/chainlink/miwaspace");
+  router.push("/chainlink/miwaspace?key=1");
   isProject.value = false;
   // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
   // // 如果 local storage 里没有保存的钱包，直接返回
@@ -206,19 +206,23 @@ onMounted(() => {
 });
 
 watch(
-  () => walletAddress.walletAddress,
-  (value, newV) => {
-    if (value) {
+  () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
+  (oldValue, newV) => {
+    if (oldValue) {
       // console.log(walletAccount.value, 'kkkk')
-      isConnectedWallet.value = true
-      walletAccount.value = walletAddress.walletAddress?.substring(0, 5) + "..." + walletAddress.walletAddress?.substring(walletAddress.walletAddress.length - 4);
+      isConnectedWallet.value = true;
+      walletAccount.value = oldValue?.substring(0, 5) + "..." + oldValue?.substring(oldValue.length - 4);
+    } else {
+      isConnectedWallet.value = false
     }
   }, { deep: true, immediate: true }
 );
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
+  window.localStorage.removeItem("walletAccount");
   visibleDisconnect.value = false;
+  isConnectedWallet.value = false
 }
 const showWallet = () => {
   // visibleWallet.value = true;
@@ -226,14 +230,22 @@ const showWallet = () => {
 }
 const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
-  const account = window.localStorage.getItem("walletAccount");
+  // const account = window.localStorage.getItem("walletAccount");
   // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
 }
 </script>
 
 <style lang="less" scoped>
 @btnColor: #E2B578;
-
+#docs:hover{
+  border-bottom: 3px solid #E2B578;
+}
+#middle:hover{
+  border-bottom: 3px solid #E2B578;
+}
+#pro:hover{
+  border-bottom: 3px solid #E2B578;
+}
 .default-header {
   position: fixed;
   top: 0;

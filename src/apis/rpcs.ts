@@ -2,8 +2,8 @@
 import httpRequest from "@/request";
 
 interface BaseParams {
-  page: string,
-  size: string,
+  page: string | number,
+  size: string | number,
 }
 
 // 获取链列表
