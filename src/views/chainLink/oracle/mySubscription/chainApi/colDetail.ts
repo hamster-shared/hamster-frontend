@@ -21,13 +21,14 @@ export const expenseColumns:any = [
     {
         title: 'Request ID',
         dataIndex: 'requestId',
-        align:'left'
+        align:'left',
+        customRender: renderTableText(20)
     },
     {
         title: 'Consumers',
         dataIndex: 'consumerAddress',
         align:'left',
-        customRender: renderTableText(30)
+        customRender: renderTableText(20)
     },
     {
         title: 'Amount',

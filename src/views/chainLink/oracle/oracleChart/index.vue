@@ -3,7 +3,7 @@
     <div>
       <a-tabs v-model:activeKey="tabNetwork" @change="changeNetwork">
         <a-tab-pane key="Mainnet" tab="Mainnet" disabled></a-tab-pane>
-        <a-tab-pane key="testnet-mumbai" tab="Testnet"></a-tab-pane>
+        <a-tab-pane key="testnet" tab="Testnet"></a-tab-pane>
       </a-tabs>
     </div>
 

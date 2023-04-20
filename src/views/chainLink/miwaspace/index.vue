@@ -56,6 +56,18 @@
       case '2':
         activeKey.value = 'Oracle';
         break;
+      case '3':
+        activeKey.value = 'Storage';
+      break;
+      case '4':
+        activeKey.value = 'Graph';
+        break;
+      case '5':
+        activeKey.value = 'ZKP';
+        break;
+      case '6':
+        activeKey.value = 'Others';
+        break;
       default: break;
     }
   }

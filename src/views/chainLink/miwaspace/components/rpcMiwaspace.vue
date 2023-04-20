@@ -17,7 +17,7 @@
           <span class="ml-2 text-base font-bold align-middle">{{item.fullname}}</span>
         </div>
         <div class="flex justify-between text-sm">
-          <div class="flex flex-col">
+          <div class="flex flex-col" v-if="parseInt(item.chainID, 16)">
             <span class="inline-block mb-2.5 mt-5">Chain ID</span>
             <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
           </div>

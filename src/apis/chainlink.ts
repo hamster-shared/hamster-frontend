@@ -233,3 +233,20 @@ export function getCustomerBalance() {
         method: "get",
     });
 }
+
+// 创建chainlink request
+export function apiPostUpdateRequest(id:string,params: createRequestParams) {
+    return httpRequest({
+        url: `/api/chainlink/request/${id}`,
+        method: "put",
+        data: params
+    })
+}
+
+// 根据id去查询请求详情
+export function apiDetailRequest(id:string) {
+    return httpRequest({
+        url: `/api/chainlink/request/${id}`,
+        method: "get",
+    })
+}

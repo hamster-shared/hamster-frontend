@@ -85,6 +85,12 @@ const handleCreateSub = async()=>{
         console.log('tx111111',tx)
         // 创建订阅存入后端接口   
         const res = await apiCreateSub(params)
+        if(res.code===200){
+            message.success(res.message)
+        }else{
+            message.error('Failed')
+        }
+        emit('closeCreateSub',false)
         console.log('创建订阅存入后端接口',res)
         id.value = res.data
         return tx.wait()
@@ -107,15 +113,13 @@ const handleCreateSub = async()=>{
       if(res.code===200){
             message.success(res.message)
         }else{
-            message.error(res.data)
+            message.error('Failed '+res.data)
         }
-        emit('closeCreateSub',false)
     }, (error:any) => {
       message.error('Failed')
+      emit('closeCreateSub',false)
       console.log('error',error)
-    //   spinning.value = false;
     });
-    // emit('getCreateSubInfo',formData)
 }
 // 取消订阅
 const cancelCreateSub = ()=>{

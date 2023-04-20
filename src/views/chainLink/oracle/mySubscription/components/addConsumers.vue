@@ -249,6 +249,8 @@ const handleFund = async()=>{
             }else{
                 message.error(res.message)
             }
+            emit('getAddConsumersInfo',formData)
+            emit('closeAddConsumers',false)
             return tx.wait()
         }).then(async(receipt:any) => {
             const params = {
@@ -265,10 +267,9 @@ const handleFund = async()=>{
                 message.error(res.data)
             }
             console.log("addConsumer", receipt);
-            emit('getAddConsumersInfo',formData)
-            emit('closeAddConsumers',false)
         }).catch((err:any)=>{
             message.error('Failed')
+            emit('closeAddConsumers',false)
             console.log('err111111',err)
         })
     }

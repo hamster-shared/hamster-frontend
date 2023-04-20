@@ -44,7 +44,7 @@
         <span class="cursor-pointer mx-[60px] font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==2? '1px solid #E2B578':''}" @click="getDeposit">Deposit</span>
         <span class="cursor-pointer font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==3? '1px solid #E2B578':''}" @click="getConsumers">Consumers</span>
     </div>
-    <div v-if="tab==1" class="flex items-center mt-[20px]">
+    <div v-if="tab==1 && false" class="flex items-center mt-[20px]">
         <span class="mr-[10px]">Request</span>
         <a-input v-model:value="reqName" class="req-input" placeholder="Please input request name" allow-clear autocomplete="off"/>
         <a-button class="mx-[10px]" @click="getExpense">Search</a-button>
