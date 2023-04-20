@@ -11,6 +11,7 @@
           <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
           <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
         </div>
+        
         <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
           <label v-if="projectType === '1'">
@@ -20,6 +21,14 @@
           </label>
           <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[projectsDetail.deployType] }}</label>
         </div>
+         <!-- 在这里 -->
+         <div
+          v-if="projectsDetail.labelDisplay"
+            class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
+            <label>{{ projectsDetail.labelDisplay }}</label>
+          </div>
+        
+
       </div>
       <div>
         <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
@@ -149,6 +158,8 @@ const msgParam = ref({
   projectType: projectType?.value
 });
 const aptosBuildParams = ref([]);
+
+console.log(projectsDetail.value)
 
 const formRules = computed(() => {
 

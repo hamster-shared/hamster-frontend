@@ -2,35 +2,35 @@
   <Breadcrumb :currentName="projectName" :isClick="loading">
     <template v-slot:tags>
       <span
-        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">
+          class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">
         {{ ContractFrameTypeEnum[frameType] }}
       </span>
     </template>
   </Breadcrumb>
   <div
-    class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
+      class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
     <div class="grid grid-cols-5 gap-4">
       <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
-        :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
+              :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
         <div class="text-[16px] font-bold mb-[16px]">Contract</div>
         <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
           <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
             <a-select-option :value="item" v-for="item in versionData" :key="item">{{
-              item
-            }}</a-select-option>
+                item
+              }}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item name="nameData" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
           <a-checkbox-group class="dark:text-white text-[#121211] w-full"
-            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
-            name="checkboxgroup">
+                            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
+                            name="checkboxgroup">
             <div v-for="(val, index) in projectsContractData" :key="val.id"
-              class="w-full flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px] mb-[16px]">
+                 class="w-full flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px] mb-[16px]">
               <a-checkbox :value="val" :disabled="val.hasModalFormData">{{ val.name }}</a-checkbox>
               <img src="@/assets/icons/cname.svg" class="cursor-pointer" v-show="val.hasArgument"
-                @click="selectAargumentName(val, index)" />
+                   @click="selectAargumentName(val, index)" />
             </div>
           </a-checkbox-group>
 
@@ -42,14 +42,14 @@
           <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
           <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select" @change="changeChain">
             <a-select-option :value="item" v-for="item in chainData" :key="item">{{
-              item
-            }}</a-select-option>
+                item
+              }}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
           <a-select v-model:value="formState.network" style="width: 100%" placeholder="Please select"
-            @change="changeNetwork">
+                    @change="changeNetwork">
             <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
               {{ item.name }}
             </a-select-option>
@@ -62,8 +62,8 @@
     </div>
     <div class="text-center mt-[16px]">
       <a-button class="btn" @click="deployClick" :loading="loading">{{
-        loading ? 'Deploying' : 'Deploy'
-      }}</a-button>
+          loading ? 'Deploying' : 'Deploy'
+        }}</a-button>
     </div>
     <!-- <div>
       <a-button @click="deployContract">test deploy</a-button>
@@ -77,7 +77,7 @@
       <img class="" src="@/assets/icons/closeIcon.svg" />
     </template>
     <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="testData" name="userForm"
-      :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
+            :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="(item, _) in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
         <a-input v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
@@ -89,7 +89,7 @@
   </a-modal>
 
   <a-modal v-model:visible="aptosNetworkVisible" title="Operation Warning" :footer="null"
-    class="modalFormRef col-span-3 mb-[16px]" autocomplete="off" noStyle>
+           class="modalFormRef col-span-3 mb-[16px]" autocomplete="off" noStyle>
     <template #closeIcon>
       <img class="" src="@/assets/icons/closeIcon.svg" />
     </template>
@@ -156,7 +156,7 @@ const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
 const chainData = reactive<any>([]);
-const networkData = ref<any>([{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }])
+const networkData = ref<any>([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 const projectsContractData = reactive<any>([]);
 const projectName = ref('');
 const abiInputData = ref([]);
@@ -382,9 +382,9 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
   const factory = new ethers.ContractFactory(
-    abi,
-    bytecode,
-    provider.getSigner()
+      abi,
+      bytecode,
+      provider.getSigner()
   );
   try {
     let value = argsMapData || {}
@@ -491,20 +491,20 @@ const deploy = () => {
       const codeSerializer = new BCS.Serializer()
       const modules = [
         new TxnBuilderTypes.Module(
-          new HexString(
-            // eslint-disable-next-line max-len
-            petraMv.value[0],
-          ).toUint8Array(),
+            new HexString(
+                // eslint-disable-next-line max-len
+                petraMv.value[0],
+            ).toUint8Array(),
         ),
       ]
       BCS.serializeVector(modules, codeSerializer)
       const payload: any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
-        TxnBuilderTypes.EntryFunction.natural(
-          "0x1::code",
-          "publish_package_txn",
-          [],
-          [BCS.bcsSerializeBytes(new HexString(petraBsc.value[0]).toUint8Array()), codeSerializer.getBytes()],
-        ),
+          TxnBuilderTypes.EntryFunction.natural(
+              "0x1::code",
+              "publish_package_txn",
+              [],
+              [BCS.bcsSerializeBytes(new HexString(petraBsc.value[0]).toUint8Array()), codeSerializer.getBytes()],
+          ),
       );
       await aptosWallet.signAndSubmitTransaction(payload).then(async (tx: any) => {
         console.log('send:', tx)
@@ -614,7 +614,7 @@ const setContractFactory = async (nameData: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
-  console.log(selectItem, 'kk')
+  // console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
   if (constructorData && constructorData.inputs.length > 0) {
     selectItem.hasArgument = true;
@@ -675,19 +675,19 @@ const changeChain = (val: string) => {
   formState.network = undefined;
   if (val === 'Ethereum') {
     // ETH
-    networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }, {name: 'Testnet/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
+    networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }, {name: 'Ethereum/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
-    networkData.value = [{ name: 'Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
+    networkData.value = [{ name: 'Polygon/Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Polygon/Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
   } else if (val === 'BNB Smart Chain') {
     // 货币符号  BNB
     networkData.value = [{
-      name: 'Mainnet',
+      name: 'Bsc/Mainnet',
       id: '38',
       url: 'https://bsc.nodereal.io/',
       networkName: 'Mainnet'
     }, {
-      name: 'Testnet',
+      name: 'Bsc/Testnet',
       id: '61',
       url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	',
       networkName: 'Testnet'
@@ -720,7 +720,7 @@ const getProjectsDetail = async () => {
       case 1:
         Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain'])
         // { name: 'Hamster Dev', id: '501' }
-        networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }]
+        networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
       case 2:
         // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系

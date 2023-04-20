@@ -21,6 +21,6 @@ export default {
   success: "Successful",
   ready: "Ready",
   stop: "Stop",
-  workflowStopped: 'Workflow Stopped',
+  workflowStopped: 'The operation has completed, can not be stopped.',
   copySuccess: "copy success",
 };

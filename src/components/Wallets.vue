@@ -5,12 +5,13 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import { useOnboard } from '@web3-onboard/vue'
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import walletTitle from '@/assets/icons/logo-white.svg'
+import { useContractApi } from '@/stores/chainlink';
 
 const walletAddress = useWalletAddress()
 
 const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
 const emit = defineEmits(["setWalletBtn"]);
-
+const contractApi = useContractApi()
 const injected = injectedModule()
 let walletStates: WalletState[]
 
@@ -155,7 +156,16 @@ const onClickDisconnect = async () => {
   }
 }
 
-
+watch(() => connectedWallet.value, (newVal, oldVal) => {
+  if (newVal && newVal !== oldVal) {
+    console.info("start init")
+    const provider = newVal.provider;
+    const network = newVal.chains[0].id;
+    const address = newVal.accounts[0].address;
+    console.log('~~~~~~~~',provider,1111,network,2222,address)
+    contractApi.initContractApi(provider, network, address);
+  }
+}, { deep: true, immediate: true });
 //暴露子组件的方法或者数据
 defineExpose({ onClickConnect, onClickDisconnect })
 </script>

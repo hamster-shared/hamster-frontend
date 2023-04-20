@@ -6,28 +6,31 @@
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
         <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
-      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
+      <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown>
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer" @click.stop>
-          NodeService 
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
+          @click.stop id="middle" style="height:64px;line-height:64px">
+          Middleware
           <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
           <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
           <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
         </div>
         <template #overlay>
           <a-menu>
-            <a-menu-item @click="goRPCs">
-              <img src="@/assets/icons/RPCs.svg" class="h-[24px]" />
-                RPCs
+            <a-menu-item @click="goDashboard">
+              <!-- <img src="@/assets/icons/RPCs.svg" class="h-[24px]" /> -->
+              Dashboard
             </a-menu-item>
-            <a-menu-item @click="goApps">
-              <img src="@/assets/icons/Apps.svg" class="h-[24px]" />
-                Apps
+            <a-menu-item @click="goMiwaspace">
+              <!-- <img src="@/assets/icons/Apps.svg" class="h-[24px]" /> -->
+              Miwaspace
             </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
+      <div @click="goDoc" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -42,6 +45,7 @@
           <img src="@/assets/icons/white.svg" class="h-[20px] dark:hidden" />
         </div>
       </div>
+      <selectNetwork></selectNetwork>
       <div>
         <a-button v-if="!isConnectedWallet" @click="showWallet" class="!p-0 ml-8" type="primary">Connect Wallet</a-button>
         <a-dropdown v-if="isConnectedWallet">
@@ -109,6 +113,7 @@ import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
+import selectNetwork from "./components/selectNetwork.vue";
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
@@ -137,30 +142,38 @@ const goPrjects = () => {
   isProject.value = true;
 }
 
-const goApps = () => {
-  const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
-  // 如果 local storage 里没有保存的钱包，直接返回
-  if (connectedWallets == null || connectedWallets === '[]') {
-    showWallet();
-  } else {
-    router.push("/node-service/Apps");
-
-    isProject.value = false;
-  }
+// 跳官网文档
+const goDoc = () => {
+  window.open('https://hamsternet.io/docs/')
 }
-const goRPCs = () => {
-  router.push("/node-service/RPCs");
 
+const goMiwaspace = () => {
+  router.push("/chainlink/miwaspace?key=1");
+  isProject.value = false;
+  // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
+  // // 如果 local storage 里没有保存的钱包，直接返回
+  // if (connectedWallets == null || connectedWallets === '[]') {
+  //   showWallet();
+  // } else {
+  //   router.push("/node-service/Apps");
+
+  //   isProject.value = false;
+  // }
+}
+const goDashboard = () => {
+  router.push("/chainlink/dashboard");
   isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
-  theme.setTheme(val)
+  // theme.setTheme(val)
   let htmlRoot = document.getElementById('htmlRoot') || null;
   if (val === 'white') {
+    theme.setTheme('light')
     htmlRoot?.setAttribute('data-theme', 'light');
     document.documentElement.classList.remove('dark')
   } else {
+    theme.setTheme('dark')
     htmlRoot?.setAttribute('data-theme', 'dark');
     document.documentElement.classList.add('dark')
   }
@@ -224,7 +237,15 @@ const setWalletBtn = (val: boolean) => {
 
 <style lang="less" scoped>
 @btnColor: #E2B578;
-
+#docs:hover{
+  border-bottom: 3px solid #E2B578;
+}
+#middle:hover{
+  border-bottom: 3px solid #E2B578;
+}
+#pro:hover{
+  border-bottom: 3px solid #E2B578;
+}
 .default-header {
   position: fixed;
   top: 0;
@@ -291,5 +312,15 @@ const setWalletBtn = (val: boolean) => {
 
 :deep(.ant-dropdown-open .up-tran) {
   transform: rotate(0deg);
+}
+
+:deep(.ant-select-selector) {
+  color: #ffffff !important;
+}
+
+html[data-theme='dark'] {
+  :deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+    border: 1px solid #EBEBEB;
+  }
 }
 </style>

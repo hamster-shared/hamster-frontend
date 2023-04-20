@@ -5,7 +5,6 @@ interface RecentBuildItem {
   version: string,
   workflowId: string,
 }
-
 interface RecentCheckItem {
   id: string,
   startTime: string,
@@ -35,6 +34,7 @@ export interface ViewInfoItem {
   recentBuild: RecentBuildItem,
   recentCheck: RecentCheckItem,
   recentDeploy:RecentDeployItem,
+  labelDisplay:string | undefined
 }
 
 interface AbiInfoDataInputsItem {
