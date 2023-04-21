@@ -234,7 +234,7 @@ export function getCustomerBalance() {
     });
 }
 
-// 创建chainlink request
+// 更新chainlink request
 export function apiPostUpdateRequest(id:string,params: createRequestParams) {
     return httpRequest({
         url: `/api/chainlink/request/${id}`,

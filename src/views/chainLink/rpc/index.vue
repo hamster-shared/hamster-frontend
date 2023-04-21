@@ -107,7 +107,7 @@ const handleChange = (val: string) => {
 
 const toDetails = (val: any) => {
   // console.log(val, '点击详情操作')
-  router.push(`/chainlink/RPC/rpc-detail/${val.chain}`);
+  router.push(`/chainlink/RPC/rpc-detail/${val.chain}?network=${val.network}`);
 }
 
 // 切换网络

@@ -40,7 +40,7 @@
       </div>
       <div class="mt-4 text-center">
         <a-button class="inline-block mr-4 back-btn" @click="router.push('/chainlink/oracle')">Back</a-button>
-        <a-button @click="handleCreateTemplate">Create</a-button>
+        <a-button @click="handleCreateTemplate">{{id?'Save':'Create'}}</a-button>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
   import { useRouter,useRoute } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
   import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
-  import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest,apiDetailRequest } from '@/apis/chainlink'
+  import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest,apiDetailRequest,apiPostUpdateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
   import { message } from 'ant-design-vue';
 
@@ -118,11 +118,11 @@
     const params = {
       name: requestName.value,
       script: pipelinefilePreview.value,
-      paramsCount: paramsCount.value
+      paramsCount: paramsCount.value,
     }
 
     try {
-      const { data } = await apiPostCreateRequest(params)
+      const { data } = id ? await apiPostUpdateRequest(id,params) : await apiPostCreateRequest(params)
       router.push('/chainlink/oracle')
       console.log('createTemplate-data:',data)
     } catch(err:any) {

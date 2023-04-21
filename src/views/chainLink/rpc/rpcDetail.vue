@@ -81,12 +81,12 @@ import { message } from "ant-design-vue";
 import { apiGetRPCChain, apiGetrequestLog } from "@/apis/rpcs";
 import { hasChanged } from "@vue/shared";
 import { addToChain } from '@/utils/changeNetwork'
-const { params } = useRoute()
+const { params,query } = useRoute()
 const projectName = ref(params.chain);
 const loading = ref(false);
 const dataSource = ref([]);
 const tabLanguage = ref('JavaScript');
-const tabNetwork = ref('');
+const tabNetwork = ref(query.network);
 const languageList = ref<any>([]);
 const editHeight = ref("height: 220px");
 const sourceContent = ref();
@@ -146,7 +146,7 @@ const getChainData = async () => {
     addNetInfo.chainName = chainsList.value[0].networkName
     addNetInfo.rpcUrls = chainsList.value[0].networkUrl
     // languageList.value = Object.keys(codeExamples);
-    tabNetwork.value = chainsList.value[0].network;
+    // tabNetwork.value = chainsList.value[0].network;
     Object.assign(newtworkChainsData, chainsList.value[0].App)
     Object.assign(chainData, chainsList.value[0]);
     // console.log(data, 'data')
@@ -223,6 +223,7 @@ const copyInfo = async (_items: any) => {
 onMounted(async () => {
   await getChainData();
   getRequestLogData();
+  console.log('tabNetwork',tabNetwork.value)
 })
 </script>
 <style lang='less' scoped>
