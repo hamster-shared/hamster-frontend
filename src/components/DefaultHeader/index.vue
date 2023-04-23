@@ -8,7 +8,7 @@
       </div>
       <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
         class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
-      <a-dropdown>
+      <a-dropdown v-if="!isShowMiddleware">
         <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
           @click.stop id="middle" style="height:64px;line-height:64px">
           Middleware
@@ -131,6 +131,7 @@ const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "hu
 const userInfo = localStorage.getItem('userInfo');
 const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
 const username = JSON.parse(userInfo)?.username;
+const isShowMiddleware = ref(false)
 const goHome = () => {
   // router.push("/node-service/RPCs");
   router.push("/projects");
@@ -203,6 +204,14 @@ onMounted(() => {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
   changeTheme(defaultTheme.value);
+  // 针对钱包登录的特殊处理
+  if(localStorage.getItem('token')?.startsWith('0x')){
+    // debugger
+    isShowMiddleware.value = true
+    isConnectedWallet.value = true
+    const walletAddr:any  = localStorage.getItem('token')
+    walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
+  }
 });
 
 watch(
@@ -221,6 +230,11 @@ const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
+  const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
+  if(isFakeToken){
+    localStorage.removeItem('token')
+    router.push('/login')
+  }
   visibleDisconnect.value = false;
   isConnectedWallet.value = false
 }

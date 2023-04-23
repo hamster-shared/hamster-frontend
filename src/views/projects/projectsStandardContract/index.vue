@@ -11,7 +11,7 @@
             <AccessControl :opts="optsERC20" @showContract="setContract" />
             <Upgradeability :opts="optsERC20" @showContract="setContract" />
             <InfoSection :opts="optsERC20" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
+            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC20"></CodeEditor>
@@ -26,7 +26,7 @@
             <AccessControl :opts="optsERC721" @showContract="setContract" />
             <Upgradeability :opts="optsERC721" @showContract="setContract" />
             <InfoSection :opts="optsERC721" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
+            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC721"></CodeEditor>
