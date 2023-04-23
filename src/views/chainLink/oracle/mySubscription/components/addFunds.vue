@@ -72,15 +72,16 @@ const getSublistData = async()=>{
                 label:tem,
                 value:item.id,
                 subNetName:item.chainAndNetwork,
-                subNetId:item.networkId
+                subNetId:item.networkId,
+                subId:item.chainSubscriptionId
             }
         })
     }
 }
 // 设置订阅号
 const setSubscription = (val:any,option:any)=>{
-    subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
-    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    subOptionsNet.value = option?.subNetName
+    subId.value = option?.subId
     keyId.value = val
     const netId = `0x${option.subNetId}`
     if (ethereum.chainId !== netId) {

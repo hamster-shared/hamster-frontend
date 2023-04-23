@@ -136,7 +136,8 @@ const getSublistData = async()=>{
                 label:tem,
                 value:item.id,
                 subNetName:item.chainAndNetwork,
-                subNetId:item.networkId
+                subNetId:item.networkId,
+                subId:item.chainSubscriptionId
             }
         })
     }
@@ -149,7 +150,7 @@ const setSubscription = (val:any,option:any)=>{
     const subOptionsNet = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
     const net = subOptionsNet.split(' ') 
     network.value=net.slice(1,net.length).join(' '),
-    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    subId.value = option?.subId
     keyId.value = val
     const netId = `0x${option.subNetId}`
     if (ethereum.chainId !== netId) {
