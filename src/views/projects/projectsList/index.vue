@@ -105,9 +105,9 @@ onMounted(() => {
 // 判断token是钱包的还是真实
 const tokenFrom = ()=>{
   const bool = localStorage.getItem('token')?.startsWith('0x')
-  if(bool){
-    localStorage.removeItem('token')
-  }
+  // if(bool){
+  //   localStorage.removeItem('token')
+  // }
   console.log('bool',bool)
 }
 
