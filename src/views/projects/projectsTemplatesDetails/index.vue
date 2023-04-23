@@ -17,7 +17,7 @@
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
         <a-button type="primary" class="ml-4" :loading="downloadLoading" @click="downloadTemplate">Download</a-button>
         <a ref="downloadLinkRef" style="display: none;"></a>
-        <a-button type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{
+        <a-button v-if="!tokenMatemaskWallet" type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{
           createTemplate
         }}</a-button>
       </div>
@@ -248,6 +248,7 @@ const moduleList = ref<any>([]);
 const functionsList = ref<any>([]);
 const moduleName = ref('');
 const sourceList = ref<any>([]);
+const tokenMatemaskWallet = ref()
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -268,6 +269,7 @@ const tableColumns = computed<any[]>(() => [
 
 onMounted(() => {
   getTemplatesDetail();
+  tokenFrom()
 })
 
 const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
@@ -668,6 +670,11 @@ const downloadTemplate = async () => {
   downloadLinkRef.value.click();
   message.success("download success")
   downloadLoading.value = false
+}
+// 判断token是钱包的还是真实
+const tokenFrom = ()=>{
+  tokenMatemaskWallet.value = localStorage.getItem('token')?.startsWith('0x')
+  console.log('bool',tokenMatemaskWallet.value)
 }
 </script>
 <style lang='less' scoped>
