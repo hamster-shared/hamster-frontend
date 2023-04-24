@@ -9,13 +9,13 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <CheckResult></CheckResult>
+      <!-- <CheckResult></CheckResult> -->
       <!-- contract -->
-      <!-- <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <GasUsageReport :gasUsageReportData="gasUsageReportData"
         v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-      <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList> -->
+      <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
