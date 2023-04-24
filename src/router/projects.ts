@@ -20,6 +20,11 @@ const projectsRoute = [
                     path: "/projects/integrated/:id",
                     name: "ProjectsIntegrated",
                     component: () => import('@/views/projects/projectsIntegrated/index.vue')
+                },
+                {
+                    path:'/project/configure',
+                    name:'ProjectConfigure',
+                    component:()=>import('@/views/projects/projectsList/components/configure.vue')
                 }
             ],
             },

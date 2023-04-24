@@ -37,6 +37,30 @@ interface GetDetailSteplogsParams {
   stepname: string,
 }
 
+
+
+export function apiIsCheck(id:string){
+  return httpRequest({
+    url:`/api/project/${id}/workflow/setting/check`,
+    method:'get',
+  })
+}
+
+//Configure Check Tools 弹出层页面
+export interface PostPopoverType{
+  tool:string,
+  toolType:number,
+}
+
+//Configure Check Tools 弹出层页面
+export function apiPostPopover(id:number,params:PostPopoverType){
+  return httpRequest({
+    url:`/api/project/${id}/workflow/setting`,
+    method:'post',
+    data:params
+  })
+}
+
 // templates-category?type=1
 export function apiGetTemplates(params: GetWorkflowsDetailParams) {
   return httpRequest({

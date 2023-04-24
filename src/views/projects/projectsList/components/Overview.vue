@@ -32,6 +32,7 @@
       <div>
 
         <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
+          <!-- 按钮 -->
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
           </label>
@@ -187,6 +188,8 @@ import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
+//弹出层页面
+import Configure from './Configure.vue'
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -195,6 +198,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import { ActionButtonEnum, ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components/data";
+import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
 
 const { t } = useI18n()
@@ -265,7 +269,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
 }
 
 // check
-const projectsCheck = async (id: string, status: Number, e: Event) => {
+const projectsCheck = async (id: string, status: number, e: Event) => {
   if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
   } else {
@@ -282,6 +286,16 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
         // message.success(res.message);
         loadView();
       }
+      if(props.viewInfo.frameType=== 1){
+        // const router=useRouter()
+        // router.push({name:'ProjectConfigure',query:{id}})        
+        
+        const res= await apiIsCheck(id)
+        if (res.data) {
+          router.push({name:'ProjectConfigure',query:{id}})
+        }
+        
+     }
     } catch (error: any) {
       console.log("erro:", error)
       message.error(error.response.data.message);
