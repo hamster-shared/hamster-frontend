@@ -134,7 +134,8 @@ const username = JSON.parse(userInfo)?.username;
 const isShowMiddleware = ref(false)
 const goHome = () => {
   // router.push("/node-service/RPCs");
-  router.push("/projects");
+  // router.push("/projects");
+  window.open('https://hamsternet.io')
   isProject.value = true;
 };
 
