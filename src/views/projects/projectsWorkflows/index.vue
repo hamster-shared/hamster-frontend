@@ -9,7 +9,7 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <!-- <CheckResult></CheckResult> -->
+      <CheckResult></CheckResult>
       <!-- contract -->
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
@@ -128,6 +128,8 @@ const getCheckReport = async () => {
   let issue = 0;
   const list: any = []
   const listGas: any = [];
+  console.log('listGas',listGas)
+
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data.map((item: any) => {
     if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {

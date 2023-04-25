@@ -37,6 +37,11 @@ interface GetDetailSteplogsParams {
   stepname: string,
 }
 
+interface GetCheckResultParams {
+  id: string,
+  detailId: string
+}
+
 // templates-category?type=1
 export function apiGetTemplates(params: GetWorkflowsDetailParams) {
   return httpRequest({
@@ -167,5 +172,14 @@ export function apiGetDetailDelete(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
     method: "delete",
+  });
+}
+
+// check详情下的Check Result的信息
+export function apiGetCheckResult(params: GetCheckResultParams) {
+  return httpRequest({
+    // url: `/api/workflows/${params.id}/detail/${params.detailId}/report/overview`,
+    url: '/api/workflows/1979/detail/3161/report/overview',
+    method: "get",
   });
 }

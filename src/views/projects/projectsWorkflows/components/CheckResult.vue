@@ -4,107 +4,91 @@
       <span class="check-container-title">Check Result</span>
 
       <div v-for="(item, index) in resultInfo" :key="index" class="items-center grid grid-cols-4 pl-10 rounded-[5px] my-8 border border-[#B5B5B5] border-solid">
-        <span class="text-2xl font-bold">{{ item.title }}</span>
-        <div v-for="content in item.content" class="py-8">
-          <span class="text-5xl">{{ content.number }}</span>
-          <span class="block text-2xl">{{ content.issues }}</span>
-          <span class="text-base">{{ content.type }}</span>
+        <span class="text-2xl font-bold">{{ item?.title }}</span>
+        <div v-for="content in item?.content" class="py-8">
+          <div>
+            <span class="text-5xl cursor-pointer" @click="router.push(`${route.fullPath}/${content.checkTool}`)">{{ content.issues }}</span>
+            <span class="block text-2xl">issues</span>
+            <span class="text-base">{{ content.checkTool }}</span>
+          </div>
         </div>
       </div>
 
       <div class="grid grid-cols-4 p-10 rounded-[5px] my-8 border border-[#B5B5B5] border-solid">
-        <span class="text-2xl font-bold">{{ gasInfo.title }}</span>
+        <span class="text-2xl font-bold">{{ gasInfo?.title }}</span>
         <div>
-          <span class="text-5xl">{{ gasInfo.number }}</span>
-          <span class="block text-2xl">{{ gasInfo.issues }}</span>
-          <span class="text-base">{{ gasInfo.type }}</span>
+          <span class="text-5xl">{{ gasInfo?.content[0].issues }}</span>
+          <span class="block text-2xl">issues</span>
+          <span class="text-base">{{ gasInfo?.content[0].checkTool }}</span>
         </div>
         <div class="flex col-span-2">
           <div class="flex-1">
-            <span class="block text-xl font-bold">{{ gasInfo.report }}</span>
-            <span class="text-xl">{{ gasInfo.reportInfo }}</span>
+            <span class="block mb-2 text-xl font-bold">{{ gasInfo?.content[0].name }}</span>
+            <span class="text-xl break-all">{{ gasInfo?.content[0]?.reportFile }}</span>
           </div>
-          <a-button class="view-detail-btn" type="link">View Detail</a-button>
+          <a-button class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail`)">View Detail</a-button>
         </div>
       </div>
 
       <div class="grid grid-cols-4 p-10 rounded-[5px] my-8 border border-[#B5B5B5] border-solid">
         <div>
-          <span class="block text-2xl font-bold">{{ AiInfo.title }}</span>
-          <span class="text-base">{{ AiInfo.subtitle }}</span>
+          <span class="block text-2xl font-bold">{{ AiInfo?.title }}</span>
+          <span class="text-base">Support by OpenAI</span>
         </div>
-        <span class="col-span-3 text-lg">{{ AiInfo.content }}</span>
+        <span class="col-span-3 text-lg whitespace-pre-wrap">{{ AiInfo?.content[0].reportFile }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
+  import { useRoute, useRouter } from 'vue-router';
+  import { apiGetCheckResult } from "@/apis/workFlows";
 
-  const resultInfo = ref([
-    {
-      title: 'Secutity Analysis',
-      content: [
-        {
-          number: '11',
-          issues: 'issues',
-          type: 'MetaTrust (SA)'
-        },
-        {
-          number: '0',
-          issues: 'issues',
-          type: 'MetaTrust (SP)'
-        },
-        {
-          number: '3',
-          issues: 'issues',
-          type: 'Mythril'
+  const { params } = useRoute();
+  const route = useRoute()
+  const router = useRouter()
+
+  const resultInfo = ref<[] | null>([])
+  const gasInfo = ref()
+  const AiInfo = ref()
+  const getCheckResultInfo = async() => {
+    try {
+      const { data } = await apiGetCheckResult({id:params.workflowsId, detailId:params.workflowDetailId})
+      console.log('getCheckResultInfo-data:', data)
+      const info = data
+      
+      info?.forEach( (item:any)=>{
+        if( item.title == 'Secutity Analysis' || item.title == 'Open Source Analysis' || item.title == 'Code Quality Analysisi') {
+          resultInfo.value?.push(item)
+          console.log('resultInfo.value', resultInfo.value)
+
+        } else if( item.title == 'Gas Usage Analysis' ){
+          gasInfo.value = item
+          
+          // let reportFileInfo = JSON.parse(item.content[0].reportFile)
+          // console.log('Gas Usage Analysis:reportFileInfo', reportFileInfo)
+
+          // reportFileInfo.forEach((report:any)=>{
+          //   if(Object.keys(report.message[0]).includes('TestResultList')){
+          //     console.log('report:',report)
+          //   }
+            
+          // })
+          
+        } else if( item.title == 'AI Analysis' ){
+          console.log('AI Analysis')
+          AiInfo.value = item
         }
-      ]
-    },
-    {
-      title: 'Open Source Analysis',
-      content: [
-        {
-          number: '12',
-          issues: 'issues',
-          type: 'MetaTrust (OSA)'
-        }
-      ]
-    },
-    {
-      title: 'Code Quality Analysisi',
-      content: [
-        {
-          number: '6',
-          issues: 'issues',
-          type: 'MetaTrust (CQ)'
-        },
-        {
-          number: '3',
-          issues: 'issues',
-          type: 'Solhint'
-        }
-      ]
+      })
+    } catch (err: any) {
+      console.log('getCheckResultInfo-data:', err)
     }
-  ])
+  }
 
-  const gasInfo = ref(
-    {
-      title: 'Gas Usage Analysis',
-      number: '2',
-      issues: 'issues',
-      type: 'eth-gas-reporter',
-      report: 'Unit Test Report',
-      reportInfo: 'Contract：MyToken2,Contract：MyERC72',
-    }
-  )
-
-  const AiInfo = ref({
-    title: 'AI Analysis',
-    subtitle: 'Support by OpenAI',
-    content: 'This code is a contract that implements the ERC-20O token interface.It includes some core functions, such as transferring tokens, querying balance amount, approve third-party transfer tokens, query token authorization quota, etc.'
+  onMounted(()=>{
+    getCheckResultInfo()
   })
     
 </script>
