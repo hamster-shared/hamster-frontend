@@ -1,6 +1,7 @@
 <template>
   <Breadcrumb :currentName="contractName" :isClick="false"></Breadcrumb>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
+    <a-button v-if="tokenMatemaskWallet" type="primary" style="float:right;margin-right: 20px;" @click="downloadInfo">Download</a-button>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="ERC20" tab="ERC20">
         <div class="flex">
@@ -10,7 +11,7 @@
             <AccessControl :opts="optsERC20" @showContract="setContract" />
             <Upgradeability :opts="optsERC20" @showContract="setContract" />
             <InfoSection :opts="optsERC20" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Creat by Code</a-button>
+            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC20"></CodeEditor>
@@ -25,7 +26,7 @@
             <AccessControl :opts="optsERC721" @showContract="setContract" />
             <Upgradeability :opts="optsERC721" @showContract="setContract" />
             <InfoSection :opts="optsERC721" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Creat by Code</a-button>
+            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC721"></CodeEditor>
@@ -40,7 +41,7 @@
             <AccessControl :opts="optsERC1155" @showContract="setContract" />
             <Upgradeability :opts="optsERC1155" @showContract="setContract" />
             <InfoSection :opts="optsERC1155" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Creat by Code</a-button>
+            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC1155"></CodeEditor>
@@ -77,6 +78,7 @@ import CodeEditor from '@/components/CodeEditor.vue';
 import { useThemeStore } from "@/stores/useTheme";
 import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
 import { message } from "ant-design-vue";
+import { downloadRequest } from '@/utils/tool'
 const theme = useThemeStore()
 const router = useRouter();
 
@@ -111,8 +113,9 @@ const contractERC1155 = ref();
 
 const { params } = useRoute();
 const contractName = ref(params.contractName);
-const activeKey = ref(contractName);
+const activeKey = ref<any>(contractName);
 const loading = ref(false);
+const tokenMatemaskWallet = ref()
 
 onMounted(async () => {
   optsERC20.value.name = 'ExampleToken';
@@ -128,6 +131,7 @@ onMounted(async () => {
   optsERC1155.value.name = 'ExampleToken';
   optsERC1155.value.uri = '';
   contractERC1155.value = erc1155.print(optsERC1155.value);
+  tokenFrom()
 })
 
 const setContract = async () => {
@@ -139,6 +143,7 @@ const setContract = async () => {
   } else if ( activeKey.value === 'ERC1155') {
     contractERC1155.value = erc1155.print(optsERC1155.value);
   }
+  return contractERC20.value || contractERC721.value || contractERC1155.value
 }
 const checkboxClick = async (event: any) => {
   if (activeKey.value === 'ERC20') {
@@ -232,6 +237,16 @@ const handleCancel = ()=>{
   loading.value = false;
   errorMsg.value = ''
   codeNameValue.value = ''
+}
+// 判断token是钱包的还是真实
+const tokenFrom = ()=>{
+  tokenMatemaskWallet.value = localStorage.getItem('token')?.startsWith('0x')
+  console.log('bool',tokenMatemaskWallet.value)
+}
+// 下载回调
+const downloadInfo = async()=>{
+  const str = await setContract()
+  downloadRequest(str,activeKey.value,'sol')
 }
 </script>
 <style lang='less' scoped>

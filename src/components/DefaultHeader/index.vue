@@ -5,11 +5,11 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" style="color:#E2B578;height:64px;line-height:64px" 
-        class="text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
-      <a-dropdown>
-        <div  class="text-[16px] cursor-pointer"
-          @click.stop id="middle" style="color:#E2B578;height:64px;line-height:64px">
+      <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
+        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
+      <a-dropdown v-if="!isShowMiddleware">
+        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
+          @click.stop id="middle" style="height:64px;line-height:64px">
           Middleware
           <img v-if="isProject" src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden dark:inline-block up-tran">
           <img v-if="!isProject" src="@/assets/icons/skx1.svg" alt="" class="h-[7px] dark:hidden up-tran">
@@ -25,7 +25,7 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px" 
+      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px"
         class="text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">
@@ -127,9 +127,11 @@ const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "hu
 const userInfo = localStorage.getItem('userInfo');
 const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
 const username = JSON.parse(userInfo)?.username;
+const isShowMiddleware = ref(false)
 const goHome = () => {
   // router.push("/node-service/RPCs");
-  router.push("/projects");
+  // router.push("/projects");
+  window.open('https://hamsternet.io')
   isProject.value = true;
 };
 
@@ -199,6 +201,14 @@ onMounted(() => {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
   changeTheme(defaultTheme.value);
+  // 针对钱包登录的特殊处理
+  if(localStorage.getItem('token')?.startsWith('0x')){
+    // debugger
+    isShowMiddleware.value = true
+    isConnectedWallet.value = true
+    const walletAddr:any  = localStorage.getItem('token')
+    walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
+  }
 });
 
 watch(
@@ -217,6 +227,11 @@ const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
+  const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
+  if(isFakeToken){
+    localStorage.removeItem('token')
+    router.push('/login')
+  }
   visibleDisconnect.value = false;
   isConnectedWallet.value = false
 }

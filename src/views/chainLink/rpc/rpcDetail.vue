@@ -6,7 +6,7 @@
       <div class="">
         <img :src="imageUrl" class="h-6;"/>
         <span class="font-bold text-[24px] mr-[20px] align-middle" style="margin-left: 10px;">{{name}}</span>
-        <span @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
+        <span v-if="parseInt(chainData.chainID,16)" @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
           Network</span>
       </div>
       <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
@@ -15,12 +15,12 @@
       <div>
         <div>
           <div class="grid grid-cols-3 gap-1">
-            <div>Chain ID</div>
+            <div v-if="parseInt(chainData.chainID,16)">Chain ID</div>
             <div>Native Token</div>
             <div>Explorers</div>
           </div>
           <div class="grid grid-cols-3 gap-1 font-bold mt-[10px] dark:text-[#E0DBD2] text-[#383B46]">
-            <div>{{ parseInt(chainData.chainID,16) }}</div>
+            <div v-if="parseInt(chainData.chainID,16)">{{ parseInt(chainData.chainID,16) }}</div>
             <div>{{ chainData.nativeToken }}</div>
             <div>{{ chainData.explorerUrl }}</div>
           </div>
@@ -81,12 +81,12 @@ import { message } from "ant-design-vue";
 import { apiGetRPCChain, apiGetrequestLog } from "@/apis/rpcs";
 import { hasChanged } from "@vue/shared";
 import { addToChain } from '@/utils/changeNetwork'
-const { params } = useRoute()
+const { params,query } = useRoute()
 const projectName = ref(params.chain);
 const loading = ref(false);
 const dataSource = ref([]);
 const tabLanguage = ref('JavaScript');
-const tabNetwork = ref('');
+const tabNetwork = ref(query.network);
 const languageList = ref<any>([]);
 const editHeight = ref("height: 220px");
 const sourceContent = ref();
@@ -110,6 +110,9 @@ const columns = [
     dataIndex: 'number',
     align: "center",
     key: 'number',
+    customRender: ({ index }:any) => {
+      return index+1
+    },
   },
   {
     title: 'Time',
@@ -143,7 +146,7 @@ const getChainData = async () => {
     addNetInfo.chainName = chainsList.value[0].networkName
     addNetInfo.rpcUrls = chainsList.value[0].networkUrl
     // languageList.value = Object.keys(codeExamples);
-    tabNetwork.value = chainsList.value[0].network;
+    // tabNetwork.value = chainsList.value[0].network;
     Object.assign(newtworkChainsData, chainsList.value[0].App)
     Object.assign(chainData, chainsList.value[0]);
     // console.log(data, 'data')
@@ -220,6 +223,7 @@ const copyInfo = async (_items: any) => {
 onMounted(async () => {
   await getChainData();
   getRequestLogData();
+  console.log('tabNetwork',tabNetwork.value)
 })
 </script>
 <style lang='less' scoped>

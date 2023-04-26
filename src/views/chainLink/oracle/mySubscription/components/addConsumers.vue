@@ -146,7 +146,8 @@ const getSublistData = async()=>{
                 label:tem,
                 value:item.id,
                 subNetName:item.chainAndNetwork,
-                subNetId:item.networkId
+                subNetId:item.networkId,
+                subId:item.chainSubscriptionId
             }
         })
     }
@@ -170,11 +171,11 @@ const getProjectsData = async(network:any)=>{
     }
     console.log('获取项目名称',res)
 }
-watch(()=>[formData.project,subOptionsNet.value],([n1,n2],[o1,o2])=>{
-    if(n2!=o2 || n1!=o1){
-        getlistData() 
-    }
-})
+// watch(()=>[formData.project,subOptionsNet.value],([n1,n2],[o1,o2])=>{
+//     if(n2!=o2 || n1!=o1){
+//         getlistData() 
+//     }
+// })
 // 获取表单数据
 const getlistData = async()=>{
     loading.value = true
@@ -214,7 +215,7 @@ const setSubscription = (val:any,option:any)=>{
     // formData.subscription = val
     subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
     getProjectsData(subOptionsNet.value)
-    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    subId.value = option?.subId;
     keyId.value = val
     const netId = `0x${option.subNetId}`
     if (ethereum.chainId !== netId) {
@@ -226,6 +227,7 @@ const setSubscription = (val:any,option:any)=>{
 const setProject = (val:any,option:any)=>{
     console.log('设置项目名称',val,option)
     formData.project = val
+    getlistData() 
 }
 // 跳转hamster
 const goHamster = ()=>{
@@ -252,6 +254,8 @@ const handleFund = async()=>{
             }else{
                 message.error(res.message)
             }
+            emit('getAddConsumersInfo',formData)
+            emit('closeAddConsumers',false)
             return tx.wait()
         }).then(async(receipt:any) => {
             const params = {
@@ -268,10 +272,9 @@ const handleFund = async()=>{
                 message.error(res.data)
             }
             console.log("addConsumer", receipt);
-            emit('getAddConsumersInfo',formData)
-            emit('closeAddConsumers',false)
         }).catch((err:any)=>{
             message.error('Failed')
+            emit('closeAddConsumers',false)
             console.log('err111111',err)
         })
     }

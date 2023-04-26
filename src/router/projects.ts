@@ -70,6 +70,11 @@ const projectsRoute = [
                         meta: {
                             layout: 'null',
                         }
+                    },
+                    {
+                        path: "/projects/:id/:workflowsId/workflows/:workflowDetailId/:type/:projectType/:checktype",
+                        name: "ProjectsCheckReport",
+                        component: () => import('@/views/projects/projectsCheckReport/index.vue')
                     }
                 ],
             },

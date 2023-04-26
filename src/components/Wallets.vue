@@ -6,6 +6,7 @@ import { useOnboard } from '@web3-onboard/vue'
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import walletTitle from '@/assets/icons/logo-white.svg'
 import { useContractApi } from '@/stores/chainlink';
+import {saveWallet} from '@/apis/login'
 
 const walletAddress = useWalletAddress()
 
@@ -134,6 +135,11 @@ const onClickConnect = async () => {
   }
   if (walletStates[0]) {
     setWalletAccount(walletStates[0]);
+    // 后端保存钱包地址
+
+    for(let account of walletStates[0].accounts){
+      saveWallet(account.address).then(() => {})
+    }
   }
 }
 
