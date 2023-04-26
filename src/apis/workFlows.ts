@@ -42,6 +42,30 @@ interface GetCheckResultParams {
   detailId: string
 }
 
+
+
+export function apiIsCheck(id:string){
+  return httpRequest({
+    url:`/api/project/${id}/workflow/setting/check`,
+    method:'get',
+  })
+}
+
+//Configure Check Tools 弹出层页面
+interface GetCheckToolType {
+  tool:string[]
+}
+
+
+//Configure Check Tools 弹出层页面
+export function apiPostPopover(id:string,params:GetCheckToolType){  
+  return httpRequest({
+    url:`/api/project/${id}/workflow/setting`,
+    method:'post',
+    data:params
+  })
+}
+
 // templates-category?type=1
 export function apiGetTemplates(params: GetWorkflowsDetailParams) {
   return httpRequest({
@@ -142,7 +166,7 @@ export function apiGetPackagesList(params: GetPackageParams) {
   });
 }
 
-// 获取 package 详情 
+// 获取 package 详情
 export function apiGetPackageDetail(packageId: string) {
   return httpRequest({
     // url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/deploy/detail`,
@@ -151,7 +175,7 @@ export function apiGetPackageDetail(packageId: string) {
   });
 }
 
-// 获取 package 详情 
+// 获取 package 详情
 export function apiGetDeployInfo(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy-info`,
@@ -159,7 +183,7 @@ export function apiGetDeployInfo(params: GetPackageParams) {
   });
 }
 
-//workflow详情report  
+//workflow详情report
 export function apiGetDetailFrontendReport(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/frontend/report`,
@@ -167,7 +191,7 @@ export function apiGetDetailFrontendReport(params: GetPackageParams) {
   });
 }
 
-// 删除 
+// 删除
 export function apiGetDetailDelete(params: GetPackageParams) {
   return httpRequest({
     url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,

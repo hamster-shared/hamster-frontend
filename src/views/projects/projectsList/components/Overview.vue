@@ -15,7 +15,7 @@
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
           </div>
           <!-- 这里 -->
-          <div v-if="viewInfo.labelDisplay" 
+          <div v-if="viewInfo.labelDisplay"
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]"
           >
             <label>{{ viewInfo.labelDisplay }}</label>
@@ -32,6 +32,7 @@
       <div>
 
         <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
+          <!-- 按钮 -->
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
           </label>
@@ -49,9 +50,9 @@
         </label>
       </div>
       </div>
-      
+
     </div>
-    <div class="center"> 
+    <div class="center">
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
@@ -91,7 +92,7 @@
             :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
-            Check Now
+            <a-button @click="showModal">Check Now </a-button>
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
@@ -183,14 +184,19 @@
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
+
+  <Configure :visible="visible" @getDoneData="getDoneData" />
+  
 </template>
 
 <script lang='ts' setup>
-import { ref, toRefs, computed, reactive } from 'vue';
+import { ref, toRefs, computed, reactive,defineComponent } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
+//弹出层页面
+import Configure from './Configure.vue'
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -199,20 +205,24 @@ import { useThemeStore } from "@/stores/useTheme";
 import { ActionButtonEnum, ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components/data";
+import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
+import  { apiPostPopover } from "@/apis/workFlows";
 
 const { t } = useI18n()
 const theme = useThemeStore()
-
+const projectId = ref('')
+//弹框
 const router = useRouter();
-
 const props = defineProps<{
   viewType: string,
   projectType: string,
   viewInfo: ViewInfoItem,
   // labelDisplay:string
 }>()
-
+// const showModal = () => {
+//       visible.value = true;
+//     };
 const actionButtonList = ref([
   { name: 'Check', url: 'check' },
   { name: 'Build', url: 'build' },
@@ -233,6 +243,9 @@ const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
+//设置弹框隐藏
+const visible=ref(false)
+
 const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
@@ -269,8 +282,21 @@ const projectsAction = (val: any, type: string, e: Event) => {
   }
 }
 
+const getDoneData =async (myArray:string[]) => {
+    const params = {
+        tool:myArray
+    }
+    //判断是否有选择
+    if (myArray.length > 0) {
+      const res = await apiPostPopover(projectId.value,params)
+      console.log(res,'done按钮接口数据');
+      visible.value=false 
+    } else {
+      message.warning('请选择工具');
+    }
+}
 // check
-const projectsCheck = async (id: string, status: Number, e: Event) => {
+const projectsCheck = async (id: string, status: number, e: Event) => {
   if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
   } else {
@@ -281,12 +307,15 @@ const projectsCheck = async (id: string, status: Number, e: Event) => {
         message.info(t('project.pipeline_executing_now'));
       } else {
         message.info("The workflow of checking is running, view now.")
-        // router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
-
-        const res = await apiProjectsCheck(id);
-        // message.success(res.message);
         loadView();
       }
+      if(props.viewInfo.frameType=== 1){
+        projectId.value = id
+        const res= await apiIsCheck(id)
+        if (res.data!==null && res.data.length > 0) {
+          visible.value=true
+        }
+     }
     } catch (error: any) {
       console.log("erro:", error)
       message.error(error.response.data.message);
@@ -363,15 +392,15 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
     if (status === 0 || status === 1 || version === "") {
       // message.info("Smart contract not avaliable.");
       message.info(t('Smart contract not avaliable.'));
-    } 
+    }
     else {
       goContractDeploy(id, version);
     }
-  } 
+  }
   else {
     if (status === 3) {
       goFrontendDeploy();
-    } 
+    }
     else {
       message.info("FrontEnd image not avaliable");
     }
@@ -412,15 +441,15 @@ const goContractBuild = async (id: string, workflowId: string, detailId: string)
 };
 
 const goContractDeploy = async (id: string, status: string | Number) => {
-  if (localStorage.getItem('projectActiveKey') == '1') 
+  if (localStorage.getItem('projectActiveKey') == '1')
   {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
-  } 
-  else if 
+  }
+  else if
   (
-    localStorage.getItem('projectActiveKey') == '2') 
+    localStorage.getItem('projectActiveKey') == '2')
     {
       if (status === 3) {
       goFrontendDeploy();
@@ -594,7 +623,6 @@ html[data-theme='dark'] {
     color: #E0DBD2;
   }
 }
-
 
 :deep(.ant-btn) {
   border-radius: 8px;
