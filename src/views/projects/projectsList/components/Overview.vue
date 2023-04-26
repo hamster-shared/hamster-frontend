@@ -92,7 +92,7 @@
             :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
-            Check Now
+            <a-button @click="showModal">Check Now </a-button>
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
@@ -185,11 +185,12 @@
   </starkNetModal>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
-  <Configure/>
+  <Configure :visible="visible" @getDoneData="getDoneData" />
+  
 </template>
 
 <script lang='ts' setup>
-import { ref, toRefs, computed, reactive } from 'vue';
+import { ref, toRefs, computed, reactive,defineComponent } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
@@ -206,19 +207,22 @@ import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components/data";
 import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
+import  { apiPostPopover } from "@/apis/workFlows";
 
 const { t } = useI18n()
 const theme = useThemeStore()
-
+const projectId = ref('')
+//弹框
 const router = useRouter();
-
 const props = defineProps<{
   viewType: string,
   projectType: string,
   viewInfo: ViewInfoItem,
   // labelDisplay:string
 }>()
-
+// const showModal = () => {
+//       visible.value = true;
+//     };
 const actionButtonList = ref([
   { name: 'Check', url: 'check' },
   { name: 'Build', url: 'build' },
@@ -239,6 +243,9 @@ const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
+//设置弹框隐藏
+const visible=ref(false)
+
 const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
@@ -275,6 +282,19 @@ const projectsAction = (val: any, type: string, e: Event) => {
   }
 }
 
+const getDoneData =async (myArray:string[]) => {
+    const params = {
+        tool:myArray
+    }
+    //判断是否有选择
+    if (myArray.length > 0) {
+      const res = await apiPostPopover(projectId.value,params)
+      console.log(res,'done按钮接口数据');
+      visible.value=false 
+    } else {
+      message.warning('请选择工具');
+    }
+}
 // check
 const projectsCheck = async (id: string, status: number, e: Event) => {
   if (props.projectType === '1' && props.viewInfo.frameType === 4) {
@@ -287,19 +307,13 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         message.info(t('project.pipeline_executing_now'));
       } else {
         message.info("The workflow of checking is running, view now.")
-        // router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
-
-        // const res = await apiProjectsCheck(id);
-        // message.success(res.message);
         loadView();
       }
       if(props.viewInfo.frameType=== 1){
-        // const router=useRouter()
-        // router.push({name:'ProjectConfigure',query:{id}})
-
+        projectId.value = id
         const res= await apiIsCheck(id)
         if (res.data!==null && res.data.length > 0) {
-          router.push({path:'ProjectConfigure',query:{id}})
+          visible.value=true
         }
      }
     } catch (error: any) {
@@ -609,7 +623,6 @@ html[data-theme='dark'] {
     color: #E0DBD2;
   }
 }
-
 
 :deep(.ant-btn) {
   border-radius: 8px;

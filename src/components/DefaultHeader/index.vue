@@ -25,7 +25,7 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px"
+      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px" 
         class="text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">
