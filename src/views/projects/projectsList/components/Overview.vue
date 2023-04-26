@@ -15,7 +15,7 @@
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
           </div>
           <!-- 这里 -->
-          <div v-if="viewInfo.labelDisplay" 
+          <div v-if="viewInfo.labelDisplay"
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]"
           >
             <label>{{ viewInfo.labelDisplay }}</label>
@@ -50,9 +50,9 @@
         </label>
       </div>
       </div>
-      
+
     </div>
-    <div class="center"> 
+    <div class="center">
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
@@ -180,6 +180,8 @@
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
+
+  <Configure/>
 </template>
 
 <script lang='ts' setup>
@@ -288,8 +290,8 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
       }
       if(props.viewInfo.frameType=== 1){
         // const router=useRouter()
-        // router.push({name:'ProjectConfigure',query:{id}})        
-        
+        // router.push({name:'ProjectConfigure',query:{id}})
+
         const res= await apiIsCheck(id)
         if (res.data!==null && res.data.length > 0) {
           router.push({path:'ProjectConfigure',query:{id}})
@@ -371,15 +373,15 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
     if (status === 0 || status === 1 || version === "") {
       // message.info("Smart contract not avaliable.");
       message.info(t('Smart contract not avaliable.'));
-    } 
+    }
     else {
       goContractDeploy(id, version);
     }
-  } 
+  }
   else {
     if (status === 3) {
       goFrontendDeploy();
-    } 
+    }
     else {
       message.info("FrontEnd image not avaliable");
     }
@@ -420,15 +422,15 @@ const goContractBuild = async (id: string, workflowId: string, detailId: string)
 };
 
 const goContractDeploy = async (id: string, status: string | Number) => {
-  if (localStorage.getItem('projectActiveKey') == '1') 
+  if (localStorage.getItem('projectActiveKey') == '1')
   {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
-  } 
-  else if 
+  }
+  else if
   (
-    localStorage.getItem('projectActiveKey') == '2') 
+    localStorage.getItem('projectActiveKey') == '2')
     {
       if (status === 3) {
       goFrontendDeploy();

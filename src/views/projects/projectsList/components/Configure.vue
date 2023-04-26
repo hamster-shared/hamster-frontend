@@ -7,11 +7,11 @@
         <div class="center">
             <p>If you need to modify this configuration later,you can modufy it by setting button on thie project details page</p>
         </div>
-        
+
         <div v-for="item in newArray" :key="item.id" style="display:flex">
             <h1 style="width:250px;height:30px;margin-bottom:10px">{{item.title}}</h1>
             <div v-for="(items,index) in item.children" :key="index">
-              <p class="p" 
+              <p class="p"
                 :style="{ backgroundColor: bgColor }"
                 @click="handleClick(items.title)"
                 style="cursor: pointer;border:1px solid #ccc;width:220px;height:95px;text-align:center;line-height:95px;margin-top:30px;margin-right:10px"
@@ -20,17 +20,15 @@
               </p>
             </div>
         </div>
-        <button @click="handleDone">Done</button> 
+        <button @click="handleDone">Done</button>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { defineComponent, onMounted, toRefs,ref } from 'vue'
 import  { apiPostPopover } from "@/apis/workFlows";
-import { message } from "ant-design-vue";
-import router from "@/router";
-import { useRoute } from 'vue-router' 
-import { log } from 'util';
+import { useRoute } from 'vue-router'
+
 //空数组
 const myArray=ref<string[]>([])
 
@@ -42,24 +40,17 @@ const props = defineProps({
   const isBorderOn=ref(false)
 //点击每一项
 function handleClick(title:string){
-    
+
     bgColor.value = bgColor.value === 'white' ? 'pink' : 'white'
     myArray.value.push(title)
-    return{
-        bgColor,
-        handleClick
-    }
 }
 
 //Done按钮
 async function handleDone(){
     console.log(myArray.value,'点击的每一项的合计');
-const res = await apiPostPopover(route.query.id as string,myArray as any)
+    const res = await apiPostPopover(route.query.id as string,myArray as any)
     console.log(res,'done按钮接口数据');
-    
-    return {
-        handleDone
-    }
+
 }
 //数据
 const newArray=ref([
@@ -127,7 +118,7 @@ const requestCall = ref<{
 
 //点击事件
 // const handleInter: any()=>{
-    
+
 // }
 
 
