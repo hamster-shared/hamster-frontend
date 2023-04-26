@@ -47,17 +47,15 @@ export function apiIsCheck(id:string){
 }
 
 //Configure Check Tools 弹出层页面
-export interface PostPopoverType{
-  tool:string,
-  toolType:number,
-}
+
+
 
 //Configure Check Tools 弹出层页面
-export function apiPostPopover(id:number,params:PostPopoverType){
+export function apiPostPopover(id:string,tool:string[]){
   return httpRequest({
     url:`/api/project/${id}/workflow/setting`,
     method:'post',
-    data:params
+    params:{tool}
   })
 }
 

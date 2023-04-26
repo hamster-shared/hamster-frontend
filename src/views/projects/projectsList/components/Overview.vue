@@ -282,7 +282,7 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         message.info("The workflow of checking is running, view now.")
         // router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
 
-        const res = await apiProjectsCheck(id);
+        // const res = await apiProjectsCheck(id);
         // message.success(res.message);
         loadView();
       }
@@ -291,10 +291,9 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         // router.push({name:'ProjectConfigure',query:{id}})        
         
         const res= await apiIsCheck(id)
-        if (res.data) {
-          router.push({name:'ProjectConfigure',query:{id}})
+        if (res.data!==null && res.data.length > 0) {
+          router.push({path:'ProjectConfigure',query:{id}})
         }
-        
      }
     } catch (error: any) {
       console.log("erro:", error)
