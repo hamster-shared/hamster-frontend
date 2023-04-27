@@ -1,7 +1,7 @@
 <template>
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
     <span class="text-[24px] leading-[32px] font-bold">Issues Files</span>
-    <div class="mt-4" v-if="checkReportData.issues > 0">
+    <div class="mt-4" v-if="metaTrustData.issues > 0">
       <label>Severity: </label>
       <a-button class="severity-btn" :class="[checkExitBtn('CRITICAL') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('CRITICAL')">Critical: {{ severityBtnData.CRITICAL }}</a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('HIGH') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('HIGH')">High:  {{ severityBtnData.HIGH }}</a-button>
@@ -69,7 +69,7 @@
 import { onMounted, ref, toRefs } from 'vue';
 import { apiGetMetascanFile } from "@/apis/checkReport";
 
-interface fileData {
+interface FileData {
   lineNum: number,
   lineText: string,
 }
@@ -80,31 +80,31 @@ interface MweData {
   lineStart: number,
   lineEnd: number,
   hightlights: [0],
-  fileContent: fileData[],
+  fileContent: FileData[],
 }
 interface ReportFileData {
   mwe: MweData[],
   fileKey: string
 }
-interface metaScanOverviewData {
+interface MetaScanOverviewData {
   CRITICAL: number,
   HIGH: number,
   INFORMATIONAL: number,
   LOW: number,
   MEDIUM: number
 }
-interface CheckReportData {
+interface MetaTrustData {
   issues: number,
-  metaScanOverviewData: metaScanOverviewData,
+  metaScanOverviewData: MetaScanOverviewData,
   reportFileData: ReportFileData[],
 }
 const props = defineProps<{
-  checkReportData: CheckReportData,
+  metaTrustData: MetaTrustData,
 }>()
-const { checkReportData } = toRefs(props)
+const { metaTrustData } = toRefs(props)
 
-const severityBtnData = checkReportData.value.metaScanOverviewData;
-const reportFileDataSA = Object.assign({}, checkReportData.value.reportFileData);
+const severityBtnData = metaTrustData.value.metaScanOverviewData;
+const reportFileDataSA = Object.assign({}, metaTrustData.value.reportFileData);
 const activeKey = ref(['1']);
 const checkedBtn: any = ref(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFORMATIONAL']);
 
@@ -140,7 +140,7 @@ const checkHightlight = (heightlight: any[], value: any) => {
 }
 //设置点击按钮需要显示的数据
 const setCheckBtnData = () => {
-  let baseReportFileData = checkReportData.value.reportFileData;
+  let baseReportFileData = metaTrustData.value.reportFileData;
   for (let key in baseReportFileData) {
     let tempMwe: any[] = [];
     delete reportFileDataSA[key];

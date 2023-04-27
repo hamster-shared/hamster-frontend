@@ -1,14 +1,14 @@
 <template>
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
     <span class="text-[24px] leading-[32px] font-bold">Issues Module</span>
-    <div v-if="checkReportData.issues === 0" class="box-card text-center py-[50px]">
+    <div v-if="metaTrustData.issues === 0" class="box-card text-center py-[50px]">
       <img src="@/assets/images/report-b.png" class="w-[58px] hidden dark:inline-block" />
       <img src="@/assets/images/report-w.png" class="w-[58px] dark:hidden" />
       <div class="dark:text-white text-[#151210] text-[11px] font-bold">Congratulations！</div>
       <div class="text-[#73706E] text-[7px]">No issues were detected.</div>
     </div>
     <div v-else>
-      <div class="mt-4" v-if="checkReportData.issues > 0">
+      <div class="mt-4" v-if="metaTrustData.issues > 0">
         <label>Severity: </label>
         <a-button class="severity-btn" :class="[checkExitBtn('Critical') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('Critical')">Critical: {{ severityBtnData.CRITICAL }}</a-button>
         <a-button class="severity-btn" :class="[checkExitBtn('High') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('High')">High:  {{ severityBtnData.HIGH }}</a-button>
@@ -42,7 +42,7 @@
 import { onMounted, ref, toRefs } from 'vue';
 
 
-interface itemsData {
+interface ItemsData {
   "Vulnerability ID": string;
   "CWE ID": string;
   Library: string;
@@ -50,35 +50,35 @@ interface itemsData {
   Description: string;
   License: [0];
 }
-interface vulnerabilityData {
-  items: itemsData[];
+interface VulnerabilityData {
+  items: ItemsData[];
 }
-interface resData {
-  vulnerability: vulnerabilityData;
+interface ResData {
+  vulnerability: VulnerabilityData;
 }
 interface ReportFileData {
-  results: resData;
+  results: ResData;
 }
-interface metaScanOverviewData {
+interface MetaScanOverviewData {
   CRITICAL: string,
   HIGH: string,
   INFORMATIONAL: string,
   LOW: string,
   MEDIUM: string
 }
-interface CheckReportData {
+interface MetaTrustData {
   issues: number,
-  metaScanOverviewData: metaScanOverviewData,
+  metaScanOverviewData: MetaScanOverviewData,
   reportFileData: ReportFileData,
 }
 const props = defineProps<{
-  checkReportData: CheckReportData,
+  metaTrustData: MetaTrustData,
 }>()
-const { checkReportData } = toRefs(props)
+const { metaTrustData } = toRefs(props)
 
-const severityBtnData = checkReportData.value.metaScanOverviewData;
+const severityBtnData = metaTrustData.value.metaScanOverviewData;
 const btnDataNum = ref(0);
-let reportFileDataOSA = Object.assign({}, checkReportData.value.reportFileData.results.vulnerability.items);
+let reportFileDataOSA = Object.assign({}, metaTrustData.value.reportFileData.results.vulnerability.items);
 const checkedBtn = ref(['Critical', 'High', 'Medium', 'Low', 'Informational']);
 
 const showContent = (value: string) => {
