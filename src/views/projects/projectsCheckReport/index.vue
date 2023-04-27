@@ -1,7 +1,7 @@
 <template>
-  <metaTrustSA></metaTrustSA>
+  <metaTrustSA v-if="metaTrustData.checkTool === 'MetaTrust (SA)'" :metaTrustData="metaTrustData"></metaTrustSA>
   <metaTrustSP></metaTrustSP>
-  <metaTrustOSA></metaTrustOSA>
+  <metaTrustOSA v-if="metaTrustData.checkTool === 'MetaTrust (OSA)'" :metaTrustData="metaTrustData"></metaTrustOSA>
   <div v-if=" params.checktype == 'Mythril' ">
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <div v-if="queryJson.projectType === '1'">
@@ -24,6 +24,7 @@
   import metaTrustSA from './components/metaTrustSA.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
   import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
+  import { apiGetReport } from "@/apis/checkReport";
   import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetDeployInfo } from "@/apis/workFlows";
   import YAML from "yaml";
 
@@ -42,6 +43,8 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
+  const reportId = ref(2224);
+  const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);
   const checkReportData = reactive([]);
@@ -219,10 +222,23 @@
     }
   }
 
+  const getReportInfo = async () => {
+    try {
+      const { data } = await apiGetReport(reportId.value);
+      data.reportFileData = YAML.parse(data.reportFile);
+      data.metaScanOverviewData = YAML.parse(data.metaScanOverview);
+
+      console.log("data:",data);
+      Object.assign(metaTrustData, data);
+    } catch (error: any) {
+      console.log("erro:", error)
+    }
+  }
   onMounted(() => {
     getWorkflowsDetails();
     getProjectsDetailData();
     loadInfo();
+    getReportInfo();
     console.log('params:',params.checktype)
   })
 
