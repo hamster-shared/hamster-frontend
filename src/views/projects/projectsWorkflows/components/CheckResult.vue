@@ -24,7 +24,14 @@
         <div class="flex col-span-2">
           <div class="flex-1">
             <span class="block mb-2 text-xl font-bold">{{ gasInfo?.content[0].name }}</span>
-            <span class="text-xl break-all">{{ gasInfo?.content[0]?.reportFile }}</span>
+            <div>
+              <span class="inline-block my-2 text-xl">Contract: {{ gasAnalysisReport?.message[0]?.contractName }}</span>
+              <div v-for="gasItem in gasAnalysisReport?.message[0]?.TestResultList">
+                <img v-show="gasItem.result === 1" src="@/assets/icons/gas-y.svg" class="w-[30px] h-[30px]" />
+                <img v-show="gasItem.result === 0" src="@/assets/icons/gas-n.svg" class="w-[30px] h-[30px]" />
+                <span class="text-xl">{{ gasItem.unitTestTitle }}</span>
+              </div>
+            </div>
           </div>
           <a-button class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail`)">View Detail</a-button>
         </div>
@@ -53,6 +60,7 @@
   const resultInfo = ref<[] | null>([])
   const gasInfo = ref()
   const AiInfo = ref()
+  const gasAnalysisReport = ref()
   const getCheckResultInfo = async() => {
     try {
       const { data } = await apiGetCheckResult({id:params.workflowsId, detailId:params.workflowDetailId})
@@ -67,15 +75,12 @@
         } else if( item.title == 'Gas Usage Analysis' ){
           gasInfo.value = item
           
-          // let reportFileInfo = JSON.parse(item.content[0].reportFile)
-          // console.log('Gas Usage Analysis:reportFileInfo', reportFileInfo)
+          let reportFileInfo = JSON.parse(item.content[0].reportFile)
+          console.log('Gas Usage Analysis:reportFileInfo', reportFileInfo)
 
-          // reportFileInfo.forEach((report:any)=>{
-          //   if(Object.keys(report.message[0]).includes('TestResultList')){
-          //     console.log('report:',report)
-          //   }
-            
-          // })
+          const gasReport = reportFileInfo.find((report:any)=>Object.keys(report.message[0]).includes('TestResultList'))
+          console.log('gasReport:',gasReport)
+          gasAnalysisReport.value = gasReport
           
         } else if( item.title == 'AI Analysis' ){
           console.log('AI Analysis')
