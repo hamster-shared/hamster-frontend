@@ -333,7 +333,7 @@ onMounted(() => {
 .btn{
   width: 70px;
   height: 20px;
-  background: blue;
+  background: #E2B578;
   line-height: 20px;
   border: none;
   border-radius: 15px 15px 15px 15px;

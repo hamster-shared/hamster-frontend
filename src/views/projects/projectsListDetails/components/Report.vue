@@ -1,6 +1,8 @@
 <template>
   <div>
-    <a-select @change="changeReport" v-model:value="checkTool" :options="checkToolList.map(item => ({ value: item }))">
+    <a-select @change="changeReport" v-model:value="checkTool" :options="checkToolList.map(item => ({ value: item }))" style="margin-right:10px">
+    </a-select>
+    <a-select @change="changeReport" v-model:value="checkReports" :options="checkReportsList.map(item => ({ value: item }))">
     </a-select>
   </div>
   <a-table class="my-4" :columns="reportTableColumns" :dataSource="reportTableList" :pagination="reportPagination">
@@ -34,6 +36,9 @@ const { detailId, projectType } = toRefs(props);
 
 const checkToolList = ref(["All Check Tool"]);
 const checkTool = ref("All Check Tool");
+// const checkReports=ref(["All Reports"])
+// const checkReportsList=ref(["All Reports"])
+
 const reportTableList = ref([]);
 
 const reportTableColumns = computed<any[]>(() => [
@@ -119,7 +124,6 @@ const changeReport = async () => {
   reportPagination.current = 1;
   getProjectsReports();
 }
-
 const getProjectsReports = async () => {
   try {
     const params = {

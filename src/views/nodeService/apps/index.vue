@@ -333,7 +333,7 @@ const setCodeHeight = (codeList: any[]) => {
 :deep(.ant-input-affix-wrapper-disabled){
   background-color: transparent;
   border-color: #EBEBEB;
-  color: #BBBAB9;
+  // color: #BBBAB9;
 }
 :deep(.ant-btn-primary){
   width: 120px;

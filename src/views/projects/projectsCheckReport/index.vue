@@ -1,4 +1,7 @@
 <template>
+  <metaTrustSA></metaTrustSA>
+  <metaTrustSP></metaTrustSP>
+  <metaTrustOSA></metaTrustOSA>
   <div v-if=" params.checktype == 'Mythril' ">
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <div v-if="queryJson.projectType === '1'">
@@ -16,6 +19,9 @@
   import { ref, reactive, onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
   import MyThril from './components/myThril.vue'
+  import metaTrustOSA from './components/metaTrustOSA.vue';
+  import metaTrustSP from './components/metaTrustSP.vue';
+  import metaTrustSA from './components/metaTrustSA.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
   import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
   import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetDeployInfo } from "@/apis/workFlows";
