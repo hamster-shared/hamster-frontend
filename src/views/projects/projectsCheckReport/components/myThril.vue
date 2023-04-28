@@ -11,8 +11,7 @@
     </div>
     <div v-for="item in checkReportData" :key="item.id"
       class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
-      <img v-if="frameType!=2" class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
-      <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
+      <span class="text-[24px] font-bold align-middle">Issues Files</span>
       
       <div v-if="item.errorNumber === 0" class="text-center p-[16px]">
         <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
@@ -20,60 +19,38 @@
         <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
         <div class="text-[#73706E]">No issues were detected.</div>
       </div>
+      
       <a-collapse v-else v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.name">
-        <a-collapse-panel v-if="val.issue > 0" :key="val.name + item.id" :header="val.name" :showArrow="false">
-          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="(projectType === '2' || projectType==='1') && item.checkTool === 'ESLint' && val.message" :dataSource="val.message"
-            :columns="ESLintColumns" :pagination="false" :showHeader="false">
-            <template #bodyCell="{ column, record, index }">
-              <template v-if="column.dataIndex === 'columnLine'">
-                line {{ record.line }},col {{ record.column }},
-              </template>
-            </template>
-          </a-table>
-          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '1' && item.checkTool === 'Solhint' &&  val.message" :dataSource="val.message"
-            :columns="ESLintColumns" :pagination="false" :showHeader="false">
-            <template #bodyCell="{ column, record, index }">
-              <template v-if="column.dataIndex === 'columnLine'">
-                line {{ record.line }},col {{ record.column }},
-              </template>
-            </template>
-          </a-table>
-
-          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '1' && (item.checkTool === 'mythril' || item.checkTool === 'ESLint') && val.message"
-            :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
-          </a-table>
-          
-          <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="table-css"
-            v-if="item.checkTool === 'sol-profiler' && val.message" :dataSource="val.message" :columns="columns"
-            :pagination="false">
-          </a-table>
-
-          <div v-if="!val.message" class="text-center">
+        <a-collapse-panel v-if="val.issue > 0" :key="val.name + val.id" :header="val.name" :showArrow="false">
+          <div v-if="!val.content" class="text-center">
             <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
             <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
             <div class="text-[#73706E]">No issues were detected.</div>
           </div>
-
+          <div>
+            <div class="font-bold">
+              <label class="text-[#BF3ABF]">[Low] </label>
+              <label>Compiler version should satisfy a semver requirement.</label>
+            </div>
+            <div class="bg-color mt-[20px] p-[20px] h-[200px]">
+              <div class="text-[#E2B578] text-[14px] flex justify-end items-center">
+              <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE</div>
+            </div>
+            <div class="font-medium mt-[20px]">Description</div>
+            <div class="text-[#73706E]">Compiler version ^0.8.0 does not satisfy the ^0.5.8 semver requirement</div>
+          </div>
           <template #extra>
             <div>
-              <span class="mr-[8px]" v-show="item.checkTool !== 'sol-profiler'">
-                {{ val.issue + ' issues' }}
+              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+                {{ val.issue + ' issues found' }}
               </span>
-              <img class="up-tran w-[12px] hidden dark:inline-block" src="@/assets/icons/up-b.svg" />
-              <img class="up-tran w-[12px] dark:hidden" src="@/assets/icons/up.svg" />
+              <svg-icon name="up-arrow" size="12" />
+              <!-- <img class="up-tran w-[12px] hidden dark:inline-block" src="@/assets/icons/up-b.svg" />
+              <img class="up-tran w-[12px] dark:hidden" src="@/assets/icons/up.svg" /> -->
             </div>
           </template>
         </a-collapse-panel>
-        <div v-else-if="item.errorNumber === 0" class="text-center p-[16px]">
-          <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
-          <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
-          <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
-          <div class="text-[#73706E]">No issues were detected.</div>
-        </div>
       </a-collapse>
       <div class="text-[#73706E] pl-[12px]">{{ 'Support by ' + item.checkTool }}</div>
     </div>
