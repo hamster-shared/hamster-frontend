@@ -1,7 +1,8 @@
 <template>
-  <metaTrustSA v-if="metaTrustData.checkTool === 'MetaTrust (SA)'" :metaTrustData="metaTrustData"></metaTrustSA>
-  <metaTrustSP></metaTrustSP>
-  <metaTrustOSA v-if="metaTrustData.checkTool === 'MetaTrust (OSA)'" :metaTrustData="metaTrustData"></metaTrustOSA>
+  <metaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></metaTrustSA>
+  <metaTrustSP v-if=" params.checktype == 'MetaTrust (SP)' "></metaTrustSP>
+  <metaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></metaTrustOSA>
+  <metaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></metaTrustCQ>
   <div v-if=" params.checktype == 'Mythril' ">
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <div v-if="queryJson.projectType === '1'">
@@ -22,6 +23,7 @@
   import metaTrustOSA from './components/metaTrustOSA.vue';
   import metaTrustSP from './components/metaTrustSP.vue';
   import metaTrustSA from './components/metaTrustSA.vue';
+  import metaTrustCQ from './components/metaTrustCQ.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
   import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
   import { apiGetReport } from "@/apis/checkReport";
@@ -43,7 +45,7 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
-  const reportId = ref(2244); //SA:2224,OSA:2244
+  const reportId = ref(2225); //SA:2224,OSA:2244,CQ:2225
   const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);
