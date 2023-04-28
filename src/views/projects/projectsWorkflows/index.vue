@@ -178,9 +178,9 @@ const getDetailFrontendReport = async () => {
       workflowDetailId: queryJson.workflowDetailId,
     }
     const { data } = await apiGetDetailFrontendReport(params);
-    data.map((item: any) => {
+    data?.map((item: any) => {
       item.reportFileData = YAML.parse(item.reportFile);
-      item.reportFileData.map((val: any) => {
+      item.reportFileData?.map((val: any) => {
         issue += val.issue
       })
     })
