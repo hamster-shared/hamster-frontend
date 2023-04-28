@@ -1,5 +1,5 @@
 <template>
-  <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
     <span class="text-[24px] leading-[32px] font-bold">Issues Module</span>
     <div v-if="metaTrustData.issues === 0" class="box-card text-center py-[50px]">
       <img src="@/assets/images/report-b.png" class="w-[58px] hidden dark:inline-block" />
@@ -40,7 +40,8 @@
 </template>
 <script lang='ts' setup>
 import { onMounted, ref, toRefs } from 'vue';
-
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore();
 
 interface ItemsData {
   "Vulnerability ID": string;
@@ -127,12 +128,34 @@ onMounted(() => {
   background: #E2B578;
   color: #FFFFFF;
 }
+.white-css{
+  .box-card{
+    background: #FFFFFF;
+    box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
+    border: 1px solid #F8F8F8;
+  }
+  .sub-title{
+    color: #000000;
+  }
+  .desc{
+    color: #73706E;
+  }
+}
+.dark-css{
+  .box-card{
+    background-color: #36322D;
+    border: 1px solid #36322D;
+  }
+  .sub-title{
+    color: #FFFFFF;
+  }
+  .desc{
+    color: #B4AFAD;
+  }
+}
 .box-card{
   margin-top: 25px;
-  background: #FFFFFF;
-  box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
   border-radius: 12px;
-  border: 1px solid #F8F8F8;
   line-height: 22px;
   font-size: 16px;
   .title{
@@ -141,11 +164,9 @@ onMounted(() => {
   }
   .sub-title{
     font-weight: 400;
-    color: #000000;
   }
   .desc{
     font-weight: 400;
-    color: #73706E;
     margin-top: 10px;
   }
 }

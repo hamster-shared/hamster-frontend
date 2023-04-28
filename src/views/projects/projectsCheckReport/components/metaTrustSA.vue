@@ -2,14 +2,14 @@
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
     <span class="text-[24px] leading-[32px] font-bold">Issues Files</span>
     <div class="mt-4" v-if="metaTrustData.issues > 0">
-      <label>Severity: </label>
+      <label class="dark:text-[#E0DBD2]">Severity: </label>
       <a-button class="severity-btn" :class="[checkExitBtn('CRITICAL') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('CRITICAL')">Critical: {{ severityBtnData.CRITICAL }}</a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('HIGH') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('HIGH')">High:  {{ severityBtnData.HIGH }}</a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('MEDIUM') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('MEDIUM')">Medium:  {{ severityBtnData.MEDIUM }} </a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('LOW') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('LOW')">Low:  {{ severityBtnData.LOW }}</a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('INFORMATIONAL') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('INFORMATIONAL')">Info:  {{ severityBtnData.INFORMATIONAL }}</a-button>
     </div>
-    <div class="box-card ">
+    <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="box-card">
       <div v-if="checkedBtn.length === 0" class="text-[#BBBAB9] text-center py-[80px]">
         <div class="text-[10px]">No Data…</div>
         <div class="text-[8px]">You currently do not choose to display data</div>
@@ -30,27 +30,27 @@
           </div>
           <div v-for="(item,index) in val.mwe" :key="index">
             <div :class="{'border-css' : index !== 0}"></div>
-            <div class="flex justify-between">
-              <div class="font-bold">
-                <label class="mr-2" :class="[item.severity === 'CRITICAL'?'text-[#FF0003]':item.severity === 'LOW'?'text-[#BC5EDE]':item.severity === 'HIGH'?'text-[#FF4D4F]':item.severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.severity }}]</label>
-                <label>File(s) Affected</label>
-              </div>
-              <div class="text-[#E2B578] text-[14px] cursor-pointer">
-                <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-              </div>
+            <div class="font-bold">
+              <label class="mr-2" :class="[item.severity === 'CRITICAL'?'text-[#FF0003]':item.severity === 'LOW'?'text-[#BC5EDE]':item.severity === 'HIGH'?'text-[#FF4D4F]':item.severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.severity }}]</label>
+              <label>File(s) Affected</label>
             </div>
             <div class="bg-color mt-[20px] p-[20px]">
+              <div class="flex justify-end">
+                <div class="text-[#E2B578] text-[14px] cursor-pointer">
+                  <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
+                </div>
+              </div>
               <div class="whitespace-pre-wrap text-[14px]"> 
                 <div class="flex" v-for="subItem in item.fileContent" :key="index">
-                  <div class="w-[5%] text-[#73706E]">{{ subItem.lineNum }}</div>
-                  <div class="w-[95%]" :class="{'hight-light': checkHightlight(item.hightlights, subItem.lineNum)}">{{ subItem.lineText }}</div>
+                  <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ subItem.lineNum }}</div>
+                  <div class="w-[95%] dark:text-[#E0DBD2]" :class="{'hight-light': checkHightlight(item.hightlights, subItem.lineNum)}">{{ subItem.lineText }}</div>
                 </div>
               </div>
             </div>
             <div class="font-medium mt-[20px]">Description</div>
-            <div class="text-[#73706E]">{{ item.description }}</div>
+            <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.description }}</div>
             <div class="font-medium mt-[20px]">Recommendation</div>
-            <div class="text-[#73706E]">{{ item.recommendation }}</div>
+            <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.recommendation }}</div>
           </div>
           <template #extra>
             <div>
@@ -68,6 +68,8 @@
 <script lang='ts' setup>
 import { onMounted, ref, toRefs } from 'vue';
 import { apiGetMetascanFile } from "@/apis/checkReport";
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore();
 
 interface FileData {
   lineNum: number,
@@ -212,38 +214,66 @@ const getMetascanFile = async () => {
 :deep(.ant-collapse-item-active .svg-icon) {
   transform: rotate(0deg);
 }
-:deep(.ant-collapse){
+:deep(.dark-css .ant-collapse){
+  border-bottom: 1px solid #302D2D;
+}
+:deep(.white-css .ant-collapse){
   border-bottom: 1px solid #F3F3F3;
+}
+:deep(.ant-collapse){
   font-size: 16px;
 }
 :deep(.ant-collapse-item){
   padding: 0 24px;
 }
+:deep(.dark-css .ant-collapse-header){
+  color: #E0DBD2 !important;
+}
 :deep(.ant-collapse-header){
   font-weight: 500;
   padding: 15px 0 !important;
 }
-:deep(.ant-collapse-content-box){
-  border-radius: 12px;
+:deep(.dark-css .ant-collapse-content){
+  background-color: #36322D;
+  border: 1px solid rgba(216, 216, 216,0.2);
+}
+:deep(.white-css .ant-collapse-content){
   border: 1px solid rgba(151, 151, 151, 0.2);
+}
+:deep(.ant-collapse-content){
+  border-radius: 12px !important;
   margin-bottom: 20px;
 }
-.box-card{
-  margin-top: 25px;
+.dark-css{
+  background: #36322D;
+  border: 1px solid #302D2D;
+  .bg-color{
+    background-color: rgba(216, 216, 216,0.2);
+  }
+  .border-css{
+    border-bottom: 1px solid #45423D;
+  }
+}
+.white-css{
   background: #FFFFFF;
   box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
-  border-radius: 12px;
   border: 1px solid #F8F8F8;
-  line-height: 22px;
-  font-size: 16px;
   .bg-color{
     background-color: rgba(216, 216, 216, 0.2);
   }
+  .border-css{
+    border-bottom: 1px solid #F3F3F3;
+  }
+}
+.box-card{
+  margin-top: 25px;
+  border-radius: 12px;
+  line-height: 22px;
+  font-size: 16px;
   .hight-light{
     background-color: rgba(226, 181, 120, 0.10)
   }
   .border-css{
-    border-bottom: 1px solid #F3F3F3;
     margin-bottom: 40px;
     margin-top: 40px;
   }
