@@ -1,5 +1,5 @@
 <template>
-    <a-modal v-model:visible="props.visible" width="1000px" :footer="null" @ok="handleOk">
+    <a-modal v-model:visible="props.visible" width="1000px" :footer="null" @ok="handleOk" @cancel="handleCancel">
        <div>
             <div>
                 <h2>Configure Check Tools</h2>
@@ -14,6 +14,7 @@
                 <div class="box" v-for="(items,index) in item.children" :key="index" style="white-space:nowrap;">
                     <p :class="myArray.includes(items.title) ? 'tags' : 'tag'"
                         style="float:left;width:210px;height:50px;line-height:50px;margin-right:10px;vertical-align:middle;text-align:center;"
+                        :style="{border:items.border? '1px solid red':''}"
                         @click="handleClick(items.title)">
                         {{items.title }}
                     </p>
@@ -25,17 +26,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, onMounted, toRefs,ref,computed } from 'vue'
+import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
-const bgColor = ref('')
-const emit = defineEmits(["getDoneData"])
+const emit = defineEmits(["getDoneData","handleCancel"])
 //空数组
 const myArray=ref<string[]>([])
 const props = defineProps({
         visible:{
             type:Boolean,
             default:false
+        },
+        selectData:{
+            type:Array,
+            default:[]
         }
     });
 //点击每一项
@@ -45,6 +49,7 @@ function handleClick(title:string){
 //Done按钮
  function handleDone(){
     emit('getDoneData',myArray.value)
+    emit('handleCancel')
 }
 
 //数据
@@ -55,12 +60,15 @@ const newArray=ref([
     children:[
         {
             title:'Mythril',
+            border:false
         },
         {
             title:'MetaTrustSecurity Analyzer',
+            border:false
         },
         {
             title:'MetaTrustSecurity Prover',
+            border:false
         }
     ]
 },
@@ -70,6 +78,7 @@ const newArray=ref([
     children:[
         {
             title:'MetaTrustOpen Source Analyzer',
+            border:false
         }
     ]
 },
@@ -79,9 +88,11 @@ const newArray=ref([
     children:[
         {
             title:'Solhint',
+            border:false
         },
         {
             title:'MetaTrustCode Quality',
+            border:false
         }
     ]
 },
@@ -91,6 +102,7 @@ const newArray=ref([
     children:[
         {
             title:'eth-gas-reporter',
+            border:false
         }
     ]
 },
@@ -100,6 +112,7 @@ const newArray=ref([
     children:[
         {
             title:'AI',
+            border:false
         }
     ]
 }
@@ -110,7 +123,6 @@ const requestCall = ref<{
     tool: string,
     toolType: number,
   }[]>([])
-
 </script>
 
 <style lang="less" scoped>

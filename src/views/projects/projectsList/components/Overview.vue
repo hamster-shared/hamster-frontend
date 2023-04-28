@@ -185,8 +185,7 @@
   </starkNetModal>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
-  <Configure :visible="visible" @getDoneData="getDoneData" />
-  
+  <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
 </template>
 
 <script lang='ts' setup>
@@ -212,6 +211,10 @@ import  { apiPostPopover } from "@/apis/workFlows";
 const { t } = useI18n()
 const theme = useThemeStore()
 const projectId = ref('')
+//点击关闭按钮
+const handleCancel=()=>{
+    evmCheckVisible.value=false
+}
 //弹框
 const router = useRouter();
 const props = defineProps<{
@@ -221,7 +224,7 @@ const props = defineProps<{
   // labelDisplay:string
 }>()
 // const showModal = () => {
-//       visible.value = true;
+//       evmCheckVisible.value = true;
 //     };
 const actionButtonList = ref([
   { name: 'Check', url: 'check' },
@@ -244,7 +247,7 @@ const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
 //设置弹框隐藏
-const visible=ref(false)
+const evmCheckVisible=ref(false)
 
 const msgParam = ref({
   id: viewInfo?.value.id,
@@ -290,9 +293,9 @@ const getDoneData =async (myArray:string[]) => {
     if (myArray.length > 0) {
       const res = await apiPostPopover(projectId.value,params)
       console.log(res,'done按钮接口数据');
-      visible.value=false 
+      evmCheckVisible.value=false 
     } else {
-      message.warning('请选择工具');
+      message.warning('Please choose tools');
     }
 }
 // check
@@ -312,8 +315,11 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
       if(props.viewInfo.frameType=== 1){
         projectId.value = id
         const res= await apiIsCheck(id)
-        if (res.data!==null && res.data.length > 0) {
-          visible.value=true
+        console.log(id,'打印一下这个id',res?.data?.length);
+        if(res.code===200){
+          if (!res.data[0]) {
+            evmCheckVisible.value=true
+          }
         }
      }
     } catch (error: any) {
@@ -591,9 +597,6 @@ const getImageUrl = (status: any) => {
   width: 100%;
   padding: 32px;
   border-radius: 12px;
-  // background: #36322D;
-  // border: 1px solid #ccc;
-  // border-color: #434343;
   margin-top: 60px;
 }
 

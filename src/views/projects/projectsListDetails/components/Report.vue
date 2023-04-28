@@ -1,9 +1,10 @@
 <template>
   <div>
-    <a-select @change="changeReport" v-model:value="checkTool" :options="checkToolList.map(item => ({ value: item }))" style="margin-right:10px">
-    </a-select>
-    <a-select @change="changeReport" v-model:value="checkReports" :options="checkReportsList.map(item => ({ value: item }))">
-    </a-select>
+    <!-- OptionsList -->
+    <a-select @change="changeReport" v-model:value="OptionsList" :options="Options2" style="margin-right:10px;width:150px"></a-select>
+    <!-- checkReportsList -->
+    <a-select @change="changePort" v-model:value="Options" :options="Options1" style="width:225px"></a-select>
+
   </div>
   <a-table class="my-4" :columns="reportTableColumns" :dataSource="reportTableList" :pagination="reportPagination">
     <template #bodyCell="{ column, record, index }">
@@ -19,24 +20,30 @@
   </a-table>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, toRefs } from 'vue';
+import { computed, onMounted, reactive, ref, toRefs, defineProps, defineExpose } from 'vue';
 import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import {
   apiGetProjectsReports,
   apiProjectsCheckTools,
+  //report
+  apiAddReport,
 } from "@/apis/projects";
 
 const router = useRouter();
 const props = defineProps({
   detailId: String,
   projectType: String,
-});
-const { detailId, projectType } = toRefs(props);
+  //report
+  type:String,
+  reportType:String,
 
-const checkToolList = ref(["All Check Tool"]);
-const checkTool = ref("All Check Tool");
-// const checkReports=ref(["All Reports"])
+});
+const { detailId, projectType,type,reportType } = toRefs(props);
+const Options=ref("All Check Tool")
+const OptionsList=ref('All Reports')
+//report定义
+// const checkReports=ref("All Reports")
 // const checkReportsList=ref(["All Reports"])
 
 const reportTableList = ref([]);
@@ -90,6 +97,66 @@ const reportTableColumns = computed<any[]>(() => [
   },
 ]);
 
+//左侧下拉框数据
+const Options1 = ref([
+      {
+        value: 'MetaTrust (SA)',
+        label: 'MetaTrust (SA)',
+      },
+      {
+        value: 'MetaTrust (SP)',
+        label: 'MetaTrust (SP)',
+      },
+      {
+        value: 'MetaTrust (OSA)',
+        label: 'MetaTrust (OSA)',
+      },
+      {
+        value: 'MetaTrust (CQ)',
+        label: 'MetaTrust (CQ)',
+      },
+      {
+        value:'Mythril',
+        label:'Mythril',
+      },
+      {
+        value:'Solhint',
+        label:'Solhint',
+      },
+      {
+        value:'eth-gas-reporter',
+        label:'eth-gas-reporter',
+      },
+      {
+        value:'Al',
+        label:'Al',
+      }
+    ]);
+
+//右侧下拉框数据
+const Options2 = ref([
+  {
+    value: 'Security AnalysisReport',
+    label: 'Security AnalysisReport',
+  },
+  {
+    value: 'Open Source AnalysisReport',
+    label: 'Open Source AnalysisReport',
+  },
+  {
+    value: 'Code Quality AnalysisReport',
+    label: 'Code Quality AnalysisReport',
+  },
+  {
+    value: 'Gas Usage AnalysisReport',
+    label: 'Gas Usage AnalysisReport',
+  },
+  {
+    value:'Other Analysis Report',
+    label:'Other Analysis Report',
+  },
+]);
+
 const reportPagination = reactive({
   // 分页配置器
   pageSize: 10, // 一页的数据限制
@@ -106,59 +173,111 @@ const reportPagination = reactive({
     reportPagination.current = current;
     reportPagination.pageSize = pagesize;
     getProjectsReports();
+    //report
+    getReportAps()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     reportPagination.current = current;
     getProjectsReports();
+    //report
+    getReportAps()
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
-
 onMounted(() => {
   getProjectsReports();
   getProjectsCheckTools();
+  //report
+  getReport()
+  getReportAps()
 })
 
-const changeReport = async () => {
+//左侧change事件
+const changeReport = async (type:string) => {
   reportPagination.current = 1;
   getProjectsReports();
+  // console.log(type)
+  OptionsList.value = type
+  //report
+  // getReport()
+  
 }
+//右侧change事件
+const changePort=async(reportType:string)=>{
+  reportPagination.current = 1;
+  console.log(reportType)
+  Options.value = reportType
+  getProjectsReports();
+}
+
 const getProjectsReports = async () => {
   try {
     const params = {
-      type: checkTool.value === 'All Check Tool' ? "" : checkTool.value,
+      type: Options.value === 'All Check Tool' ? "" : Options.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
+      reportType:OptionsList.value === 'All Reports' ? "" : OptionsList.value
     }
     const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
     reportTableList.value = data.data;
     reportPagination.total = data.total
 
   } catch (error: any) {
-    console.log("erro:", error)
+    console.log("Error:", error)
   } finally {
     // loading.value = false;
+  }
+};
+
+//report
+const getReportAps = async () => {
+  try {
+    const params = {
+      type: checkReports.value === 'All Report' ? "" : checkReports.value,
+      page: reportPagination.current,
+      size: reportPagination.pageSize,
+      //1
+      reportType:checkReportsList.value
+    }
+    
+    const { data } = await apiAddReport(detailId.value.toString(),params,reportType);
+    reportTableList.value = data.data;
+    reportPagination.total = data.total
+  } catch (error: any) {
+    console.log("Error:", error)
+  } finally {
   }
 };
 
 const getProjectsCheckTools = async () => {
   try {
     const { data } = await apiProjectsCheckTools(detailId.value.toString());
-    checkToolList.value.length = 1;
-    checkToolList.value = checkToolList.value.concat(data);
-
+    OptionsList.value.length = 1;
+    OptionsList.value = OptionsList.value.concat(data);
   } catch (error: any) {
-    console.log("erro:", error)
+    console.log("Error:", error)
   } finally {
-    // loading.value = false;
   }
 }
+// report
+const getReport=async()=>{
+  try{
+    const { data } = await apiProjectsCheckTools(detailId.value.toString());
+    checkReportsList.value.length = 1;
+    checkReportsList.value = checkReportsList.value.concat(data);
+  }catch(error:any){
+    console.log('Error:',Error)
+  }finally{
+  }
+}
+
 const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
   router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
 }
 
 defineExpose({
-  getProjectsReports
+  getProjectsReports,
+  getReportAps
 })
 </script>
