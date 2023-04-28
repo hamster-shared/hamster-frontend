@@ -88,6 +88,21 @@ interface apiContainerDeployParams {
   serviceTargetPort?: number,
 }
 
+//获取Report列表
+interface apiReportsParams{
+  type:string,
+  reportType:string,
+}
+
+//获取Report列表
+export function apiAddReport(id:string,params:apiReportsParams){
+  return httpRequest({
+    url:`/api/projects/${id}/reports`,
+    method:'get',
+    params:params
+  })
+}
+
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({

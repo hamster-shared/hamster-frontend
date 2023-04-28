@@ -40,6 +40,13 @@
               <a-menu-item @click="visibleModal = true">
                 <a href="javascript:;">General</a>
               </a-menu-item>
+              <!-- Check Setting -->
+              <a-menu-item @click="GetCheck" :visible="visible">
+                <a href="javascript:;">Check Setting</a>
+                <!-- 弹框组件 -->
+                <Configure :visible="visible" :selectData="selectData"  @getDoneData="getDoneData" @cancel="handleCancel" />
+              </a-menu-item>
+
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
                 <a href="javascript:;">Container</a>
               </a-menu-item>
@@ -119,12 +126,17 @@ import {
   apiPostContainer,
   apiGetContainer,
   apiGetAptosBuildParams,
-  apiAptosBuild
+  apiAptosBuild,
+  apiProjectsCheck
 } from "@/apis/projects";
+import Configure from '../projectsList/components/Configure.vue'
+import  { apiPostPopover } from "@/apis/workFlows";
+import {apiIsCheck} from '@/apis/workFlows'
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
 const theme = useThemeStore()
+const projectId = ref('')
 
 const router = useRouter();
 const { params } = useRoute();
@@ -141,6 +153,19 @@ const reportRef = ref();
 const packageRef = ref();
 const formRef = ref();
 const userInfo = localStorage.getItem('userInfo');
+const getDoneData =async (myArray:string[]) => {
+    const params = {
+        tool:myArray
+    }
+    //判断是否有选择
+    if (myArray.length > 0) {
+      const res = await apiPostPopover(projectId.value,params)
+      console.log(res,'done按钮接口数据');
+      visible.value=false 
+    } else {
+      message.warning('Please choose tools');
+    }
+}
 const formData = reactive({
   name: '',
   userId: JSON.parse(userInfo)?.id,
@@ -158,8 +183,25 @@ const msgParam = ref({
   projectType: projectType?.value
 });
 const aptosBuildParams = ref([]);
-
+const selectData = ref([])
 console.log(projectsDetail.value)
+
+// 弹框
+let visible=ref(false)
+//x关闭按钮
+const handleCancel=async(id:string[])=>{
+  visible.value=false
+}
+const GetCheck=async()=>{
+  visible.value=true
+  //调用接口
+  const res=await apiIsCheck(detailId.value)
+  //判断返回数据是否为空
+  if (res.code===200) {
+    selectData.value = res.data
+  }
+  
+}
 
 const formRules = computed(() => {
 

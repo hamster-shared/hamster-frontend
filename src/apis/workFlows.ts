@@ -43,7 +43,7 @@ interface GetCheckResultParams {
 }
 
 
-
+// 检查EVM合约是否设置了workflow的check pipeline
 export function apiIsCheck(id:string){
   return httpRequest({
     url:`/api/project/${id}/workflow/setting/check`,
