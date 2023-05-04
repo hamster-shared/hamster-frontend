@@ -1,8 +1,9 @@
 <template>
-  <metaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></metaTrustSA>
-  <metaTrustSP v-if=" params.checktype == 'MetaTrust (SP)' "></metaTrustSP>
-  <metaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></metaTrustOSA>
-  <metaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></metaTrustCQ>
+  <MetaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
+  <MetaTrustSP :metaTrustData="metaTrustData" v-if=" metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)'  "></MetaTrustSP>
+  <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
+  <MetaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
+  <Solhint :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
   <div v-if=" params.checktype == 'Mythril' ">
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <div v-if="queryJson.projectType === '1'">
@@ -20,10 +21,11 @@
   import { ref, reactive, onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
   import MyThril from './components/myThril.vue'
-  import metaTrustOSA from './components/metaTrustOSA.vue';
-  import metaTrustSP from './components/metaTrustSP.vue';
-  import metaTrustSA from './components/metaTrustSA.vue';
-  import metaTrustCQ from './components/metaTrustCQ.vue';
+  import MetaTrustOSA from './components/metaTrustOSA.vue';
+  import MetaTrustSP from './components/metaTrustSP.vue';
+  import MetaTrustSA from './components/metaTrustSA.vue';
+  import MetaTrustCQ from './components/metaTrustCQ.vue';
+  import Solhint from './components/solhint.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
   import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
   import { apiGetReport } from "@/apis/checkReport";
@@ -45,7 +47,7 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
-  const reportId = ref(2225); //SA:2224,OSA:2244,CQ:2225
+  const reportId = ref(2061); //SA:2224,OSA:2244,SP:2295,Solhint:2061
   const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);
