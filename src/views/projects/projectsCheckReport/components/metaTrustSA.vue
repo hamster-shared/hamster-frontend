@@ -40,7 +40,7 @@
                   <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
                 </div>
               </div>
-              <div class="whitespace-pre-wrap text-[14px]"> 
+              <div class="mt-4 whitespace-pre-wrap text-[14px]"> 
                 <div class="flex" v-for="subItem in item.fileContent" :key="index">
                   <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ subItem.lineNum }}</div>
                   <div class="w-[95%] dark:text-[#E0DBD2]" :class="{'hight-light': checkHightlight(item.hightlights, subItem.lineNum)}">{{ subItem.lineText }}</div>
