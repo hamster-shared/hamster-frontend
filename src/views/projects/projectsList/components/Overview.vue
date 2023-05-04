@@ -317,8 +317,10 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         const res= await apiIsCheck(id)
         console.log(id,'打印一下这个id',res?.data?.length);
         if(res.code===200){
-          if (!res.data[0]) {
+          if (JSON.stringify(res.data) === "{}") {
             evmCheckVisible.value=true
+            //不显示弹框
+            message.destroy()
           }
         }
      }
