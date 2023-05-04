@@ -414,6 +414,7 @@ const switchToChain = async (chainId: string) => {
     message.success('success');
     // console.info(res, '成功')
   }).catch((err: any) => {
+    loading.value = false
     if (err.code === 4902) {
       message.info('Please add the network first');
       addToChain(chainId)

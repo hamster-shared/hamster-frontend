@@ -59,7 +59,7 @@
           
           <div class="my-2">
             <a target="_blank" :href="viewInfo.repositoryUrl" class="flex">
-              <div class="text-over-css">{{ viewInfo.repositoryUrl }}</div>
+              <div class="text-over-css">{{ showViewInfoRepositoryUrlStart }}</div>
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
@@ -234,10 +234,12 @@ const actionButtonList = ref([
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 
-console.log(11111,viewInfo.value)
 const showViewInfoRepositoryUrl = computed(() => {
   // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
   return viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
+})
+const showViewInfoRepositoryUrlStart = computed(() => {
+  return viewInfo.value?.repositoryUrl.slice(0, viewInfo.value?.repositoryUrl.length-3)
 })
 
 const emit = defineEmits(["loadProjects"]);
