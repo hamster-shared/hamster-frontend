@@ -14,3 +14,10 @@ export function apiGetMetascanFile(key: string) {
     method: 'get',
   })
 }
+
+export function apiGetContractContent(id: string, name: string) {
+  return httpRequest({
+    url: `/api/project/${id}/contract/${name}/content`,
+    method: 'get',
+  })
+}

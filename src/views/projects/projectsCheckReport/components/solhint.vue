@@ -32,7 +32,7 @@
                 <div class="mt-4 text-[14px] whitespace-pre-wrap">
                   <div class="flex" >
                     <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ item.line }}</div>
-                    <div class="w-[95%] dark:text-[#E0DBD2]">{{ item.note }}</div>
+                    <div class="w-[95%] dark:text-[#E0DBD2]">{{ item.fileContent }}</div>
                   </div>
                 </div>
               </div>
@@ -52,14 +52,18 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, toRefs } from 'vue';
+import { onMounted, ref, toRefs } from 'vue';
+import { useRoute } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
+import { apiGetContractContent } from "@/apis/checkReport";
 const theme = useThemeStore();
+const { params } = useRoute();
 
 interface MessageData {
   level: string,
   line: string,
   note: string,
+  fileContent: string,
 }
 interface ReportFileData {
   issue: number,
@@ -78,6 +82,31 @@ const { metaTrustData } = toRefs(props)
 const reportFileData = Object.assign({}, metaTrustData.value.reportFileData);
 const activeKey = ref(['1']);
 
+onMounted(() => {
+  getMetascanFile();
+})
+//获取显示的代码
+const getMetascanFile = async () => {
+  console.log("reportFileData:",reportFileData);
+  for (let key in reportFileData) {
+    try {
+      const { data } = await apiGetContractContent(params.id, reportFileData[key].name);
+      const tempFile = data.split('\n');
+
+      //截取需要显示的代码
+      reportFileData[key].message.forEach((element, index) => {
+        let tempData = '';
+        if (tempFile.length >= element.line) {
+          tempData = tempFile[parseInt(element.line) - 1];
+        }
+        element.fileContent = tempData;
+        // reportFileData[ind].message[index].fileContent = tempData;
+      });
+    } catch (error: any) {
+      console.log("erro:", error)
+    }
+  }
+}
 </script>
 <style lang='less' scoped>
 .Severity-btn{
