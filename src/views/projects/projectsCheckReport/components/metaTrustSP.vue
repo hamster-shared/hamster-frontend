@@ -44,20 +44,22 @@
                 <div class="mt-4  text-[14px] whitespace-pre-wrap">
                   <div class="flex" >
                     <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ item.affectedFiles.range.start.line }}</div>
-                    <div class="w-[95%] dark:text-[#E0DBD2] hight-light">{{ item.affectedFiles.text }}</div>
+                    <div class="w-[95%] text-[#545454] dark:text-[#B4AFAD]">{{ item.affectedFiles.text }}</div>
                   </div>
                 </div>
               </div>
               <div class="font-medium mt-[20px]">Description</div>
               <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.Description }}</div>
               <div class="font-medium mt-[20px]">POC</div>
-              <div class="flex text-[#73706E] dark:text-[#B4AFAD]" v-for="subItem in item.poc" :key="index">
-                <div class="mr-4">Step {{ subItem.callDepth }}</div>
-                <div>
-                  <label>{{ subItem.functionName }}</label>
-                  <label v-for="subVal in subItem.parameters" :key="index" class="pl-4">
-                    {{ subVal.name }} = {{ subVal.value }}
-                  </label>
+              <div class="bg-color mt-[20px] p-[20px] text-[14px]">
+                <div class="flex text-[#73706E] dark:text-[#B4AFAD]" v-for="subItem in item.poc" :key="index">
+                  <div class="mr-4">Step {{ subItem.callDepth }}</div>
+                  <div>
+                    <label>{{ subItem.functionName }}</label>
+                    <label v-for="subVal in subItem.parameters" :key="index" class="pl-4">
+                      {{ subVal.name }} = {{ subVal.value }}
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
