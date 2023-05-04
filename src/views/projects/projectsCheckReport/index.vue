@@ -47,7 +47,7 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
-  const reportId = ref(2061); //SA:2224,OSA:2244,SP:2295,Solhint:2061
+  const reportId = ref(2295); //SA:2224,OSA:2244,SP:2295,Solhint:2061
   const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);

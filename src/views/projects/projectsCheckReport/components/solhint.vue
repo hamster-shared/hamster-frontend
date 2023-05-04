@@ -32,7 +32,7 @@
                 <div class="mt-4 text-[14px] whitespace-pre-wrap">
                   <div class="flex" >
                     <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ item.line }}</div>
-                    <div class="w-[95%] dark:text-[#E0DBD2] hight-light">{{ item.note }}</div>
+                    <div class="w-[95%] dark:text-[#E0DBD2]">{{ item.note }}</div>
                   </div>
                 </div>
               </div>
