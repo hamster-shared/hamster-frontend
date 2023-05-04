@@ -321,6 +321,8 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         if(res.code===200){
           if (JSON.stringify(res.data) === "{}") {
             evmCheckVisible.value=true
+            //不显示弹框
+            message.destroy()
           }
         }
      }

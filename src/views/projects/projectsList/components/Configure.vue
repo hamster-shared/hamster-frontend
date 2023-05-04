@@ -30,7 +30,6 @@ import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const emit = defineEmits(["getDoneData","handleCancel"])
-//空数组
 const myArray=ref<string[]>([])
 const props = defineProps({
         visible:{
@@ -44,14 +43,13 @@ const props = defineProps({
     });
 //点击每一项
 function handleClick(title:string){
-    myArray.value.push(title)    
+    myArray.value.push(title)   
 }
 //Done按钮
  function handleDone(){
     emit('getDoneData',myArray.value)
     emit('handleCancel')
 }
-
 //数据
 const newArray=ref([
 {
