@@ -239,9 +239,9 @@
     }
   }
   onMounted(() => {
-    // getWorkflowsDetails();
-    // getProjectsDetailData();
-    // loadInfo();
+    getWorkflowsDetails();
+    getProjectsDetailData();
+    loadInfo();
     getReportInfo();
     console.log('params:',params.checktype)
   })
