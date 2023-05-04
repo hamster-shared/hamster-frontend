@@ -47,7 +47,7 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
-  const reportId = ref(2295); //SA:2224,OSA:2244,SP:2295,Solhint:2061
+  const reportId = ref(2319); //SA:2224,OSA:2244,SP:2295,Solhint:2319
   const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);
@@ -111,27 +111,30 @@
     const list: any = []
     const listGas: any = [];
     const { data } = await apiGetWorkFlowsReport(queryJson);
-    data.map((item: any) => {
-      if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
-        if (item.checkTool === 'eth-gas-reporter') {
-          listGas.push(item);
-        } else {
-          list.push(item)
+    
+    if (data != null) {
+      data.map((item: any) => {
+        if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+          if (item.checkTool === 'eth-gas-reporter') {
+            listGas.push(item);
+          } else {
+            list.push(item)
+          }
         }
-      }
-    })
+      })
 
-    // issue = yamlData(listGas, issue, "gasUsage");
-    const myThril = [list.find( (item:any) => item.checkTool == 'mythril')]
-    Object.assign(getCheckMyThrilData, myThril);
+      // issue = yamlData(listGas, issue, "gasUsage");
+      const myThril = [list.find( (item:any) => item.checkTool == 'mythril')]
+      Object.assign(getCheckMyThrilData, myThril);
 
-    issue = yamlData(myThril, issue, "report");
+      issue = yamlData(myThril, issue, "report");
 
-    data.filter((item: any) => {
-      if (item.checkTool == 'OpenAI') {
-        openAiInfo.value = item
-      }
-    })
+      data.filter((item: any) => {
+        if (item.checkTool == 'OpenAI') {
+          openAiInfo.value = item
+        }
+      })
+    }
     
     // Object.assign(gasUsageReportData, listGas);
     workflowsDetailsData.errorNumber = issue;
