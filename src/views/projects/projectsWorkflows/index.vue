@@ -9,13 +9,15 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <CheckResult></CheckResult>
-      <!-- contract -->
-      <!-- <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
-      <GasUsageReport :gasUsageReportData="gasUsageReportData"
-        v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-      <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList> -->
+      <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
+      <CheckResult v-if="contractFrameType == '1'"></CheckResult>
+      <div v-else>
+        <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+          :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
+        <GasUsageReport :gasUsageReportData="gasUsageReportData"
+          v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
+        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList>
+      </div>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
@@ -47,9 +49,9 @@ import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
 
-
 const { t } = useI18n()
 const { params } = useRoute();
+const contractFrameType = localStorage.getItem('frameType')
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -129,7 +131,7 @@ const getCheckReport = async () => {
   const list: any = []
   const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
-  data.map((item: any) => {
+  data?.map((item: any) => {
     if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
       if (item.checkTool === 'eth-gas-reporter') {
         listGas.push(item);
@@ -142,7 +144,7 @@ const getCheckReport = async () => {
   issue = yamlData(listGas, issue, "gasUsage");
   issue = yamlData(list, issue, "report");
 
-  data.filter((item: any) => {
+  data?.filter((item: any) => {
     if (item.checkTool == 'OpenAI') {
       openAiInfo.value = item
     }
@@ -154,19 +156,21 @@ const getCheckReport = async () => {
 }
 
 const yamlData = (list: any[], issue: number, dataType: string) => {
-  list.map((item: any) => {
-    item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any, index: number) => {
-      if (dataType === "gasUsage") {
-        if (index === 0) {
+  if (list.length > 0) {
+    list.map((item: any) => {
+      item.reportFileData = YAML.parse(item.reportFile);
+      item.reportFileData?.map((val: any, index: number) => {
+        if (dataType === "gasUsage") {
+          if (index === 0) {
+            issue += val.issue
+          }
+        } else {
           issue += val.issue
         }
-      } else {
-        issue += val.issue
-      }
+      })
+      item.errorNumber = issue;
     })
-    item.errorNumber = issue;
-  })
+  } 
   return issue;
 }
 
@@ -262,7 +266,6 @@ onMounted(() => {
   getProjectsDetailData();
   loadInfo();
 })
-
 
 onUnmounted(() => {
   clearTimeout(detailTimer.value);
