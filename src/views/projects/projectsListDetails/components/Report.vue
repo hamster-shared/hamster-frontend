@@ -242,7 +242,6 @@ const getReportAps = async () => {
       type: checkReports.value === 'All Report' ? "" : checkReports.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
-      //1
       reportType:checkReportsList.value
     }
     
