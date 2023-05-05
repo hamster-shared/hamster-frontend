@@ -40,7 +40,8 @@
                   <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
-                  <!-- <button class="chainlink" @click="handleChai">Chainlink</button> -->
+                  <!-- Middleware Button -->
+                  <!-- <button class="chainlink" v-if=".name==='Middleware'">Chainlink</button> -->
                 </div>
               </div>
             </div>
@@ -110,6 +111,7 @@ const getTemplatesCategory = async () => {
     });
   } catch (error: any) {
     console.log("erro:", error)
+    
   } finally {
     // loading.value = false;
   }
@@ -143,11 +145,11 @@ const goBack = () => {
   /*文本不自动换行*/
   overflow: hidden;
 }
-// .chainlink{
-//   left: 40px;
-//   border: none;
-//   border-radius: 10px;
-//   background: skyblue;
-//   color: #fff;
-// }
+.chainlink{
+  left: 40px;
+  border: none;
+  border-radius: 10px;
+  background: skyblue;
+  color: #fff;
+}
 </style>
