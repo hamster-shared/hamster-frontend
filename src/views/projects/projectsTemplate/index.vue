@@ -41,7 +41,7 @@
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
                   <!-- Middleware Button -->
-                  <!-- <button class="chainlink" v-if=".name==='Middleware'">Chainlink</button> -->
+                  <button class="chainlink" v-if="items.name==='MiddleWare'">Chainlink</button>
                 </div>
               </div>
             </div>
