@@ -319,7 +319,13 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         const res= await apiIsCheck(id)
         console.log(id,'打印一下这个id',res?.data?.length);
         if(res.code===200){
-          if (JSON.stringify(res.data) === "{}") {
+          // if (JSON.stringify(res.data) === "{}") {
+          //   evmCheckVisible.value=true
+          //   //不显示弹框
+          //   message.destroy()
+          // } 
+          //判断是否为EVM 显示弹框
+          if(props.viewInfo.frameType===1){
             evmCheckVisible.value=true
             //不显示弹框
             message.destroy()
@@ -596,6 +602,12 @@ const getImageUrl = (status: any) => {
 };
 </script>
 <style lang='less' scoped>
+[data-v-4a4ce7d8] .ant-btn{
+  border: none;
+  background: none;
+  color: #E2B578;
+  left: -15px;
+}
 
 .center{
   width: 100%;
