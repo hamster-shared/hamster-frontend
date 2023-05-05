@@ -1,20 +1,11 @@
 <template>
+  <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
   <MetaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
-  <MetaTrustSP :metaTrustData="metaTrustData" v-if=" metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)'  "></MetaTrustSP>
+  <MetaTrustSP :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
   <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
   <MetaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
   <Solhint :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
-  <div v-if=" params.checktype == 'Mythril' ">
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
-    <div v-if="queryJson.projectType === '1'">
-      <MyThril v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="getCheckMyThrilData" :checkStatus="workflowsDetailsData.checkStatus"></MyThril>
-    </div>
-    <div v-else>
-      <MyThril v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></MyThril>
-    </div>
-  </div>
+  <MyThril :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
 </template>
 
 <script lang="ts" setup>
@@ -31,6 +22,7 @@
   import { apiGetReport } from "@/apis/checkReport";
   import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetDeployInfo } from "@/apis/workFlows";
   import YAML from "yaml";
+  import BreadCrumb from '../components/Breadcrumb.vue'
 
   const { params } = useRoute();
   const queryJson = reactive({
@@ -40,6 +32,7 @@
     type: params.type,
     projectType: params.projectType,
   })
+  const loading = ref(false);
   const detailTimer = ref();
   const title = ref('');
   const currentName = ref('');
@@ -47,7 +40,7 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
-  const reportId = ref(2319); //SA:2224,OSA:2244,SP:2295,Solhint:2319
+  const reportId = ref(2224); //SA:2224,OSA:2244,CQ:2225,myThril:2320
   const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);

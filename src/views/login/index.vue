@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <div class="flex justify-between login-header">
-      <a target="_bank" href="https://hamsternet.io/">
+      <a target="_bank" @click="goHome">
         <img src="@/assets/images/logo-block.png" class="h-[28px] mt-[16px]" />
       </a>
     </div>
@@ -81,7 +81,13 @@ const awakeWallet = async()=>{
     console.log('Please install MetaMask!');
   }
 }
-
+const goHome = () => {
+  let linkVal = "https://portal.hamster.newtouch.com"
+  if (window.location.href.indexOf('hamsternet.io') !== -1) {
+    linkVal = "https://hamsternet.io";
+  }
+  window.open(linkVal)
+};
 onMounted(()=>{
   if(localStorage.getItem('token')){
     if(localStorage.getItem('firstState')==="0"){

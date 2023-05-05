@@ -1,5 +1,5 @@
 <template>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
+  <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
     <span class="text-[24px] leading-[32px] font-bold">Issues Files</span>
     <div class="mt-4" v-if="metaTrustData.issues > 0">
       <label>Severity: </label>
@@ -41,14 +41,11 @@
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
               </div>
             </div>
-            <div class="bg-color mt-[20px] p-[20px]">
-              <div class="whitespace-pre-wrap text-[14px]"> 
-                <div class="flex" v-for="subItem in item.fileContent" :key="index">
-                  <div class="w-[5%] text-[#73706E]">{{ subItem.lineNum }}</div>
-                  <div class="w-[95%]" :class="{'hight-light': checkHightlight(item.hightlights, subItem.lineNum)}">{{ subItem.lineText }}</div>
-                </div>
-              </div>
+
+            <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
+              {{ item.file }}
             </div>
+
             <div class="font-medium mt-[20px]">Description</div>
             <div class="text-[#73706E]">{{ item.Description }}</div>
           </div>
@@ -131,28 +128,30 @@
     }
   }
   //设置代码的点亮行
-  const checkHightlight = (heightlight: any[], value: any) => {
-    if (heightlight.findIndex((item: any) => item === value ) !==-1 ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // const checkHightlight = (heightlight: any[], value: any) => {
+  //   if (heightlight.findIndex((item: any) => item === value ) !==-1 ) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
   //设置点击按钮需要显示的数据
   const setCheckBtnData = () => {
-    let baseReportFileData = metaTrustData.value.reportFileData;
+    let baseReportFileData = metaTrustData.value.reportFileData.Issues;
+    
     for (let key in baseReportFileData) {
       let tempMwe: any[] = [];
       delete reportFileDataCQ[key];
-      baseReportFileData[key].Details.forEach(element => {
-        if (checkExitBtn(element.severity)) {
+
+      baseReportFileData[key].Details.forEach((element:any) => {
+        if (checkExitBtn(element.Severity)) {
           tempMwe.push(element)
         }
       });
       if (tempMwe.length > 0) {
         reportFileDataCQ[key] = {
           Details: tempMwe,
-          fileKey: baseReportFileData[key].fileKey,
+          FileAddress: baseReportFileData[key].FileAddress,
         };
       }
     }
@@ -161,29 +160,19 @@
   //获取显示的代码
   const getMetascanFile = async () => {
     for (let key in reportFileDataCQ) {
-      console.log('key',key)
+      // console.log('key',key)
       let fileKey = reportFileDataCQ[key].FileAddress;
-      console.log('fileKey',fileKey)
+      // console.log('fileKey',fileKey)
       try {
         const { data } = await apiGetMetascanFile(fileKey);
-        const tempFile = data.split('\n');
-        //截取需要显示的代码
-        reportFileDataCQ[key].Details.forEach((element, index) => {
-          let tempData = []
-          if (tempFile.length >= element.lineStart) {
-            let endNum = element.lineEnd;
-            if (tempFile.length < element.lineEnd) {
-              endNum = tempFile.length;
-            }
-            for (let i = element.lineStart; i <= endNum; i++) {
-              tempData.push({
-                lineNum: i,
-                lineText: tempFile[i-1]
-              });
-            }
-          }
-          reportFileDataCQ[key].Details[index].fileContent = tempData;
-        });
+        const tempFile = data.split('\n')
+
+        // console.log('fileKey-data:',tempFile)
+
+        reportFileDataCQ[key]?.Details?.forEach((item:any)=>{
+          item.file = tempFile.slice(item.AffectedFiles.Line*1-1, item.AffectedFiles.Line*1)[0]
+          // console.log('item:',item)
+        })
       } catch (error: any) {
         console.log("erro:", error)
       }
@@ -220,51 +209,71 @@
 :deep(.ant-collapse-item-active .svg-icon) {
   transform: rotate(0deg);
 }
-:deep(.ant-collapse){
+:deep(.dark-css .ant-collapse){
+  border-bottom: 1px solid #302D2D;
+}
+:deep(.white-css .ant-collapse){
   border-bottom: 1px solid #F3F3F3;
+}
+:deep(.ant-collapse){
   font-size: 16px;
 }
 :deep(.ant-collapse-item){
   padding: 0 24px;
 }
+:deep(.dark-css .ant-collapse-header){
+  color: #E0DBD2 !important;
+}
 :deep(.ant-collapse-header){
   font-weight: 500;
   padding: 15px 0 !important;
 }
-:deep(.ant-collapse-content-box){
-  border-radius: 12px;
+:deep(.dark-css .ant-collapse-content){
+  background-color: #36322D;
+  border: 1px solid rgba(216, 216, 216,0.2);
+}
+:deep(.white-css .ant-collapse-content){
   border: 1px solid rgba(151, 151, 151, 0.2);
+}
+:deep(.ant-collapse-content){
+  border-radius: 12px !important;
   margin-bottom: 20px;
 }
-.box-card{
-  margin-top: 25px;
+.dark-css{
+  background: #36322D;
+  border: 1px solid #302D2D;
+  .bg-color{
+    background-color: rgba(216, 216, 216,0.2);
+  }
+  .border-css{
+    border-bottom: 1px solid #45423D;
+  }
+}
+.white-css{
+  background: #FFFFFF;
   box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
-  border-radius: 12px;
-  background: #FFF;
   border: 1px solid #F8F8F8;
-  line-height: 22px;
-  font-size: 16px;
   .bg-color{
     background-color: rgba(216, 216, 216, 0.2);
   }
+  .border-css{
+    border-bottom: 1px solid #F3F3F3;
+  }
 }
-
-.dark-css{
-  .box-card{
-    background: #36322D;
-    border: 1px solid #302D2D;
-    box-shadow: unset;
+.box-card{
+  margin-top: 25px;
+  border-radius: 12px;
+  line-height: 22px;
+  font-size: 16px;
+  .hight-light{
+    background-color: rgba(226, 181, 120, 0.10)
   }
-
-  .ant-collapse{
-    border-bottom: unset;
+  .border-css{
+    margin-bottom: 40px;
+    margin-top: 40px;
   }
-  :deep(.ant-collapse>.ant-collapse-item) {
-    border-bottom: 1px solid #302D2D;
-  }
-
-  :deep(.ant-collapse-content) {
-    background: #36322D;
+  .file-bg{
+    background: rgba(216, 216, 216,0.2);
   }
 }
 </style>
