@@ -14,8 +14,9 @@
                 <div class="box" v-for="(items,index) in item.children" :key="index" style="white-space:nowrap;">
                     <p :class="myArray.includes(items.title) ? 'tags' : 'tag'"
                         style="float:left;width:220px;height:50px;line-height:50px;margin-right:10px;vertical-align:middle;text-align:center;font-weight:600;border-radius:8px;"
-                        :style="{border:items.border? '1px solid red':''}"
-                        @click="handleClick(items.title)">
+                        :style="{border:items.border? '1px solid #ccc':''}"
+                        @click="handleClick(items)"
+                        >
                         {{items.title }}
                     </p>
                 </div>
@@ -43,8 +44,12 @@ const props = defineProps({
     }
 });
 //点击每一项
-function handleClick(title:string){
-    myArray.value.push(title)
+function handleClick(items:any){
+    //去重
+    if(!myArray.value.includes(items.title)){
+        myArray.value.push(items.title)
+    }
+    items.border=!items.border
 }
 //Done按钮
 function handleDone(){
