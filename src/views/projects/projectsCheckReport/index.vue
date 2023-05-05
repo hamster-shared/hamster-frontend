@@ -1,9 +1,11 @@
 <template>
+  <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
   <metaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></metaTrustSA>
   <metaTrustSP v-if=" params.checktype == 'MetaTrust (SP)' "></metaTrustSP>
   <metaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></metaTrustOSA>
   <metaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></metaTrustCQ>
-  <div v-if=" params.checktype == 'Mythril' ">
+  <MyThril :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
+  <!-- <div v-if=" params.checktype == 'Mythril' ">
     <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <div v-if="queryJson.projectType === '1'">
       <MyThril v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
@@ -13,7 +15,7 @@
       <MyThril v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
         :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></MyThril>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts" setup>
@@ -29,6 +31,7 @@
   import { apiGetReport } from "@/apis/checkReport";
   import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetDeployInfo } from "@/apis/workFlows";
   import YAML from "yaml";
+  import BreadCrumb from '../components/Breadcrumb.vue'
 
   const { params } = useRoute();
   const queryJson = reactive({
@@ -38,6 +41,7 @@
     type: params.type,
     projectType: params.projectType,
   })
+  const loading = ref(false);
   const detailTimer = ref();
   const title = ref('');
   const currentName = ref('');
@@ -45,7 +49,7 @@
   const processData = ref([]);
   const openAiInfo = ref({})
 
-  const reportId = ref(2225); //SA:2224,OSA:2244,CQ:2225
+  const reportId = ref(2224); //SA:2224,OSA:2244,CQ:2225,myThril:2320
   const metaTrustData = reactive({checkTool: ''});
   const gasUsageReportData = reactive([])
   const frontendReportData = reactive([]);

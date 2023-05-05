@@ -14,3 +14,10 @@ export function apiGetMetascanFile(key: string) {
     method: 'get',
   })
 }
+
+export function apiGetMythrilscanFile(params: {id:string, name: string}) {
+  return httpRequest({
+    url: `/api/project/${params.id}/contract/${params.name}/content`,
+    method: 'get',
+  })
+}

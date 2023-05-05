@@ -434,6 +434,7 @@ const loadView = async () => {
 };
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("frameType", viewInfo.value.frameType)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
   // message.info("Executing Now，please wait a moment.")
