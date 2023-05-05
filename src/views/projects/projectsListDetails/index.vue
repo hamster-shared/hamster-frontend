@@ -45,7 +45,7 @@
               <a-menu-item @click="GetCheck" :visible="visible">
                 <a href="javascript:;" style="color:#151210">Check Setting</a>
                 <!-- 弹框组件 -->
-                <Configure :visible="visible" :selectData="selectData"  @getDoneData="getDoneData" @cancel="handleCancel" />
+                <Configure :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
               </a-menu-item>
 
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
@@ -130,7 +130,7 @@ import {
   apiAptosBuild,
   apiProjectsCheck
 } from "@/apis/projects";
-import Configure from '../projectsList/components/Configure.vue'
+import Configure from '@/views/projects/projectsList/components/Configure.vue'
 import  { apiPostPopover } from "@/apis/workFlows";
 import {apiIsCheck} from '@/apis/workFlows'
 import { message } from "ant-design-vue";
@@ -154,19 +154,6 @@ const reportRef = ref();
 const packageRef = ref();
 const formRef = ref();
 const userInfo = localStorage.getItem('userInfo');
-const getDoneData =async (myArray:string[]) => {
-    const params = {
-        tool:myArray
-    }
-    //判断是否有选择
-    if (myArray.length > 0) {
-      const res = await apiPostPopover(projectId.value,params)
-      console.log(res,'done按钮接口数据');
-      visible.value=false 
-    } else {
-      message.warning('Please choose tools');
-    }
-}
 const formData = reactive({
   name: '',
   userId: JSON.parse(userInfo)?.id,
@@ -184,7 +171,7 @@ const msgParam = ref({
   projectType: projectType?.value
 });
 const aptosBuildParams = ref([]);
-const selectData = ref([])
+const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
 
 // 弹框
@@ -194,15 +181,63 @@ const handleCancel=async(id:string[])=>{
   visible.value=false
 }
 //Check Setting
-const GetCheck=async()=>{
-  visible.value=true
+const GetCheck = async()=>{
+  // debugger
   //调用接口
-  const res=await apiIsCheck(detailId.value)
+  const {code,data}=await apiIsCheck(detailId.value)
+  const {securityAnalysis=[],openSourceAnalysis=[],codeQualityAnalysis=[],gasUsageAnalysis=[],otherAnalysis=[]} = data
   //判断返回数据是否为空
-  if (res.code===200) {
-    selectData.value = res.data
+  if (code===200) {
+    const securityAnalysisArr = securityAnalysis?.map((item:string)=>{
+      if(item=='MetaTrust (SA)'){
+        item = 'MetaTrust Security Analyzer'
+      }else if(item=='MetaTrust (SP)'){
+        item = 'MetaTrust Security Prover'
+      }
+      return item
+    })
+    const openSourceAnalysisArr = openSourceAnalysis?.map((item:string)=>{
+      if(item=='MetaTrust (OSA)'){
+        item = 'MetaTrust Open Source Analyzer'
+      }
+      return item
+    })
+    const codeQualityAnalysisArr = codeQualityAnalysis?.map((item:string)=>{
+      if(item=='MetaTrust (CQ)'){
+        item = 'MetaTrust Code Quality'
+      }
+      return item
+    })
+    selectEVMData.value = [...securityAnalysisArr,...openSourceAnalysisArr,...codeQualityAnalysisArr,...gasUsageAnalysis,...otherAnalysis]
   }
-  
+  visible.value=true
+  console.log('selectEVMData',selectEVMData.value)
+}
+
+const getDoneData =async (myArray:string[]) => {
+    const tools = myArray?.map((item:string,index:number)=>{
+      if(item=='MetaTrust Security Analyzer'){
+        item = 'MetaTrust (SA)'
+      }else if(item=='MetaTrust Security Prover'){
+        item = 'MetaTrust (SP)'
+      }else if(item=='MetaTrust Open Source Analyzer'){
+        item = 'MetaTrust (OSA)'
+      }else if(item=='MetaTrust Code Quality'){
+        item = 'MetaTrust (CQ)'
+      }
+      return item
+    })
+    const params = {
+        tool:tools
+    }
+    //判断是否有选择
+    if (myArray.length > 0) {
+      const res = await apiPostPopover(projectId.value,params)
+      console.log(res,'done按钮接口数据');
+      visible.value=false 
+    } else {
+      message.warning('Please choose tools');
+    }
 }
 
 const formRules = computed(() => {

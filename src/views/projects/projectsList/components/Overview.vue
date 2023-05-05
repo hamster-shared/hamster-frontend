@@ -288,8 +288,20 @@ const projectsAction = (val: any, type: string, e: Event) => {
 }
 
 const getDoneData =async (myArray:string[]) => {
+    const tools = myArray?.map((item:string,index:number)=>{
+      if(item=='MetaTrust Security Analyzer'){
+        item = 'MetaTrust (SA)'
+      }else if(item=='MetaTrust Security Prover'){
+        item = 'MetaTrust (SP)'
+      }else if(item=='MetaTrust Open Source Analyzer'){
+        item = 'MetaTrust (OSA)'
+      }else if(item=='MetaTrust Code Quality'){
+        item = 'MetaTrust (CQ)'
+      }
+      return item
+    })
     const params = {
-        tool:myArray
+        tool:tools
     }
     //判断是否有选择
     if (myArray.length > 0) {
@@ -314,7 +326,8 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         message.info("The workflow of checking is running, view now.")
         loadView();
       }
-      if(props.viewInfo.frameType=== 1){
+      //判断是否为EVM 显示弹框 并且 ipfs不弹
+      if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
         projectId.value = id
         const res= await apiIsCheck(id)
         console.log(id,'打印一下这个id',res?.data?.length);
@@ -324,8 +337,8 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
           //   //不显示弹框
           //   message.destroy()
           // } 
-          //判断是否为EVM 显示弹框
-          if(props.viewInfo.frameType===1){
+          // 如果没有数据就弹，有数据不弹
+          if(JSON.stringify(res.data) === "{}"){
             evmCheckVisible.value=true
             //不显示弹框
             message.destroy()
