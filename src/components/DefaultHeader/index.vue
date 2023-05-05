@@ -131,7 +131,11 @@ const isShowMiddleware = ref(false)
 const goHome = () => {
   // router.push("/node-service/RPCs");
   // router.push("/projects");
-  window.open('https://hamsternet.io')
+  let linkVal = "https://portal.hamster.newtouch.com"
+  if (window.location.href.indexOf('hamsternet.io') !== -1) {
+    linkVal = "https://hamsternet.io";
+  }
+  window.open(linkVal)
   isProject.value = true;
 };
 
