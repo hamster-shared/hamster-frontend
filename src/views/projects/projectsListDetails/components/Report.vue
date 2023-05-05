@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- OptionsList -->
-    <a-select @change="changeReport" v-model:value="OptionsList" :options="Options2" style="margin-right:10px;width:150px"></a-select>
+    <a-select @change="changeReport" v-model:value="OptionsList" :options="RightData" style="margin-right:10px;width:250px"></a-select>
     <!-- checkReportsList -->
-    <a-select @change="changePort" v-model:value="Options" :options="Options1" style="width:225px"></a-select>
+    <a-select @change="changePort" v-model:value="Options" :options="LeftData" style="width:225px"></a-select>
 
   </div>
   <a-table class="my-4" :columns="reportTableColumns" :dataSource="reportTableList" :pagination="reportPagination">
@@ -40,11 +40,8 @@ const props = defineProps({
 
 });
 const { detailId, projectType,type,reportType } = toRefs(props);
-const Options=ref("All Check Tool")
+const Options=ref("All Check Tools")
 const OptionsList=ref('All Reports')
-//report定义
-// const checkReports=ref("All Reports")
-// const checkReportsList=ref(["All Reports"])
 
 const reportTableList = ref([]);
 
@@ -60,16 +57,16 @@ const reportTableColumns = computed<any[]>(() => [
   {
     title:'Check Tools',
     // title: 'Report Type',
-    dataIndex: 'type',
+    dataIndex: 'checkTool',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'type',
+    key: 'checkTool',
   },
   {
     title:'issues',
     // title: 'Check Tool',
-    dataIndex: 'checkTool',
-    key: 'checkTool',
+    dataIndex: 'issues',
+    key: 'issues',
     ellipsis: 'fixed',
     align: 'center',
   },
@@ -98,7 +95,11 @@ const reportTableColumns = computed<any[]>(() => [
 ]);
 
 //左侧下拉框数据
-const Options1 = ref([
+const LeftData = ref([
+      {
+        value: 'All Check Tools',
+        label: 'All Check Tools',
+      },
       {
         value: 'MetaTrust (SA)',
         label: 'MetaTrust (SA)',
@@ -134,22 +135,26 @@ const Options1 = ref([
     ]);
 
 //右侧下拉框数据
-const Options2 = ref([
+const RightData = ref([
   {
-    value: 'Security AnalysisReport',
-    label: 'Security AnalysisReport',
+    value: 'All Report Type',
+    label: 'All Report Type',
   },
   {
-    value: 'Open Source AnalysisReport',
-    label: 'Open Source AnalysisReport',
+    value: 'Security Analysis Report',
+    label: 'Security Analysis Report',
   },
   {
-    value: 'Code Quality AnalysisReport',
-    label: 'Code Quality AnalysisReport',
+    value: 'Open Source Analysis Report',
+    label: 'Open Source Analysis Report',
   },
   {
-    value: 'Gas Usage AnalysisReport',
-    label: 'Gas Usage AnalysisReport',
+    value: 'Code Quality Analysis Report',
+    label: 'Code Quality Analysis Report',
+  },
+  {
+    value: 'Gas Usage Analysis Report',
+    label: 'Gas Usage Analysis Report',
   },
   {
     value:'Other Analysis Report',
@@ -214,12 +219,12 @@ const changePort=async(reportType:string)=>{
 const getProjectsReports = async () => {
   try {
     const params = {
-      type: Options.value === 'All Check Tool' ? "" : Options.value,
+      type: Options.value === 'All Check Tools' ? "" : Options.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
-      reportType:OptionsList.value === 'All Reports' ? "" : OptionsList.value
+      reportType:(OptionsList.value === 'All Report Type' || OptionsList.value === 'All Reports') ? "" : OptionsList.value
     }
-    const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
+    const { data } = await apiGetProjectsReports('detailId.value.toString()', params);
     reportTableList.value = data.data;
     reportPagination.total = data.total
 
@@ -237,7 +242,6 @@ const getReportAps = async () => {
       type: checkReports.value === 'All Report' ? "" : checkReports.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
-      //1
       reportType:checkReportsList.value
     }
     

@@ -59,7 +59,7 @@
           
           <div class="my-2">
             <a target="_blank" :href="viewInfo.repositoryUrl" class="flex">
-              <div class="text-over-css">{{ viewInfo.repositoryUrl }}</div>
+              <div class="text-over-css">{{ showViewInfoRepositoryUrlStart }}</div>
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
@@ -234,10 +234,12 @@ const actionButtonList = ref([
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 
-console.log(11111,viewInfo.value)
 const showViewInfoRepositoryUrl = computed(() => {
   // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
   return viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
+})
+const showViewInfoRepositoryUrlStart = computed(() => {
+  return viewInfo.value?.repositoryUrl.slice(0, viewInfo.value?.repositoryUrl.length-3)
 })
 
 const emit = defineEmits(["loadProjects"]);
@@ -317,8 +319,16 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         const res= await apiIsCheck(id)
         console.log(id,'打印一下这个id',res?.data?.length);
         if(res.code===200){
-          if (!res.data[0]) {
+          // if (JSON.stringify(res.data) === "{}") {
+          //   evmCheckVisible.value=true
+          //   //不显示弹框
+          //   message.destroy()
+          // } 
+          //判断是否为EVM 显示弹框
+          if(props.viewInfo.frameType===1){
             evmCheckVisible.value=true
+            //不显示弹框
+            message.destroy()
           }
         }
      }
@@ -593,6 +603,12 @@ const getImageUrl = (status: any) => {
 };
 </script>
 <style lang='less' scoped>
+[data-v-4a4ce7d8] .ant-btn{
+  border: none;
+  background: none;
+  color: #E2B578;
+  left: -15px;
+}
 
 .center{
   width: 100%;

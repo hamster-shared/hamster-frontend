@@ -40,6 +40,7 @@
                   <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
+                  <!-- <button class="chainlink" @click="handleChai">Chainlink</button> -->
                 </div>
               </div>
             </div>
@@ -123,6 +124,7 @@ const goStandard = (name: string) => {
 const goBack = () => {
   router.back();
 }
+
 </script>
 <style lang='less' scoped>
 .white-css .border-box {
@@ -141,4 +143,11 @@ const goBack = () => {
   /*文本不自动换行*/
   overflow: hidden;
 }
+// .chainlink{
+//   left: 40px;
+//   border: none;
+//   border-radius: 10px;
+//   background: skyblue;
+//   color: #fff;
+// }
 </style>

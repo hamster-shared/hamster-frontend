@@ -34,15 +34,16 @@
         <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
         <!-- <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button> -->
         <a-dropdown>
+          <!-- Setting -->
           <a-button type="primary" class="ml-4">Setting</a-button>
           <template #overlay>
             <a-menu>
               <a-menu-item @click="visibleModal = true">
-                <a href="javascript:;">General</a>
+                <a href="javascript:;" style="color:#151210">General</a>
               </a-menu-item>
               <!-- Check Setting -->
               <a-menu-item @click="GetCheck" :visible="visible">
-                <a href="javascript:;">Check Setting</a>
+                <a href="javascript:;" style="color:#151210">Check Setting</a>
                 <!-- 弹框组件 -->
                 <Configure :visible="visible" :selectData="selectData"  @getDoneData="getDoneData" @cancel="handleCancel" />
               </a-menu-item>
@@ -192,6 +193,7 @@ let visible=ref(false)
 const handleCancel=async(id:string[])=>{
   visible.value=false
 }
+//Check Setting
 const GetCheck=async()=>{
   visible.value=true
   //调用接口

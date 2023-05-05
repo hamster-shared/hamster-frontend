@@ -1,31 +1,22 @@
 <template>
   <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
-  <metaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></metaTrustSA>
-  <metaTrustSP v-if=" params.checktype == 'MetaTrust (SP)' "></metaTrustSP>
-  <metaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></metaTrustOSA>
-  <metaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></metaTrustCQ>
+  <MetaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
+  <MetaTrustSP :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
+  <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
+  <MetaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
+  <Solhint :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
   <MyThril :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
-  <!-- <div v-if=" params.checktype == 'Mythril' ">
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
-    <div v-if="queryJson.projectType === '1'">
-      <MyThril v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="getCheckMyThrilData" :checkStatus="workflowsDetailsData.checkStatus"></MyThril>
-    </div>
-    <div v-else>
-      <MyThril v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></MyThril>
-    </div>
-  </div> -->
 </template>
 
 <script lang="ts" setup>
   import { ref, reactive, onMounted, onUnmounted } from 'vue';
   import { useRoute } from 'vue-router';
   import MyThril from './components/myThril.vue'
-  import metaTrustOSA from './components/metaTrustOSA.vue';
-  import metaTrustSP from './components/metaTrustSP.vue';
-  import metaTrustSA from './components/metaTrustSA.vue';
-  import metaTrustCQ from './components/metaTrustCQ.vue';
+  import MetaTrustOSA from './components/metaTrustOSA.vue';
+  import MetaTrustSP from './components/metaTrustSP.vue';
+  import MetaTrustSA from './components/metaTrustSA.vue';
+  import MetaTrustCQ from './components/metaTrustCQ.vue';
+  import Solhint from './components/solhint.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
   import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
   import { apiGetReport } from "@/apis/checkReport";
@@ -113,27 +104,30 @@
     const list: any = []
     const listGas: any = [];
     const { data } = await apiGetWorkFlowsReport(queryJson);
-    data.map((item: any) => {
-      if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
-        if (item.checkTool === 'eth-gas-reporter') {
-          listGas.push(item);
-        } else {
-          list.push(item)
+    
+    if (data != null) {
+      data.map((item: any) => {
+        if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+          if (item.checkTool === 'eth-gas-reporter') {
+            listGas.push(item);
+          } else {
+            list.push(item)
+          }
         }
-      }
-    })
+      })
 
-    // issue = yamlData(listGas, issue, "gasUsage");
-    const myThril = [list.find( (item:any) => item.checkTool == 'mythril')]
-    Object.assign(getCheckMyThrilData, myThril);
+      // issue = yamlData(listGas, issue, "gasUsage");
+      const myThril = [list.find( (item:any) => item.checkTool == 'mythril')]
+      Object.assign(getCheckMyThrilData, myThril);
 
-    issue = yamlData(myThril, issue, "report");
+      issue = yamlData(myThril, issue, "report");
 
-    data.filter((item: any) => {
-      if (item.checkTool == 'OpenAI') {
-        openAiInfo.value = item
-      }
-    })
+      data.filter((item: any) => {
+        if (item.checkTool == 'OpenAI') {
+          openAiInfo.value = item
+        }
+      })
+    }
     
     // Object.assign(gasUsageReportData, listGas);
     workflowsDetailsData.errorNumber = issue;
