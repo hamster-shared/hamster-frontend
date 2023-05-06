@@ -197,7 +197,8 @@
     try {
       const { data } = await apiGetProjectsDetail(queryJson.id.toString())
       Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status })
-      localStorage.setItem('frameType',data.frameType)
+      localStorage.setItem('frameType', data.frameType)
+      localStorage.setItem('gistId',data.gistId)
     } catch (err: any) {
       console.info(err)
     }
