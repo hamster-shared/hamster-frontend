@@ -135,20 +135,18 @@ function handleClick(items:any){
         myArray.value.splice(index,1)
         items.border=false
     }
-    console.log(items,'items');
-    
     //如果当前选项已经被选中，则从myArray 数组中移除该选项
     if(items.border===false && myArray.value.includes(items.title)){
         const index=myArray.value.indexOf(items.title)
         myArray.value.splice(index,1)
     }
-    console.log(11111, myArray.value)
 }
 //Done按钮
 function handleDone(){
     emit('getDoneData',myArray.value)
     emit('handleCancel')
 }
+// 关闭弹框清楚勾选项
 const closeEVMToolsModal = ()=>{
     newArray.value.map((item:any)=>{
         item.children.map((en:any)=>{
