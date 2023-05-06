@@ -146,7 +146,7 @@ const goBack = () => {
   overflow: hidden;
 }
 .chainlink{
-  left: 20%;
+  margin-left: 10px;
   border: none;
   border-radius: 10px;
   background:#E2B578;

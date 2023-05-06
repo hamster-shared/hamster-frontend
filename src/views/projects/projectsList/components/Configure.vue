@@ -149,6 +149,16 @@ function handleDone(){
     emit('getDoneData',myArray.value)
     emit('handleCancel')
 }
+const closeEVMToolsModal = ()=>{
+    newArray.value.map((item:any)=>{
+        item.children.map((en:any)=>{
+            en.border = false;
+        })
+        return item
+    })
+    myArray.value = []
+    emit('handleCancel')
+}
 onMounted(()=>{
     getSelectTools()
 })
