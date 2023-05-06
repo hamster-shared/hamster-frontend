@@ -1,5 +1,5 @@
 <template>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
+  <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
     <span class="text-[24px] leading-[32px] font-bold">Issues Files</span>
 
     <div class="box-card">
@@ -10,25 +10,23 @@
         <div class="text-[#73706E] text-[7px]">No issues were detected.</div>
       </div>
       
-      <a-collapse v-else v-model:activeKey="activeKey" v-for="(val,key) in reportFileDataMyThril" :key="key">
+      <a-collapse v-else class="mythril-collapse" v-model:activeKey="activeKey" v-for="(val,key) in reportFileDataMyThril" :key="key">
         <a-collapse-panel :key="key" :header="val.name" :showArrow="false">
-          <!-- <div v-if="val.Details.length === 0" class="text-center">
+          <!-- <div v-if="val.message.length === 0" class="text-center">
             <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
             <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
             <div class="text-[#73706E]">No issues were detected.</div>
           </div> -->
           <div v-for="(item,index) in val.message" :key="index">
-            <div class="flex justify-between">
-              <div class="font-bold">
-                {{ item.note }}
-              </div>
-              <div class="text-[#E2B578] text-[14px] cursor-pointer">
-                <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-              </div>
+            <div class="text-base">
+              {{ item.note }}
             </div>
 
             <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
+              <div class="flex justify-end text-[#E2B578] text-[14px] cursor-pointer">
+                <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
+              </div>
               {{ item.file }}
             </div>
           </div>
@@ -49,10 +47,7 @@
 
 <script setup lang="ts">
   import { onMounted, ref, toRefs } from 'vue';
-  import { useThemeStore } from "@/stores/useTheme";
-  import { apiGetMythrilscanFile } from "@/apis/checkReport";
-
-  const theme = useThemeStore()
+  import { apiGetContractContent } from "@/apis/checkReport";
 
   interface FileData {
     lineNum: number,
@@ -91,12 +86,8 @@
   //获取显示的代码
   const getMythrilscanFile = () => {
     reportFileDataMyThril.forEach(async( item:any )=>{
-      const params = {
-        id: projectId,
-        name: item.name
-      }
       try {
-        const { data } = await apiGetMythrilscanFile(params)
+        const { data } = await apiGetContractContent(projectId, item.name)
         const tempFile = data.split('\n')
         // console.log('mythril-data:', tempFile)
 
@@ -172,22 +163,24 @@
   }
 }
 
-.dark-css{
+html[data-theme='dark']{
   .box-card{
     background: #36322D;
     border: 1px solid #302D2D;
     box-shadow: unset;
   }
-
   .ant-collapse{
     border-bottom: unset;
   }
-  :deep(.ant-collapse>.ant-collapse-item) {
-    border-bottom: 1px solid #302D2D;
-  }
+  .mythril-collapse{
+    :deep(.ant-collapse>.ant-collapse-item) {
+      border-bottom: 1px solid #302D2D;
+    }
 
-  :deep(.ant-collapse-content) {
-    background: #36322D;
+    :deep(.ant-collapse-content) {
+      background-color: #36322D;
+      border-radius: 12px;
+    }
   }
 }
 </style>
