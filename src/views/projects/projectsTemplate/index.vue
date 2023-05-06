@@ -146,10 +146,10 @@ const goBack = () => {
   overflow: hidden;
 }
 .chainlink{
-  left: 40px;
+  left: 20%;
   border: none;
   border-radius: 10px;
-  background: skyblue;
+  background:#E2B578;
   color: #fff;
 }
 </style>

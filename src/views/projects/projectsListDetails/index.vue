@@ -44,8 +44,6 @@
               <!-- Check Setting -->
               <a-menu-item @click="GetCheck" :visible="visible">
                 <a href="javascript:;" style="color:#151210">Check Setting</a>
-                <!-- 弹框组件 -->
-                <Configure :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
               </a-menu-item>
 
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
@@ -106,6 +104,8 @@
     @hideContainerParam="containerVisible = false"></ContainerParam>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="detailId" :aptosBuildParams="aptosBuildParams"
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
+  <!-- 弹框组件 -->
+  <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -189,9 +189,11 @@ const GetCheck = async()=>{
   //判断返回数据是否为空
   if (code===200) {
     const securityAnalysisArr = securityAnalysis?.map((item:string)=>{
-      if(item=='MetaTrust (SA)'){
+      if(item=='MetaTrust (SA)')
+      {
         item = 'MetaTrust Security Analyzer'
-      }else if(item=='MetaTrust (SP)'){
+      }else if(item=='MetaTrust (SP)')
+      {
         item = 'MetaTrust Security Prover'
       }
       return item
@@ -209,8 +211,8 @@ const GetCheck = async()=>{
       return item
     })
     selectEVMData.value = [...securityAnalysisArr,...openSourceAnalysisArr,...codeQualityAnalysisArr,...gasUsageAnalysis,...otherAnalysis]
+    visible.value=true
   }
-  visible.value=true
   console.log('selectEVMData',selectEVMData.value)
 }
 
@@ -232,7 +234,7 @@ const getDoneData =async (myArray:string[]) => {
     }
     //判断是否有选择
     if (myArray.length > 0) {
-      const res = await apiPostPopover(projectId.value,params)
+      const res = await apiPostPopover(detailId.value,params)
       console.log(res,'done按钮接口数据');
       visible.value=false 
     } else {
