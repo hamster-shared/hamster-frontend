@@ -31,7 +31,7 @@ import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const emit = defineEmits(["getDoneData","handleCancel"])
-const myArray=ref<string[]>([])
+const myArray=ref<any>([])
 const props = defineProps({
     visible:{
         type:Boolean,
@@ -139,9 +139,19 @@ const newArray=ref([
     ]
 }
 ])
-onMounted(()=>{
-    console.log('configure 111111',props.selectData)
+const getSelectTools = ()=>{
     myArray.value=props.selectData
+    console.log('configure 111111',myArray.value)
+    newArray.value.map((item:any)=>{
+        item.children.map((en:any)=>{
+            if(props.selectData?.indexOf(en.title)!=-1){
+                en.border = true
+            }
+        })
+    })
+}
+onMounted(()=>{
+    getSelectTools()
 })
 
 </script>
@@ -200,4 +210,4 @@ button{
         color:#E2B578;
     }
 }
-</style>>
+</style>
