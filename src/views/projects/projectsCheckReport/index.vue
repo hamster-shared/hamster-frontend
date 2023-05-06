@@ -25,7 +25,7 @@
   import YAML from "yaml";
   import BreadCrumb from '../components/Breadcrumb.vue'
 
-  const { params } = useRoute();
+  const { params,query } = useRoute();
   const queryJson = reactive({
     id: params.id,
     workflowDetailId: params.workflowDetailId,
@@ -38,7 +38,7 @@
   const processData = ref([]);
   const inRunning = ref(true);
 
-  const reportId = ref(2224); //SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
+  const reportId:any = query.reportId; //SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
   const metaTrustData = reactive({checkTool: ''});
   const workflowsDetailsData = reactive({
     startTime: '',
@@ -73,7 +73,7 @@
 
   const getReportInfo = async () => {
     try {
-      const { data } = await apiGetReport(reportId.value);
+      const { data } = await apiGetReport(reportId);
       data.reportFileData = YAML.parse(data.reportFile);
       data.metaScanOverviewData = YAML.parse(data.metaScanOverview);
 

@@ -10,7 +10,7 @@
         <span class="text-base font-bold">{{ item?.title }}</span>
         <div v-for="content in item?.content" class="py-8">
           <div>
-            <span class="text-4xl cursor-pointer" @click="router.push(`${route.fullPath}/${content.checkTool}`)">{{ content.issues }}</span>
+            <span class="text-4xl cursor-pointer" @click="router.push(`${route.fullPath}/${content.checkTool}?reportId=${content.id}`)">{{ content.issues }}</span>
             <span class="block text-2xl">issues</span>
             <span class="text-base">{{ content.checkTool }}</span>
           </div>

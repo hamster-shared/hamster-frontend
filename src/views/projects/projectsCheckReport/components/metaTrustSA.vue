@@ -53,7 +53,7 @@
             <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.recommendation }}</div>
           </div>
           <template #extra>
-            <div>
+            <div v-if="val?.mwe?.length">
               <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
                 {{ val.mwe.length + ' issues found' }}
               </span>
