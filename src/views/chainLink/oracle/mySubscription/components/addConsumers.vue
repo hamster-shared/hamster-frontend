@@ -54,7 +54,6 @@ import dayjs from "dayjs";
 import { message } from 'ant-design-vue';
 import { useContractApi } from "@/stores/chainlink";
 import { switchToChain } from '@/utils/changeNetwork'
-import { log } from 'console';
 const { ethereum } = window;
 const contractApi = useContractApi()
 const { registryApi, linkTokenApi, walletAddress } = useContractApi()

@@ -8,7 +8,7 @@
       </a-tabs>
     </div>
     <div class="flex justify-between mt-[16px]">
-      <div class="font-bold text-[20px]">Overiew</div>
+      <div class="font-bold text-[20px]">Overview</div>
       <!-- <a-select ref="select" v-model:value="tiemValue" style="width: 120px" @change="handleChange">
         <a-select-option :value="item.id" v-for="item in timeList">{{ item.name }}</a-select-option>
       </a-select> -->

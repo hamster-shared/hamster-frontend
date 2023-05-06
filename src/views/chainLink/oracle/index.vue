@@ -4,7 +4,7 @@
     <oracleChart></oracleChart>
     <div class="flex flex-col self-center w-full mt-[32px] container-border">
       <div class="flex justify-between my-4">
-        <div class="font-bold text-[20px]">Create Request</div>
+        <div class="font-bold text-[20px]">My Request</div>
         <div>
           <a-button @click="router.push('/chainlink/oracle/create-request')">Create Request</a-button>
           <a-button v-if="false" class="ml-2" @click="toDocs">Docs</a-button>

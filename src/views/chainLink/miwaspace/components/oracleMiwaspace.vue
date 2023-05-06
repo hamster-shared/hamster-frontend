@@ -21,7 +21,7 @@
       </div>
 
       <div class="relative oracle-container">
-        <span class="text-base font-bold">Chainlink</span>
+        <span class="text-base font-bold">Chainlink Functions</span>
         <div class="mt-5">
           <span class="text-sm chainlink-description">Chainlink Functions is a Web3 serverless developer platform thatallows you to fetch 
             any data from any API and run custom compute on Chainlink's highly secure.

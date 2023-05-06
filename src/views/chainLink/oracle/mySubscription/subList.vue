@@ -10,7 +10,7 @@
             <a-button class="ml-2" @click="getSublist">Search</a-button>
         </div>
         <div>
-            <a-button @click="createSubPop">Created</a-button>
+            <a-button @click="createSubPop">Create</a-button>
             <a-button @click="addConsumerPop" class="mx-2">Add Consumers</a-button>
             <a-button @click="addFundsPop">Add Funds</a-button>
         </div>

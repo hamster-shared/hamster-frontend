@@ -10,7 +10,7 @@
     <div class="flex">
       <div class="flex-1">
         <div class="flex justify-between">
-          <div class="font-bold text-[20px]">Overiew</div>
+          <div class="font-bold text-[20px]">Overview</div>
           <!-- <a-select ref="select" v-model:value="selectTimeValue" style="width: 120px; margin-right: 20px;"
             @change="handleChange">
             <a-select-option value="1">Last 1 days</a-select-option>
