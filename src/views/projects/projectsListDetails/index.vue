@@ -189,9 +189,11 @@ const GetCheck = async()=>{
   //判断返回数据是否为空
   if (code===200) {
     const securityAnalysisArr = securityAnalysis?.map((item:string)=>{
-      if(item=='MetaTrust (SA)'){
+      if(item=='MetaTrust (SA)')
+      {
         item = 'MetaTrust Security Analyzer'
-      }else if(item=='MetaTrust (SP)'){
+      }else if(item=='MetaTrust (SP)')
+      {
         item = 'MetaTrust Security Prover'
       }
       return item

@@ -15,13 +15,6 @@ export function apiGetMetascanFile(key: string) {
   })
 }
 
-export function apiGetMythrilscanFile(params: {id:string, name: string}) {
-  return httpRequest({
-    url: `/api/project/${params.id}/contract/${params.name}/content`,
-    method: 'get',
-  })
-}
-
 export function apiGetContractContent(id: string, name: string) {
   return httpRequest({
     url: `/api/project/${id}/contract/${name}/content`,
