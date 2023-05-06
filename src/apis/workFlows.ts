@@ -202,8 +202,8 @@ export function apiGetDetailDelete(params: GetPackageParams) {
 // check详情下的Check Result的信息
 export function apiGetCheckResult(params: GetCheckResultParams) {
   return httpRequest({
-    // url: `/api/workflows/${params.id}/detail/${params.detailId}/report/overview`,
-    url: '/api/workflows/1979/detail/3161/report/overview',
+    url: `/api/workflows/${params.id}/detail/${params.detailId}/report/overview`,
+    // url: '/api/workflows/1979/detail/3161/report/overview',
     method: "get",
   });
 }

@@ -589,12 +589,13 @@ const createProject = async () => {
       userId: JSON.parse(userInfo)?.id,
       templateUrl: templatesDetail.value.repositoryUrl,
       labelDisplay: templatesDetail.value.labelDisplay,
+      gistId: templatesDetail.value.gistId,
+      defaultFile: templatesDetail.value.defaultFile,
     }
     if (projectType.value == '2') {
       params.frameType = templatesDetail.value.templateType - 0;
     }
     const res = await apiAddProjects(params);
-    console.log('apiAddProjects:', res.data)
     message.success(res.message);
 
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);

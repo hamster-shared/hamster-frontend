@@ -27,7 +27,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
-    <AiAnalysis v-if="isShowAiAnalysis" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
+    <AiAnalysis v-if="isShowAiAnalysis && contractFrameType != '1'" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>

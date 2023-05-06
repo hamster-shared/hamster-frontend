@@ -22,7 +22,7 @@
         <div class="text-[#73706E] text-[7px]">No issues were detected.</div>
       </div>
       
-      <a-collapse v-else v-model:activeKey="activeKey" v-for="(val,key) in reportFileDataCQ" :key="key">
+      <a-collapse class="metatrustcq-collapse" v-else v-model:activeKey="activeKey" v-for="(val,key) in reportFileDataCQ" :key="key">
         <a-collapse-panel :key="key" :header="key" :showArrow="false">
           <div v-if="val.Details.length === 0" class="text-center">
             <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
@@ -37,7 +37,7 @@
                 <label class="mr-2" :class="[item.Severity === 'CRITICAL'?'text-[#FF0003]':item.Severity === 'LOW'?'text-[#BC5EDE]':item.Severity === 'HIGH'?'text-[#FF4D4F]':item.Severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.Severity }}]</label>
                 <label>File(s) Affected</label>
               </div>
-              <div class="text-[#E2B578] text-[14px] cursor-pointer">
+              <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
               </div>
             </div>
@@ -178,6 +178,11 @@
       }
     }
   }
+  const openChainIDE = (name: any) => {
+    const gistId = localStorage.getItem('gistId');
+    const openVal = name.substring(name.lastIndexOf("/")+1)
+    window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+  }
 
   onMounted(() => {
     console.log('reportFileDataCQ:',reportFileDataCQ)
@@ -206,14 +211,12 @@
   transition: all .3s, visibility 0s;
   color: #E2B578;
 }
+:deep(.ant-collapse-content>.ant-collapse-content-box) {
+  border: 1px solid rgba(151,151,151,0.2);
+  border-radius: 12px;
+}
 :deep(.ant-collapse-item-active .svg-icon) {
   transform: rotate(0deg);
-}
-:deep(.dark-css .ant-collapse){
-  border-bottom: 1px solid #302D2D;
-}
-:deep(.white-css .ant-collapse){
-  border-bottom: 1px solid #F3F3F3;
 }
 :deep(.ant-collapse){
   font-size: 16px;
@@ -221,43 +224,35 @@
 :deep(.ant-collapse-item){
   padding: 0 24px;
 }
-:deep(.dark-css .ant-collapse-header){
-  color: #E0DBD2 !important;
-}
 :deep(.ant-collapse-header){
   font-weight: 500;
   padding: 15px 0 !important;
-}
-:deep(.dark-css .ant-collapse-content){
-  background-color: #36322D;
-  border: 1px solid rgba(216, 216, 216,0.2);
-}
-:deep(.white-css .ant-collapse-content){
-  border: 1px solid rgba(151, 151, 151, 0.2);
 }
 :deep(.ant-collapse-content){
   border-radius: 12px !important;
   margin-bottom: 20px;
 }
-.dark-css{
-  background: #36322D;
-  border: 1px solid #302D2D;
+html[data-theme='dark']{
+  .box-card{
+    background: #36322D;
+    border: 1px solid #302D2D;
+    box-shadow: unset;
+  }
   .bg-color{
     background-color: rgba(216, 216, 216,0.2);
   }
   .border-css{
     border-bottom: 1px solid #45423D;
   }
-}
-.white-css{
-  background: #FFFFFF;
-  box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
-  border: 1px solid #F8F8F8;
-  .bg-color{
-    background-color: rgba(216, 216, 216, 0.2);
-  }
-  .border-css{
-    border-bottom: 1px solid #F3F3F3;
+  .metatrustcq-collapse{
+    :deep(.ant-collapse>.ant-collapse-item) {
+      border-bottom: 1px solid #302D2D;
+    }
+
+    :deep(.ant-collapse-content) {
+      background-color: #36322D;
+      border-radius: 12px;
+    }
   }
 }
 .box-card{
@@ -265,6 +260,8 @@
   border-radius: 12px;
   line-height: 22px;
   font-size: 16px;
+  border: 1px solid #F8F8F8;
+  box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
   .hight-light{
     background-color: rgba(226, 181, 120, 0.10)
   }
