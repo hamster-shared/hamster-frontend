@@ -1,12 +1,12 @@
 <template>
-    <a-modal v-model:visible="props.visible" width="1000px" :footer="null" @ok="handleOk" @cancel="handleCancel">
+    <a-modal v-model:visible="props.visible" width="800px" :footer="null" @cancel="closeEVMToolsModal">
        <div>
             <div>
                 <h1 style="font-size:24px;">Configure Check Tools</h1>
                 <p class="prop">Please select the appropriate tool to check the contract</p>
             </div>
             <div class="center">
-                <p>If you need to modify this configuration later,you can modufy it by setting button on thie project details page</p>
+                <p>If you need to modify this configuration later,you can modify it by setting button on the project details page</p>
             </div>
 
             <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">
@@ -22,13 +22,13 @@
                 </div>
             </div>
             <a-button @click="handleDone">Done</a-button>
-            
         </div>
     </a-modal>
 </template>
 <script lang="ts" setup>
 import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+const destroyOnClose=ref()
 const route = useRoute()
 const emit = defineEmits(["getDoneData","handleCancel"])
 const myArray=ref<any>([])
@@ -42,40 +42,8 @@ const props = defineProps({
         default:[]
     }
 });
-//点击每一项
-function handleClick(items:any){
-    items.border=!items.border
-    // debugger
-    //去重
-    if(!myArray.value.includes(items.title)){
-        myArray.value.push(items.title)
-    }
-    else{
-        const index=myArray.value.indexOf(items.title)
-        myArray.value.splice(index,1)
-        items.border=false
-    }
-    console.log(items,'items');
-    
-    //如果当前选项已经被选中，则从myArray 数组中移除该选项
-    if(items.border===false && myArray.value.includes(items.title)){
-        const index=myArray.value.indexOf(items.title)
-        myArray.value.splice(index,1)
-    }
-    console.log(11111, myArray.value)
-}
-
-
-const getTagClass=(item:any)=>{
-    return myArray.value.includes(item.title)? "tags":"tag"
-}
-//Done按钮
-function handleDone(){
-    emit('getDoneData',myArray.value)
-    emit('handleCancel')
-}
 //数据
-const newArray=ref([
+const newArray=ref<any>([
 {
     title:'Security Analysis',
     id:1,
@@ -139,16 +107,55 @@ const newArray=ref([
     ]
 }
 ])
-const getSelectTools = ()=>{
-    myArray.value=props.selectData
-    console.log('configure 111111',myArray.value)
+
+const getTagClass=(item:any)=>{
+    return myArray.value.includes(item.title)? "tags":"tag"
+}
+
+const getSelectTools=()=>{
+    myArray.value=props.selectDatas
     newArray.value.map((item:any)=>{
         item.children.map((en:any)=>{
             if(props.selectData?.indexOf(en.title)!=-1){
-                en.border = true
+                en.border=true
             }
         })
     })
+}
+
+//点击每一项
+function handleClick(items:any){
+    items.border=!items.border
+    //去重
+    if(!myArray.value.includes(items.title)){
+        myArray.value.push(items.title)
+    }
+    else{
+        const index=myArray.value.indexOf(items.title)
+        myArray.value.splice(index,1)
+        items.border=false
+    }
+    //如果当前选项已经被选中，则从myArray 数组中移除该选项
+    if(items.border===false && myArray.value.includes(items.title)){
+        const index=myArray.value.indexOf(items.title)
+        myArray.value.splice(index,1)
+    }
+}
+//Done按钮
+function handleDone(){
+    emit('getDoneData',myArray.value)
+    emit('handleCancel')
+}
+// 关闭弹框清楚勾选项
+const closeEVMToolsModal = ()=>{
+    newArray.value.map((item:any)=>{
+        item.children.map((en:any)=>{
+            en.border = false;
+        })
+        return item
+    })
+    myArray.value = []
+    emit('handleCancel')
 }
 onMounted(()=>{
     getSelectTools()

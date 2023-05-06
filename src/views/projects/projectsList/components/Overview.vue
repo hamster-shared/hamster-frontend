@@ -327,32 +327,29 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
   } else {
     disabled.value = false;
     try {
-      if (status === 1) {
-        // 点击check按钮，提示
-        message.info(t('project.pipeline_executing_now'));
-      } else {
-        message.info("The workflow of checking is running, view now.")
-        loadView();
-      }
       //判断是否为EVM 显示弹框 并且 ipfs不弹
       if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
         projectId.value = id
         const res= await apiIsCheck(id)
         console.log(id,'打印一下这个id',res?.data?.length);
+        // message.destroy()
         if(res.code===200){
-          // if (JSON.stringify(res.data) === "{}") {
-          //   evmCheckVisible.value=true
-          //   //不显示弹框
-          //   message.destroy()
-          // } 
           // 如果没有数据就弹，有数据不弹
           if(JSON.stringify(res.data) === "{}"){
             evmCheckVisible.value=true
-            //不显示弹框
-            message.destroy()
           }
         }
      }
+      if (status === 1) {
+        // 点击check按钮，提示
+        message.info(t('project.pipeline_executing_now'));
+      } else {
+        // evm 没有数据时，弹框唤起不吐丝
+        if(!evmCheckVisible.value){
+          message.info("The workflow of checking is running, view now.")
+        }
+        loadView();
+      }
     } catch (error: any) {
       console.log("erro:", error)
       message.error(error.response.data.message);
@@ -616,7 +613,6 @@ const getActionImageUrl = (status: any) => {
     .href;
 }
 
-
 const getImageUrl = (status: any) => {
   let iconName = `${SvgStatusEnums[status]}`;
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
@@ -642,7 +638,6 @@ const openInChainIDE = (gistId:string,fileName:string) => {
   border-radius: 12px;
   margin-top: 60px;
 }
-
 .first{
   justify-content: space-between;
   margin-bottom: 32px;
@@ -690,7 +685,6 @@ a,
 a:hover {
   color: #151210;
 }
-
 .text-ellipsis {
   text-overflow: ellipsis;
   /*文字溢出的部分隐藏并用省略号代替*/
@@ -704,12 +698,10 @@ html[data-theme='light'] {
     color: #151210;
     cursor: default;
   }
-
   .disabledCheckCss:hover {
     color: #151210;
   }
 }
-
 .action-button-item:hover {
   .action-icon {
     .svg-icon {
@@ -717,11 +709,9 @@ html[data-theme='light'] {
     }
   };
 }
-
 .text-over-css{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 </style>
