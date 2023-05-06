@@ -315,6 +315,7 @@ const getDoneData =async (myArray:string[]) => {
       const res = await apiPostPopover(projectId.value,params)
       console.log(res,'done按钮接口数据');
       evmCheckVisible.value=false 
+      message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
     }
