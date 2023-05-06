@@ -100,6 +100,11 @@
       }
     })
   }
+  const openChainIDE = (name: string) => {
+    const gistId = localStorage.getItem('gistId');
+    const openVal = name.substring(name.lastIndexOf("/")+1)
+    window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+  }
 
   onMounted(() => {
     console.log('mythril:',reportFileDataMyThril, reportIssue)

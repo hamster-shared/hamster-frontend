@@ -12,10 +12,11 @@
             <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">
                 <p style="font-weight:500;font-size:14px;margin-top:10px;">{{item.title}}</p>
                 <div class="box" v-for="(items,index) in item.children" :key="index" style="white-space:nowrap;">
-                    <p :class="myArray.includes(items.title) ? 'tags' : 'tag'"
-                        style="float:left;width:220px;height:50px;line-height:50px;margin-right:10px;vertical-align:middle;text-align:center;font-weight:600;border-radius:8px;"
-                        :style="{border:items.border? '1px solid red':''}"
-                        @click="handleClick(items.title)">
+                    <p
+                        class="tool-tab"
+                        :style="{color:items.border?'#E2B578' : '',border:items.border? '1px solid #E2B578':'1px solid #ccc' }"
+                        @click="handleClick(items)"
+                        >
                         {{items.title }}
                     </p>
                 </div>
@@ -25,13 +26,12 @@
         </div>
     </a-modal>
 </template>
-
 <script lang="ts" setup>
 import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 const emit = defineEmits(["getDoneData","handleCancel"])
-const myArray=ref<string[]>([])
+const myArray=ref<any>([])
 const props = defineProps({
     visible:{
         type:Boolean,
@@ -43,8 +43,31 @@ const props = defineProps({
     }
 });
 //点击每一项
-function handleClick(title:string){
-    myArray.value.push(title)
+function handleClick(items:any){
+    items.border=!items.border
+    // debugger
+    //去重
+    if(!myArray.value.includes(items.title)){
+        myArray.value.push(items.title)
+    }
+    else{
+        const index=myArray.value.indexOf(items.title)
+        myArray.value.splice(index,1)
+        items.border=false
+    }
+    console.log(items,'items');
+    
+    //如果当前选项已经被选中，则从myArray 数组中移除该选项
+    if(items.border===false && myArray.value.includes(items.title)){
+        const index=myArray.value.indexOf(items.title)
+        myArray.value.splice(index,1)
+    }
+    console.log(11111, myArray.value)
+}
+
+
+const getTagClass=(item:any)=>{
+    return myArray.value.includes(item.title)? "tags":"tag"
 }
 //Done按钮
 function handleDone(){
@@ -116,8 +139,19 @@ const newArray=ref([
     ]
 }
 ])
+const getSelectTools = ()=>{
+    myArray.value=props.selectData
+    console.log('configure 111111',myArray.value)
+    newArray.value.map((item:any)=>{
+        item.children.map((en:any)=>{
+            if(props.selectData?.indexOf(en.title)!=-1){
+                en.border = true
+            }
+        })
+    })
+}
 onMounted(()=>{
-    console.log('configure 111111',props.selectData)
+    getSelectTools()
 })
 
 </script>
@@ -146,7 +180,7 @@ onMounted(()=>{
     padding-left: 15px;
     border-radius: 8px;
     font-size: 14px;
-    border: 1px solid #E2B578;
+    // border: 1px solid #E2B578;
     font-weight: 500;
     flex-wrap: wrap;
 }
@@ -161,4 +195,19 @@ button{
     left: 50%;
     right: 50%;
 }
-</style>>
+.tool-tab{
+    float:left;
+    width:220px;
+    height:50px;
+    line-height:50px;
+    margin-right:10px;
+    vertical-align:middle;
+    text-align:center;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+    &:hover{
+        color:#E2B578;
+    }
+}
+</style>

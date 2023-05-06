@@ -9,6 +9,8 @@ interface AddProjectsParams {
   repoOwner: string;
   templateRepo: string;
   userId: number;
+  gistId: string;
+  defaultFile: string
 }
 
 interface GetProjectsParams {

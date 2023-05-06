@@ -63,9 +63,16 @@
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
-          <div>
-            <svg-icon name="white-link" size="16" />
-            main
+          <div v-if="projectType === '1'">
+            <div>
+              <a-button @click="openInChainIDE(viewInfo.gistId,viewInfo.defaultFile)">Open with ChainIDE</a-button>
+            </div>
+          </div >
+          <div v-else>
+            <div>
+              <svg-icon name="white-link" size="16" />
+              main
+            </div>
           </div>
         </div>
 
@@ -308,6 +315,7 @@ const getDoneData =async (myArray:string[]) => {
       const res = await apiPostPopover(projectId.value,params)
       console.log(res,'done按钮接口数据');
       evmCheckVisible.value=false 
+      message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
     }
@@ -614,6 +622,11 @@ const getImageUrl = (status: any) => {
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };
+
+const openInChainIDE = (gistId:string,fileName:string) => {
+  var url = `https://chainide.com/s/createGistProject?gist=${gistId}&open=${fileName}`
+  window.open(url)
+}
 </script>
 <style lang='less' scoped>
 [data-v-4a4ce7d8] .ant-btn{
