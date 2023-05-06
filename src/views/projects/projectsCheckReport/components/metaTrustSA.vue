@@ -189,7 +189,7 @@ const getMetascanFile = async () => {
     }
   }
 }
-const openChainIDE = (name: string) => {
+const openChainIDE = (name: any) => {
   const gistId = localStorage.getItem('gistId');
   const openVal = name.substring(name.lastIndexOf("/")+1)
   window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
