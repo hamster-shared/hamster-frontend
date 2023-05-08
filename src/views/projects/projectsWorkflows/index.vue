@@ -132,7 +132,7 @@ const getCheckReport = async () => {
   const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data?.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '' && item.checkTool !== 'MetaTrust (OSA)' && item.checkTool != 'MetaTrust (SA)' && item.checkTool != 'AI') {
       if (item.checkTool === 'eth-gas-reporter') {
         listGas.push(item);
       } else {
@@ -149,7 +149,6 @@ const getCheckReport = async () => {
       openAiInfo.value = item
     }
   })
-  
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
@@ -158,17 +157,17 @@ const getCheckReport = async () => {
 const yamlData = (list: any[], issue: number, dataType: string) => {
   if (list.length > 0) {
     list.map((item: any) => {
-      item.reportFileData = YAML.parse(item.reportFile);
-      item.reportFileData?.map((val: any, index: number) => {
-        if (dataType === "gasUsage") {
-          if (index === 0) {
+        item.reportFileData = YAML.parse(item.reportFile);
+        item.reportFileData?.map((val: any, index: number) => {
+          if (dataType === "gasUsage") {
+            if (index === 0) {
+              issue += val.issue
+            }
+          } else {
             issue += val.issue
           }
-        } else {
-          issue += val.issue
-        }
-      })
-      item.errorNumber = issue;
+        })
+        item.errorNumber = issue;
     })
   } 
   return issue;
