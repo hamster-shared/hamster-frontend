@@ -113,6 +113,9 @@ const getTagClass=(item:any)=>{
 }
 
 const getSelectTools=()=>{
+    if(props.selectData.length){
+        myArray.value = props.selectData
+    }
     newArray.value.map((item:any)=>{
         item.children.map((en:any)=>{
             if(props.selectData?.indexOf(en.title)!=-1){

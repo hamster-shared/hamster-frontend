@@ -42,7 +42,7 @@
                 <a href="javascript:;" style="color:#151210">General</a>
               </a-menu-item>
               <!-- Check Setting -->
-              <a-menu-item @click="GetCheck" :visible="visible">
+              <a-menu-item v-if="frameType === 1" @click="GetCheck" :visible="visible">
                 <a href="javascript:;" style="color:#151210">Check Setting</a>
               </a-menu-item>
 
@@ -50,7 +50,7 @@
                 <a href="javascript:;">Container</a>
               </a-menu-item>
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
-                <a href="javascript:;">Build Setting</a>
+                <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
             </a-menu>
           </template>
