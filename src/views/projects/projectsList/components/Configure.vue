@@ -97,7 +97,7 @@ const newArray=ref<any>([
     ]
 },
 {
-    title:'Other Analysis',
+    title:'Expanded Analysis',
     id:5,
     children:[
         {
