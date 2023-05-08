@@ -5,14 +5,14 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
+      <div @click="goPrjects" :class="{ 'header-menu-line': isProject }"
+        class="header-text-css ml-12 mr-8">Projects</div>
       <a-dropdown v-if="!isShowMiddleware">
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
-          @click.stop id="middle" style="height:64px;line-height:64px">
+        <div :class="{ 'header-menu-line': !isProject }" class="header-text-css "
+          @click.stop>
           Middleware
-          <img v-if="isProject" src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden dark:inline-block up-tran">
-          <img v-if="!isProject" src="@/assets/icons/skx1.svg" alt="" class="h-[7px] dark:hidden up-tran">
+          <img v-if="isProject" src="@/assets/icons/skx.svg" alt="" class="h-[7px] inline-block up-tran">
+          <img v-if="!isProject" src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
         </div>
         <template #overlay>
           <a-menu>
@@ -25,8 +25,8 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px" 
-        class="text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
+      <div @click="goDoc" 
+        class="header-text-css  ml-12 mr-8">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -252,13 +252,8 @@ const setWalletBtn = (val: boolean) => {
 
 <style lang="less" scoped>
 @btnColor: #E2B578;
-#docs:hover{
-  border-bottom: 3px solid #E2B578;
-}
-#middle:hover{
-  border-bottom: 3px solid #E2B578;
-}
-#pro:hover{
+
+.header-menu-line{
   border-bottom: 3px solid #E2B578;
 }
 .default-header {
@@ -337,5 +332,10 @@ html[data-theme='dark'] {
   :deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
     border: 1px solid #EBEBEB;
   }
+}
+</style>
+<style scoped>
+.header-text-css{
+  @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
 }
 </style>
