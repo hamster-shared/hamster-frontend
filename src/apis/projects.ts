@@ -9,6 +9,8 @@ interface AddProjectsParams {
   repoOwner: string;
   templateRepo: string;
   userId: number;
+  gistId: string;
+  defaultFile: string
 }
 
 interface GetProjectsParams {
@@ -86,6 +88,21 @@ interface apiContainerDeployParams {
   serviceProtocol?: string,
   servicePort?: number,
   serviceTargetPort?: number,
+}
+
+//获取Report列表
+interface apiReportsParams{
+  type:string,
+  reportType:string,
+}
+
+//获取Report列表
+export function apiAddReport(id:string,params:apiReportsParams){
+  return httpRequest({
+    url:`/api/projects/${id}/reports`,
+    method:'get',
+    params:params
+  })
 }
 
 //创建项目

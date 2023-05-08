@@ -16,7 +16,10 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ title + ' Result' }}</div>
-          <div class="process-detail-info">{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
+          <div class="process-detail-info">
+            <div v-if="props.checkType != ''">{{ props.checkType }}</div>
+            <div v-else>{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
+          </div>
           <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
             {{ workflowsDetailsData.errorNumber + ' issues found' }}
           </div>
@@ -48,6 +51,7 @@ interface WorkflowsDetailsData {
 }
 
 const props = defineProps<{
+  checkType: string
   title: String,
   inRunning: Boolean,
   workflowsDetailsData: WorkflowsDetailsData,

@@ -15,7 +15,7 @@
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
           </div>
           <!-- 这里 -->
-          <div v-if="viewInfo.labelDisplay" 
+          <div v-if="viewInfo.labelDisplay"
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]"
           >
             <label>{{ viewInfo.labelDisplay }}</label>
@@ -32,6 +32,7 @@
       <div>
 
         <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
+          <!-- 按钮 -->
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
           </label>
@@ -49,22 +50,29 @@
         </label>
       </div>
       </div>
-      
+
     </div>
-    <div class="center"> 
+    <div class="center">
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
           
           <div class="my-2">
             <a target="_blank" :href="viewInfo.repositoryUrl" class="flex">
-              <div class="text-over-css">{{ viewInfo.repositoryUrl }}</div>
+              <div class="text-over-css">{{ showViewInfoRepositoryUrlStart }}</div>
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
-          <div>
-            <svg-icon name="white-link" size="16" />
-            main
+          <div v-if="projectType === '1'">
+            <div>
+              <a-button @click="openInChainIDE(viewInfo.gistId,viewInfo.defaultFile)">Open with ChainIDE</a-button>
+            </div>
+          </div >
+          <div v-else>
+            <div>
+              <svg-icon name="white-link" size="16" />
+              main
+            </div>
           </div>
         </div>
 
@@ -91,7 +99,7 @@
             :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
-            Check Now
+            <a-button @click="showModal">Check Now </a-button>
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
@@ -183,14 +191,18 @@
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
+
+  <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
 </template>
 
 <script lang='ts' setup>
-import { ref, toRefs, computed, reactive } from 'vue';
+import { ref, toRefs, computed, reactive,defineComponent } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
+//弹出层页面
+import Configure from './Configure.vue'
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -199,20 +211,28 @@ import { useThemeStore } from "@/stores/useTheme";
 import { ActionButtonEnum, ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { RecentStatusEnums, SvgStatusEnums } from "../enums/RecentEnums";
 import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components/data";
+import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
+import  { apiPostPopover } from "@/apis/workFlows";
 
 const { t } = useI18n()
 const theme = useThemeStore()
-
+const projectId = ref('')
+//点击关闭按钮
+const handleCancel=()=>{
+    evmCheckVisible.value=false
+}
+//弹框
 const router = useRouter();
-
 const props = defineProps<{
   viewType: string,
   projectType: string,
   viewInfo: ViewInfoItem,
   // labelDisplay:string
 }>()
-
+// const showModal = () => {
+//       evmCheckVisible.value = true;
+//     };
 const actionButtonList = ref([
   { name: 'Check', url: 'check' },
   { name: 'Build', url: 'build' },
@@ -221,10 +241,12 @@ const actionButtonList = ref([
 
 const { viewType, viewInfo, projectType } = toRefs(props);
 
-console.log(11111,viewInfo.value)
 const showViewInfoRepositoryUrl = computed(() => {
   // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
   return viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
+})
+const showViewInfoRepositoryUrlStart = computed(() => {
+  return viewInfo.value?.repositoryUrl.slice(0, viewInfo.value?.repositoryUrl.length-3)
 })
 
 const emit = defineEmits(["loadProjects"]);
@@ -233,6 +255,9 @@ const aptosBuildVisible = ref(false)
 const disabled = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
+//设置弹框隐藏
+const evmCheckVisible=ref(false)
+
 const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
@@ -269,22 +294,71 @@ const projectsAction = (val: any, type: string, e: Event) => {
   }
 }
 
+const getDoneData =async (myArray:string[]) => {
+    const tools = myArray?.map((item:string,index:number)=>{
+      if(item=='MetaTrust Security Analyzer'){
+        item = 'MetaTrust (SA)'
+      }else if(item=='MetaTrust Security Prover'){
+        item = 'MetaTrust (SP)'
+      }else if(item=='MetaTrust Open Source Analyzer'){
+        item = 'MetaTrust (OSA)'
+      }else if(item=='MetaTrust Code Quality'){
+        item = 'MetaTrust (CQ)'
+      }
+      return item
+    })
+    const params = {
+        tool:tools
+    }
+    //判断是否有选择
+    if (myArray.length > 0) {
+      const res = await apiPostPopover(projectId.value,params)
+      console.log(res,'done按钮接口数据');
+      evmCheckVisible.value = false 
+
+      await apiProjectsCheck(projectId.value);
+      
+      message.info("The workflow of checking is running, view now.")
+    } else {
+      message.warning('Please choose tools');
+    }
+}
 // check
-const projectsCheck = async (id: string, status: Number, e: Event) => {
+const projectsCheck = async (id: string, status: number, e: Event) => {
   if (props.projectType === '1' && props.viewInfo.frameType === 4) {
     e.stopPropagation()
   } else {
     disabled.value = false;
     try {
+      //判断是否为EVM 显示弹框 并且 ipfs不弹
+      if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
+        projectId.value = id
+        const res= await apiIsCheck(id)
+        console.log(id,'打印一下这个id',res?.data?.length);
+        // message.destroy()
+        if(res.code===200){
+          // 如果没有数据就弹，有数据不弹
+          if(JSON.stringify(res.data) === "{}"){
+            evmCheckVisible.value=true
+          } else {
+            await apiProjectsCheck(id);
+          }
+        }
+      }
       if (status === 1) {
         // 点击check按钮，提示
         message.info(t('project.pipeline_executing_now'));
       } else {
-        message.info("The workflow of checking is running, view now.")
-        // router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
-
-        const res = await apiProjectsCheck(id);
-        // message.success(res.message);
+        //判断是否为EVM 显示弹框 
+        if (props.viewInfo.frameType === 1 && projectType.value === '1') {
+          // evm 没有数据时，弹框唤起不吐丝
+          if (!evmCheckVisible.value) {
+            message.info("The workflow of checking is running, view now.")
+          }
+        } else {
+          const res = await apiProjectsCheck(id);
+          message.success(res.message);
+        }
         loadView();
       }
     } catch (error: any) {
@@ -363,15 +437,15 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
     if (status === 0 || status === 1 || version === "") {
       // message.info("Smart contract not avaliable.");
       message.info(t('Smart contract not avaliable.'));
-    } 
+    }
     else {
       goContractDeploy(id, version);
     }
-  } 
+  }
   else {
     if (status === 3) {
       goFrontendDeploy();
-    } 
+    }
     else {
       message.info("FrontEnd image not avaliable");
     }
@@ -399,6 +473,7 @@ const loadView = async () => {
 };
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
+  localStorage.setItem("frameType", viewInfo.value.frameType)
   localStorage.setItem("projectId", id)
   router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
   // message.info("Executing Now，please wait a moment.")
@@ -407,20 +482,20 @@ const goContractCheck = async (id: string, workflowId: string, detailId: string)
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
+  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value+'?isBuild=1');
   // message.info("Executing Now，please wait a moment.")
 };
 
 const goContractDeploy = async (id: string, status: string | Number) => {
-  if (localStorage.getItem('projectActiveKey') == '1') 
+  if (localStorage.getItem('projectActiveKey') == '1')
   {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
     router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
-  } 
-  else if 
+  }
+  else if
   (
-    localStorage.getItem('projectActiveKey') == '2') 
+    localStorage.getItem('projectActiveKey') == '2')
     {
       if (status === 3) {
       goFrontendDeploy();
@@ -549,25 +624,31 @@ const getActionImageUrl = (status: any) => {
     .href;
 }
 
-
 const getImageUrl = (status: any) => {
   let iconName = `${SvgStatusEnums[status]}`;
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };
+
+const openInChainIDE = (gistId:string,fileName:string) => {
+  var url = `https://chainide.com/s/createGistProject?gist=${gistId}&open=${fileName}`
+  window.open(url)
+}
 </script>
 <style lang='less' scoped>
+[data-v-4a4ce7d8] .ant-btn{
+  border: none;
+  background: none;
+  color: #E2B578;
+  left: -15px;
+}
 
 .center{
   width: 100%;
   padding: 32px;
   border-radius: 12px;
-  // background: #36322D;
-  // border: 1px solid #ccc;
-  // border-color: #434343;
   margin-top: 60px;
 }
-
 .first{
   justify-content: space-between;
   margin-bottom: 32px;
@@ -595,7 +676,6 @@ html[data-theme='dark'] {
   }
 }
 
-
 :deep(.ant-btn) {
   border-radius: 8px;
 }
@@ -616,7 +696,6 @@ a,
 a:hover {
   color: #151210;
 }
-
 .text-ellipsis {
   text-overflow: ellipsis;
   /*文字溢出的部分隐藏并用省略号代替*/
@@ -630,12 +709,10 @@ html[data-theme='light'] {
     color: #151210;
     cursor: default;
   }
-
   .disabledCheckCss:hover {
     color: #151210;
   }
 }
-
 .action-button-item:hover {
   .action-icon {
     .svg-icon {
@@ -643,11 +720,9 @@ html[data-theme='light'] {
     }
   };
 }
-
 .text-over-css{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 </style>

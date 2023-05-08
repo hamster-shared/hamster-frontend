@@ -1,6 +1,6 @@
 <template>
   <div class=" dark:text-white text-[#121211]">
-    <div v-if="checkReportData?.length === 0 && projectType === '2' && checkStatus != 0 && checkStatus != 1"
+    <!-- <div v-if="checkReportData?.length === 0 && projectType === '2' && checkStatus != 0 && checkStatus != 1"
       class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
       <div class="text-center p-[16px]">
         <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
@@ -8,13 +8,13 @@
         <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
         <div class="text-[#73706E]">No issues were detected.</div>
       </div>
-    </div>
+    </div> -->
     <div v-for="item in checkReportData" :key="item.id"
       class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
       <img v-if="frameType!=2" class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
       
-      <div v-if="item.errorNumber === 0" class="text-center p-[16px]">
+      <div v-if="item.errorNumber === 0 || item.reportFile=='null'" class="text-center p-[16px]">
         <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
         <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
         <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
@@ -106,6 +106,7 @@ interface CheckReportData {
   checkTool: string,
   errorNumber: number,
   reportFileData: ReportFileData[],
+  reportFile:string
 }
 const props = defineProps<{
   projectType: String,
@@ -242,7 +243,7 @@ const columns = [
   }
 ];
 const { checkReportData, projectType, checkStatus } = toRefs(props)
-console.log("checkReportData:",checkReportData.value);
+
 </script>
 
 <style lang="less" scoped>

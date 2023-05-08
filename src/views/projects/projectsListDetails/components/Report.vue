@@ -1,7 +1,10 @@
 <template>
   <div>
-    <a-select @change="changeReport" v-model:value="checkTool" :options="checkToolList.map(item => ({ value: item }))">
-    </a-select>
+    <!-- OptionsList -->
+    <a-select @change="changeReport" v-model:value="OptionsList" :options="RightData" style="margin-right:10px;width:250px"></a-select>
+    <!-- checkReportsList -->
+    <a-select @change="changePort" v-model:value="Options" :options="LeftData" style="width:225px"></a-select>
+
   </div>
   <a-table class="my-4" :columns="reportTableColumns" :dataSource="reportTableList" :pagination="reportPagination">
     <template #bodyCell="{ column, record, index }">
@@ -17,23 +20,29 @@
   </a-table>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, toRefs } from 'vue';
+import { computed, onMounted, reactive, ref, toRefs, defineProps, defineExpose } from 'vue';
 import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import {
   apiGetProjectsReports,
   apiProjectsCheckTools,
+  //report
+  apiAddReport,
 } from "@/apis/projects";
 
 const router = useRouter();
 const props = defineProps({
   detailId: String,
   projectType: String,
-});
-const { detailId, projectType } = toRefs(props);
+  //report
+  type:String,
+  reportType:String,
 
-const checkToolList = ref(["All Check Tool"]);
-const checkTool = ref("All Check Tool");
+});
+const { detailId, projectType,type,reportType } = toRefs(props);
+const Options=ref("All Check Tools")
+const OptionsList=ref('All Reports')
+
 const reportTableList = ref([]);
 
 const reportTableColumns = computed<any[]>(() => [
@@ -48,16 +57,16 @@ const reportTableColumns = computed<any[]>(() => [
   {
     title:'Check Tools',
     // title: 'Report Type',
-    dataIndex: 'type',
+    dataIndex: 'checkTool',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'type',
+    key: 'checkTool',
   },
   {
     title:'issues',
     // title: 'Check Tool',
-    dataIndex: 'checkTool',
-    key: 'checkTool',
+    dataIndex: 'issues',
+    key: 'issues',
     ellipsis: 'fixed',
     align: 'center',
   },
@@ -85,6 +94,74 @@ const reportTableColumns = computed<any[]>(() => [
   },
 ]);
 
+//左侧下拉框数据
+const LeftData = ref([
+      {
+        value: 'All Check Tools',
+        label: 'All Check Tools',
+      },
+      {
+        value: 'MetaTrust (SA)',
+        label: 'MetaTrust (SA)',
+      },
+      {
+        value: 'MetaTrust (SP)',
+        label: 'MetaTrust (SP)',
+      },
+      {
+        value: 'MetaTrust (OSA)',
+        label: 'MetaTrust (OSA)',
+      },
+      {
+        value: 'MetaTrust (CQ)',
+        label: 'MetaTrust (CQ)',
+      },
+      {
+        value:'Mythril',
+        label:'Mythril',
+      },
+      {
+        value:'Solhint',
+        label:'Solhint',
+      },
+      {
+        value:'eth-gas-reporter',
+        label:'eth-gas-reporter',
+      },
+      {
+        value:'Al',
+        label:'Al',
+      }
+    ]);
+
+//右侧下拉框数据
+const RightData = ref([
+  {
+    value: 'All Report Type',
+    label: 'All Report Type',
+  },
+  {
+    value: 'Security Analysis Report',
+    label: 'Security Analysis Report',
+  },
+  {
+    value: 'Open Source Analysis Report',
+    label: 'Open Source Analysis Report',
+  },
+  {
+    value: 'Code Quality Analysis Report',
+    label: 'Code Quality Analysis Report',
+  },
+  {
+    value: 'Gas Usage Analysis Report',
+    label: 'Gas Usage Analysis Report',
+  },
+  {
+    value:'Other Analysis Report',
+    label:'Other Analysis Report',
+  },
+]);
+
 const reportPagination = reactive({
   // 分页配置器
   pageSize: 10, // 一页的数据限制
@@ -101,60 +178,110 @@ const reportPagination = reactive({
     reportPagination.current = current;
     reportPagination.pageSize = pagesize;
     getProjectsReports();
+    //report
+    getReportAps()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     reportPagination.current = current;
     getProjectsReports();
+    //report
+    getReportAps()
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
-
 onMounted(() => {
   getProjectsReports();
   getProjectsCheckTools();
+  //report
+  getReport()
+  getReportAps()
 })
 
-const changeReport = async () => {
+//左侧change事件
+const changeReport = async (type:string) => {
   reportPagination.current = 1;
+  getProjectsReports();
+  // console.log(type)
+  OptionsList.value = type
+  //report
+  // getReport()
+  
+}
+//右侧change事件
+const changePort=async(reportType:string)=>{
+  reportPagination.current = 1;
+  console.log(reportType)
+  Options.value = reportType
   getProjectsReports();
 }
 
 const getProjectsReports = async () => {
   try {
     const params = {
-      type: checkTool.value === 'All Check Tool' ? "" : checkTool.value,
+      type: Options.value === 'All Check Tools' ? "" : Options.value,
       page: reportPagination.current,
       size: reportPagination.pageSize,
+      reportType:(OptionsList.value === 'All Report Type' || OptionsList.value === 'All Reports') ? "" : OptionsList.value
     }
     const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
     reportTableList.value = data.data;
     reportPagination.total = data.total
 
   } catch (error: any) {
-    console.log("erro:", error)
+    console.log("Error:", error)
   } finally {
     // loading.value = false;
+  }
+};
+
+//report
+const getReportAps = async () => {
+  try {
+    const params = {
+      type: checkReports.value === 'All Report' ? "" : checkReports.value,
+      page: reportPagination.current,
+      size: reportPagination.pageSize,
+      reportType:checkReportsList.value
+    }
+    
+    const { data } = await apiAddReport(detailId.value.toString(),params,reportType);
+    reportTableList.value = data.data;
+    reportPagination.total = data.total
+  } catch (error: any) {
+    console.log("Error:", error)
+  } finally {
   }
 };
 
 const getProjectsCheckTools = async () => {
   try {
     const { data } = await apiProjectsCheckTools(detailId.value.toString());
-    checkToolList.value.length = 1;
-    checkToolList.value = checkToolList.value.concat(data);
-
+    OptionsList.value.length = 1;
+    OptionsList.value = OptionsList.value.concat(data);
   } catch (error: any) {
-    console.log("erro:", error)
+    console.log("Error:", error)
   } finally {
-    // loading.value = false;
   }
 }
+// report
+const getReport=async()=>{
+  try{
+    const { data } = await apiProjectsCheckTools(detailId.value.toString());
+    checkReportsList.value.length = 1;
+    checkReportsList.value = checkReportsList.value.concat(data);
+  }catch(error:any){
+    console.log('Error:',Error)
+  }finally{
+  }
+}
+
 const goContractWorkflows = (type: String, workflowId: String, workflowDetailId: String) => {
   router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
 }
 
 defineExpose({
-  getProjectsReports
+  getProjectsReports,
+  getReportAps
 })
 </script>

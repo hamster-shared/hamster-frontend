@@ -29,10 +29,11 @@
             <a-select class="inline-block" :placeholder="subOptionsNet" disabled></a-select>
             <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
-                     <a-radio-group v-model:checked="record.checked">
-                        <a-radio :value="1" @click="getProjectInfo(record.address)"></a-radio>
+                      <a-radio-group v-model:value="radioFlag" @change="changeRadio">
+                         <a-radio :checked="record.address === radioFlag" :value='record.address' >
+                            <!-- @click="getProjectInfo(record.address)" -->
+                        </a-radio> 
                     </a-radio-group>
-                    <!-- <a-radio class="inline-block w-[20px] radio-normal" v-model:checked="record.checked" @click="getProjectInfo(record.address)"></a-radio> -->
                     <span :title="record.address">{{ record.address.slice(0,10) }}</span>
                 </template>
             </a-table>
@@ -124,6 +125,7 @@ const subId = ref()
 const keyId = ref()
 // Penning id
 const temId = ref()
+const radioFlag = ref('')
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -284,13 +286,26 @@ const cancelFund = ()=>{
 const getProjectInfo = (add:string)=>{
     formData.consumer = add
     console.log('选中表格中的项目',add)
+    // radioFlag.value = add
 }
+// const changeRadio = (e:any) => {
+//     console.log('选中的是'+ e,'hsbhdsbddshbd ');
+// }
 onMounted(()=>{
     getSublistData()
 })
 
 </script>
 <style lang="less" scoped>
+// .dis{
+//     width: 7px;
+//     height: 7px;
+//     background: pink;
+//     border-radius: 12px;
+//     // left: 5px;
+//     // top: -15px;
+//     display: none;
+// }
 .done-btn {
     width: 120px;
     height: 43px;
