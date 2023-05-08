@@ -100,7 +100,7 @@
     })
 
     issue = yamlData(listGas, issue, "gasUsage");
-    console.log("gasUsageReportData:",listGas);
+    
     Object.assign(gasUsageReportData, listGas);
     workflowsDetailsData.errorNumber = issue;
   }
