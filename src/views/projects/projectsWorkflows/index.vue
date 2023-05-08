@@ -10,7 +10,7 @@
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="contractFrameType == '1'"></CheckResult>
+      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'"></CheckResult>
       <div v-else>
         <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
@@ -50,7 +50,7 @@ import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
 
 const { t } = useI18n()
-const { params } = useRoute();
+const { params,query } = useRoute();
 const contractFrameType = localStorage.getItem('frameType')
 const queryJson = reactive({
   id: params.id,
