@@ -314,7 +314,10 @@ const getDoneData =async (myArray:string[]) => {
     if (myArray.length > 0) {
       const res = await apiPostPopover(projectId.value,params)
       console.log(res,'done按钮接口数据');
-      evmCheckVisible.value=false 
+      evmCheckVisible.value = false 
+
+      await apiProjectsCheck(projectId.value);
+      
       message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
@@ -337,16 +340,24 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
           // 如果没有数据就弹，有数据不弹
           if(JSON.stringify(res.data) === "{}"){
             evmCheckVisible.value=true
+          } else {
+            await apiProjectsCheck(id);
           }
         }
-     }
+      }
       if (status === 1) {
         // 点击check按钮，提示
         message.info(t('project.pipeline_executing_now'));
       } else {
-        // evm 没有数据时，弹框唤起不吐丝
-        if(!evmCheckVisible.value){
-          message.info("The workflow of checking is running, view now.")
+        //判断是否为EVM 显示弹框 
+        if (props.viewInfo.frameType === 1 && projectType.value === '1') {
+          // evm 没有数据时，弹框唤起不吐丝
+          if (!evmCheckVisible.value) {
+            message.info("The workflow of checking is running, view now.")
+          }
+        } else {
+          const res = await apiProjectsCheck(id);
+          message.success(res.message);
         }
         loadView();
       }
