@@ -7,6 +7,7 @@
   <MetaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
   <Solhint :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
   <MyThril :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
+  <GasUsageReport :gasUsageReportData="gasUsageReportData" v-if="params.checktype == 'gasInfoDetail' "></GasUsageReport>
 </template>
 
 <script lang="ts" setup>
@@ -19,8 +20,9 @@
   import MetaTrustCQ from './components/metaTrustCQ.vue';
   import Solhint from './components/solhint.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
+  import GasUsageReport from '../projectsWorkflows/components/GasUsageReport.vue'
   import { apiGetProjectsDetail } from "@/apis/projects";
-  import { apiGetWorkflowsDetail } from "@/apis/workFlows";
+  import { apiGetWorkflowsDetail, apiGetWorkFlowsReport } from "@/apis/workFlows";
   import { apiGetReport } from "@/apis/checkReport";
   import YAML from "yaml";
   import BreadCrumb from '../components/Breadcrumb.vue'
@@ -38,6 +40,7 @@
   const processData = ref([]);
   const inRunning = ref(true);
 
+  const gasUsageReportData = reactive([])
   const reportId:any = query.reportId; //SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
   const metaTrustData = reactive({checkTool: ''});
   const workflowsDetailsData = reactive({
@@ -86,11 +89,50 @@
     }
   }
 
+  const getCheckReport = async () => {
+    let issue = 0;
+    const listGas: any = [];
+    const { data } = await apiGetWorkFlowsReport(queryJson);
+    data?.map((item: any) => {
+      if (item.checkTool === 'eth-gas-reporter') {
+        listGas.push(item);
+      }
+    })
+
+    issue = yamlData(listGas, issue, "gasUsage");
+    
+    Object.assign(gasUsageReportData, listGas);
+    workflowsDetailsData.errorNumber = issue;
+  }
+
+  const yamlData = (list: any[], issue: number, dataType: string) => {
+    if (list.length > 0) {
+      list.map((item: any) => {
+          item.reportFileData = YAML.parse(item.reportFile);
+          item.reportFileData?.map((val: any, index: number) => {
+            if (dataType === "gasUsage") {
+              if (index === 0) {
+                issue += val.issue
+              }
+            } else {
+              issue += val.issue
+            }
+          })
+          item.errorNumber = issue;
+      })
+    } 
+    return issue;
+  }
   onMounted(() => {
     // console.log('queryJson:',queryJson)
     getCodeRepository()
     getTime()
-    getReportInfo();
+
+    if (params.checktype == 'gasInfoDetail') {
+      getCheckReport();
+    } else {
+      getReportInfo();
+    }
   })
 
 </script>

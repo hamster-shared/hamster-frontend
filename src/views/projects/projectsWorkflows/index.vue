@@ -4,13 +4,13 @@
       <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="contractFrameType == '1'"></CheckResult>
+      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'"></CheckResult>
       <div v-else>
         <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
@@ -50,7 +50,7 @@ import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
 
 const { t } = useI18n()
-const { params } = useRoute();
+const { params,query } = useRoute();
 const contractFrameType = localStorage.getItem('frameType')
 const queryJson = reactive({
   id: params.id,
@@ -132,7 +132,7 @@ const getCheckReport = async () => {
   const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data?.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '' && item.checkTool !== 'MetaTrust (OSA)' && item.checkTool != 'MetaTrust (SA)' && item.checkTool != 'AI') {
       if (item.checkTool === 'eth-gas-reporter') {
         listGas.push(item);
       } else {
@@ -149,7 +149,6 @@ const getCheckReport = async () => {
       openAiInfo.value = item
     }
   })
-  
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
@@ -158,17 +157,17 @@ const getCheckReport = async () => {
 const yamlData = (list: any[], issue: number, dataType: string) => {
   if (list.length > 0) {
     list.map((item: any) => {
-      item.reportFileData = YAML.parse(item.reportFile);
-      item.reportFileData?.map((val: any, index: number) => {
-        if (dataType === "gasUsage") {
-          if (index === 0) {
+        item.reportFileData = YAML.parse(item.reportFile);
+        item.reportFileData?.map((val: any, index: number) => {
+          if (dataType === "gasUsage") {
+            if (index === 0) {
+              issue += val.issue
+            }
+          } else {
             issue += val.issue
           }
-        } else {
-          issue += val.issue
-        }
-      })
-      item.errorNumber = issue;
+        })
+        item.errorNumber = issue;
     })
   } 
   return issue;
