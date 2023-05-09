@@ -121,21 +121,14 @@
 </script>
 
 <style lang='less' scoped>
-  .miwaspace-tab,.ant-tabs-top {
-    :deep(&>.ant-tabs-nav:before) {
-      border: 1px solid #EBEBEB;
-    }
-  }
-  :deep(.ant-tabs-card>.ant-tabs-nav .ant-tabs-tab) {
-    border: 1px solid #EBEBEB;
+  :deep(.ant-tabs-tab-active .ant-tabs-tab-btn){
+    color: #E2B578 ;
+    font-weight: 400;
   }
   .dark-css {
-    :deep(.ant-tabs-card>.ant-tabs-nav .ant-tabs-tab) {
-      background: unset;
-      border: 1px solid #302D2D;
-    }
-    :deep(.ant-tabs-card>.ant-tabs-nav .ant-tabs-tab-active) {
-      background: #35322E;
+    :deep(.ant-tabs-tab-active .ant-tabs-tab-btn){
+      color: #E2B578 !important;
+      font-weight: 400 !important;
     }
   }
 </style>

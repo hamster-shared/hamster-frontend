@@ -2,13 +2,19 @@ html[data-theme='dark'] {
   .ant-tabs{
     color: #FFFFFF;
   }
-
-  .ant-tabs-top>.ant-tabs-nav:before {
-    border: 1px solid #F8F8F8;
+  .ant-tabs-card{
+    color: #E0DBD2;
   }
   .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
     font-weight: bold;
     color: #FFFFFF;
+  }
+  .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab{
+    background: #35322E;
+    border: 1px solid #434343;
+  }
+  .ant-tabs-card>.ant-tabs-nav:before{
+    border: 1px solid #434343;
   }
 }
 
@@ -25,4 +31,16 @@ html[data-theme='dark'] {
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
   font-weight: bold;
   color: #151210;
+}
+.ant-tabs-card>.ant-tabs-nav:before{
+  border: 1px solid #EBEBEB;
+}
+.ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab{
+  border-radius: 4px 4px 0 0;
+}
+.ant-tabs-card>.ant-tabs-nav .ant-tabs-tab{
+  border: 1px solid #D4D4D4;
+}
+.ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab-active{
+  border-bottom-color: #D4D4D4;
 }
