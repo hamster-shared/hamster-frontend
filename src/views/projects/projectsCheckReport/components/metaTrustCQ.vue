@@ -100,7 +100,7 @@
   }
   const props = defineProps<{
     metaTrustData: MetaTrustData,
-  gistId: string,
+    gistId: string,
   }>()
   const { metaTrustData, gistId } = toRefs(props)
 
