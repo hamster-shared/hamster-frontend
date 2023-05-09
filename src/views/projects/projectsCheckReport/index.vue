@@ -1,12 +1,13 @@
 <template>
   <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
   <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
-  <MetaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
-  <MetaTrustSP :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
+  <MetaTrustSA :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
+  <MetaTrustSP :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
   <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
-  <MetaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
-  <Solhint :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
-  <MyThril :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
+  <MetaTrustCQ :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
+  <Solhint :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
+  <MyThril :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
+  <GasUsageReport :gasUsageReportData="gasUsageReportData" v-if="params.checktype == 'gasInfoDetail' "></GasUsageReport>
 </template>
 
 <script lang="ts" setup>
@@ -19,8 +20,9 @@
   import MetaTrustCQ from './components/metaTrustCQ.vue';
   import Solhint from './components/solhint.vue';
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
+  import GasUsageReport from '../projectsWorkflows/components/GasUsageReport.vue'
   import { apiGetProjectsDetail } from "@/apis/projects";
-  import { apiGetWorkflowsDetail } from "@/apis/workFlows";
+  import { apiGetWorkflowsDetail, apiGetWorkFlowsReport } from "@/apis/workFlows";
   import { apiGetReport } from "@/apis/checkReport";
   import YAML from "yaml";
   import BreadCrumb from '../components/Breadcrumb.vue'
@@ -37,7 +39,8 @@
   const title = ref('Check');
   const processData = ref([]);
   const inRunning = ref(true);
-
+  const gistId = ref('');
+  const gasUsageReportData = reactive([])
   const reportId:any = query.reportId; //SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
   const metaTrustData = reactive({checkTool: ''});
   const workflowsDetailsData = reactive({
@@ -51,7 +54,8 @@
     try {
       const { data } = await apiGetProjectsDetail(queryJson.id);
       // console.log("getCodeRepository-data:",data);
-      workflowsDetailsData.repositoryUrl = data.repositoryUrl
+      workflowsDetailsData.repositoryUrl = data.repositoryUrl;
+      gistId.value = data.gistId;
     } catch (error: any) {
       console.log("erro:", error)
     }
@@ -86,11 +90,50 @@
     }
   }
 
+  const getCheckReport = async () => {
+    let issue = 0;
+    const listGas: any = [];
+    const { data } = await apiGetWorkFlowsReport(queryJson);
+    data?.map((item: any) => {
+      if (item.checkTool === 'eth-gas-reporter') {
+        listGas.push(item);
+      }
+    })
+
+    issue = yamlData(listGas, issue, "gasUsage");
+    
+    Object.assign(gasUsageReportData, listGas);
+    workflowsDetailsData.errorNumber = issue;
+  }
+
+  const yamlData = (list: any[], issue: number, dataType: string) => {
+    if (list.length > 0) {
+      list.map((item: any) => {
+          item.reportFileData = YAML.parse(item.reportFile);
+          item.reportFileData?.map((val: any, index: number) => {
+            if (dataType === "gasUsage") {
+              if (index === 0) {
+                issue += val.issue
+              }
+            } else {
+              issue += val.issue
+            }
+          })
+          item.errorNumber = issue;
+      })
+    } 
+    return issue;
+  }
   onMounted(() => {
     // console.log('queryJson:',queryJson)
     getCodeRepository()
     getTime()
-    getReportInfo();
+
+    if (params.checktype == 'gasInfoDetail') {
+      getCheckReport();
+    } else {
+      getReportInfo();
+    }
   })
 
 </script>
