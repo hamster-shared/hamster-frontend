@@ -100,8 +100,9 @@
   }
   const props = defineProps<{
     metaTrustData: MetaTrustData,
+  gistId: string,
   }>()
-  const { metaTrustData } = toRefs(props)
+  const { metaTrustData, gistId } = toRefs(props)
 
   const severityBtnData = metaTrustData.value.metaScanOverviewData;
   const reportFileDataCQ = Object.assign({}, metaTrustData.value.reportFileData.Issues);
@@ -179,9 +180,8 @@
     }
   }
   const openChainIDE = (name: any) => {
-    const gistId = localStorage.getItem('gistId');
     const openVal = name.substring(name.lastIndexOf("/")+1)
-    window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+    window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
   }
 
   onMounted(() => {

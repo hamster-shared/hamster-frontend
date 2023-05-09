@@ -1,12 +1,12 @@
 <template>
   <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
   <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
-  <MetaTrustSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
-  <MetaTrustSP :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
+  <MetaTrustSA :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
+  <MetaTrustSP :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
   <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
-  <MetaTrustCQ :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
-  <Solhint :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
-  <MyThril :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
+  <MetaTrustCQ :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
+  <Solhint :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
+  <MyThril :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
   <GasUsageReport :gasUsageReportData="gasUsageReportData" v-if="params.checktype == 'gasInfoDetail' "></GasUsageReport>
 </template>
 
@@ -39,7 +39,7 @@
   const title = ref('Check');
   const processData = ref([]);
   const inRunning = ref(true);
-
+  const gistId = ref('');
   const gasUsageReportData = reactive([])
   const reportId:any = query.reportId; //SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
   const metaTrustData = reactive({checkTool: ''});
@@ -54,7 +54,8 @@
     try {
       const { data } = await apiGetProjectsDetail(queryJson.id);
       // console.log("getCodeRepository-data:",data);
-      workflowsDetailsData.repositoryUrl = data.repositoryUrl
+      workflowsDetailsData.repositoryUrl = data.repositoryUrl;
+      gistId.value = data.gistId;
     } catch (error: any) {
       console.log("erro:", error)
     }
