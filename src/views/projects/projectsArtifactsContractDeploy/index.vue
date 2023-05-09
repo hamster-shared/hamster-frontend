@@ -696,7 +696,7 @@ const changeChain = (val: string) => {
   } else if(val === 'Arbitrum'){
     networkData.value = [{ name: 'Arbitrum One', id: 'a4b1', url: 'https://arbitrum-mainnet.infura.io', networkName: 'Arbitrum One' },{ name: 'Arbitrum Nova', id: 'a4ba', url: 'https://nova.arbitrum.io/rpc', networkName: 'Arbitrum Nova' },{ name: 'Nitro Goerli Rollup Testnet', id: '66eed', url: 'https://goerli-rollup.arbitrum.io/rpc', networkName: 'Nitro Goerli Rollup Testnet' }]
   }else if(val === 'IRIShub'){
-    networkData.value = [{ name: 'Mainnet', id: '1a20', url: 'https://evmrpc.irishub-1.irisnet.org', networkName: 'Mainnet' },{ name: 'Testnet NYANCAT', id: '4130', url: 'https://rpc.nyancat.irisnet.org', networkName: 'Testnet NYANCAT' }]
+    networkData.value = [{ name: 'Mainnet', id: '1a20', url: 'https://evmrpc.irishub-1.irisnet.org', networkName: 'Mainnet' },{ name: 'Testnet NYANCAT', id: '4130', url: 'https://evmrpc.nyancat.irisnet.org', networkName: 'Testnet NYANCAT' }]
   }else if (val === 'Sui'){
     networkData.value = [{
       name: 'Devnet',
