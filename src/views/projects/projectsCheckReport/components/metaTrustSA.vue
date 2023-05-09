@@ -36,7 +36,7 @@
             </div>
             <div class="bg-color mt-[20px] p-[20px]">
               <div class="flex justify-end">
-                <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+                <div class="open-chainIDE-css text-[14px] cursor-pointer" @click="openChainIDE(key)">
                   <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
                 </div>
               </div>
@@ -53,8 +53,8 @@
             <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.recommendation }}</div>
           </div>
           <template #extra>
-            <div v-if="val?.mwe?.length">
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div v-if="val?.mwe?.length" class="open-chainIDE-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.mwe.length + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -199,7 +199,8 @@ const openChainIDE = (name: any) => {
 .severity-btn{
   margin-left: 16px;
   width: 100px;
-  background: rgba(255,255,255,0.2);
+  // background: rgba(255,255,255,0.2);
+  background-color: transparent;
   border: 2px solid #E2B578;
   color: #E2B578;
 }

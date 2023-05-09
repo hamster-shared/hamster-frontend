@@ -43,8 +43,8 @@
             <svg-icon :name="item.url" size="15" />
           </label>
           <!-- 按钮 -->
-          <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label>
-          <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
+          <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
+          <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
             {{ item.name }}
           </label>
         </label>
@@ -714,9 +714,22 @@ html[data-theme='light'] {
   }
 }
 .action-button-item:hover {
+  label{
+    color: #E2B578;
+  }
   .action-icon {
     .svg-icon {
       color: #E2B578;
+    }
+  };
+}
+.action-button-item:active {
+  label{
+    color: #CE9C58;
+  }
+  .action-icon {
+    .svg-icon {
+      color: #CE9C58;
     }
   };
 }

@@ -25,7 +25,7 @@
               </div>
               <div class="bg-color mt-[20px] p-[20px]">
                 <div class="flex justify-end">
-                  <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(val.name)">
+                  <div class="open-chainIDE-css cursor-pointer" @click="openChainIDE(val.name)">
                     <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
                   </div>
                 </div>
@@ -39,8 +39,8 @@
             </div>
           </div>
           <template #extra>
-            <div>
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div class="open-chainIDE-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.issue + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -117,7 +117,7 @@ const openChainIDE = (name: string) => {
 .Severity-btn{
   margin-left: 16px;
   width: 100px;
-  background: rgba(255,255,255,0.2);
+  background-color: transparent;
   border: 2px solid #E2B578;
   color: #E2B578;
 }

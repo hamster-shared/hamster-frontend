@@ -37,7 +37,7 @@
                 <label class="mr-2" :class="[item.Severity === 'CRITICAL'?'text-[#FF0003]':item.Severity === 'LOW'?'text-[#BC5EDE]':item.Severity === 'HIGH'?'text-[#FF4D4F]':item.Severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.Severity }}]</label>
                 <label>File(s) Affected</label>
               </div>
-              <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+              <div class="open-chainIDE-css text-[14px] cursor-pointer" @click="openChainIDE(key)">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
               </div>
             </div>
@@ -50,8 +50,8 @@
             <div class="text-[#73706E]">{{ item.Description }}</div>
           </div>
           <template #extra>
-            <div>
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div class="open-chainIDE-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.Details.length + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -194,7 +194,7 @@
 .severity-btn{
   margin-left: 16px;
   width: 100px;
-  background: rgba(255,255,255,0.2);
+  background-color: transparent;
   border: 2px solid #E2B578;
   color: #E2B578;
 }

@@ -14,7 +14,7 @@
                 <div class="box" v-for="(items,index) in item.children" :key="index" style="white-space:nowrap;">
                     <p
                         class="tool-tab"
-                        :style="{color:items.border?'#E2B578' : '',border:items.border? '1px solid #E2B578':'1px solid #ccc' }"
+                        :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
                         @click="handleClick(items)"
                         >
                         {{items.title }}
@@ -212,11 +212,17 @@ button{
     margin-right:10px;
     vertical-align:middle;
     text-align:center;
-    font-weight:600;
+    font-weight:400;
+    font-size: 14px;
     border-radius:8px;
+    color: #4E4E4E;
     cursor:pointer;
+    border: 2px solid #DCDCDC;
     &:hover{
-        color:#E2B578;
+      border-color:#E2B578 !important;
+    }
+    &:active{
+      border-color: #CE9C58 !important;
     }
 }
 </style>
