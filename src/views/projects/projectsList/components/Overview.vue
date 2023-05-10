@@ -63,16 +63,20 @@
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
-          <div v-if="projectType === '1'">
-            <!-- <div>
+          <!-- <div v-if="projectType === '1'">
+            <div>
               <a-button @click="openInChainIDE(viewInfo.gistId,viewInfo.defaultFile)">Open with ChainIDE</a-button>
-            </div> -->
+            </div>
           </div >
           <div v-else>
             <div>
               <svg-icon name="white-link" size="16" />
               main
             </div>
+          </div> -->
+          <div>
+            <svg-icon name="white-link" size="16" />
+            main
           </div>
         </div>
 
