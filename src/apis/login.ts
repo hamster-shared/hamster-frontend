@@ -38,3 +38,12 @@ export function apiInstall(code:string) {
     data: {code: code},
   });
 }
+
+// /api/user/wallet
+export function saveWallet(address:string) {
+  return httpRequest({
+    url: "/api/user/wallet",
+    method: "post",
+    data: {address: address},
+  });
+}

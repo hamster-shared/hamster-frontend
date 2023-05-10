@@ -414,6 +414,7 @@ const switchToChain = async (chainId: string) => {
     message.success('success');
     // console.info(res, '成功')
   }).catch((err: any) => {
+    loading.value = false
     if (err.code === 4902) {
       message.info('Please add the network first');
       addToChain(chainId)
@@ -692,7 +693,11 @@ const changeChain = (val: string) => {
       url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	',
       networkName: 'Testnet'
     }]
-  } else if (val === 'Sui'){
+  } else if(val === 'Arbitrum'){
+    networkData.value = [{ name: 'Arbitrum One', id: 'a4b1', url: 'https://arbitrum-mainnet.infura.io', networkName: 'Arbitrum One' },{ name: 'Arbitrum Nova', id: 'a4ba', url: 'https://nova.arbitrum.io/rpc', networkName: 'Arbitrum Nova' },{ name: 'Nitro Goerli Rollup Testnet', id: '66eed', url: 'https://goerli-rollup.arbitrum.io/rpc', networkName: 'Nitro Goerli Rollup Testnet' }]
+  }else if(val === 'IRIShub'){
+    networkData.value = [{ name: 'Mainnet', id: '1a20', url: 'https://evmrpc.irishub-1.irisnet.org', networkName: 'Mainnet' },{ name: 'Testnet NYANCAT', id: '4130', url: 'https://evmrpc.nyancat.irisnet.org', networkName: 'Testnet NYANCAT' }]
+  }else if (val === 'Sui'){
     networkData.value = [{
       name: 'Devnet',
       id: 'sui:devnet',
@@ -718,7 +723,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain'])
+        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;

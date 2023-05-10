@@ -8,7 +8,7 @@
       </a-tabs>
     </div>
     <div class="flex justify-between mt-[16px]">
-      <div class="font-bold text-[20px]">Overiew</div>
+      <div class="font-bold text-[20px]">Overview</div>
       <!-- <a-select ref="select" v-model:value="tiemValue" style="width: 120px" @change="handleChange">
         <a-select-option :value="item.id" v-for="item in timeList">{{ item.name }}</a-select-option>
       </a-select> -->
@@ -107,7 +107,7 @@ const handleChange = (val: string) => {
 
 const toDetails = (val: any) => {
   // console.log(val, '点击详情操作')
-  router.push(`/chainlink/RPC/rpc-detail/${val.chain}`);
+  router.push(`/chainlink/RPC/rpc-detail/${val.chain}?network=${val.network}`);
 }
 
 // 切换网络

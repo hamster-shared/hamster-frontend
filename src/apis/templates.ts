@@ -51,3 +51,14 @@ export function apiTemplatesShow(type: String, languageType: String, deployType:
   });
 }
 
+//Download Template
+export function apiDownloadTemplate(id: String, repoName: String) {
+  return httpRequest({
+    url: `/api/templates/${id}/download`,
+    method: "post",
+    params: {
+      repoName: repoName,
+    },
+  });
+}
+

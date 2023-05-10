@@ -5,12 +5,12 @@
     <div class="flex justify-between items-center mt-[30px]">
         <div>
             <span class="mr-[10px]">Network</span>
-            <a-select class="w-[200px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
+            <a-select class="w-[230px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
             :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
             <a-button class="ml-2" @click="getSublist">Search</a-button>
         </div>
         <div>
-            <a-button @click="createSubPop">Created</a-button>
+            <a-button @click="createSubPop">Create</a-button>
             <a-button @click="addConsumerPop" class="mx-2">Add Consumers</a-button>
             <a-button @click="addFundsPop">Add Funds</a-button>
         </div>
@@ -42,7 +42,8 @@ import addConsumers from './components/addConsumers.vue'
 import { apiSublist } from '@/apis/chainlink'
 import dayjs from "dayjs";
 const router = useRouter();
-const netOptions = ref<any>(['All','Hamster Moonbeam Testnet','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
+// 'Hamster Moonbeam Testnet'经产品要求，隐藏掉这个网络
+const netOptions = ref<any>(['All','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const netName = ref('All')
 const loading = ref(false)
 const breadCrumbLoading = ref(false)

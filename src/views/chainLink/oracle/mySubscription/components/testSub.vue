@@ -136,7 +136,8 @@ const getSublistData = async()=>{
                 label:tem,
                 value:item.id,
                 subNetName:item.chainAndNetwork,
-                subNetId:item.networkId
+                subNetId:item.networkId,
+                subId:item.chainSubscriptionId
             }
         })
     }
@@ -149,7 +150,7 @@ const setSubscription = (val:any,option:any)=>{
     const subOptionsNet = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
     const net = subOptionsNet.split(' ') 
     network.value=net.slice(1,net.length).join(' '),
-    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    subId.value = option?.subId
     keyId.value = val
     const netId = `0x${option.subNetId}`
     if (ethereum.chainId !== netId) {
@@ -291,9 +292,11 @@ const handleConfirm = async()=>{
        apiExecSub(params).then((res)=>{
             if(res.code===200){
                 temId.value = res.data
+                message.success(res.message)
             }else{
-                message.error(res.data)
+                message.error('Failed '+res.message)
             }
+            emit('closeTestSub',false)
             console.log("~~~~~tx",tx)
         })
         return tx.wait()
@@ -307,8 +310,7 @@ const handleConfirm = async()=>{
             }
             const res = await updateTestSub(temId.value,params)
             if(res.code===200){
-                message.success(res.data)
-                emit('closeTestSub',false)
+                message.success('The test request has been sent successfully, and the result will be sent to your email address mailbox, please check it.')
                 emit('getTestSubInfo',formData)
             }else{
                 message.error(res.data)
@@ -316,6 +318,7 @@ const handleConfirm = async()=>{
         })
     }).catch((err:any)=>{
         message.error("Failed")
+        emit('closeTestSub',false)
         console.log(err)
     })
 }

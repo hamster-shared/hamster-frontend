@@ -2,7 +2,10 @@
   <div class="px-60 ant-layout-content layout-default-content">
     <div class="flex justify-between">
       <span class="text-[#151210] dark:text-[#FFFFFF] text-2xl font-bold">Congratulations！</span>
-      <a-button @click="goToGithub" class="!h-[43px] w-[150px]">View your project</a-button>
+      <div>
+        <a-button @click="goToGithub" class="!h-[43px] w-[150px]">View your project</a-button>
+        <!-- <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-[10px]">Open with ChainIDE</a-button> -->
+      </div>
     </div>
     <span class="text-[#73706E] dark:text-[#E0DBD2] w-2/3 inline-block mt-2 mb-10">
       Your project is fully integrated with GitHub,you can continue develop within your normal developer workflow.
@@ -32,8 +35,17 @@ const routerId = router.currentRoute.value.params.id
 
 const githubNumber = ref('')
 
+const projectData = ref(null)
+
 const goToGithub = ()=>{
   window.open(githubNumber.value)
+}
+
+const openInChainIDE = ()=> {
+  const gistId = projectData.value.gistId
+  const fileName = projectData.value.defaultFile
+  var url = `https://chainide.com/s/createGistProject?gist=${gistId}&open=${fileName}`
+  window.open(url)
 }
 
 onBeforeMount(()=>{
@@ -42,6 +54,7 @@ onBeforeMount(()=>{
 
 onMounted(async()=>{
   const { data } = await apiGetProjectsDetail(routerId)
+  projectData.value = data
   githubNumber.value = data.repositoryUrl
 })
 

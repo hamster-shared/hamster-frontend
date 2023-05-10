@@ -1,7 +1,7 @@
 <template>
   <div class="login-box">
     <div class="flex justify-between login-header">
-      <a target="_bank" href="https://hamsternet.io/">
+      <a target="_bank" @click="goHome">
         <img src="@/assets/images/logo-block.png" class="h-[28px] mt-[16px]" />
       </a>
     </div>
@@ -11,6 +11,10 @@
       <div class="login-btn mb-[24px] bg-[#ffffff] text-[#000000] cursor-pointer" @click="loginBox">
         <img src="@/assets/icons/Frame-white.svg" class="h-[24px]" />
         <span class="align-middle ml-[6px]">Continue with GitHub</span>
+      </div>
+      <div class="login-btn mb-[24px] bg-[#ffffff] text-[#000000] cursor-pointer" @click="awakeWallet">
+        <svg-icon name="metamaskLogo" size="18" class="mr-[4px]" />
+        <span class="align-middle ml-[6px]">Continue with MeteMask</span>
       </div>
       <div class="login-btn btn-dis mb-[24px] bg-[#333230] text-[#FFFFFF]">
         <img src="@/assets/icons/icon-gitLab.svg" />
@@ -25,6 +29,7 @@
 
 </template>
 <script lang='ts' setup>
+import { message } from "ant-design-vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
@@ -44,12 +49,7 @@ const loginBox = () => {
   } else {
     if (userInfo.token) {
       localStorage.setItem('token', userInfo.token);
-      if (localStorage.getItem('firstState') === "0") {
-        //第一次登录
-        router.push('/welcome')
-      } else {
-        router.push('/projects')
-      }
+      commonJump()
     } else {
       const state = new Date().getTime();
       const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
@@ -58,19 +58,36 @@ const loginBox = () => {
     }
   }
 }
-
-onMounted(() => {
-  if (localStorage.getItem('token')) {
-    // console.log("firstState:", localStorage.getItem('firstState'), localStorage.getItem('firstState') === "0", localStorage.getItem('firstState') === "1");
-    if (localStorage.getItem('firstState') === "0") {
+const commonJump = ()=>{
+  if (localStorage.getItem('firstState') === "0") {
       //第一次登录
       router.push('/welcome')
     } else {
       router.push('/projects')
     }
+}
+// 通过钱包登录
+const awakeWallet = async()=>{
+  if (window.ethereum) {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const address = accounts[0];
+    if(address){
+      localStorage.setItem('token',address)
+      commonJump()
+    }
+    console.log(`Metamask wallet address: ${address}`,accounts);
+  } else {
+    message.error('Please install MetaMask!')
+    console.log('Please install MetaMask!');
   }
-})
-
+}
+const goHome = () => {
+  let linkVal = "https://portal.hamster.newtouch.com"
+  if (window.location.href.indexOf('hamsternet.io') !== -1) {
+    linkVal = "https://hamsternet.io";
+  }
+  window.open(linkVal)
+};
 onMounted(()=>{
   if(localStorage.getItem('token')){
     if(localStorage.getItem('firstState')==="0"){

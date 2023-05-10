@@ -4,33 +4,29 @@
       <div class="flex items-center cursor-pointer" @click="goHome">
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
-        <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
-      <div @click="goPrjects" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
-      <a-dropdown>
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
-          @click.stop id="middle" style="height:64px;line-height:64px">
+      <div @click="goPrjects" style="height:64px;line-height:64px" 
+        class="text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
+      <a-dropdown v-if="!isShowMiddleware">
+        <div class="text-[#E2B578] text-[16px] cursor-pointer"
+          @click.stop id="middle" style="height:64px;line-height:64px;">
           Middleware
-          <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
-          <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
-          <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
+          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden up-tran">
+          <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] up-tran">
         </div>
         <template #overlay>
           <a-menu>
             <a-menu-item @click="goDashboard">
-              <!-- <img src="@/assets/icons/RPCs.svg" class="h-[24px]" /> -->
               Dashboard
             </a-menu-item>
             <a-menu-item @click="goMiwaspace">
-              <!-- <img src="@/assets/icons/Apps.svg" class="h-[24px]" /> -->
               Miwaspace
             </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" style="height:64px;line-height:64px" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
+      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px" 
+        class="text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -56,7 +52,7 @@
           <template #overlay>
             <a-menu>
               <a-menu-item @click="visibleDisconnect = true">
-                <a href="javascript:;">
+                <a href="javascript:;" style="color:black">
                   <img src="@/assets/icons/disconnect.svg" class="h-[24px]" />
                   Disconnect
                 </a>
@@ -131,9 +127,15 @@ const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "hu
 const userInfo = localStorage.getItem('userInfo');
 const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
 const username = JSON.parse(userInfo)?.username;
+const isShowMiddleware = ref(false)
 const goHome = () => {
   // router.push("/node-service/RPCs");
-  router.push("/projects");
+  // router.push("/projects");
+  let linkVal = "https://portal.hamster.newtouch.com"
+  if (window.location.href.indexOf('hamsternet.io') !== -1) {
+    linkVal = "https://hamsternet.io";
+  }
+  window.open(linkVal)
   isProject.value = true;
 };
 
@@ -203,6 +205,14 @@ onMounted(() => {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
   changeTheme(defaultTheme.value);
+  // 针对钱包登录的特殊处理
+  if(localStorage.getItem('token')?.startsWith('0x')){
+    // debugger
+    isShowMiddleware.value = true
+    isConnectedWallet.value = true
+    const walletAddr:any  = localStorage.getItem('token')
+    walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
+  }
 });
 
 watch(
@@ -221,6 +231,11 @@ const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
+  const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
+  if(isFakeToken){
+    localStorage.removeItem('token')
+    router.push('/login')
+  }
   visibleDisconnect.value = false;
   isConnectedWallet.value = false
 }

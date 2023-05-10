@@ -17,7 +17,7 @@
           <span class="ml-2 text-base font-bold align-middle">{{item.fullname}}</span>
         </div>
         <div class="flex justify-between text-sm">
-          <div class="flex flex-col">
+          <div class="flex flex-col" v-if="parseInt(item.chainID, 16)">
             <span class="inline-block mb-2.5 mt-5">Chain ID</span>
             <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
           </div>
@@ -28,14 +28,14 @@
         </div>
         <div>
           <div class="my-5 text-sm">RPC URL</div>
-          <a-input placeholder="Please input your RPC URL" v-model:value="item.httpAddress">
+          <a-input placeholder="*********" v-model:value="item.httpAddress" disabled="true">
             <template #suffix>
-              <img class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
-              <span class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span>
+              <img v-if="item.httpAddress" class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
+              <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span>
             </template>
           </a-input>
         </div>
-        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network)">Get Service Now</a-button>
+        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network,item.userActive)">{{item.userActive ? 'Enter Now':'Get Service Now'}}</a-button>
       </div>
     </div>
 
@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { toRefs, onMounted } from 'vue';
+  import { toRefs, onMounted,ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import { apiPostCustomerOpenService } from '@/apis/middleWare'
@@ -65,19 +65,24 @@
   message.success('copy success')
 }
 // 开通rpc需要调接口
-const handleOpenRpcService = async(chain:string,network:string)=>{
-  try {
-    const params:projectsParams = {
-      chain:chain,
-      network:network
-    }
+const handleOpenRpcService = async(chain:string,network:string,userActive:boolean)=>{
+  if(userActive){
+    // 跳rpc-detail
+    router.push(`/chainlink/RPC/rpc-detail/${chain}`)
+  }else{
+    // 跳rpc的折线图
+    try {
+      const params:projectsParams = {
+        chain:chain,
+        network:network
+      }
       const { data } = await apiPostCustomerOpenService('rpc',params)
       console.log('handleOpenRpcService-data:', data)
       router.push('/chainlink/rpc')
     } catch(err:any) {
-      message.error(err.message)
       console.log('handleOpenRpcService-err:', err)
     }
+  }
 }
 
 </script>

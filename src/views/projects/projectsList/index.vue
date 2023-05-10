@@ -99,7 +99,17 @@ onMounted(() => {
     activeKey.value = window.localStorage.getItem("projectActiveKey");
   }
   activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+  tokenFrom()
 })
+
+// 判断token是钱包的还是真实
+const tokenFrom = ()=>{
+  const bool = localStorage.getItem('token')?.startsWith('0x')
+  // if(bool){
+  //   localStorage.removeItem('token')
+  // }
+  console.log('bool',bool)
+}
 
 onBeforeUnmount(() => {
   clearTimeout(timer.value);

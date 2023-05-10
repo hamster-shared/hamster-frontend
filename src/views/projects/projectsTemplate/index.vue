@@ -40,6 +40,8 @@
                   <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
+                  <!-- Middleware Button -->
+                  <button class="chainlink" v-if="items.name==='MiddleWare'">Chainlink</button>
                 </div>
               </div>
             </div>
@@ -63,7 +65,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> 
   </div>
 </template>
 <script lang='ts' setup>
@@ -109,6 +111,7 @@ const getTemplatesCategory = async () => {
     });
   } catch (error: any) {
     console.log("erro:", error)
+    
   } finally {
     // loading.value = false;
   }
@@ -123,6 +126,7 @@ const goStandard = (name: string) => {
 const goBack = () => {
   router.back();
 }
+
 </script>
 <style lang='less' scoped>
 .white-css .border-box {
@@ -140,5 +144,12 @@ const goBack = () => {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+.chainlink{
+  margin-left: 10px;
+  border: none;
+  border-radius: 10px;
+  background:#E2B578;
+  color: #fff;
 }
 </style>

@@ -4,7 +4,7 @@
     <oracleChart></oracleChart>
     <div class="flex flex-col self-center w-full mt-[32px] container-border">
       <div class="flex justify-between my-4">
-        <div class="font-bold text-[20px]">Create Request</div>
+        <div class="font-bold text-[20px]">My Request</div>
         <div>
           <a-button @click="router.push('/chainlink/oracle/create-request')">Create Request</a-button>
           <a-button v-if="false" class="ml-2" @click="toDocs">Docs</a-button>
@@ -15,8 +15,8 @@
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
               <a-button class="table-btn" @click="showTestSubBtn(record)">Test</a-button>
-              <a-button class="mx-2 table-btn-disable" disabled>Edit</a-button>
-              <a-button class="table-btn-disable" disabled>Download</a-button>
+              <a-button class="mx-2 table-btn-disable" @click="editRequest(record)">Edit</a-button>
+              <a-button class="table-btn-disable" @click="downloadRequest(record)">Download</a-button>
             </template>
           </template>
         </a-table>
@@ -29,7 +29,7 @@
       <template #closeIcon>
           <img class="" src="@/assets/icons/closeIcon.svg" @click="closeMessageModal"/>
       </template>
-      <p>The test request has been sent successfully, and the result will be sent to your #mail address# mailbox, please check it.</p>
+      <p>The test request has been sent successfully, and the result will be sent to your email address mailbox, please check it.</p>
       <div style="width:100%;display:flex;justify-content: center;margin-top: 20px;">
           <a-button @click="closeMessageModal">Got it</a-button>
       </div>
@@ -145,6 +145,23 @@
     console.log('点击表格中的test按钮',column.value)
     showTestSub.value = true
   }
+  // 跳转编辑请求页面（创建共用一个页面）
+  const editRequest = (record:any)=>{
+    console.log('跳转编辑请求页面（创建共用一个页面）',record)
+    router.push(`/chainlink/oracle/create-request?id=${record.id}`)
+  }
+
+  // 下载请求
+  const downloadRequest = (record:any)=>{
+    const str = record.script;
+    const url = `data:,${str}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${record.name}.js`;
+    a.click();
+    a.remove();
+  }
+
   // 获取testsub数据
   const getTestSubInfo = (testSub:any)=>{
       console.log('添加消费者数据接收',testSub)

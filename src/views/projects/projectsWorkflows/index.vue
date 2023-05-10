@@ -4,17 +4,20 @@
       <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <!-- contract -->
-      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
-      <GasUsageReport :gasUsageReportData="gasUsageReportData"
-        v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-      <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList>
+      <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
+      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'"></CheckResult>
+      <div v-else>
+        <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+          :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
+        <GasUsageReport :gasUsageReportData="gasUsageReportData"
+          v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
+        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList>
+      </div>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
@@ -24,7 +27,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
-    <AiAnalysis v-if="isShowAiAnalysis" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
+    <AiAnalysis v-if="isShowAiAnalysis && contractFrameType != '1'" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
@@ -44,10 +47,11 @@ import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
 import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
-
+import CheckResult from './components/CheckResult.vue'
 
 const { t } = useI18n()
-const { params } = useRoute();
+const { params,query } = useRoute();
+const contractFrameType = localStorage.getItem('frameType')
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -127,8 +131,8 @@ const getCheckReport = async () => {
   const list: any = []
   const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
-  data.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+  data?.map((item: any) => {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '' && item.checkTool !== 'MetaTrust (OSA)' && item.checkTool != 'MetaTrust (SA)' && item.checkTool != 'AI') {
       if (item.checkTool === 'eth-gas-reporter') {
         listGas.push(item);
       } else {
@@ -140,30 +144,32 @@ const getCheckReport = async () => {
   issue = yamlData(listGas, issue, "gasUsage");
   issue = yamlData(list, issue, "report");
 
-  data.filter((item: any) => {
+  data?.filter((item: any) => {
     if (item.checkTool == 'OpenAI') {
       openAiInfo.value = item
     }
   })
-  console.log("openAiInfo.value:",openAiInfo.value);
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
 }
 
 const yamlData = (list: any[], issue: number, dataType: string) => {
-  list.map((item: any) => {
-    item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any, index: number) => {
-      if (dataType === "gasUsage") {
-        if (index === 0) {
-          issue += val.issue
-        }
-      } else {
-        issue += val.issue
-      }
+  if (list.length > 0) {
+    list.map((item: any) => {
+        item.reportFileData = YAML.parse(item.reportFile);
+        item.reportFileData?.map((val: any, index: number) => {
+          if (dataType === "gasUsage") {
+            if (index === 0) {
+              issue += val.issue
+            }
+          } else {
+            issue += val.issue
+          }
+        })
+        item.errorNumber = issue;
     })
-  })
+  } 
   return issue;
 }
 
@@ -175,9 +181,9 @@ const getDetailFrontendReport = async () => {
       workflowDetailId: queryJson.workflowDetailId,
     }
     const { data } = await apiGetDetailFrontendReport(params);
-    data.map((item: any) => {
+    data?.map((item: any) => {
       item.reportFileData = YAML.parse(item.reportFile);
-      item.reportFileData.map((val: any) => {
+      item.reportFileData?.map((val: any) => {
         issue += val.issue
       })
     })
@@ -259,7 +265,6 @@ onMounted(() => {
   getProjectsDetailData();
   loadInfo();
 })
-
 
 onUnmounted(() => {
   clearTimeout(detailTimer.value);

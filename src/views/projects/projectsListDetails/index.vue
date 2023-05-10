@@ -34,17 +34,23 @@
         <a-button type="primary" ghost @click="deleteModal = true;">Delete</a-button>
         <!-- <a-button type="primary" class="ml-4" @click="visibleModal = true">Setting</a-button> -->
         <a-dropdown>
+          <!-- Setting -->
           <a-button type="primary" class="ml-4">Setting</a-button>
           <template #overlay>
             <a-menu>
               <a-menu-item @click="visibleModal = true">
-                <a href="javascript:;">General</a>
+                <a href="javascript:;" style="color:#151210">General</a>
               </a-menu-item>
+              <!-- Check Setting -->
+              <a-menu-item v-if="frameType === 1" @click="GetCheck" :visible="visible">
+                <a href="javascript:;" style="color:#151210">Check Setting</a>
+              </a-menu-item>
+
               <a-menu-item v-if="projectsDetail.deployType == 2" @click="containerVisible = true">
                 <a href="javascript:;">Container</a>
               </a-menu-item>
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
-                <a href="javascript:;">Build Setting</a>
+                <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
             </a-menu>
           </template>
@@ -98,6 +104,8 @@
     @hideContainerParam="containerVisible = false"></ContainerParam>
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="detailId" :aptosBuildParams="aptosBuildParams"
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
+  <!-- 弹框组件 -->
+  <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -119,12 +127,17 @@ import {
   apiPostContainer,
   apiGetContainer,
   apiGetAptosBuildParams,
-  apiAptosBuild
+  apiAptosBuild,
+  apiProjectsCheck
 } from "@/apis/projects";
+import Configure from '@/views/projects/projectsList/components/Configure.vue'
+import  { apiPostPopover } from "@/apis/workFlows";
+import {apiIsCheck} from '@/apis/workFlows'
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
 const theme = useThemeStore()
+const projectId = ref('')
 
 const router = useRouter();
 const { params } = useRoute();
@@ -158,8 +171,76 @@ const msgParam = ref({
   projectType: projectType?.value
 });
 const aptosBuildParams = ref([]);
-
+const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
+
+// 弹框
+let visible=ref(false)
+//x关闭按钮
+const handleCancel=async(id:string[])=>{
+  visible.value=false
+}
+//Check Setting
+const GetCheck = async()=>{
+  // debugger
+  //调用接口
+  const {code,data}=await apiIsCheck(detailId.value)
+  const {securityAnalysis=[],openSourceAnalysis=[],codeQualityAnalysis=[],gasUsageAnalysis=[],otherAnalysis=[]} = data
+  //判断返回数据是否为空
+  if (code===200) {
+    const securityAnalysisArr = securityAnalysis?.map((item:string)=>{
+      if(item=='MetaTrust (SA)')
+      {
+        item = 'MetaTrust Security Analyzer'
+      }else if(item=='MetaTrust (SP)')
+      {
+        item = 'MetaTrust Security Prover'
+      }
+      return item
+    })
+    const openSourceAnalysisArr = openSourceAnalysis?.map((item:string)=>{
+      if(item=='MetaTrust (OSA)'){
+        item = 'MetaTrust Open Source Analyzer'
+      }
+      return item
+    })
+    const codeQualityAnalysisArr = codeQualityAnalysis?.map((item:string)=>{
+      if(item=='MetaTrust (CQ)'){
+        item = 'MetaTrust Code Quality'
+      }
+      return item
+    })
+    selectEVMData.value = [...securityAnalysisArr,...openSourceAnalysisArr,...codeQualityAnalysisArr,...gasUsageAnalysis,...otherAnalysis]
+    visible.value=true
+  }
+  console.log('selectEVMData',selectEVMData.value)
+}
+
+const getDoneData =async (myArray:string[]) => {
+    const tools = myArray?.map((item:string,index:number)=>{
+      if(item=='MetaTrust Security Analyzer'){
+        item = 'MetaTrust (SA)'
+      }else if(item=='MetaTrust Security Prover'){
+        item = 'MetaTrust (SP)'
+      }else if(item=='MetaTrust Open Source Analyzer'){
+        item = 'MetaTrust (OSA)'
+      }else if(item=='MetaTrust Code Quality'){
+        item = 'MetaTrust (CQ)'
+      }
+      return item
+    })
+    const params = {
+        tool:tools
+    }
+    //判断是否有选择
+    if (myArray.length > 0) {
+      const res = await apiPostPopover(detailId.value,params)
+      console.log(res,'done按钮接口数据');
+      visible.value=false 
+    } else {
+      message.warning('Please choose tools');
+    }
+}
 
 const formRules = computed(() => {
 

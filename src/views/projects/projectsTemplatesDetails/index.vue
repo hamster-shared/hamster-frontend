@@ -15,7 +15,9 @@
       </div>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
-        <a-button type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{
+        <a-button type="primary" class="ml-4" :loading="downloadLoading" @click="downloadTemplate">Download</a-button>
+        <a ref="downloadLinkRef" style="display: none;"></a>
+        <a-button v-if="!tokenMatemaskWallet" type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{
           createTemplate
         }}</a-button>
       </div>
@@ -192,7 +194,7 @@ import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
 import NoData from "@/components/NoData.vue"
 import { apiAddProjects, apiDupProjectName } from "@/apis/projects";
-import { apiTemplatesDetail, apiFrontendTemplatesDetail } from "@/apis/templates";
+import { apiTemplatesDetail, apiFrontendTemplatesDetail,apiDownloadTemplate } from "@/apis/templates";
 import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
 import type { AbiInfoDataItem } from "@/views/projects/components/data"
@@ -200,7 +202,8 @@ import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
 import YAML from "yaml";
 const theme = useThemeStore()
-
+const downloadLoading = ref(false)
+const downloadLinkRef = ref(null)
 const router = useRouter();
 const { params } = useRoute();
 const createTemplateLoading = ref(false);
@@ -245,6 +248,7 @@ const moduleList = ref<any>([]);
 const functionsList = ref<any>([]);
 const moduleName = ref('');
 const sourceList = ref<any>([]);
+const tokenMatemaskWallet = ref()
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -265,6 +269,7 @@ const tableColumns = computed<any[]>(() => [
 
 onMounted(() => {
   getTemplatesDetail();
+  tokenFrom()
 })
 
 const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
@@ -584,12 +589,13 @@ const createProject = async () => {
       userId: JSON.parse(userInfo)?.id,
       templateUrl: templatesDetail.value.repositoryUrl,
       labelDisplay: templatesDetail.value.labelDisplay,
+      gistId: templatesDetail.value.gistId,
+      defaultFile: templatesDetail.value.defaultFile,
     }
     if (projectType.value == '2') {
       params.frameType = templatesDetail.value.templateType - 0;
     }
     const res = await apiAddProjects(params);
-    console.log('apiAddProjects:', res.data)
     message.success(res.message);
 
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
@@ -653,6 +659,23 @@ const copyInfo = async (_items: any) => {
   } catch {
     message.error("copy failed");
   }
+}
+const downloadTemplate = async () => {
+  downloadLoading.value = true
+  const res = await apiDownloadTemplate(templatesDetail.value.id.toString(),templatesDetail.value.repositoryName);
+  if (res.code != 200) {
+    message.error(res.message);
+    return
+  }
+  downloadLinkRef.value.href = res.data;
+  downloadLinkRef.value.click();
+  message.success("download success")
+  downloadLoading.value = false
+}
+// 判断token是钱包的还是真实
+const tokenFrom = ()=>{
+  tokenMatemaskWallet.value = localStorage.getItem('token')?.startsWith('0x')
+  console.log('bool',tokenMatemaskWallet.value)
 }
 </script>
 <style lang='less' scoped>

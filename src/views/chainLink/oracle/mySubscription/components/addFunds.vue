@@ -72,15 +72,16 @@ const getSublistData = async()=>{
                 label:tem,
                 value:item.id,
                 subNetName:item.chainAndNetwork,
-                subNetId:item.networkId
+                subNetId:item.networkId,
+                subId:item.chainSubscriptionId
             }
         })
     }
 }
 // 设置订阅号
 const setSubscription = (val:any,option:any)=>{
-    subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
-    subId.value = option?.label?.substring(option?.label?.indexOf("_")+1,option?.label?.length);
+    subOptionsNet.value = option?.subNetName
+    subId.value = option?.subId
     keyId.value = val
     const netId = `0x${option.subNetId}`
     if (ethereum.chainId !== netId) {
@@ -99,14 +100,20 @@ const handleFund = async()=>{
     if (contractApi.apiStatus) {
         linkTokenApi?.transferAndCall(registryApi?.contract.address, weiValue, data).then(async(tx:any)=>{
             const walletAccount = localStorage.getItem('walletAccount') 
-            const params = {
+            const params:any = {
                 transactionTx:tx.hash,
                 incr:formData.amount,
                 address:walletAccount
             }
             console.log('tx',tx,'params',params)
             const res = await apiPayFund(keyId.value,params)
-            temId.value = res.data
+            if(res.code===200){
+                temId.value = res.data
+                message.success(res.message)
+            }else{
+                message.error('Failed'+res.message)
+            }
+            emit('closeAddFund',false)
             return tx.wait()
         }).then(async(receipt:any) => {
             console.log("receipt",receipt);
@@ -122,9 +129,9 @@ const handleFund = async()=>{
             }else{
                 message.error(res.data)
             }
-            emit('closeAddFund',false)
         }).catch((err:any)=>{
             message.error('Failed')
+            emit('closeAddFund',false)
             console.log(err)
         })
     }

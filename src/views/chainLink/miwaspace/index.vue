@@ -56,6 +56,18 @@
       case '2':
         activeKey.value = 'Oracle';
         break;
+      case '3':
+        activeKey.value = 'Storage';
+      break;
+      case '4':
+        activeKey.value = 'Graph';
+        break;
+      case '5':
+        activeKey.value = 'ZKP';
+        break;
+      case '6':
+        activeKey.value = 'Others';
+        break;
       default: break;
     }
   }
@@ -78,8 +90,13 @@
   const getRpcInfo = async() => {
     try {
       const { data } = await apiGetMiddleWareRpc()
-      rpcPageInfo.value = data
-      console.log('rpc-data:', data)
+      rpcPageInfo.value = data.map((item:any)=>{
+        if(!item.userActive){
+          item.httpAddress = ''
+        }
+        return item
+      })
+      console.log('rpc-data:', rpcPageInfo.value)
     } catch(err:any) {
       console.log('rpc-err:', err)
     }
@@ -90,7 +107,7 @@
   const checkIfOpenService = async()=> {
     try {
       const { data } = await apiGetIfOpenService('oracle')
-      openService.value = data
+      openService.value = data.isActive
       console.log('oracle-data:', data)
     } catch(err:any) {
       console.log('oracle-err:', err)
