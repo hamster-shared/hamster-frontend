@@ -52,7 +52,7 @@
           <template #overlay>
             <a-menu>
               <a-menu-item @click="visibleDisconnect = true">
-                <a href="javascript:;">
+                <a href="javascript:;" style="color:black">
                   <img src="@/assets/icons/disconnect.svg" class="h-[24px]" />
                   Disconnect
                 </a>
