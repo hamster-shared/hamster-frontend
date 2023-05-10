@@ -9,7 +9,7 @@
         class="dark:text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown v-if="!isShowMiddleware">
         <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#E2B578] text-[16px] cursor-pointer"
-          @click.stop id="middle" style="height:64px;line-height:64px">
+          @click.stop id="middle" style="height:64px;line-height:64px;color:#E2B578">
           Middleware
           <img v-if="isProject" src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden dark:inline-block up-tran">
           <img v-if="!isProject" src="@/assets/icons/skx1.svg" alt="" class="h-[7px] dark:hidden up-tran">
