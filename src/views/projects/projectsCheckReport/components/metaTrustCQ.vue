@@ -37,9 +37,9 @@
                 <label class="mr-2" :class="[item.Severity === 'CRITICAL'?'text-[#FF0003]':item.Severity === 'LOW'?'text-[#BC5EDE]':item.Severity === 'HIGH'?'text-[#FF4D4F]':item.Severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.Severity }}]</label>
                 <label>File(s) Affected</label>
               </div>
-              <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+              <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-              </div>
+              </div> -->
             </div>
 
             <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">

@@ -4,7 +4,7 @@
       <span class="text-[#151210] dark:text-[#FFFFFF] text-2xl font-bold">Congratulations！</span>
       <div>
         <a-button @click="goToGithub" class="!h-[43px] w-[150px]">View your project</a-button>
-        <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-[10px]">Open with ChainIDE</a-button>
+        <!-- <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-[10px]">Open with ChainIDE</a-button> -->
       </div>
     </div>
     <span class="text-[#73706E] dark:text-[#E0DBD2] w-2/3 inline-block mt-2 mb-10">

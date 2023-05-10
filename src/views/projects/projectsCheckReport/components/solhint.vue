@@ -25,9 +25,9 @@
               </div>
               <div class="bg-color mt-[20px] p-[20px]">
                 <div class="flex justify-end">
-                  <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(val.name)">
+                  <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(val.name)">
                     <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-                  </div>
+                  </div> -->
                 </div>
                 <div class="mt-4 text-[14px] whitespace-pre-wrap">
                   <div class="flex" >

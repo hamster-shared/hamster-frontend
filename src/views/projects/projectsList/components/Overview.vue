@@ -64,9 +64,9 @@
             </a>
           </div>
           <div v-if="projectType === '1'">
-            <div>
+            <!-- <div>
               <a-button @click="openInChainIDE(viewInfo.gistId,viewInfo.defaultFile)">Open with ChainIDE</a-button>
-            </div>
+            </div> -->
           </div >
           <div v-else>
             <div>

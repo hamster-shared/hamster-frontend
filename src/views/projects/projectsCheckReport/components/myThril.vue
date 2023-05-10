@@ -24,9 +24,9 @@
             </div>
 
             <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
-              <div class="flex justify-end text-[#E2B578] text-[14px] cursor-pointer">
+              <!-- <div class="flex justify-end text-[#E2B578] text-[14px] cursor-pointer">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-              </div>
+              </div> -->
               {{ item.file }}
             </div>
           </div>
