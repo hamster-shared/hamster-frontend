@@ -56,7 +56,7 @@
       <div class="grid grid-cols-4 gap-4">
         <div>
           <div class="text-[16px] font-bold">Code Repository</div>
-          
+
           <div class="my-2">
             <a target="_blank" :href="viewInfo.repositoryUrl" class="flex">
               <div class="text-over-css">{{ showViewInfoRepositoryUrlStart }}</div>
@@ -103,7 +103,7 @@
             :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
-            <a-button @click="showModal">Check Now </a-button>
+            <span>Check Now</span>
           </div>
           <div class="text-[#E2B578] cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
@@ -318,10 +318,10 @@ const getDoneData =async (myArray:string[]) => {
     if (myArray.length > 0) {
       const res = await apiPostPopover(projectId.value,params)
       console.log(res,'done按钮接口数据');
-      evmCheckVisible.value = false 
+      evmCheckVisible.value = false
 
       await apiProjectsCheck(projectId.value);
-      
+
       message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
@@ -353,7 +353,7 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         // 点击check按钮，提示
         message.info(t('project.pipeline_executing_now'));
       } else {
-        //判断是否为EVM 显示弹框 
+        //判断是否为EVM 显示弹框
         if (props.viewInfo.frameType === 1 && projectType.value === '1') {
           // evm 没有数据时，弹框唤起不吐丝
           if (!evmCheckVisible.value) {
@@ -640,13 +640,6 @@ const openInChainIDE = (gistId:string,fileName:string) => {
 }
 </script>
 <style lang='less' scoped>
-[data-v-4a4ce7d8] .ant-btn{
-  border: none;
-  background: none;
-  color: #E2B578;
-  left: -15px;
-}
-
 .center{
   width: 100%;
   padding: 32px;
