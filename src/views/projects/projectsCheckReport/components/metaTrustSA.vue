@@ -36,9 +36,9 @@
             </div>
             <div class="bg-color mt-[20px] p-[20px]">
               <div class="flex justify-end">
-                <div class="open-chainIDE-css text-[14px] cursor-pointer" @click="openChainIDE(key)">
+                <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
                   <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-                </div>
+                </div> -->
               </div>
               <div class="mt-4 whitespace-pre-wrap text-[14px]"> 
                 <div class="flex" v-for="subItem in item.fileContent" :key="index">
@@ -102,8 +102,9 @@ interface MetaTrustData {
 }
 const props = defineProps<{
   metaTrustData: MetaTrustData,
+  gistId: string,
 }>()
-const { metaTrustData } = toRefs(props)
+const { metaTrustData, gistId } = toRefs(props)
 
 const severityBtnData = metaTrustData.value.metaScanOverviewData;
 const reportFileDataSA = Object.assign({}, metaTrustData.value.reportFileData);
@@ -190,9 +191,8 @@ const getMetascanFile = async () => {
   }
 }
 const openChainIDE = (name: any) => {
-  const gistId = localStorage.getItem('gistId');
   const openVal = name.substring(name.lastIndexOf("/")+1)
-  window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+  window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
 }
 </script>
 <style lang='less' scoped>

@@ -24,9 +24,9 @@
             </div>
 
             <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
-              <div class="flex justify-end open-chainIDE-css text-[14px] cursor-pointer">
+              <!-- <div class="flex justify-end text-[#E2B578] text-[14px] cursor-pointer">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-              </div>
+              </div> -->
               {{ item.file }}
             </div>
           </div>
@@ -76,9 +76,10 @@
 
   const props = defineProps<{
     metaTrustData: MetaTrustData,
+    gistId: string,
   }>()
 
-  const { metaTrustData } = toRefs(props)
+  const { metaTrustData, gistId } = toRefs(props)
   const reportIssue = metaTrustData.value.issues
   const projectId = metaTrustData.value.projectId
   const reportFileDataMyThril = Object.assign([], metaTrustData.value.reportFileData);
@@ -101,9 +102,8 @@
     })
   }
   const openChainIDE = (name: string) => {
-    const gistId = localStorage.getItem('gistId');
     const openVal = name.substring(name.lastIndexOf("/")+1)
-    window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+    window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
   }
 
   onMounted(() => {
