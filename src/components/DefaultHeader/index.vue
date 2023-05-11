@@ -5,11 +5,11 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" style="height:64px;line-height:64px" 
-        class="text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
+      <div @click="goPrjects" :class="{ 'header-menu-line': isProject }"
+        class="header-text-css ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown v-if="!isShowMiddleware">
-        <div class="text-[#E2B578] text-[16px] cursor-pointer"
-          @click.stop id="middle" style="height:64px;line-height:64px;">
+        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }"
+          @click.stop>
           Middleware
           <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden up-tran">
           <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] up-tran">
