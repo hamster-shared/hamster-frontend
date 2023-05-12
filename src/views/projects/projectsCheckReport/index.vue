@@ -41,7 +41,7 @@
   const inRunning = ref(true);
   const gistId = ref('');
   const gasUsageReportData = reactive([])
-  const reportId:any = query.reportId; //SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
+  const reportId:any = query.reportId; //SP:2295,SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
   const metaTrustData = reactive({checkTool: ''});
   const workflowsDetailsData = reactive({
     startTime: '',
