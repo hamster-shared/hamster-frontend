@@ -1,15 +1,16 @@
 import { fileURLToPath, URL } from "node:url";
 import path from 'path';
 import { defineConfig, loadEnv } from "vite";
-import type {ConfigEnv} from 'vite';
+import type { ConfigEnv } from 'vite';
 import vue from "@vitejs/plugin-vue";
 import viteCompression from 'vite-plugin-compression';
 import OptimizationPersist from 'vite-plugin-optimize-persist';
 import PkgConfig from 'vite-plugin-package-config';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
+import prismjs from "vite-plugin-prismjs";
 
 // https://vitejs.dev/config/
-export default ({ mode }:ConfigEnv) => defineConfig({
+export default ({ mode }: ConfigEnv) => defineConfig({
   // define: {
   //   'process.env': {}
   // },
@@ -22,6 +23,13 @@ export default ({ mode }:ConfigEnv) => defineConfig({
   },
   plugins: [
     vue(),
+    prismjs({
+      languages: ["json", "js"],
+      //  languages: 'all',
+      plugins: ["line-numbers"], //配置显示行号插件
+      theme: "solarizedlight", //主题名称
+      css: true,
+    }),
     viteCompression({
       // threshold: 1024000 // 对大于 1mb 的文件进行压缩
     }),
@@ -59,7 +67,7 @@ export default ({ mode }:ConfigEnv) => defineConfig({
         rewrite: (path) => path.replace(/^\/nodeService/, ""),
       },
     },
-    host:true,//同一局域网可以访问本地服务
+    host: true,//同一局域网可以访问本地服务
   },
   // 强制预构建插件包
   optimizeDeps: {

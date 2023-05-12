@@ -23,18 +23,19 @@
                 <label class="mr-2" :class="[item.level === 'warning'?'text-[#F6662B]':'text-[#FF0003]']">[{{ item.level }}]</label>
                 <label>{{ item.note }}</label>
               </div>
-              <div class="bg-color mt-[20px] p-[20px]">
+              <div class="bg-color mt-[20px]">
                 <div class="flex justify-end">
                   <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(val.name)">
                     <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
                   </div> -->
                 </div>
-                <div class="mt-4 text-[14px] whitespace-pre-wrap">
+                <PrismEditor :code="item.fileContent" :isShowlineNumbers="false"></PrismEditor>
+                <!-- <div class="mt-4 text-[14px] whitespace-pre-wrap">
                   <div class="flex" >
                     <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ item.line }}</div>
                     <div class="w-[95%] dark:text-[#E0DBD2]">{{ item.fileContent }}</div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -55,6 +56,7 @@
 import { onMounted, ref, toRefs } from 'vue';
 import { useRoute } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
+import PrismEditor from "@/components/PrismEditor.vue";
 import { apiGetContractContent } from "@/apis/checkReport";
 const theme = useThemeStore();
 const { params } = useRoute();

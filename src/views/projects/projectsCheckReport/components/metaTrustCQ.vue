@@ -41,10 +41,12 @@
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
               </div> -->
             </div>
-
-            <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
-              {{ item.file }}
+            <div class="file-bg mt-[20px] rounded-xl">
+              <PrismEditor :code="item.file" :isShowlineNumbers="false"></PrismEditor>
             </div>
+            <!-- <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
+              {{ item.file }}
+            </div> -->
 
             <div class="font-medium mt-[20px]">Description</div>
             <div class="text-[#73706E]">{{ item.Description }}</div>
@@ -66,6 +68,7 @@
   import { onMounted, ref, toRefs } from 'vue';
   import { useThemeStore } from "@/stores/useTheme";
   import { apiGetMetascanFile } from "@/apis/checkReport";
+  import PrismEditor from "@/components/PrismEditor.vue";
 
   const theme = useThemeStore()
 
