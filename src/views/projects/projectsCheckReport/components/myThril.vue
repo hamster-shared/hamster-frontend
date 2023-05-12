@@ -22,13 +22,15 @@
             <div class="text-base">
               {{ item.note }}
             </div>
-
-            <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl">
+            <div class="file-bg mt-[20px] rounded-xl">
+              <PrismEditor :code="item.file" :isShowlineNumbers="false"></PrismEditor>
+            </div>
+            <!-- <div class="whitespace-pre-wrap file-bg mt-[20px] p-[20px] rounded-xl"> -->
               <!-- <div class="flex justify-end text-[#E2B578] text-[14px] cursor-pointer">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
               </div> -->
-              {{ item.file }}
-            </div>
+              <!-- {{ item.file }}
+            </div> -->
           </div>
           
           <template #extra>
@@ -47,6 +49,7 @@
 
 <script setup lang="ts">
   import { onMounted, ref, toRefs } from 'vue';
+  import PrismEditor from "@/components/PrismEditor.vue";
   import { apiGetContractContent } from "@/apis/checkReport";
 
   interface FileData {
