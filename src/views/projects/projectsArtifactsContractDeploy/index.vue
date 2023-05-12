@@ -592,6 +592,7 @@ const deployClick = async () => {
       } catch (errorInfo) {
         // 表单校验
         console.log('Failed:', errorInfo);
+        loading.value = false;
       }
     }
   }
