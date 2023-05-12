@@ -169,7 +169,6 @@ const setCheckBtnData = () => {
 }
 //获取显示的代码
 const getMetascanFile = async () => {
-  console.log("reportFileDataSA:",reportFileDataSA);
   for (let key in reportFileDataSA) {
     let fileKey = reportFileDataSA[key].fileKey;
     try {
