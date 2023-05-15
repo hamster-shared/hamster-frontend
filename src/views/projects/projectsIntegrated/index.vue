@@ -18,7 +18,8 @@
       </span>
     </div>
     <div>
-      <img src="@/assets/images/integrated-bg.png" class="w-full"/>
+      <img src="@/assets/images/integrated-bg-black.png" class="hidden w-full dark:inline-block"/>
+      <img src="@/assets/images/integrated-bg-white.png" class="w-full dark:hidden"/>
     </div>
   </div>
   

@@ -6,7 +6,7 @@
     </div>
     <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue" placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
 
-    <div class="flex justify-between px-6 mb-5 py-7 rounded-xl boxcontainer-shadow" v-for="(item,index) in repositoryData" :key="index">
+    <div class="flex justify-between px-6 mb-5 py-7 rounded-xl dark:bg-[#35322E] boxcontainer-shadow" v-for="(item,index) in repositoryData" :key="index">
       <div>
         <div class="text-base font-bold">{{ item.name }} 
           <span class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">{{ item.Visibility }}</span>
@@ -16,8 +16,13 @@
       <a-button class="self-center w-[140px] !h-[42px]" @click="handleImport(item)">Import</a-button>
     </div>
 
-    <div v-if="pagination.total" class="mb-6 text-center">
-      <a-pagination size="small" @showSizeChange="pagination.onShowSizeChange" @change="pagination.onChange" v-model:current="pagination.current" :total="pagination.total" v-model:pageSize="pagination.pageSize"/>
+    <div class="mb-6 text-center">
+      <a-pagination v-if="pagination.total" size="small" @showSizeChange="pagination.onShowSizeChange" @change="pagination.onChange" v-model:current="pagination.current" :total="pagination.total" v-model:pageSize="pagination.pageSize"/>
+      <div v-else>
+        <img src="@/assets/icons/noData--dark.svg" alt="" class="w-[128px] hidden dark:inline-block" />
+        <img src="@/assets/icons/noData-white.svg" class="w-[128px] dark:hidden" />
+        <p>No Data</p>
+      </div>
     </div>
 
     <!-- <div class="text-center">
@@ -33,14 +38,14 @@
       </template>
       <div class="text-2xl text-[#151210] mb-4 font-bold" v-if="!contractRepositoryVisible">Configure Project</div>
       <div class="text-2xl text-[#151210] mb-4 font-bold" v-else>Import a Third-Party Git Repository</div>
+      <!-- <span v-if="!nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}1111</span> -->
 
       <a-form layout="vertical" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
         <a-form-item v-if="contractRepositoryVisible" label="Repository URL" name="importRepositoryContractProjectUrl">
-          <a-input autocomplete="off" @change="nameDupErrInfo = ''" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
+          <a-input autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
         <a-form-item label="Project Name" name="projectName" :rules="[{ required: true, message: 'Please enter your name!' }]">
           <a-input disabled autocomplete="off" v-model:value="contractFormData.projectName" placeholder="Automated recognition"/>
-          <span v-if="nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}</span>
         </a-form-item>
         <a-form-item class="select-type" label="Affiliated Ecosystem" name="contractSelectChain" :rules="[{ required: true, message: 'Please select your chain!' }]">
           <a-select autocomplete="off" v-model:value="contractFormData.contractSelectChain" placeholder="Please select...">
@@ -66,11 +71,10 @@
 
       <a-form layout="vertical" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
         <a-form-item v-if="frontEndRepositoryVisible" label="Repository URL" name="importRepositoryFrontEndProjectUrl">
-          <a-input autocomplete="off" @change="nameDupErrInfo = ''" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
+          <a-input autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
         <a-form-item label="Project Name" name="frontEndProjectName" :rules="[{ required: true, message: 'Please enter your project name!' }]">
           <a-input disabled autocomplete="off" v-model:value="frontEndFormData.frontEndProjectName" placeholder="Automated recognition"/>
-          <span v-if="nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}</span>
         </a-form-item>
         <a-form-item class="select-type" label="Framework Preset" name="frontEndSelectFramework" :rules="[{ required: true, message: 'Please select your framework!' }]">
           <a-select autocomplete="off" v-model:value="frontEndFormData.frontEndSelectFramework" placeholder="Please select...">
@@ -318,7 +322,7 @@
       const params = {
         name: frontEndFormData.value.frontEndProjectName,
         ecosystem: +frontEndFormData.value.frontEndSelectFramework,
-        cloneUrl: contractRepositoryVisible.value? frontEndFormData.value.importRepositoryFrontEndProjectUrl : importUrl.value.githubUrl,
+        cloneUrl: frontEndRepositoryVisible.value? frontEndFormData.value.importRepositoryFrontEndProjectUrl : importUrl.value.githubUrl,
         type: 2,
         deployType: +frontEndFormData.value.frontEndMethod
       }
@@ -355,6 +359,9 @@
     :deep(.ant-input-affix-wrapper){
       border-radius: 8px 0px 0px 8px !important;
     }
+    :deep(.ant-input-group-addon) {
+      border-radius: 0px 8px 8px 0px;
+    }
     :deep(.ant-btn-icon-only){
       height: 42px;
       width: 50px;
@@ -384,10 +391,19 @@
 
   html[data-theme='dark']{
     .search-btn {
-      :deep(.ant-btn-icon-only){
-        background: #1d1c1a;
-        border-left: 1px solid rgba(191,191,191);
+      :deep(.ant-input-group-addon) {
+        background-color: unset;
+        border-radius: 0px 8px 8px 0px;
       }
+      :deep(.ant-btn-icon-only){
+        background: rgba(226, 181, 120, 0.1);
+        border-left: 0px;
+      }
+    }
+
+    .boxcontainer-shadow{
+      border: 1px solid #434343;
+      box-shadow: unset;
     }
 
     .select-type {
