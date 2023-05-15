@@ -60,12 +60,13 @@
 
 <script setup lang="ts">
 import { reactive, ref, toRefs } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 
 const router = useRouter();
+const route = useRoute()
 const columns = [{
   title: 'Contract',
   dataIndex: 'name',
@@ -124,14 +125,18 @@ const deployTxHash = starknetHashData[state.id]?.deployTxHash || '';
 
 const props = defineProps({
   contractListData: Array,
-  frameType:Number
+  frameType:Number,
+  currentName:String
 })
 
-const { contractListData,frameType } = toRefs(props)
+const { contractListData,frameType,currentName } = toRefs(props)
 
 const toDeployUrl = (val: any) => {
+  localStorage.removeItem('fromNamePath')
   const contract = val.id || '00';
-  router.push(`/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}`)
+  const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','-')}`
+  router.push(path)
+  localStorage.setItem('fromNamePath',route.fullPath)
 }
 
 const toDetailUrl = (val: any) => {

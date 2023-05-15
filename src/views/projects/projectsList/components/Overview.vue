@@ -464,7 +464,8 @@ const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
+    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1'
+    router.push(path);
   }
 };
 const loadView = async () => {
@@ -472,17 +473,19 @@ const loadView = async () => {
   emit("loadProjects");
 };
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
+  localStorage.removeItem('evmCheckWorkflow')
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("frameType", viewInfo.value.frameType)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
-  // message.info("Executing Now，please wait a moment.")
+  const path = "/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value
+  router.push(path);
+  localStorage.setItem('evmCheckWorkflow',path)
 };
 
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
+  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value+'?isBuild=1');
   // message.info("Executing Now，please wait a moment.")
 };
 
@@ -512,7 +515,7 @@ const goContractDeploy = async (id: string, status: string | Number) => {
 const goContractDetail = async (id: string, version: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/contracts-details/" + version);
+  router.push("/projects/" + id + "/contracts-details/" + version + '?fromList=1');
 }
 const goFrontendDeploy = async () => {
   try {

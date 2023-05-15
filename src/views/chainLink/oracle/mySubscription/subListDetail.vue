@@ -1,6 +1,6 @@
 <template>
-    <BreadCrumb currentName="Basic Information" :isClick="breadCrumbLoading" class="mb-6"/>
-    <div class="text-[24px] font-bold">Basic Information</div>
+    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <!-- <div class="text-[24px] font-bold">Basic Information</div> -->
     <div class="mt-[30px]">
         <p>
             <span class="name">ID</span>
@@ -72,7 +72,7 @@
 import dayjs from "dayjs";
 import { renderTableText } from '@/utils/customRender'
 import { reactive, ref, onMounted } from 'vue'
-import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import { expenseColumns,depositColumns,consumersColumns } from './chainApi/colDetail'
 import {apiSublistDetail,apiExpenseList,apiDepositList,apiConsumerList,apiDelConsumer} from '@/apis/chainlink'
 import { useRoute } from "vue-router";
@@ -87,6 +87,8 @@ const tab = ref(1)
 const subDetailCol = ref<any>([])
 const tableData:any = []
 const detailInfo = ref<any>({})
+const breadCrumbInfo = ref<any>([])
+
 const pagination = reactive({
     // 分页配置器
     pageSize: 10, // 一页的数据限制
@@ -232,6 +234,20 @@ onMounted(async()=>{
     subDetailCol.value = expenseColumns
     getDetailInfo()
     getExpense()
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Oracle',
+        path:'/chainlink/Oracle'
+      },
+      {
+        breadcrumbName:'My Subscription',
+        path:'/chainlink/oracle/sublist'
+      },
+      {
+        breadcrumbName:'Basic Information',
+        path:''
+      },
+    ]
 })
 </script>
 <style scoped less>

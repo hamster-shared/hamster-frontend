@@ -1,7 +1,7 @@
 <template>
-    <BreadCrumb currentName="My Subscription" :isClick="breadCrumbLoading" class="mb-6"/>
+    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
 
-    <div class="text-[24px] font-bold">My Subscription</div>
+    <!-- <div class="text-[24px] font-bold">My Subscription</div> -->
     <div class="flex justify-between items-center mt-[30px]">
         <div>
             <span class="mr-[10px]">Network</span>
@@ -35,7 +35,7 @@
 <script setup lang="ts" name="subList">
 import { useRouter } from 'vue-router'
 import { ref,reactive,onMounted } from 'vue'
-import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import createSub from './components/createSub.vue'
 import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
@@ -51,9 +51,9 @@ const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
 const showTestSub = ref(false)
-const setSubNetwork = ()=>{
 
-}
+const breadCrumbInfo = ref<any>([])
+
 const subListColumns:any = [
     {
         title: 'ID',
@@ -219,6 +219,16 @@ const goSubDetail = (record:any)=>{
 }
 onMounted(async()=>{
     getSublist()
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Oracle',
+        path:'/chainlink/Oracle'
+      },
+      {
+        breadcrumbName:'My Subscription',
+        path:''
+      },
+    ]
 })
 </script>
 <style scoped less>

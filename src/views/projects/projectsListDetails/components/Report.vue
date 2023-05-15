@@ -224,7 +224,7 @@ const getProjectsReports = async () => {
       size: reportPagination.pageSize,
       reportType:(OptionsList.value === 'All Report Type' || OptionsList.value === 'All Reports') ? "" : OptionsList.value
     }
-    const { data } = await apiGetProjectsReports('detailId.value.toString()', params);
+    const { data } = await apiGetProjectsReports(detailId.value.toString(), params);
     reportTableList.value = data.data;
     reportPagination.total = data.total
 
