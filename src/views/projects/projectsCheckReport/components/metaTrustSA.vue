@@ -8,7 +8,7 @@
       <a-button class="severity-btn" :class="[checkExitBtn('MEDIUM') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('MEDIUM')">Medium:  {{ severityBtnData.MEDIUM }} </a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('LOW') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('LOW')">Low:  {{ severityBtnData.LOW }}</a-button>
       <a-button class="severity-btn" :class="[checkExitBtn('INFORMATIONAL') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('INFORMATIONAL')">Info:  {{ severityBtnData.INFORMATIONAL }}</a-button>
-    </div>
+    </div> 
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="box-card">
       <div v-if="checkedBtn.length === 0" class="text-[#BBBAB9] text-center py-[80px]">
         <div class="text-[10px]">No Data…</div>
@@ -34,18 +34,21 @@
               <label class="mr-2" :class="[item.severity === 'CRITICAL'?'text-[#FF0003]':item.severity === 'LOW'?'text-[#BC5EDE]':item.severity === 'HIGH'?'text-[#FF4D4F]':item.severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.severity }}]</label>
               <label>File(s) Affected</label>
             </div>
-            <div class="bg-color mt-[20px] p-[20px]">
+            <div class="bg-color mt-[20px]"><!--  p-[20px]-->
               <div class="flex justify-end">
-                <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+                <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
                   <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-                </div>
+                </div> -->
               </div>
-              <div class="mt-4 whitespace-pre-wrap text-[14px]"> 
+              <div class="mt-4" v-for="subItem in item.fileContent" :key="index">
+                <PrismEditor :code="subItem.lineText" :lineTotal="subItem.lineNum"></PrismEditor>
+              </div>
+              <!-- <div class="mt-4 whitespace-pre-wrap text-[14px]"> 
                 <div class="flex" v-for="subItem in item.fileContent" :key="index">
                   <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ subItem.lineNum }}</div>
                   <div class="w-[95%] dark:text-[#E0DBD2]" :class="{'hight-light': checkHightlight(item.hightlights, subItem.lineNum)}">{{ subItem.lineText }}</div>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="font-medium mt-[20px]">Description</div>
             <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.description }}</div>
@@ -67,6 +70,7 @@
 </template>
 <script lang='ts' setup>
 import { onMounted, ref, toRefs } from 'vue';
+import PrismEditor from "@/components/PrismEditor.vue";
 import { apiGetMetascanFile } from "@/apis/checkReport";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
@@ -102,8 +106,12 @@ interface MetaTrustData {
 }
 const props = defineProps<{
   metaTrustData: MetaTrustData,
+  gistId: string,
 }>()
-const { metaTrustData } = toRefs(props)
+const { metaTrustData, gistId } = toRefs(props)
+
+const codeInfo = ref("console.log('hello world);");
+const typeInfo = ref("js");
 
 const severityBtnData = metaTrustData.value.metaScanOverviewData;
 const reportFileDataSA = Object.assign({}, metaTrustData.value.reportFileData);
@@ -161,7 +169,6 @@ const setCheckBtnData = () => {
 }
 //获取显示的代码
 const getMetascanFile = async () => {
-
   for (let key in reportFileDataSA) {
     let fileKey = reportFileDataSA[key].fileKey;
     try {
@@ -170,19 +177,25 @@ const getMetascanFile = async () => {
       //截取需要显示的代码
       reportFileDataSA[key].mwe.forEach((element, index) => {
         let tempData = []
+        let lineTotal = 0;
         if (tempFile.length >= element.lineStart) {
           let endNum = element.lineEnd;
           if (tempFile.length < element.lineEnd) {
             endNum = tempFile.length;
           }
           for (let i = element.lineStart; i <= endNum; i++) {
-            tempData.push({
-              lineNum: i,
-              lineText: tempFile[i-1]
-            });
+            // tempData.push({
+            //   lineNum: i,
+            //   lineText: tempFile[i-1]
+            // });
+            tempData.push(tempFile[i - 1]);
+            lineTotal++;
           }
         }
-        reportFileDataSA[key].mwe[index].fileContent = tempData;
+        reportFileDataSA[key].mwe[index].fileContent = [{
+          lineNum: lineTotal,
+          lineText: tempData.join("\n")
+        }]
       });
     } catch (error: any) {
       console.log("erro:", error)
@@ -190,9 +203,8 @@ const getMetascanFile = async () => {
   }
 }
 const openChainIDE = (name: any) => {
-  const gistId = localStorage.getItem('gistId');
   const openVal = name.substring(name.lastIndexOf("/")+1)
-  window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+  window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
 }
 </script>
 <style lang='less' scoped>

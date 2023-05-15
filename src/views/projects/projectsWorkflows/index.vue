@@ -4,7 +4,7 @@
       <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
@@ -133,7 +133,7 @@ const getCheckReport = async () => {
   const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
   data?.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '') {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '' && item.checkTool !== 'MetaTrust (OSA)' && item.checkTool != 'MetaTrust (SA)' && item.checkTool != 'AI') {
       if (item.checkTool === 'eth-gas-reporter') {
         listGas.push(item);
       } else {
@@ -141,16 +141,21 @@ const getCheckReport = async () => {
       }
     }
   })
-
-  issue = yamlData(listGas, issue, "gasUsage");
-  issue = yamlData(list, issue, "report");
+  // evm的错误统计
+  if(contractFrameType=='1'){
+    for(let i=0;i<data.length;i++){
+      issue += data[i].issues
+    }
+  }else{
+    issue = yamlData(listGas, issue, "gasUsage");
+    issue = yamlData(list, issue, "report");
+  }
 
   data?.filter((item: any) => {
     if (item.checkTool == 'OpenAI') {
       openAiInfo.value = item
     }
   })
-  
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
@@ -159,17 +164,17 @@ const getCheckReport = async () => {
 const yamlData = (list: any[], issue: number, dataType: string) => {
   if (list.length > 0) {
     list.map((item: any) => {
-      item.reportFileData = YAML.parse(item.reportFile);
-      item.reportFileData?.map((val: any, index: number) => {
-        if (dataType === "gasUsage") {
-          if (index === 0) {
+        item.reportFileData = YAML.parse(item.reportFile);
+        item.reportFileData?.map((val: any, index: number) => {
+          if (dataType === "gasUsage") {
+            if (index === 0) {
+              issue += val.issue
+            }
+          } else {
             issue += val.issue
           }
-        } else {
-          issue += val.issue
-        }
-      })
-      item.errorNumber = issue;
+        })
+        item.errorNumber = issue;
     })
   } 
   return issue;

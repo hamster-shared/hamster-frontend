@@ -8,6 +8,10 @@
   </div>
   <a-table class="my-4" :columns="reportTableColumns" :dataSource="reportTableList" :pagination="reportPagination">
     <template #bodyCell="{ column, record, index }">
+      <template v-if="column.dataIndex === 'issues'">
+        <label v-if="record.issues">{{record.issues}} issues found</label>
+        <label v-else>-</label>
+      </template>
       <template v-if="column.dataIndex === 'type'">
         <label v-if="record.type === 1">Contract Check</label>
         <label v-if="record.type === 2">Contract Build</label>

@@ -32,12 +32,12 @@
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2" disabled="true">Use an existing repository（coming soon）
-                <div>Please pay attention to Hamster</div>
+              <a-radio :style="radioStyle" value="2">Use an existing repository
+                <div class="radio-sub">Easily build your app by importing an existing git repository with Hamster</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1'">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1' && formData.contractCode == '1'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <a-radio :style="radioStyle" value="1">EVM
                 <div class="radio-sub">Build application based on EVM and Solidity language</div>
@@ -59,7 +59,7 @@
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2'">
+          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2' && formData.contractCode == '1'">
             <a-radio-group v-model:value="formData.deployType" name="deployType" @change="getTemplatesShow">
               <a-radio :style="radioStyle" value="1">IPFS
                 <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
@@ -70,7 +70,8 @@
             </a-radio-group>
           </a-form-item>
         </a-form>
-        <div>
+
+        <div v-show="formData.contractCode == '1'">
           <div class="flex justify-between">
             <div class="font-bold text-[16px]">Popular Template</div>
             <div class="cursor-pointer" @click="goNext">
@@ -133,8 +134,12 @@
             </div>
           </div>
         </div>
+
+        <div v-show="formData.contractCode == '2'">
+          <ImportGitRepository :projectType="formData.type"></ImportGitRepository>
+        </div>
       </div>
-      <div class="w-full mt-8 text-center">
+      <div v-show="formData.contractCode == '1'" class="w-full mt-8 text-center">
         <a-button type="primary" :loading="loading" @click="goNext" class="w-[440px]">Next</a-button>
       </div>
     </div>
@@ -146,16 +151,7 @@ import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
-import aptosone from '@/assets/svg/aptos-one.svg'
-import aptostwo from '@/assets/svg/aptos-two.svg';
-import aptosthree from '@/assets/svg/aptos-three.svg';
-import aptosfour from '@/assets/svg/aptos-four.svg';
-import tonone from '@/assets/svg/ton-one.svg';
-import tontwo from '@/assets/svg/ton-two.svg';
-import tonthree from '@/assets/svg/ton-three.svg';
-import starkwareone from '@/assets/svg/starkware-one.svg';
-import starkwaretwo from '@/assets/svg/starkware-two.svg';
-import starkwarethree from '@/assets/svg/starkware-three.svg'
+import ImportGitRepository from './components/ImportGitRepository.vue'
 import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()

@@ -4,23 +4,28 @@
       <span class="text-[#151210] dark:text-[#FFFFFF] text-2xl font-bold">Congratulations！</span>
       <div>
         <a-button @click="goToGithub" class="!h-[43px] w-[150px]">View your project</a-button>
-        <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-[10px]">Open with ChainIDE</a-button>
+        <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-4">Open with ChainIDE</a-button>
       </div>
     </div>
-    <span class="text-[#73706E] dark:text-[#E0DBD2] w-2/3 inline-block mt-2 mb-10">
-      Your project is fully integrated with GitHub,you can continue develop within your normal developer workflow.
-      When you push to a Git branch, you can check、build and deploy your smart contract by One-click on Hamster.
-    </span>
     <div>
-      <img src="@/assets/images/light-integrated-bg.png" class="w-full dark:hidden"/>
-      <img src="@/assets/images/dark-integrated-bg.png" class="hidden w-full dark:inline-block"/>
+      <span v-if="routerType == 'repository'" class="text-[#73706E] dark:text-[#E0DBD2] w-2/3 inline-block mt-2 mb-10">
+        Successfully integrated your Git repository.<br>
+        When you push to a Git branch, you can check、build and deploy your smart contract by One-click on Hamster.
+      </span>
+      <span v-else class="text-[#73706E] dark:text-[#E0DBD2] w-2/3 inline-block mt-2 mb-10">
+        Your project is fully integrated with GitHub,you can continue develop within your normal developer workflow.
+        When you push to a Git branch, you can check、build and deploy your smart contract by One-click on Hamster.
+      </span>
+    </div>
+    <div>
+      <img src="@/assets/images/integrated-bg.png" class="w-full"/>
     </div>
   </div>
   
-  <div class="relative mt-8 text-center">
-    <img src="@/assets/images/light-gridding.png" class="w-full -mt-8 dark:hidden"/>
-    <img src="@/assets/images/dark-gridding.png" class="hidden w-full -mt-8 dark:inline-block"/>
-    <a-button class="w-[443px] !h-[52px] !absolute top-1 button-center" @click="router.push('/projects')">Back to project list</a-button>
+  <div class="my-8 text-center">
+    <!-- <img src="@/assets/images/light-gridding.png" class="w-full -mt-8 dark:hidden"/>
+    <img src="@/assets/images/dark-gridding.png" class="hidden w-full -mt-8 dark:inline-block"/> -->
+    <a-button class="w-[161px] !h-[43px] button-center" @click="router.push('/projects')">Back to project list</a-button>
   </div>
 </template>
 
@@ -32,6 +37,7 @@ import { apiGetProjectsDetail } from "@/apis/projects";
 const router = useRouter();
 
 const routerId = router.currentRoute.value.params.id
+const routerType = router.currentRoute.value.query.type
 
 const githubNumber = ref('')
 
@@ -65,7 +71,9 @@ onBeforeUnmount(()=>{
 
 <style lang="less" scoped>
 .button-center {
-  left: calc(50% - 200px);
+  // left: calc(50% - 200px);
+  background-color:unset;
+  color: #E2B578;
 }
 </style>
 <style lang="less">

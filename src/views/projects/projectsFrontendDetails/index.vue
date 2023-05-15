@@ -11,13 +11,13 @@
           <template #overlay>
             <a-menu>
               <a-menu-item>
-                <a href="javascript:;" @click="viewLogs">View Deploy Logs</a>
+                <a href="javascript:;" style="color:black" @click="viewLogs">View Deploy Logs</a>
               </a-menu-item>
               <a-menu-item>
-                <a href="javascript:;" @click="copyUrl">Copy URL</a>
+                <a href="javascript:;" style="color:black" @click="copyUrl">Copy URL</a>
               </a-menu-item>
               <a-menu-item>
-                <a href="javascript:;" @click="deleteBtn">Delete</a>
+                <a href="javascript:;" style="color:black" @click="deleteBtn">Delete</a>
               </a-menu-item>
             </a-menu>
           </template>

@@ -35,23 +35,27 @@
                 <label class="mr-2" :class="[item.Severity === 'CRITICAL'?'text-[#FF0003]':item.Severity === 'LOW'?'text-[#BC5EDE]':item.Severity === 'HIGH'?'text-[#FF4D4F]':item.Severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.Severity }}]</label>
                 <label>{{ item.Title }}</label>
               </div>
-              <div class="bg-color mt-[20px] p-[20px]">
+              <div class="bg-color mt-[20px]">
                 <div class="flex justify-end">
-                  <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+                  <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
                     <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-                  </div>
+                  </div> -->
                 </div>
-                <div class="mt-4  text-[14px] whitespace-pre-wrap">
+                <PrismEditor :code="item.affectedFiles.text" :isShowlineNumbers="false"></PrismEditor>
+                <!-- <div class="mt-4  text-[14px] whitespace-pre-wrap">
                   <div class="flex" >
                     <div class="w-[5%] text-[#73706E] dark:text-[#B4AFAD]">{{ item.affectedFiles.range.start.line }}</div>
                     <div class="w-[95%] text-[#545454] dark:text-[#B4AFAD]">{{ item.affectedFiles.text }}</div>
                   </div>
-                </div>
+                </div> -->
               </div>
               <div class="font-medium mt-[20px]">Description</div>
               <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.Description }}</div>
               <div class="font-medium mt-[20px]">POC</div>
-              <div class="bg-color mt-[20px] p-[20px] text-[14px]">
+              <div class="bg-color mt-4">
+                <PrismEditor :code="item.pocData" :isShowlineNumbers="false"></PrismEditor>
+              </div>
+              <!-- <div class="bg-color mt-[20px] p-[20px] text-[14px]">
                 <div class="flex text-[#73706E] dark:text-[#B4AFAD]" v-for="subItem in item.poc" :key="index">
                   <div class="mr-4">Step {{ subItem.callDepth }}</div>
                   <div>
@@ -61,7 +65,7 @@
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
           <template #extra>
@@ -78,7 +82,8 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, toRefs } from 'vue';
+import { onMounted, ref, toRefs } from 'vue';
+import PrismEditor from "@/components/PrismEditor.vue";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
 
@@ -110,6 +115,7 @@ interface Details {
   Title: string,
   affectedFiles: FileData,
   poc: PocData[],
+  pocData: string,
 }
 interface IssuesData {
   Details: Details[],
@@ -131,13 +137,18 @@ interface MetaTrustData {
 }
 const props = defineProps<{
   metaTrustData: MetaTrustData,
+  gistId: string,
 }>()
-const { metaTrustData } = toRefs(props)
+const { metaTrustData, gistId } = toRefs(props)
 
 const SeverityBtnData = metaTrustData.value.metaScanOverviewData;
 const reportFileDataSP = Object.assign({}, metaTrustData.value.reportFileData.Issues);
 const activeKey = ref(['1']);
 const checkedBtn: any = ref(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFORMATIONAL']);
+
+onMounted(() => {
+  setPocData();
+})
 
 const showContent = (value: any) => {
   let index = checkedBtn.value.findIndex((item: any) => item === value);
@@ -175,10 +186,28 @@ const setCheckBtnData = () => {
     }
   }
 }
+const setPocData = () => {
+  for (let key in reportFileDataSP) {
+    reportFileDataSP[key].Details.forEach((element, subKey) => {
+      if (Object.keys(element).length > 0) {
+        let tempArray: any[] = [];
+        element.poc.forEach(subItem => {
+          let tempVal = "Step " + subItem.callDepth + "\t" + subItem.functionName;
+          subItem.parameters.forEach(subVal => {
+            tempVal += "\t" + subVal.name + " = " + subVal.value;
+          })
+          tempArray.push(tempVal)
+        });
+        if (tempArray.length > 0) {
+          reportFileDataSP[key].Details[subKey].pocData = tempArray.join("\n");
+        }
+      }
+    });
+  }
+}
 const openChainIDE = (name: any) => {
-  const gistId = localStorage.getItem('gistId');
   const openVal = name.substring(name.lastIndexOf("/")+1)
-  window.open("https://chainide.com/s/createGistProject?gist="+gistId+"&open="+openVal);
+  window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
 }
 </script>
 <style lang='less' scoped>
