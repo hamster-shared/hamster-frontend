@@ -140,9 +140,15 @@ const getCheckReport = async () => {
       }
     }
   })
-
-  issue = yamlData(listGas, issue, "gasUsage");
-  issue = yamlData(list, issue, "report");
+  // evm的错误统计
+  if(contractFrameType=='1'){
+    for(let i=0;i<data.length;i++){
+      issue += data[i].issues
+    }
+  }else{
+    issue = yamlData(listGas, issue, "gasUsage");
+    issue = yamlData(list, issue, "report");
+  }
 
   data?.filter((item: any) => {
     if (item.checkTool == 'OpenAI') {
