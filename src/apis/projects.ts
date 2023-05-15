@@ -96,6 +96,21 @@ interface apiReportsParams{
   reportType:string,
 }
 
+// 获取repository
+interface apiGetRepositoryParams{
+  page?: number,
+  size?: number,
+  filter?: string
+}
+// repository点击import按钮
+interface apiPostRepositoryParams{
+  name: string,
+  ecosystem: string | number,
+  cloneUrl: string,
+  type: string | number,
+  deployType?: string | number
+}
+
 //获取Report列表
 export function apiAddReport(id:string,params:apiReportsParams){
   return httpRequest({
@@ -364,5 +379,23 @@ export function apiPostAptosBuild(id: String, dataParam:{}[]) {
     url: `/api/projects/${id}/params/aptos`,
     method: "post",
     data: dataParam,
+  });
+}
+
+// 获取import repositories的数据
+export function apiGetRepository(params:apiGetRepositoryParams) {
+  return httpRequest({
+    url: '/api/repositories',
+    method: "get",
+    params
+  });
+}
+
+// 仓库导入，点击import按钮弹框调取接口
+export function apiPostRepository(params: apiPostRepositoryParams) {
+  return httpRequest({
+    url: '/api/projects/import',
+    method: "post",
+    data: params,
   });
 }
