@@ -36,11 +36,11 @@
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancelContract"/>
       </template>
-      <div class="text-2xl text-[#151210] mb-4 font-bold" v-if="!contractRepositoryVisible">Configure Project</div>
-      <div class="text-2xl text-[#151210] mb-4 font-bold" v-else>Import a Third-Party Git Repository</div>
-      <!-- <span v-if="!nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}1111</span> -->
+      <div class="text-2xl text-[#151210] mb-1 font-bold" v-if="!contractRepositoryVisible">Configure Project</div>
+      <div class="text-2xl text-[#151210] mb-1 font-bold" v-else>Import a Third-Party Git Repository</div>
+      <span v-if="nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}</span>
 
-      <a-form layout="vertical" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
+      <a-form layout="vertical" class="!mt-3" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
         <a-form-item v-if="contractRepositoryVisible" label="Repository URL" name="importRepositoryContractProjectUrl">
           <a-input autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
@@ -66,10 +66,11 @@
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancelFrontend"/>
       </template>
-      <div class="text-2xl text-[#151210] mb-4 font-bold" v-if="!frontEndRepositoryVisible">Configure Project</div>
-      <div class="text-2xl text-[#151210] mb-4 font-bold" v-else>Import a Third-Party Git Repository</div>
+      <div class="text-2xl text-[#151210] mb-1 font-bold" v-if="!frontEndRepositoryVisible">Configure Project</div>
+      <div class="text-2xl text-[#151210] mb-1 font-bold" v-else>Import a Third-Party Git Repository</div>
+      <span v-if="nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}</span>
 
-      <a-form layout="vertical" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
+      <a-form layout="vertical" class="!mt-3" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
         <a-form-item v-if="frontEndRepositoryVisible" label="Repository URL" name="importRepositoryFrontEndProjectUrl">
           <a-input autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
@@ -299,9 +300,7 @@
         router.push(`/projects/integrated/${data}?type=repository`)
       } catch (err:any) {
         console.log('contractRepositoryVisible-err:',err)
-        if(err.response.data.message.includes("already exists")){
-          nameDupErrInfo.value = "Project Name duplication"
-        }
+        nameDupErrInfo.value = err.response.data.message
       } finally {
         doneLoading.value = false
         importUrl.value = []
@@ -332,9 +331,7 @@
         router.push(`/projects/integrated/${data}?type=repository`)
       } catch (err:any) {
         console.log('frontEndRepositoryVisible-err:',err)
-        if(err.response.data.message.includes("already exists")){
-          nameDupErrInfo.value = "Project Name duplication"
-        }
+        nameDupErrInfo.value = err.response.data.message
       } finally {
         doneLoading.value = false
         importUrl.value = []
