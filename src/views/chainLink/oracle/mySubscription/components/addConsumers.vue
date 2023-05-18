@@ -45,8 +45,6 @@
     </a-modal>
 </template>
 <script setup lang="ts" name="addConsumers">
-import router from '@/router';
-import { renderTableText } from '@/utils/customRender'
 import { ref, onMounted, computed, reactive,watch } from 'vue'
 import { consumerSublist,consumerProjects,consumerTable,apiConsumerAdd,updateConsumer } from '@/apis/chainlink'
 import type { consumerInTableParams } from '@/apis/utils/chainlinkInterface'
@@ -170,11 +168,6 @@ const getProjectsData = async(network:any)=>{
     }
     console.log('获取项目名称',res)
 }
-// watch(()=>[formData.project,subOptionsNet.value],([n1,n2],[o1,o2])=>{
-//     if(n2!=o2 || n1!=o1){
-//         getlistData() 
-//     }
-// })
 // 获取表单数据
 const getlistData = async()=>{
     loading.value = true
@@ -211,7 +204,6 @@ const selectManul = (val:any)=>{
 }
 // 设置订阅号
 const setSubscription = (val:any,option:any)=>{
-    // formData.subscription = val
     subOptionsNet.value = option?.label?.substring(option?.label?.indexOf("(")+1,option?.label?.indexOf(")"));
     getProjectsData(subOptionsNet.value)
     subId.value = option?.subId;
@@ -288,24 +280,16 @@ const getProjectInfo = (add:string)=>{
     console.log('选中表格中的项目',add)
     // radioFlag.value = add
 }
-// const changeRadio = (e:any) => {
-//     console.log('选中的是'+ e,'hsbhdsbddshbd ');
-// }
+const changeRadio = (e:any) => {
+    console.log('changeRadio',e);
+    formData.consumer = e.target.value
+}
 onMounted(()=>{
     getSublistData()
 })
 
 </script>
 <style lang="less" scoped>
-// .dis{
-//     width: 7px;
-//     height: 7px;
-//     background: pink;
-//     border-radius: 12px;
-//     // left: 5px;
-//     // top: -15px;
-//     display: none;
-// }
 .done-btn {
     width: 120px;
     height: 43px;
