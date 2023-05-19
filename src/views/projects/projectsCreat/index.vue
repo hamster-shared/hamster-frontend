@@ -54,6 +54,9 @@
               <a-radio :style="radioStyle" value="5">Sui
                 <div class="radio-sub">Build application based on Sui  and Move language</div>
               </a-radio>
+              <a-radio :style="radioStyle" value="6">Filecoin
+                <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
+              </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
               <a-radio value="8">Angular</a-radio> -->
@@ -72,14 +75,14 @@
         </a-form>
 
         <div v-show="formData.contractCode == '1'">
-          <div class="flex justify-between">
+          <div class="flex justify-between" v-if="formData.frameType != '6'">
             <div class="font-bold text-[16px]">Popular Template</div>
             <div class="cursor-pointer" @click="goNext">
               <img src="@/assets/icons/explore-template.svg" class="h-[20px]" />
               <span class="text-[#E2B578] align-middle text-[16px]"> Explore all template</span>
             </div>
           </div>
-          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1'">A collection of our most
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1' && formData.frameType != '6'">A collection of our most
             deployed contracts.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
@@ -110,6 +113,10 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <!-- filecoin模板组件 -->
+            <div v-if="formData.frameType == '6'">
+              <FilecoinTemplate></FilecoinTemplate>
             </div>
           </div>
           <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
@@ -152,6 +159,7 @@ import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import ImportGitRepository from './components/ImportGitRepository.vue'
+import FilecoinTemplate from './components/FilecoinTemplate.vue'
 import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
@@ -204,9 +212,14 @@ const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 // });
 
 const goNext = async () => {
-
-  localStorage.setItem("createFormData", JSON.stringify(formData));
-  setCreateProjectValue(`/projects/template/${formData.type}`)
+  // frameType=6 直接跳转详情页
+  if(formData.frameType == '6'){
+    localStorage.setItem("createFormData", JSON.stringify(formData));
+    router.push('/projects/templates/details')
+  }else{
+    localStorage.setItem("createFormData", JSON.stringify(formData));
+    setCreateProjectValue(`/projects/template/${formData.type}`)
+  }
 }
 const setCreateProjectValue = async (path: RouteLocationRaw) => {
 
