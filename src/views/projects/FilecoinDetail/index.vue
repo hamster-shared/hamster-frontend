@@ -6,6 +6,7 @@
       <a-tab-pane key="Solidity" tab="Solidity">
         <div class="flex">
           <div class="w-1/4 p-4">
+            <Solidity></Solidity>
             <a-button type="primary" class="mt-4">111</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
@@ -35,6 +36,7 @@ import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
 import { ref,computed } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
+import Solidity from './components/Solidity.vue';
 import CodeEditor from '@/components/CodeEditor.vue';
 import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
 import { message } from 'ant-design-vue'
@@ -117,5 +119,11 @@ const createProject = async () => {
 
 </script>
 <style scoped lang="less">
-
+:deep(.ant-tabs-tab.ant-tabs-tab-disabled){
+  color: #DCDCDC;
+}
+:deep(.ant-tabs-tab-btn){
+  width: 100px;
+  text-align: center;
+}
 </style>
