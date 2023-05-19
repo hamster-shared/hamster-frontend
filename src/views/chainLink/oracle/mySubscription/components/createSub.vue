@@ -24,6 +24,7 @@ import { useContractApi } from "@/stores/chainlink";
 import { apiCreateSub,updateSub } from '@/apis/chainlink'
 import { message } from 'ant-design-vue'
 import { switchToChain } from '@/utils/changeNetwork'
+import { useRouter  } from 'vue-router';
 const { ethereum } = window;
 // 用于后端映射创建和更新订阅
 const id = ref<number>()
@@ -37,6 +38,7 @@ const props = defineProps({
 const formRef = ref();
 const chainName = ref()
 const rpcUrl = ref()
+const router = useRouter()
 // ETH
 // 经产品要求，隐藏掉这个网络{label: 'Hamster Moonbeam Testnet',networkName: 'Hamster Moonbeam', value: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}
 // networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }, {name: 'Testnet/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
@@ -113,6 +115,7 @@ const handleCreateSub = async()=>{
       const res = await updateSub(params)
       if(res.code===200){
             message.success(res.message)
+            emit('getCreateSubInfo',true)
         }else{
             message.error('Failed '+res.data)
         }

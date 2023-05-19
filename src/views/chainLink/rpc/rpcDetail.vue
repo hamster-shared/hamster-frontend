@@ -32,7 +32,6 @@
             <div class="font-bold">{{ newtworkChainsData.http_link }}</div>
             <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.http_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
-              <!-- <span class="text-[16px]">Copy</span> -->
             </div>
           </div>
         </div>
@@ -43,7 +42,6 @@
             <div class="font-bold">{{ newtworkChainsData.websocket_link }}</div>
             <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
-              <!-- <span class="text-[16px]">Copy</span> -->
             </div>
           </div>
         </div>
@@ -60,7 +58,6 @@
           <div class="text-right">
             <span class="text-right cursor-pointer text-[#E2B578]" @click="copyInfo(value)">
               <svg-icon name="copy" size="18"></svg-icon>
-              Copy Code
             </span>
           </div>
       </a-tab-pane>
