@@ -6,23 +6,31 @@
       <a-tab-pane key="Solidity" tab="Solidity">
         <div class="flex">
           <div class="w-1/4 p-4">
-            <Solidity></Solidity>
-            <a-button type="primary" class="mt-4">111</a-button>
+            <div class="font-bold text-[#818998] mb-2">Contract Name</div>
+            <div>
+                <a-input v-model:value="name" placeholder="" allow-clear autocomplete="off" />
+            </div>
+            <div class="font-bold text-[#818998] my-2">FEATURES</div>
+            <div class="flex justify-between items-center" v-for="(items, index) in featuresList" :key="index">
+                <div>
+                    <a-checkbox :name="items.name" @click="checkboxClick"> {{ items.label }}</a-checkbox>
+                </div>
+            </div>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
-            <CodeEditor :readOnly="true" value="contractERC20"></CodeEditor>
+            <CodeEditor :readOnly="true" :value="content"></CodeEditor>
           </div>
         </div>
       </a-tab-pane>
-      <a-tab-pane key="Rust" tab="Rust" disabled class="dark:text-[#E0DBD2]">
+      <a-tab-pane key="Rust" tab="Rust" disabled>
         <div class="flex">
           noData
         </div>
       </a-tab-pane>
     </a-tabs>
-    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
+    <a-modal :footer="null" centered="true" v-model:visible="createCodeVisible" title="Create by template" @cancel="createCodeVisible = false">
       <span class="text-sm">Project Name</span>
-      <a-input placeholder="Project Name" v-model:value="codeNameValue" allowClear/>
+      <a-input placeholder="Project Name" v-model:value="codeNameValue" allowClear class="my-1"/>
       <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
@@ -36,7 +44,6 @@ import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
 import { ref,computed } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
-import Solidity from './components/Solidity.vue';
 import CodeEditor from '@/components/CodeEditor.vue';
 import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
 import { message } from 'ant-design-vue'
@@ -48,6 +55,14 @@ const errorMsg = ref()
 const createCodeLoading = ref()
 const loading = ref(false)
 const router = useRouter()
+const name = ref('')
+const content = ref('pragma solidity ^0.8.17;')
+const featuresList = ref([
+  { name: 'mintable', label: 'Mintable' },
+  { name: 'burnable', label: 'Burnable' },
+  { name: 'pausable', label: 'Pausable'},
+  { name: 'permit', label: 'Permit'},
+]);
 
 // 弹出创建evm框
 const showCreateEvm = ()=>{
@@ -93,17 +108,19 @@ const handleOk = async ()=>{
     }
   })
 }
+
 // 创建evm合约
 const createProject = async () => {
   try {
     // loading.value = true;
     const createProjectTemp = localStorage.getItem('createProjectTemp');
+    console.log('createProjectTemp',createProjectTemp)
     const params = {
       name: codeNameValue.value,
       type: JSON.parse(createProjectTemp)?.type - 0,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
-      fileName: '',
-      content: '',
+      fileName: name.value,
+      content: content.value,
     }
     const res = await apiProjectsCode(params);
     message.success(res.message);
@@ -116,7 +133,10 @@ const createProject = async () => {
     createCodeLoading.value = false
   }
 }
+// 点击FEATURES触发数据更新
+const checkboxClick = ()=>{
 
+}
 </script>
 <style scoped lang="less">
 :deep(.ant-tabs-tab.ant-tabs-tab-disabled){

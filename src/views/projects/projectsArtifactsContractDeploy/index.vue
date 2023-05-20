@@ -710,6 +710,18 @@ const changeChain = (val: string) => {
       url: 'https://explorer-rpc.testnet.sui.io/',
       networkName: 'Testnet'
     }]
+  }else if (val === 'Filecoin'){
+    networkData.value = [{
+      name: 'Filecoin/Hyperspace',
+      id: 'c45',
+      url: 'https://api.hyperspace.node.glif.io/rpc/v1',
+      networkName: 'Filecoin/Hyperspace'
+    },{
+      name: 'Filecoin/Mainnet',
+      id: '13a',
+      url: 'https://api.node.glif.io/rpc/v1',
+      networkName: 'Filecoin/Mainnet'
+    }]
   }
 }
 
@@ -724,7 +736,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub'])
+        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;

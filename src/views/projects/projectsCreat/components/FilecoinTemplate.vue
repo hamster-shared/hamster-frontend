@@ -7,16 +7,16 @@
         Plaase choose one of the programming languages :
     </div>
     <div class="template cursor-pointer" @click="goFilecoinDetail" style="border: 1px solid #E2B578;">
-        <img src="@/assets/icons/solidity-b.svg" class="w-[28px] mt-[70px] hidden dark:inline-block"/>
-        <img src="@/assets/icons/solidity-w.svg" class="w-[28px] mt-[70px] dark:hidden"/>
+        <img src="@/assets/icons/solidity-b.svg" class="w-[48px] mt-[70px] hidden dark:inline-block"/>
+        <img src="@/assets/icons/solidity-w.svg" class="w-[48px] mt-[70px] dark:hidden"/>
         <p class="font-bold mt-[20px]">Solidity</p>
         <div class="text-[14px]">
             Developers can benefit from the mature Ethereum development experience and easily build powerful decentralized storage applications
         </div>
     </div>
-    <div class="template">
-        <img src="@/assets/icons/rust-b.svg" class="w-[28px] mt-[70px] hidden dark:inline-block"/>
-        <img src="@/assets/icons/rust-w.svg" class="w-[28px] dark:hidden mt-[70px]"/>
+    <div class="template border border-solid border-[#EBEBEB] dark:border-[#434343]">
+        <img src="@/assets/icons/rust-b.svg" class="w-[58px] mt-[60px] hidden dark:inline-block"/>
+        <img src="@/assets/icons/rust-w.svg" class="w-[58px] dark:hidden mt-[60px]"/>
         <p class="font-bold mt-[20px]">Rust</p>
         <div class="text-[14px]">
             Rust's memory safety and performance advantages allow you to build fast, secure and scalable decentralized storage applications on Filecoin
@@ -38,7 +38,6 @@ const goFilecoinDetail = () => {
     padding:20px;
     width: 500px;
     height: 300px;
-    border: 1px solid #6B6B6B;
     margin-bottom: 16px;
     border-radius: 12px;
     // &:hover{
