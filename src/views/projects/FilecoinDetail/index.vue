@@ -8,12 +8,24 @@
           <div class="w-1/4 p-4">
             <div class="font-bold text-[#818998] mb-2">Contract Name</div>
             <div>
-                <a-input v-model:value="name" placeholder="" allow-clear autocomplete="off" />
+                <a-input v-model:value="name" placeholder="" allow-clear autocomplete="off" @change="getContent" oninput="value=value.replace(/^[0-9.]/g,'')"/>
             </div>
             <div class="font-bold text-[#818998] my-2">FEATURES</div>
-            <div class="flex justify-between items-center" v-for="(items, index) in featuresList" :key="index">
+            <div>
                 <div>
-                    <a-checkbox :name="items.name" @click="checkboxClick"> {{ items.label }}</a-checkbox>
+                  <a-checkbox  @click="makeDealFn(makeDealBool)" v-model:checked="makeDealBool"> makeDeal</a-checkbox>
+                </div>
+                <div>
+                  <a-checkbox  @click="getDealFn(getDealBool)" v-model:checked="getDealBool"> getDeal</a-checkbox>
+                </div>
+                <div>
+                  <a-checkbox  @click="handleFileCoinFn(handleFileCoinBool)" v-model:checked="handleFileCoinBool"> handleFileCoin</a-checkbox>
+                </div>
+                <div>
+                  <a-checkbox  @click="updateActivationStatusFn(updateActivationStatusBool)" v-model:checked="updateActivationStatusBool"> updateActivationStatus</a-checkbox>
+                </div>
+                <div>
+                  <a-checkbox  @click="balanceFn(balanceBool)" v-model:checked="balanceBool"> balance</a-checkbox>
                 </div>
             </div>
           </div>
@@ -41,7 +53,7 @@
 </template>
 <script setup lang="ts">
 import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
-import { ref,computed } from 'vue'
+import { ref,computed,onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import CodeEditor from '@/components/CodeEditor.vue';
@@ -58,13 +70,19 @@ const createCodeLoading = ref()
 const loading = ref(false)
 const router = useRouter()
 const name = ref('')
-const content = ref('pragma solidity ^0.8.17;')
+const content = ref()
 const featuresList = ref([
-  { name: 'mintable', label: 'Mintable' },
-  { name: 'burnable', label: 'Burnable' },
-  { name: 'pausable', label: 'Pausable'},
-  { name: 'permit', label: 'Permit'},
+  { name: 'makeDeal', label: 'makeDeal', checked:true },
+  { name: 'getDeal', label: 'getDeal', checked:false },
+  { name: 'handleFileCoin', label: 'handleFileCoin', checked:true},
+  { name: 'updateActivationStatus', label: 'updateActivationStatus', checked:false},
+  { name: 'balance', label: 'balance', checked:false},
 ]);
+const makeDealBool = ref(false)
+const getDealBool = ref(false)
+const handleFileCoinBool = ref(false)
+const updateActivationStatusBool = ref(false)
+const balanceBool = ref(false)
 
 // 弹出创建evm框
 const showCreateEvm = ()=>{
@@ -135,24 +153,47 @@ const createProject = async () => {
     createCodeLoading.value = false
   }
 }
-// 点击FEATURES触发数据更新
-const checkboxClick = async () => {
-  const content: fileCoinContent = {
-    name: 'yourfilepath',
-    makeDeal: false,
-    getDeal: false,
-    handleFileCoin: false,
-    updateActivationStatus: false,
-    balance: true,
+const getContent = async()=>{
+  // const regex = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+  const params: fileCoinContent = {
+    name: name.value,
+    makeDeal: makeDealBool.value,
+    getDeal: getDealBool.value,
+    handleFileCoin: handleFileCoinBool.value,
+    updateActivationStatus: updateActivationStatusBool.value,
+    balance: balanceBool.value,
   };
   try {
-    const fileCoinContent = getFileCoinContent(content);
-    console.log("lines",fileCoinContent)
+    const fileCoinContent = await getFileCoinContent(params);
+    content.value = fileCoinContent
   } catch (err) {
     console.log("err",err)
   }
-
 }
+// 点击FEATURES触发数据更新
+const makeDealFn = async (bool:boolean) => {
+  makeDealBool.value = !bool
+  getContent()
+}
+const getDealFn = async (bool:boolean) => {
+  getDealBool.value = !bool
+  getContent()
+}
+const handleFileCoinFn = async (bool:boolean) => {
+  handleFileCoinBool.value = !bool
+  getContent()
+}
+const updateActivationStatusFn = async (bool:boolean) => {
+  updateActivationStatusBool.value = !bool
+  getContent()
+}
+const balanceFn = async (bool:boolean) => {
+  balanceBool.value = !bool
+  getContent()
+}
+onMounted(()=>{
+  getContent()
+})
 </script>
 <style scoped lang="less">
 :deep(.ant-tabs-tab.ant-tabs-tab-disabled){

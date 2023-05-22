@@ -4,11 +4,11 @@ import * as path from 'path';
 
 export interface fileCoinContent {
   name: string;
-  makeDeal:boolean;
-  getDeal:boolean;
-  handleFileCoin:boolean;
-  updateActivationStatus:boolean;
-  balance:boolean;
+  makeDeal?:boolean;
+  getDeal?:boolean;
+  handleFileCoin?:boolean;
+  updateActivationStatus?:boolean;
+  balance?:boolean;
 }
 
 const filePath = 'public/DealClient.sol';
