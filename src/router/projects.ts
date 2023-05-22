@@ -47,6 +47,11 @@ const projectsRoute = [
                         name: "ProjectsStandardContract",
                         component: () => import('@/views/projects/projectsStandardContract/index.vue'),
                     },
+                    {
+                        path: "/projects/templates/details",
+                        name: "FilecoinDetail",
+                        component: () => import('@/views/projects/FilecoinDetail/index.vue'),
+                    },
                 ]
             },
             {
