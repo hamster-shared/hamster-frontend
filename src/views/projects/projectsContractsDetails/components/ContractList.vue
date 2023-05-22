@@ -34,7 +34,7 @@
     </div>
     <div class="col-span-2 p-[32px]">
       <div>
-        <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :abiInfo="abiInfo"
+        <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :outputs="outputs" :abiInfo="abiInfo"
           :frameType="frameType" :buttonInfo="buttonInfo" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress">
         </ContractForm>
       </div>
@@ -64,6 +64,7 @@ const buttonInfo = ref('');
 const checkValue = ref('');
 const checkValueIndex = ref(0);
 const inputs = ref([]);
+const outputs = ref([]);
 const contractForm = ref();
 const abiInfoData = reactive([]);
 const aptosName = ref('')
@@ -113,6 +114,7 @@ const commonFirst = ()=>{
       })
     }else{
       inputs.value = sendAbis[0]?.inputs;
+      outputs.value = sendAbis[0]?.outputs
     }
     buttonInfo.value = 'Transact'
   } else if (sendAbis.length <= 0 && callAbis.length > 0) {
@@ -122,6 +124,7 @@ const commonFirst = ()=>{
       // inputs.value = callAbis[0]?.fields;
     }else{
       inputs.value = callAbis[0]?.inputs;
+      outputs.value = callAbis[0]?.outputs;
     }
     buttonInfo.value = 'Call'
   } else {
@@ -133,6 +136,7 @@ const emit = defineEmits(["checkContract"])
 
 const checkContract = (name: string, val: any, text: string, index: number) => {
   inputs.value = []
+  outputs.value = []
   console.log('checkContract',val)
   checkValueIndex.value = index;
   // console.log(buttonInfo, 'buttonInfo')
@@ -160,10 +164,12 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
     }
   }else{
     inputs.value = val.inputs
+    outputs.value = val.outputs
   }
   buttonInfo.value = text
 
   emit("checkContract", inputs, name);
+  emit("checkContract", outputs, name);
 }
 
 </script>

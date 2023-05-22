@@ -204,10 +204,10 @@ const connectWallet = async () => {
 const deployContract = async (item: any) => {
   loading.value = true;
   try {
-    const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
+    // const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
     // const walletData = await connectWallet();
     const response = await starkWareData.account.deploy({
-      classHash: classHash,
+      classHash: item.byteCode,
       constructorCalldata: []
     })
     setProjectsContractDeploy('', response.contract_address[0], item.id)
