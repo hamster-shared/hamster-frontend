@@ -86,6 +86,10 @@ const balanceBool = ref(false)
 
 // 弹出创建evm框
 const showCreateEvm = ()=>{
+  if(!name.value.trim()){
+    message.error('Please input Contract Name!')
+    return
+  }
     createCodeVisible.value = true
 }
 const checkDupName = computed(async () => {
