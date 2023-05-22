@@ -12,7 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "types": [
       "vite/client",
-      "vite-plugin-svg-icons/client"
+      "vite-plugin-svg-icons/client",
+      "jest"
     ],
   },
   "references": [
