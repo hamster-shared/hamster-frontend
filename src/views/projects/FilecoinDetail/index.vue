@@ -47,6 +47,8 @@ import { useThemeStore } from "@/stores/useTheme";
 import CodeEditor from '@/components/CodeEditor.vue';
 import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
 import { message } from 'ant-design-vue'
+import { getFileCoinContent} from '@/utils/fileCoinUtil';
+import type { fileCoinContent } from '@/utils/fileCoinUtil';
 const theme = useThemeStore()
 const activeKey = ref('Solidity')
 const createCodeVisible = ref(false)
@@ -134,7 +136,21 @@ const createProject = async () => {
   }
 }
 // 点击FEATURES触发数据更新
-const checkboxClick = ()=>{
+const checkboxClick = async () => {
+  const content: fileCoinContent = {
+    name: 'yourfilepath',
+    makeDeal: false,
+    getDeal: false,
+    handleFileCoin: false,
+    updateActivationStatus: false,
+    balance: true,
+  };
+  try {
+    const fileCoinContent = getFileCoinContent(content);
+    console.log("lines",fileCoinContent)
+  } catch (err) {
+    console.log("err",err)
+  }
 
 }
 </script>

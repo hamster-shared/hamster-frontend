@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 
-interface fileCoinContent {
+export interface fileCoinContent {
   name: string;
   makeDeal:boolean;
   getDeal:boolean;
@@ -11,11 +11,9 @@ interface fileCoinContent {
   balance:boolean;
 }
 
-// const filePath = path.resolve(__dirname, '../../public/DealClient.sol');
-const publicPath = path.resolve(process.cwd(), 'public');
-const filePath = path.resolve(publicPath, 'DealClient.sol');
+const filePath = 'public/DealClient.sol';
 
-export function initializeFileCoinContent(): fileCoinContent {
+function initializeFileCoinContent(): fileCoinContent {
   return {
     name: "DealClient",
     makeDeal: false,
@@ -26,9 +24,32 @@ export function initializeFileCoinContent(): fileCoinContent {
   };
 }
 
-export function getFileCoinContent(fileCoinContent: fileCoinContent): Promise<string>  {
-    let lineNumbers = getLineNumbers(fileCoinContent);
-    return readLinesFromFile(fileCoinContent.name, lineNumbers);
+export function getFileCoinContent(fileCoinContent: fileCoinContent): string {
+  if (!fileCoinContent) {
+    fileCoinContent = initializeFileCoinContent();
+  }
+  let lineNumbers = getLineNumbers(fileCoinContent);
+  return readLinesFromFile(fileCoinContent.name, lineNumbers);
+}
+
+function getFileContentInWebEnv(url: string): string {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', url, false); // 同步请求
+  xhr.send();
+  if (xhr.status === 200) {
+    return xhr.responseText;
+  } else {
+    throw new Error(`Failed to load file: ${url}`);
+  }
+}
+
+function getFileContentInNodeEnv(path: string): string {
+  try {
+    const data = fs.readFileSync(path, 'utf8');
+    return data;
+  } catch (err) {
+    throw new Error(`Failed to load file: ${path}`);
+  }
 }
 
 function getLineNumbers(fileCoinContent: fileCoinContent): number[] {
@@ -63,52 +84,47 @@ function getLineNumbers(fileCoinContent: fileCoinContent): number[] {
   return uniqueNumbers;
 }
 
-function readLinesFromFile(name :string, lineNumbers: number[]): Promise<string> {
-  return new Promise((resolve, reject) => {
+function readLinesFromFile(name :string, lineNumbers: number[]): string {
     let content: string = "";
-    if (lineNumbers.length < 1) {
-      fs.readFile(filePath, { encoding: 'utf8' }, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          if (name) {
-            data = data.replace("contract DealClient", "contract " + name);
-          }
-          resolve(data);
-        }
-      });
+  let fileContent: string;
+  try {
+    if (typeof __dirname !== 'undefined') {
+      const nodeEnvFilePath = path.resolve(__dirname, '../../public/DealClient.sol');
+      fileContent = getFileContentInNodeEnv(nodeEnvFilePath);
     } else {
-      const stream = fs.createReadStream(filePath, { encoding: 'utf8' });
-      let currentLine = 1;
-
-      stream.on('data', (data: string) => {
-        const splitLines = data.split('\n');
-
-        splitLines.forEach((line: string) => {
-          if (lineNumbers.includes(currentLine)) {
-            if (line.includes("contract DealClient") && name) {
-              line = line.replace("DealClient", name)
-            }
-            if (currentLine == 1) {
-              content = line + '\n';
-            } else {
-              content = content + line + '\n';
-            }
-          }
-          currentLine++;
-        });
-      });
-
-      stream.on('close', () => {
-        resolve(content);
-      });
-
-      stream.on('error', (err) => {
-        reject(err);
-      });
+      const fileUrl = new URL(filePath, window.location.origin).href;
+      fileContent = getFileContentInWebEnv(fileUrl);
     }
-  });
+  } catch (err) {
+    throw err;
+  }
+
+  if (lineNumbers.length < 1) {
+    if (name) {
+      content = fileContent.replace("contract DealClient", "contract " + name);
+    }
+  } else {
+    let currentLine = 1;
+    const splitLines = fileContent.split('\n');
+
+    splitLines.forEach((line: string) => {
+      if (lineNumbers.includes(currentLine)) {
+        if (line.includes("contract DealClient") && name) {
+          line = line.replace("DealClient", name)
+        }
+        if (currentLine == 1) {
+          content = line + '\n';
+        } else {
+          content = content + line + '\n';
+        }
+      }
+      currentLine++;
+    });
+  }
+  return content;
 }
+
+
 
 const fileCoinMethod = {
       default: [1, 2, 3, 66, 103, 104, 105, 106, 107, 108, 323],
