@@ -21,10 +21,10 @@
       </div>
 
       <div class="relative oracle-container">
-        <span class="text-base font-bold">Chainlink Functions</span>
+        <span class="text-base font-bold">Hamslink</span>
         <div class="mt-5">
-          <span class="text-sm chainlink-description">Chainlink Functions is a Web3 serverless developer platform thatallows you to fetch 
-            any data from any API and run custom compute on Chainlink's highly secure.
+          <span class="text-sm chainlink-description">Chainlink Functions is a web3 serverless development platform that allows you to fetch data from any API and perform 
+          custom computations on Chainlink's highly secure and reliable network. However, Chainlink Functions operations are relatively complex
           </span>
           <div class="text-left">
             <a-button type="link" class="!p-0" @click="showMore = true">View More</a-button>
@@ -36,8 +36,12 @@
         </div>
 
         <div class="absolute top-0 left-0 viewmore-container " v-if="showMore" @click="showMore = false">
-          Chainlink Functions is a Web3 serverless developer platform thatallows you to fetch 
-            any data from any API and run custom compute on Chainlink's highly secure.
+          Chainlink Functions is a web3 serverless development platform that allows you to fetch data from any API and perform 
+          custom computations on Chainlink's highly secure and reliable network. However, Chainlink Functions operations are relatively complex, the
+          visual interface is insufficient, and a certain level of coding ability is required. To simplify
+          Chainlink Functions operations and allow more developers to easily access Chainlink
+          Functions services, Hamster has integrated and developed a Chainlink Functions service
+          middleware.
         </div>
       </div>
     </div>
@@ -85,7 +89,7 @@
   .viewmore-container {
     width: 453px;
     height: 237px;
-    padding: 30px;
+    padding: 15px 30px;
     background: rgba(0,0,0,0.9);
     color: white;
     border-radius: 12px;

@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col w-full px-6">
-    <div class="flex justify-between mb-6">
+    <div class="flex justify-between mb-3">
       <div class="text-2xl font-bold">Hamslink</div>
       <a-button class="w-[80px] !h-[38px]">Doc</a-button>
     </div>
-
+    <div class="font-bold text-[20px] mb-[10px]">Overview</div>
     <oracleChart></oracleChart>
     <div class="flex flex-col self-center w-full mt-[32px] container-border">
       <div class="flex justify-between my-4">

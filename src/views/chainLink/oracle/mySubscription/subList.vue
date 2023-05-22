@@ -5,7 +5,7 @@
     <div class="flex justify-between items-center mt-[30px]">
         <div>
             <span class="mr-[10px]">Network</span>
-            <a-select class="w-[230px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
+            <a-select class="w-[200px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
             :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
             <a-button class="ml-2" @click="getSublist">Search</a-button>
         </div>
@@ -17,7 +17,7 @@
     </div>
     <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
         <template #operation="{ record }">
-            <a @click="goSubDetail(record)" class="mr-16">View</a>
+            <a @click="goSubDetail(record)" class="mr-16 !text-[#E2B578]">View</a>
         </template>
         <template #id="{ record }">
             <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
@@ -168,6 +168,7 @@ const getCreateSubInfo = (info:any)=>{
 // 关闭订阅
 const closeCreateSub = (bool:boolean)=>{
     showCreateSub.value = bool
+    router.push('/chainlink/oracle/sublist')
 }
 
 // 添加消费者弹框
