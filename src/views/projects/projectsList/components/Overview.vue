@@ -403,8 +403,11 @@ const buildStatusAction = async (id: string, buildData: any) => {
 const aptosBuildParams = ref([])
 const projectsBuild = async (id: string, buildData: any, frameType: string,type:any) => {
   console.log('projectsBuild:::', id, buildData, frameType)
-  const res = await apiCheckSetAptosBuildParams(id)
-  const needsParams = res.data.needsParams
+  let needsParams = false 
+  if(frameType == '2'){
+    const res = await apiCheckSetAptosBuildParams(id)
+    needsParams = res.data.needsParams
+  }
   try {
     if (frameType == '2' && type == 1 && needsParams) {
       aptosBuildVisible.value = true

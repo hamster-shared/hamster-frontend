@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48px" height="75px" viewBox="0 0 48 75" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>暗色版-solidity-logo@1x</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="暗色版-solidity-logo" fill-rule="nonzero">
+            <g id="编组" opacity="0.45" fill="#010101">
+                <g id="路径">
+                    <polygon points="35.6930243 0.187638562 23.8300974 21.2865525 0.0833949166 21.2865525 11.9463218 0.187638562"></polygon>
+                </g>
+            </g>
+            <g id="编组" opacity="0.6" transform="translate(11.883776, 0.000000)" fill="#FFFFFF">
+                <g id="路径">
+                    <polygon points="11.9463218 21.2865525 35.6721756 21.2865525 23.8092487 0.187638562 0.0625461874 0.187638562"></polygon>
+                </g>
+            </g>
+            <g id="编组" opacity="0.8" fill="#FFFFFF">
+                <g id="路径">
+                    <polygon points="11.9463218 42.3854664 23.8300974 21.2865525 11.9463218 0.187638562 0.0833949166 21.2865525"></polygon>
+                </g>
+            </g>
+            <g id="编组" opacity="0.45" transform="translate(11.883776, 52.747285)" fill="#010101">
+                <g id="路径">
+                    <polygon points="0.187638562 21.2865525 12.0505654 0.187638562 35.7972679 0.187638562 23.9134923 21.2865525"></polygon>
+                </g>
+            </g>
+            <g id="编组" opacity="0.6" transform="translate(0.208487, 52.747285)" fill="#FFFFFF">
+                <g id="路径">
+                    <polygon points="23.7258538 0.187638562 0 0.187638562 11.8629269 21.2865525 35.5887807 21.2865525"></polygon>
+                </g>
+            </g>
+            <g id="编组" opacity="0.8" transform="translate(23.767551, 31.690068)" fill="#FFFFFF">
+                <g id="路径">
+                    <polygon points="12.0297167 0.145941104 0.166789833 21.244855 12.0297167 42.3437689 23.9134923 21.244855"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
