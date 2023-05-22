@@ -214,6 +214,7 @@ const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 const goNext = async () => {
   // frameType=6 直接跳转详情页
   if(formData.frameType == '6'){
+    formData.frameType = '1'
     localStorage.setItem("createFormData", JSON.stringify(formData));
     router.push('/projects/templates/details')
   }else{
