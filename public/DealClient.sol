@@ -63,7 +63,7 @@ import {FilAddresses} from "@zondax/filecoin-solidity/contracts/v0.8/utils/FilAd
     return buf.data();
   }
 
-contract Deal {
+contract DealClient {
   using AccountCBOR for *;
   using MarketCBOR for *;
 

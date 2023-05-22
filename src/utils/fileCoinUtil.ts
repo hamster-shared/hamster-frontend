@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 
-export interface fileCoinContent {
+interface fileCoinContent {
   name: string;
   makeDeal:boolean;
   getDeal:boolean;
@@ -14,6 +14,17 @@ export interface fileCoinContent {
 // const filePath = path.resolve(__dirname, '../../public/DealClient.sol');
 const publicPath = path.resolve(process.cwd(), 'public');
 const filePath = path.resolve(publicPath, 'DealClient.sol');
+
+export function initializeFileCoinContent(): fileCoinContent {
+  return {
+    name: "DealClient",
+    makeDeal: false,
+    getDeal: false,
+    handleFileCoin: false,
+    updateActivationStatus: false,
+    balance: false
+  };
+}
 
 export function getFileCoinContent(fileCoinContent: fileCoinContent): Promise<string>  {
     let lineNumbers = getLineNumbers(fileCoinContent);
@@ -60,7 +71,10 @@ function readLinesFromFile(name :string, lineNumbers: number[]): Promise<string>
         if (err) {
           reject(err);
         } else {
-          resolve(data.replace("contract DealClient", "contract " + name));
+          if (name) {
+            data = data.replace("contract DealClient", "contract " + name);
+          }
+          resolve(data);
         }
       });
     } else {
@@ -72,7 +86,7 @@ function readLinesFromFile(name :string, lineNumbers: number[]): Promise<string>
 
         splitLines.forEach((line: string) => {
           if (lineNumbers.includes(currentLine)) {
-            if (line.includes("contract DealClient")) {
+            if (line.includes("contract DealClient") && name) {
               line = line.replace("DealClient", name)
             }
             if (currentLine == 1) {
