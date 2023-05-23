@@ -271,6 +271,7 @@
     nameDupErrInfo.value = ''
     frontEndFormRef.value.resetFields()
     frontEndFormData.value = {}
+    frontEndFormData.value.frontEndMethod = '2'
   }
 
   let importUrl = ref([])
@@ -348,6 +349,10 @@
 
   onMounted(()=>{
     getRepositoryData()
+    // frontend 默认选中container
+    if(frontEndImportVisible){
+      frontEndFormData.value.frontEndMethod = '2'
+    }
   })
 </script>
 
