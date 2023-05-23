@@ -19,6 +19,16 @@ import Null from "./layout/null/index.vue";
 import SvgIcon from "./components/Icon/SvgIcon.vue";
 import 'virtual:svg-icons-register';
 
+import * as buffer from "buffer";
+
+if (typeof (window as any).global === "undefined") {
+    (window as any).global = window;
+}
+
+if (typeof (window as any).Buffer === "undefined") {
+    (window as any).Buffer = buffer.Buffer;
+}
+
 const app = createApp(App);
 
 app.use(createPinia());

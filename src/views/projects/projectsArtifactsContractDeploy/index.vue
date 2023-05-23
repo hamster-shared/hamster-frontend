@@ -64,10 +64,11 @@
       <a-button class="btn" @click="deployClick" :loading="loading">{{
           loading ? 'Deploying' : 'Deploy'
         }}</a-button>
+<!--       <a-button @click="test">test</a-button>-->
     </div>
-    <!-- <div>
-      <a-button @click="deployContract">test deploy</a-button>
-    </div> -->
+<!--    <div>-->
+<!--      <a-button @click="deployContract">test deploy</a-button>-->
+<!--    </div>-->
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
@@ -129,6 +130,16 @@ import {sleep} from "@/utils/tool"
 import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
 import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
+import ContractEngine from "@/views/projects/projectsArtifactsContractDeploy/lib/engine";
+import type {ContractBuild, DeployStep} from "@/views/projects/projectsArtifactsContractDeploy/lib/types";
+import {
+  ERC20_ABI, ERC20_BYTECODE,
+  Logic1,
+  Logic1_ByteCode,
+  Logic2,
+  Logic2_ByteCode, SimpleUpgrade, SimpleUpgrade_Bytecode
+} from "@/views/projects/projectsArtifactsContractDeploy/lib/contracts";
+import {PROXY_CONSTRUCTOR} from "@/views/projects/projectsArtifactsContractDeploy/lib/types";
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
@@ -762,6 +773,49 @@ const getProjectsDetail = async () => {
   } catch (err: any) {
 
   }
+}
+
+
+const deployInfo: ref<DeployStep[]> = ref([
+    {
+        Contract: {
+            name: "ERC20",
+            address: "",
+            proxy: true,
+        },
+        steps: [{
+            type: PROXY_CONSTRUCTOR,
+            method: "",
+            params: [],
+            status: "PENDDING",
+        }]
+
+    }
+])
+
+const test = async ()=> {
+  console.log('test')
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const engine = new ContractEngine(provider)
+  const abiMap = new Map<string,ContractBuild>()
+  abiMap.set("Logic1", {
+    abi: Logic1,
+    bytecode: Logic1_ByteCode
+  })
+  abiMap.set("Logic2", {
+    abi: Logic2,
+    bytecode: Logic2_ByteCode
+  })
+  abiMap.set("SimpleUpgrade", {
+    abi: SimpleUpgrade,
+    bytecode: SimpleUpgrade_Bytecode
+  })
+  abiMap.set("ERC20", {
+    abi: ERC20_ABI,
+    bytecode: ERC20_BYTECODE,
+  })
+  await engine.run(abiMap,deployInfo)
+  console.log('test success')
 }
 
 onMounted(async () => {
