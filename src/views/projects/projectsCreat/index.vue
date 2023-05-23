@@ -116,7 +116,7 @@
             </div>
             <!-- filecoin模板组件 -->
             <div v-if="formData.frameType == '6'">
-              <FilecoinTemplate></FilecoinTemplate>
+              <FilecoinTemplate @goFilecoinDetail="goNext"></FilecoinTemplate>
             </div>
           </div>
           <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">

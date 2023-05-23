@@ -26,10 +26,12 @@
 </template>
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+const emit = defineEmits(["goFilecoinDetail"]);
 const router = useRouter()
 // 跳转Filecoin详情页
 const goFilecoinDetail = () => {
-  router.push('/projects/templates/details')
+    //   router.push('/projects/templates/details')
+    emit('goFilecoinDetail')
 }
 </script>
 <style scoped lang="less">
