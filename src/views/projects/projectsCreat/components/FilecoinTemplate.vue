@@ -39,7 +39,7 @@ const goFilecoinDetail = () => {
     text-align: center;
     padding:20px;
     width: 500px;
-    height: 300px;
+    // height: 300px;
     margin-bottom: 16px;
     border-radius: 12px;
     // &:hover{
