@@ -11,7 +11,7 @@ export interface fileCoinContent {
   balance?:boolean;
 }
 
-const filePath = 'public/DealClient.sol';
+const filePath = 'DealClient.sol';
 
 function initializeFileCoinContent(): fileCoinContent {
   return {
@@ -102,6 +102,8 @@ function readLinesFromFile(name :string, lineNumbers: number[]): string {
   if (lineNumbers.length < 1) {
     if (name) {
       content = fileContent.replace("contract DealClient", "contract " + name);
+    } else {
+      content = fileContent;
     }
   } else {
     let currentLine = 1;
