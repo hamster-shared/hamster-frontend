@@ -6,7 +6,7 @@
       <div class="">
         <img :src="imageUrl" class="h-6;"/>
         <span class="font-bold text-[24px] mr-[20px] align-middle" style="margin-left: 10px;">{{name}}</span>
-        <span v-if="parseInt(chainData.chainID,16)" @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
+        <span v-if="parseInt(chainData.chainID,16) && chainData.isEvm" @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
           Network</span>
       </div>
       <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
@@ -16,7 +16,7 @@
         <div>
           <div class="grid grid-cols-3 gap-1">
             <div v-if="parseInt(chainData.chainID,16)">Chain ID</div>
-            <div>Native Token</div>
+            <div>Currency</div>
             <div>Explorers</div>
           </div>
           <div class="grid grid-cols-3 gap-1 font-bold mt-[10px] dark:text-[#E0DBD2] text-[#383B46]">
@@ -32,18 +32,16 @@
             <div class="font-bold">{{ newtworkChainsData.http_link }}</div>
             <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.http_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
-              <span class="text-[16px]">Copy</span>
             </div>
           </div>
         </div>
-        <div>
+        <div v-if="newtworkChainsData.websocket_link">
           <div class="text-[16px] mb-[12px] mt-[24px]">Websocket</div>
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
             <div class="font-bold">{{ newtworkChainsData.websocket_link }}</div>
             <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
-              <span class="text-[16px]">Copy</span>
             </div>
           </div>
         </div>
@@ -60,7 +58,6 @@
           <div class="text-right">
             <span class="text-right cursor-pointer text-[#E2B578]" @click="copyInfo(value)">
               <svg-icon name="copy" size="18"></svg-icon>
-              Copy Code
             </span>
           </div>
       </a-tab-pane>

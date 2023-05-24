@@ -15,7 +15,7 @@
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          :placeholder="'Enter a value for ' + item.internalType" allowClear
+          :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
           v-model:value="formData[item.name]"></a-input>
       </a-form-item>
     </div>
@@ -39,7 +39,7 @@ import * as ethers from "ethers";
 import YAML from "yaml";
 import { message } from 'ant-design-vue';
 import { connect, getStarknet } from "@argent/get-starknet";
-import { stark, number } from "starknet";
+import { stark, number,uint256 } from "starknet";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { WalletCore } from '@aptos-labs/wallet-adapter-core';
 import { AptosClient } from 'aptos'
@@ -55,6 +55,7 @@ const props = defineProps({
     required: true
   },
   inputs: { type: Array as any, default: () => { return [] } },
+  outputs: { type: Array as any, default: () => { return [] } },
   aptosName: String,
   aptosAddress: String
 })
@@ -77,7 +78,7 @@ const aptosNetwork = ref('')
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs, frameType, aptosName, aptosAddress } = toRefs(props)
+const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
@@ -89,43 +90,112 @@ const connectWallet = async () => {
 const executeGet = async () => {
   isSend.value = true
   try {
+    var calldata = stark.compileCalldata({})
+    if (JSON.stringify(formData) != "{}") {
+      calldata = stark.compileCalldata(formData)
+    }
     const callResp = await deployAddress.deployAddressValue.account.callContract({
-      entrypoint: formState.checkValue,
-      contractAddress: formState.contractAddress,
-      calldata: stark.compileCalldata({
-      }),
+      entrypoint: checkValue?.value,
+      contractAddress: contractAddress?.value,
+      calldata: calldata,
     })
-    const firstReturnData = callResp.result[0]
+    if (callResp.result.length > 0) {
+      callResp.result.forEach( (item:string,index:number) => {
+        if (outputs?.value.length > 0) {
+          if (outputs?.value.length > index) {
+            const output = outputs?.value[index]
+            if (output.type == 'felt') {
+              if (isHexStringStringData(item)) {
+                hashValue.value = hashValue.value + output.name + ": " + byteArrayToString(hexToByteArray(item)) + "\n"
+              } else {
+                hashValue.value = hashValue.value + output.name + ": " + parseInt(item, 16).toString() + "\n"
+              }
+            } else {
+              hashValue.value = hashValue.value + output.name + ": " + parseInt(item, 16).toString() + "\n"
+            }
+          }
+        } else {
+          hashValue.value = callResp.result[0]
+        }
+      })
+    }
+    // const firstReturnData = callResp.result[0]
+    // if (firstReturnData == "0x0") {
+    //   hashValue.value = parseInt(firstReturnData, 16).toString()
+    //   return
+    // }
+    // if (isHexStringStringData(firstReturnData)) {
+    //   const data = byteArrayToString(hexToByteArray(firstReturnData))
+    //   hashValue.value = data
+    // } else {
+    //   // hashValue.value = parseInt(firstReturnData, 16).toString()
+    //   hashValue.value = number.toFelt(firstReturnData)
+    // }
     // console.log(firstReturnData, number.toFelt(firstReturnData))
-    hashValue.value = number.toFelt(firstReturnData)
+    // hashValue.value = number.toFelt(firstReturnData)
   } catch (err: any) {
-    message.error(err)
+    message.error(err.toString())
   } finally {
     isSend.value = false;
   }
 }
+
+function isHexStringStringData(hexString: string): boolean {
+  const asciiString = hexString.slice(2).replace(/../g, char => String.fromCharCode(parseInt(char, 16)));
+  const printableRegex = /^[\x20-\x7E]+$/;
+  return printableRegex.test(asciiString);
+}
+
+function hexToByteArray(hex: string): number[] {
+  const bytes: number[] = [];
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes.push(parseInt(hex.substr(i, 2), 16));
+  }
+  return bytes;
+}
+
+function byteArrayToString(byteArray: number[]): string {
+  return String.fromCharCode(...byteArray);
+}
+
 const executeSet = async () => {
   isSend.value = true
   // console.log(formData, 'set')
   try {
+    let callData: any = {}
+    Object.assign(callData,formData)
+    const amountToMint = uint256.bnToUint256(1);
+    if (inputs?.value.length > 0) {
+      inputs?.value.forEach((item: any) => {
+        if (item.type == 'Uint256') {
+          const amount = uint256.bnToUint256(parseInt(callData[item.name]));
+          callData[item.name] = { type: 'struct', low: amount.low, high: amount.high }
+        }
+      })
+    }
     const invokeResponse = await deployAddress.deployAddressValue.account.execute({
-      contractAddress: formState.contractAddress,
-      entrypoint: formState.checkValue,
-      calldata: stark.compileCalldata(formData)
-    })
+          contractAddress: contractAddress?.value,
+          entrypoint: checkValue?.value,
+          calldata: stark.compileCalldata(callData)},
+    );
     // console.log(invokeResponse.transaction_hash)
     const receiptResponsePromise = await deployAddress.deployAddressValue.account.waitForTransaction(invokeResponse.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
     // console.log(receiptResponsePromise, 'receiptResponsePromise')
     hashValue.value = invokeResponse.transaction_hash;
   } catch (err: any) {
-    message.error(err)
+    message.error(err.toString())
   } finally {
     isSend.value = false;
   }
 }
 const submit = async () => {
+  const emptyInputs = inputs?.value.filter( (item: { name: string | number; }) => !formData[item.name]);
+  if (emptyInputs.length > 0) {
+    message.warning('Please enter the necessary parameters')
+    return
+  }
   // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
-  if (formState.frameType == 4) {
+  if (frameType?.value == 4) {
     // console.log(formState.frameType, 'formState.frameType')
     // console.log(formState.frameType, 'formState.frameType')
     if (JSON.stringify(deployAddress.deployAddressValue) == '{}') {
@@ -133,13 +203,13 @@ const submit = async () => {
       Object.assign(testData, data1)
       // console.log(data1, 'data1')
       deployAddress.setDeployAddress(testData)
-      if (JSON.stringify(formData) == "{}") {
+      if (buttonInfo?.value == "Call") {
         executeGet()
       } else {
         executeSet()
       }
     } else {
-      if (JSON.stringify(formData) == "{}") {
+      if (buttonInfo?.value == "Call") {
         executeGet()
       } else {
         executeSet()

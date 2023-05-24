@@ -22,7 +22,7 @@
             <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
           </div>
           <div class="flex flex-col">
-            <span class="inline-block mb-2.5 mt-5">Native Token</span>
+            <span class="inline-block mb-2.5 mt-5">Currency</span>
             <span class="self-center">{{ item.nativeToken }}</span>
           </div>
         </div>
@@ -31,7 +31,7 @@
           <a-input placeholder="*********" v-model:value="item.httpAddress" disabled="true">
             <template #suffix>
               <img v-if="item.httpAddress" class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
-              <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span>
+              <!-- <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span> -->
             </template>
           </a-input>
         </div>

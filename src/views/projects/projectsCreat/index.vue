@@ -32,12 +32,12 @@
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
-              <a-radio :style="radioStyle" value="2" disabled="true">Use an existing repository（coming soon）
-                <div>Please pay attention to Hamster</div>
+              <a-radio :style="radioStyle" value="2">Use an existing repository
+                <div class="radio-sub">Easily build your app by importing an existing git repository with Hamster</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1'">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1' && formData.contractCode == '1'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <a-radio :style="radioStyle" value="1">EVM
                 <div class="radio-sub">Build application based on EVM and Solidity language</div>
@@ -54,12 +54,15 @@
               <a-radio :style="radioStyle" value="5">Sui
                 <div class="radio-sub">Build application based on Sui  and Move language</div>
               </a-radio>
+              <a-radio :style="radioStyle" value="6">Filecoin
+                <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
+              </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2'">
+          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2' && formData.contractCode == '1'">
             <a-radio-group v-model:value="formData.deployType" name="deployType" @change="getTemplatesShow">
               <a-radio :style="radioStyle" value="1">IPFS
                 <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
@@ -70,15 +73,16 @@
             </a-radio-group>
           </a-form-item>
         </a-form>
-        <div>
-          <div class="flex justify-between">
+
+        <div v-show="formData.contractCode == '1'">
+          <div class="flex justify-between" v-if="formData.frameType != '6'">
             <div class="font-bold text-[16px]">Popular Template</div>
             <div class="cursor-pointer" @click="goNext">
               <img src="@/assets/icons/explore-template.svg" class="h-[20px]" />
               <span class="text-[#E2B578] align-middle text-[16px]"> Explore all template</span>
             </div>
           </div>
-          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1'">A collection of our most
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1' && formData.frameType != '6'">A collection of our most
             deployed contracts.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
@@ -110,6 +114,10 @@
                 </div>
               </div>
             </div>
+            <!-- filecoin模板组件 -->
+            <div v-if="formData.frameType == '6'">
+              <FilecoinTemplate @goFilecoinDetail="goNext"></FilecoinTemplate>
+            </div>
           </div>
           <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
@@ -133,8 +141,12 @@
             </div>
           </div>
         </div>
+
+        <div v-show="formData.contractCode == '2'">
+          <ImportGitRepository :projectType="formData.type"></ImportGitRepository>
+        </div>
       </div>
-      <div class="w-full mt-8 text-center">
+      <div v-show="formData.contractCode == '1'" class="w-full mt-8 text-center">
         <a-button type="primary" :loading="loading" @click="goNext" class="w-[440px]">Next</a-button>
       </div>
     </div>
@@ -146,16 +158,8 @@ import { useRouter, type RouteLocationRaw } from "vue-router";
 import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
-import aptosone from '@/assets/svg/aptos-one.svg'
-import aptostwo from '@/assets/svg/aptos-two.svg';
-import aptosthree from '@/assets/svg/aptos-three.svg';
-import aptosfour from '@/assets/svg/aptos-four.svg';
-import tonone from '@/assets/svg/ton-one.svg';
-import tontwo from '@/assets/svg/ton-two.svg';
-import tonthree from '@/assets/svg/ton-three.svg';
-import starkwareone from '@/assets/svg/starkware-one.svg';
-import starkwaretwo from '@/assets/svg/starkware-two.svg';
-import starkwarethree from '@/assets/svg/starkware-three.svg'
+import ImportGitRepository from './components/ImportGitRepository.vue'
+import FilecoinTemplate from './components/FilecoinTemplate.vue'
 import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
@@ -208,9 +212,15 @@ const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 // });
 
 const goNext = async () => {
-
-  localStorage.setItem("createFormData", JSON.stringify(formData));
-  setCreateProjectValue(`/projects/template/${formData.type}`)
+  // frameType=6 直接跳转详情页
+  if(formData.frameType == '6'){
+    formData.frameType = '1'
+    localStorage.setItem("createFormData", JSON.stringify(formData));
+    router.push('/projects/templates/details')
+  }else{
+    localStorage.setItem("createFormData", JSON.stringify(formData));
+    setCreateProjectValue(`/projects/template/${formData.type}`)
+  }
 }
 const setCreateProjectValue = async (path: RouteLocationRaw) => {
 
