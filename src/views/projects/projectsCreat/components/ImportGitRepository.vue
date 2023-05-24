@@ -249,6 +249,7 @@
       contractImportVisible.value = true
       contractRepositoryVisible.value = false
       contractFormData.value.projectName = item.name
+      contractFormData.value.importRepositoryContractProjectUrl = item.githubUrl
     } else {
       frontEndImportVisible.value = true
       frontEndRepositoryVisible.value = false
@@ -296,6 +297,7 @@
         cloneUrl: !contractRepositoryVisible.value? contractFormData.value.importRepositoryContractProjectUrl : importUrl.value.githubUrl,
         type: 1,
       }
+      debugger
       try {
         const { data } = await apiPostRepository(params)
         console.log('contractRepositoryVisible-data:', data)
