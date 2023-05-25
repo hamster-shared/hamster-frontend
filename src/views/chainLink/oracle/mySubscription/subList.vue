@@ -7,12 +7,12 @@
             <span class="mr-[10px]">Network</span>
             <a-select class="w-[200px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
             :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
-            <a-button class="ml-2" @click="getSublist">Search</a-button>
+            <a-button class="ml-2 mt-2" @click="getSublist">Search</a-button>
         </div>
         <div>
-            <a-button @click="createSubPop">Create</a-button>
-            <a-button @click="addConsumerPop" class="mx-2">Add Consumers</a-button>
-            <a-button @click="addFundsPop">Add Funds</a-button>
+            <a-button @click="createSubPop" class="mt-1">Create</a-button>
+            <a-button @click="addConsumerPop" class="mx-2 mt-1">Add Consumers</a-button>
+            <a-button @click="addFundsPop" class="mt-1">Add Funds</a-button>
         </div>
     </div>
     <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
@@ -163,12 +163,14 @@ const createSubPop = ()=>{
 }
 // 订阅数据接收
 const getCreateSubInfo = (info:any)=>{
+    showCreateSub.value = false
+    getSublist()
     console.log('订阅数据接收',info)
 }
 // 关闭订阅
 const closeCreateSub = (bool:boolean)=>{
     showCreateSub.value = bool
-    router.push('/chainlink/oracle/sublist')
+    router.push('/middleware/dashboard/oracle/sublist')
 }
 
 // 添加消费者弹框
@@ -179,6 +181,8 @@ const addConsumerPop = ()=>{
 // 添加消费者数据接收
 const getAddConsumersInfo = (consumersInfo:any)=>{
     console.log('添加消费者数据接收',consumersInfo)
+    showAddConsumers.value = false
+    getSublist()
 }
 // 关闭消费者
 const closeAddConsumers = (bool:boolean)=>{
@@ -193,6 +197,8 @@ const addFundsPop = ()=>{
 // 添加资金数据接收
 const getAddFundInfo = (fundInfo:any)=>{
     console.log('添加消费者数据接收',fundInfo)
+    showAddFund.value = false
+    getSublist()
 }
 // 关闭资金
 const closeAddFund = (bool:boolean)=>{
@@ -216,7 +222,7 @@ const btnChange = ()=>{
 }
 const goSubDetail = (record:any)=>{
     console.log('goSubDetail',record)
-    router.push(`/chainlink/oracle/subList/sublist-detail?subId=${record.id}`)
+    router.push(`/middleware/dashboard/oracle/subList/sublist-detail?subId=${record.id}`)
 }
 onMounted(async()=>{
     getSublist()

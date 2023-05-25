@@ -297,7 +297,6 @@
         cloneUrl: !contractRepositoryVisible.value? contractFormData.value.importRepositoryContractProjectUrl : importUrl.value.githubUrl,
         type: 1,
       }
-      debugger
       try {
         const { data } = await apiPostRepository(params)
         console.log('contractRepositoryVisible-data:', data)

@@ -36,7 +36,7 @@
         </p>
         <p>
             <span class="name">amount</span>
-            <span class="text-[#FF4A4A] mr-1 font-bold">{{detailInfo.balance || "-"}}</span>link
+            <span class="text-[#FF4A4A] mr-1 font-bold">{{detailInfo.balance}}</span>link
         </p>
     </div>
     <div class="mt-[40px] pb-[16px] w-[100%]" style="border-bottom: 1px solid #434343;">

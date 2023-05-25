@@ -40,7 +40,7 @@
         </div>
         <div class="text-center flex justify-between mt-[16px]">
             <a-button style="margin-right: 20px;background: transparent;color:#E2B578" @click="goHamster">Create Consumer by Hamster</a-button>
-            <a-button @click="handleFund">Confirm</a-button>
+            <a-button @click="handleFund" :loading="addConsumerLoading">Confirm</a-button>
         </div>
     </a-modal>
 </template>
@@ -124,6 +124,7 @@ const keyId = ref()
 // Penning id
 const temId = ref()
 const radioFlag = ref('')
+const addConsumerLoading = ref(false)
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -229,6 +230,7 @@ const goHamster = ()=>{
 const handleFund = async()=>{
     await formRef.value.validate();
     console.log(' id 是订阅Id addConsumerAddress 合约地址',parseInt(subId.value),formData.consumer)
+    addConsumerLoading.value = true
     if (contractApi.apiStatus) {
         // id 是订阅Id addConsumerAddress 合约地址
         registryApi?.addConsumer(parseInt(subId.value), formData.consumer).then(async(tx:any)=>{
@@ -239,14 +241,14 @@ const handleFund = async()=>{
                 transactionTx:tx.hash
             }
             const res = await apiConsumerAdd(params)
-            if(res.code===200){
-                temId.value = res.data
-                message.success(res.message)
-            }else{
-                message.error(res.message)
-            }
-            emit('getAddConsumersInfo',formData)
-            emit('closeAddConsumers',false)
+            // if(res.code===200){
+            //     message.success(res.message)
+            // }else{
+            //     message.error(res.message)
+            // }
+            temId.value = res.data
+            // emit('getAddConsumersInfo',formData)
+            // emit('closeAddConsumers',false)
             return tx.wait()
         }).then(async(receipt:any) => {
             const params = {
@@ -259,13 +261,17 @@ const handleFund = async()=>{
             const res = await updateConsumer(params)
             if(res.code===200){
                 message.success(res.message)
+                addConsumerLoading.value = false
+                emit('getAddConsumersInfo')
             }else{
                 message.error(res.data)
+                addConsumerLoading.value = false
             }
             console.log("addConsumer", receipt);
         }).catch((err:any)=>{
             message.error('Failed')
             emit('closeAddConsumers',false)
+            addConsumerLoading.value = false
             console.log('err111111',err)
         })
     }

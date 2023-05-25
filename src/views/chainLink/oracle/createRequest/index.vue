@@ -39,7 +39,7 @@
         <CodeEditor v-model:value="pipelinefilePreview" class="request-codeeditor"></CodeEditor>
       </div>
       <div class="mt-4 text-center">
-        <a-button class="inline-block mr-4 back-btn" @click="router.push('/chainlink/oracle')">Back</a-button>
+        <a-button class="inline-block mr-4 back-btn" @click="router.push('/middleware/dashboard/oracle')">Back</a-button>
         <a-button @click="handleCreateTemplate">{{id?'Save':'Create'}}</a-button>
       </div>
     </div>
@@ -154,7 +154,7 @@
 
     try {
       const { data } = id ? await apiPostUpdateRequest(id,params) : await apiPostCreateRequest(params)
-      router.push('/chainlink/oracle')
+      router.push('/middleware/dashboard/oracle')
       console.log('createTemplate-data:',data)
     } catch(err:any) {
       message.error(err.message)
@@ -215,7 +215,7 @@
     }
   }
   .back-btn {
-    background-color: #1D1C1A;
+    background: transparent;
     color: #E2B578;
   }
   .item{

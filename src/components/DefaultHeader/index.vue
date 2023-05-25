@@ -150,7 +150,7 @@ const goDoc = () => {
 }
 
 const goMiwaspace = () => {
-  router.push("/chainlink/miwaspace?key=1");
+  router.push("/middleware/miwaspace?key=1");
   isProject.value = false;
   // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
   // // 如果 local storage 里没有保存的钱包，直接返回
@@ -163,7 +163,7 @@ const goMiwaspace = () => {
   // }
 }
 const goDashboard = () => {
-  router.push("/chainlink/dashboard");
+  router.push("/middleware/dashboard");
   isProject.value = false;
 }
 

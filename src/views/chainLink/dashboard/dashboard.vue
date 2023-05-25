@@ -55,15 +55,15 @@ const isShowOracle = ref(false)
 const oracleList = ref<any>([])
 const networkClick = (val: any) => {
   console.log('networkClick',val)
-  router.push(`/chainlink/RPC/rpc-detail/${val.chain}?network=${val.network}`)
+  router.push(`/middleware/dashboard/RPC/rpc-detail/${val.chain}?network=${val.network}`)
 }
 // more 跳转rpc
 const goRPC = ()=>{
-  router.push('/chainlink/RPC')
+  router.push('/middleware/dashboard/RPC')
 }
 
 const oracleClick = () => {
-  router.push('/chainlink/Oracle')
+  router.push('/middleware/dashboard/Oracle')
 }
 const getChains = async()=>{
   const params = {
@@ -100,7 +100,7 @@ const goMiwaspaceTab = (tab:any)=>{
         break;
       default: break;
     }
-  router.push(`/chainlink/miwaspace?key=${index.value}`)
+  router.push(`/middleware/miwaspace?key=${index.value}`)
 }
 const openService = async()=>{
   const res = await apiGetIfOpenService('oracle')

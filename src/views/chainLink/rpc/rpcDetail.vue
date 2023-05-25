@@ -25,7 +25,7 @@
             <div>{{ chainData.explorerUrl }}</div>
           </div>
         </div>
-        <div>
+        <div v-if="newtworkChainsData.http_link">
           <div class="text-[16px] mb-[12px] mt-[32px]">RPC</div>
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
@@ -156,6 +156,8 @@ const addNetwork = ()=>{
   // 如果网络id不一样，需要调小狐狸进行网络切换
   if (ethereum.chainId !== `0x${addNetInfo.chainId}`) {
         addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,addNetInfo.rpcUrls)
+    }else{
+      message.error('The current network has been added')
     }
 }
 const handleChange = (val: string) => {
