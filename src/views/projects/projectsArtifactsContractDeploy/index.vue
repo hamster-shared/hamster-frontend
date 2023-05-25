@@ -539,7 +539,7 @@ const deploy = () => {
 }
 
 const deployClick = async () => {
-  // frameType 1.evm 2.aptos 3.ton 4.starkware,5: sui
+  // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
@@ -748,7 +748,7 @@ const getProjectsDetail = async () => {
       case 3:
         break;
       case 4:
-        Object.assign(chainData, ['StarkWare'])
+        Object.assign(chainData, ['Starknet'])
         networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
         const data = await connectWallet();
         Object.assign(starkWareData, data)

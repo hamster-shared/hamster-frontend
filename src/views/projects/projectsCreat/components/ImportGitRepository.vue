@@ -52,7 +52,7 @@
             <a-select-option value="1">EVM</a-select-option>
             <a-select-option value="2">Aptos</a-select-option>
             <!-- <a-select-option value="3">TON</a-select-option> -->
-            <a-select-option value="4">StarkWare</a-select-option>
+            <a-select-option value="4">Starknet</a-select-option>
             <a-select-option value="5">Sui</a-select-option>
           </a-select>
         </a-form-item>
