@@ -55,7 +55,7 @@ const isShowOracle = ref(false)
 const oracleList = ref<any>([])
 const networkClick = (val: any) => {
   console.log('networkClick',val)
-  router.push(`/middleware/dashboard/RPC/rpc-detail/${val.chain}?network=${val.network}`)
+  router.push(`/middleware/dashboard/RPC/rpc-detail/${val.chain}?network=${val.network}&fromDashboard=1`)
 }
 // more 跳转rpc
 const goRPC = ()=>{

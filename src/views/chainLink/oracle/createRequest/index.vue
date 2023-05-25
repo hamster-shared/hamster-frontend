@@ -1,10 +1,9 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <BreadCrumb currentName="Create Request" :isClick="loading" class="mb-6"/>
+    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <!-- <div class="mb-4 text-2xl font-bold">Create Request</div> -->
 
-    <div class="mb-4 text-2xl font-bold">Create Request</div>
-
-    <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB]">
+    <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB] mt-4">
       <div class="flex justify-between mb-4">
         <span class="items-center self-center font-bold">You can choose the following templates to quickly create a Request</span>
         <a-button v-if="false" type="link">View All</a-button>
@@ -61,7 +60,7 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter,useRoute } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
-  import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+  import BreadCrumb from "@/components/BreadCrumb.vue";
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest,apiDetailRequest,apiPostUpdateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
   import { message } from 'ant-design-vue';
@@ -77,6 +76,7 @@
   const loading = ref(false);
   const changeRequestWarning = ref(false)
   const requestTemId = ref()
+  const breadCrumbInfo = ref<any>([])
 
   const requestTemplateInfo = ref<{
     id: number,
@@ -179,6 +179,16 @@
     if(id){
       getDetailInfo()
     }
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Oracle',
+        path:'/middleware/dashboard/Oracle'
+      },
+      {
+        breadcrumbName:id ? 'Edit Request' : 'Create Request',
+        path:''
+      },
+    ]
   })
 </script>
 

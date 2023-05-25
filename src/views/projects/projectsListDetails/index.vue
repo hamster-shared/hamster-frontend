@@ -2,17 +2,7 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
       <div class="flex items-center">
-        <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-          <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
-          <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
-          back
-        </div>
-        <div class="ml-4">
-          <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
-        </div>
-        
-        <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
+        <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
           <label v-if="projectType === '1'">
             <div>{{ ContractFrameTypeEnum[projectsDetail.frameType] }}</div>
@@ -66,7 +56,7 @@
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
-          <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" />
+          <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" :name="projectsDetail.name"/>
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
@@ -136,6 +126,7 @@ import {apiIsCheck} from '@/apis/workFlows'
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 const theme = useThemeStore()
 const projectId = ref('')
 
@@ -158,7 +149,7 @@ const formData = reactive({
   name: '',
   userId: JSON.parse(userInfo)?.id,
 });
-const projectsDetail = ref({});
+const projectsDetail = ref<any>({});
 const frameType = ref(0);
 const containerVisible = ref(false);
 const aptosBuildVisible = ref(false);
@@ -173,6 +164,7 @@ const msgParam = ref({
 const aptosBuildParams = ref([]);
 const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
+const breadCrumbInfo = ref<any>([])
 
 // 弹框
 let visible=ref(false)
@@ -270,8 +262,18 @@ const formRules = computed(() => {
   };
 });
 
-onMounted(() => {
-  getProjectsDetail();
+onMounted(async() => {
+  await getProjectsDetail();
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:projectsDetail.value.name,
+      path:''
+    },
+  ]
 })
 
 onBeforeUnmount(() => {

@@ -1,6 +1,6 @@
 <template>
   <div class="rpc-detail">
-    <Breadcrumb :currentName="projectName" :isClick="loading"></Breadcrumb>
+    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
     <div
       class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="">
@@ -71,7 +71,7 @@
 <script lang='ts' setup>
 import { ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import Breadcrumb from "@/views/projects/components/Breadcrumb.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { message } from "ant-design-vue";
@@ -100,6 +100,12 @@ const addNetInfo = reactive<any>({
   chainName:'',
   rpcUrls:''
 })
+const breadCrumbInfo = ref<any>([])
+// 从Dashboard进来
+const fromDashboard = query.fromDashboard
+// 从fromMiwaspace进来
+const fromMiwaspace = query.fromMiwaspace
+console.log('fromDashboard',fromDashboard,query)
 
 const columns = [
   {
@@ -218,11 +224,36 @@ const copyInfo = async (_items: any) => {
   inp.remove();
   message.success('copy success')
 }
-
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  let name = ''
+  let jumpPath = ''
+  if(fromDashboard){
+    name = 'Dashboard'
+    jumpPath = '/middleware/dashboard'
+  }else if(fromMiwaspace){
+    name = 'Miwaspace'
+    jumpPath = '/middleware/miwaspace?key=1'
+  }else{
+    name = 'Rpc'
+    jumpPath = '/middleware/dashboard/rpc'
+  }
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName: name,
+      path: jumpPath
+    },
+    {
+      breadcrumbName:projectName.value,
+      path:''
+    },
+  ]
+}
 onMounted(async () => {
   await getChainData();
   getRequestLogData();
   console.log('tabNetwork',tabNetwork.value)
+  judgeOrigin()
 })
 </script>
 <style lang='less' scoped>
