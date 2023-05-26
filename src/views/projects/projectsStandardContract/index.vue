@@ -63,7 +63,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed, reactive } from "vue";
+import { onMounted, ref, computed, reactive, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Breadcrumb from "@/components/BreadCrumb.vue";
 import { erc20, erc721, erc1155, infoDefaults } from '@openzeppelin/wizard';
