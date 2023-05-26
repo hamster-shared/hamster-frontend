@@ -127,6 +127,7 @@ const getSubscripionInfo = async () => {
   try {
     const { data } = await apiGetSubscriptionParams(params)
     subscripion[0].number = data.total_subscription?data.total_subscription:'0'
+    console.log('subscripion[0].number:',subscripion[0].number)
     // if(!data.total_consumers){
     //   subscripion[1].number = '-'
     //   subscripion[1].disabled = true
@@ -134,8 +135,8 @@ const getSubscripionInfo = async () => {
     //   subscripion[1].number = data.total_consumers
     //   subscripion[1].disabled = false
     // }
-    subscripion[1].number = subscripion[0].number ? data.total_consumers : '-'
-    if(!subscripion[0].number){
+    subscripion[1].number = subscripion[0].number == '0' ? '-' : data.total_consumers
+    if(subscripion[0].number == '0'){
       subscripion[1].disabled = true
     }else{
       subscripion[1].disabled = false
@@ -147,7 +148,8 @@ const getSubscripionInfo = async () => {
 }
 
 const getBalance = async()=> {
-  if(!subscripion[0].number){
+  if(subscripion[0].number == '0'){
+    subscripion[2].disabled = true
     return
   }
   try {
@@ -164,11 +166,7 @@ const getBalance = async()=> {
     //   subscripion[2].number = ethers.utils.formatEther(testNumber);
     // }
     subscripion[2].number = ethers.utils.formatEther(testNumber);
-    if(!subscripion[0].number){
-      subscripion[2].disabled = true
-    }else{
-      subscripion[2].disabled = false
-    }
+    subscripion[2].disabled = false
   } catch(err:any) {
     console.log('balance-err:',err)
   }
