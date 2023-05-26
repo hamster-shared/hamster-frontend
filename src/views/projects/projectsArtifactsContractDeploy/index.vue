@@ -1,12 +1,5 @@
 <template>
-  <Breadcrumb :currentName="projectName" :isClick="loading">
-    <template v-slot:tags>
-      <span
-          class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">
-        {{ ContractFrameTypeEnum[frameType] }}
-      </span>
-    </template>
-  </Breadcrumb>
+  <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
   <div
       class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
     <div class="grid grid-cols-5 gap-4">
@@ -108,10 +101,10 @@
 import {onMounted, reactive, ref} from "vue";
 import type {FormInstance} from 'ant-design-vue';
 import {message} from "ant-design-vue";
-import {useRouter} from "vue-router";
+import {useRouter,useRoute} from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
-import Breadcrumb from "../components/Breadcrumb.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import {useThemeStore} from "@/stores/useTheme";
@@ -135,6 +128,7 @@ const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const router = useRouter();
+const route = useRoute()
 const { t } = useI18n()
 
 const frameType = ref(1);
@@ -174,6 +168,8 @@ const aptosContractId = ref<any>([])
 const aptosNetwork = ref('')
 const aptosNetworkVisible = ref(false)
 const abiFn = ref<any>()
+
+const breadCrumbInfo = ref<any>([])
 
 // sui
 const suiWallet = new WalletStandardAdapterProvider()
@@ -217,7 +213,7 @@ const deployContract = async (item: any) => {
     localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
     if (receiptResponsePromise.status === 'ACCEPTED_ON_L2') {
       // contract_address.value = response.contract_address[0]
-      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}?name=${route.query.name}`)
     } else {
       loading.value = false
     }
@@ -347,7 +343,7 @@ const deploySuiContract = async (item: any)=> {
 
   loading.value = false
 
-  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}?name=${route.query.name}`)
 }
 
 // 查询版本号
@@ -612,7 +608,7 @@ const setContractFactory = async (nameData: any) => {
   const result = res.some(it => {
     return it !== undefined
   })
-  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : loading.value = false
+  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}?name=${route.query.name}`) : loading.value = false
 }
 
 const setAbiInfo = (selectItem: any) => {
@@ -764,11 +760,34 @@ const getProjectsDetail = async () => {
   }
 }
 
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  localStorage.setItem('deplayPath',route.fullPath)
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:'Deploy',
+      path:''
+    },
+  ]
+  if(route.query?.name){
+    const name = route.query?.name?.replace('-','#')
+    breadCrumbInfo.value.splice(1,0,{
+      breadcrumbName:name,
+      path:localStorage.getItem('fromNamePath')
+    })
+  }
+}
 onMounted(async () => {
+  localStorage.removeItem('deplayPath')
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   await getProjectsDetail();
   await getProjectsContract()
+  judgeOrigin()
 })
 
 </script>

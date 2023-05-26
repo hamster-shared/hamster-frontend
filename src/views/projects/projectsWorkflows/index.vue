@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
+      <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
@@ -10,13 +10,13 @@
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'"></CheckResult>
+      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'" :currentName="currentName"></CheckResult>
       <div v-else>
         <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
         <GasUsageReport :gasUsageReportData="gasUsageReportData"
           v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList>
+        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
       </div>
     </div>
     <div v-else>
@@ -38,7 +38,7 @@ import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, 
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 import YAML from "yaml";
-import Breadcrumb from '../components/Breadcrumb.vue';
+import Breadcrumb from '@/components/BreadCrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
@@ -85,6 +85,7 @@ const workflowsDetailsData = reactive({
   deployType: 0,
   checkStatus: 0,
 });
+const breadCrumbInfo = ref<any>([])
 
 const isShowAiAnalysis = computed(() => {
   return [5, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
@@ -266,10 +267,20 @@ const setCurrentName = () => {
   }
 }
 
-onMounted(() => {
-  getWorkflowsDetails();
+onMounted(async() => {
+  await getWorkflowsDetails();
   getProjectsDetailData();
   loadInfo();
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:currentName.value,
+      path:''
+    },
+  ]
 })
 
 onUnmounted(() => {
