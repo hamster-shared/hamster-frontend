@@ -70,7 +70,7 @@
       </a-tabs>
     </div>
   </div>
-  <a-modal v-model:visible="visibleModal" :footer="null">
+  <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Project Name" name="name">
@@ -234,6 +234,7 @@ const getDoneData =async (myArray:string[]) => {
     }
 }
 
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
 const formRules = computed(() => {
 
   const checkDupName = async () => {
@@ -244,7 +245,9 @@ const formRules = computed(() => {
         name: formData.name,
       }
       const res = await apiDupProjectName(params);
-      if (res.data === false) {
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
         return Promise.reject("Project Name duplication");
       } else {
         return Promise.resolve()
@@ -258,7 +261,7 @@ const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
   return {
-    name: [requiredRule('Name'), { validator: checkDupName, trigger: "change" }],
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
   };
 });
 
