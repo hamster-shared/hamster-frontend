@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :currentName="contractName" :isClick="false"></Breadcrumb>
+  <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo"/>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
     <a-button v-if="tokenMatemaskWallet" type="primary" style="float:right;margin-right: 20px;" @click="downloadInfo">Download</a-button>
     <a-tabs v-model:activeKey="activeKey">
@@ -63,9 +63,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed, reactive } from "vue";
+import { onMounted, ref, computed, reactive, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import Breadcrumb from "../components/Breadcrumb.vue";
+import Breadcrumb from "@/components/BreadCrumb.vue";
 import { erc20, erc721, erc1155, infoDefaults } from '@openzeppelin/wizard';
 import InfoSection from './components/InfoSection.vue';
 import Upgradeability from './components/Upgradeability.vue';
@@ -87,6 +87,8 @@ const router = useRouter();
 const createCodeLoading = ref(false)
 const createCodeVisible = ref(false)
 const codeNameValue = ref('')
+const errorMsg = ref()
+const breadCrumbInfo = ref<any>([])
 const createProjectLoading = ref(false)
 const formRef = ref();
 const userInfo = localStorage.getItem('userInfo');
@@ -139,7 +141,26 @@ onMounted(async () => {
   optsERC1155.value.uri = '';
   contractERC1155.value = erc1155.print(optsERC1155.value);
   tokenFrom()
+  judgeOrigin()
 })
+
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:'template',
+      path:`/projects/template/1`
+    },
+    {
+      breadcrumbName:activeKey.value,
+      path:''
+    },
+  ]
+}
 
 const setContract = async () => {
   if (activeKey.value === 'ERC20') {
@@ -255,6 +276,12 @@ const downloadInfo = async()=>{
   const str = await setContract()
   downloadRequest(str,activeKey.value,'sol')
 }
+// 监听tab切换更改对应面包屑的名称
+watch(()=>activeKey.value,(old,val)=>{
+  if(old!=val){
+    judgeOrigin()
+  }
+})
 </script>
 <style lang='less' scoped>
 

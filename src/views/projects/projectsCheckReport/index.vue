@@ -1,5 +1,5 @@
 <template>
-  <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
+  <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"></bread-crumb>
   <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
   <MetaTrustSA :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
   <MetaTrustSP :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
@@ -25,7 +25,7 @@
   import { apiGetWorkflowsDetail, apiGetWorkFlowsReport } from "@/apis/workFlows";
   import { apiGetReport } from "@/apis/checkReport";
   import YAML from "yaml";
-  import BreadCrumb from '../components/Breadcrumb.vue'
+  import BreadCrumb from '@/components/BreadCrumb.vue';
 
   const { params,query } = useRoute();
   const queryJson = reactive({
@@ -39,6 +39,8 @@
   const title = ref('Check');
   const processData = ref([]);
   const inRunning = ref(true);
+  const breadCrumbInfo = ref<any>([])
+
   const gistId = ref('');
   const gasUsageReportData = reactive([])
   const reportId:any = query.reportId; //SP:2295,SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
@@ -125,15 +127,28 @@
     return issue;
   }
   onMounted(() => {
-    // console.log('queryJson:',queryJson)
+    console.log('queryJson:',queryJson,query)
     getCodeRepository()
     getTime()
-
     if (params.checktype == 'gasInfoDetail') {
       getCheckReport();
     } else {
       getReportInfo();
     }
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'projects',
+        path:'/projects'
+      },
+      {
+        breadcrumbName:query?.currentName?.replace('-','#'),
+        path:localStorage.getItem('evmCheckWorkflow')
+      },
+      {
+        breadcrumbName:'Check Report',
+        path:''
+      },
+    ]
   })
 
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="contractSetails flex justify-between mb-[24px]">
-    <Breadcrumb :currentName="projectName" :isClick="false">
+    <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo">
       <template v-slot:tags>
         <span
           class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -90,11 +90,11 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onBeforeMount, type HtmlHTMLAttributes } from "vue";
+import { ref, reactive, onBeforeMount, type HtmlHTMLAttributes,onMounted } from "vue";
 import { message } from 'ant-design-vue'
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
-import Breadcrumb from "../components/Breadcrumb.vue";
+import Breadcrumb from "@/components/BreadCrumb.vue";
 import ContractList from "./components/ContractList.vue";
 import NoData from "@/components/NoData.vue"
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
@@ -106,6 +106,7 @@ import {useI18n} from "vue-i18n";
 import {sleep} from "@/utils/tool";
 
 const router = useRouter();
+const route = useRoute()
 const theme = useThemeStore();
 const { t } = useI18n()
 
@@ -127,6 +128,7 @@ const moduleName = ref('cesh');
 const contractName = ref('');
 const contractAddress = ref('');
 const selectedRow = ref(0);
+const breadCrumbInfo = ref<any>([])
 const columns = [
   {
     title: 'Network',
@@ -397,7 +399,7 @@ const getVersion = async () => {
 }
 
 const deploy = (val: any) => {
-  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}`)
+  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}?from=Dashboard&name=${route.query?.name?.replace('-','#')}`)
 }
 const changeVersion = (val: any) => {
   queryJson.version = val
@@ -448,18 +450,39 @@ const copyInfo = (info: string, type: string) => {
   message.success('copy success')
 }
 
-onBeforeMount(() => {
-  // provider.connect().then(() => {
-
-  // }).catch(reject => {
-  //   console.log(reject)
-  // })
-
+onBeforeMount(async() => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
-  getContractDeployDetail()
-  getProjectsDetail()
+  await getContractDeployDetail()
+  await getProjectsDetail()
+  judgeOrigin()
 })
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:'Dashboard',
+      path:''
+    },
+  ]
+  if(!route.query?.fromList){
+    breadCrumbInfo.value.splice(1,0,{
+      breadcrumbName:'Deploy',
+      path:localStorage.getItem('deplayPath')
+    })
+  }
+  if(route.query.name){
+    breadCrumbInfo.value.splice(1,0,{
+      breadcrumbName:route.query?.name?.replace('-','#'),
+      path:localStorage.getItem('fromNamePath')
+    })
+  }
+  console.log(1111111,breadCrumbInfo.value,frameType.value)
+}
 
 </script>
 <style lang='less' scoped>

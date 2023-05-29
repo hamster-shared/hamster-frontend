@@ -31,7 +31,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <a-button class="!h-[43px] w-[169px]" v-if="openService" @click="router.push('/chainlink/oracle')">Enter Now</a-button>
+          <a-button class="!h-[43px] w-[169px]" v-if="openService" @click="router.push('/middleware/dashboard/oracle')">Enter Now</a-button>
           <a-button class="!h-[43px] w-[169px]" v-else @click="handleOpenService">Get Service Now</a-button>
         </div>
 

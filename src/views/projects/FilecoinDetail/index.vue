@@ -1,5 +1,5 @@
 <template>
-<BreadCrumb currentName="Filecoin Contract Editor" :isClick="false" class="mb-6"/>
+<bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
 <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
     <a-button type="primary" style="float:right;margin-right: 20px;" @click="showCreateEvm">Create by Code</a-button>
     <a-tabs v-model:activeKey="activeKey">
@@ -54,7 +54,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import { ref,computed,onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
@@ -90,11 +90,12 @@ const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
   name: '',
 });
+const breadCrumbInfo = ref<any>([])
 
 // 弹出创建evm框
 const showCreateEvm = ()=>{
   if(!name.value.trim()){
-    message.error('Please input Contract Name!')
+    message.error('Please input the Contract Name!')
     return
   }
     createCodeVisible.value = true
@@ -203,8 +204,18 @@ const balanceFn = async (bool:boolean) => {
   balanceBool.value = !bool
   getContent()
 }
-onMounted(()=>{
-  getContent()
+onMounted(async()=>{
+  await getContent()
+  breadCrumbInfo.value = [
+      {
+        breadcrumbName:'create',
+        path:'/projects/create'
+      },
+      {
+        breadcrumbName:'Filecoin Contract Editor',
+        path:''
+      },
+    ]
 })
 </script>
 <style scoped lang="less">

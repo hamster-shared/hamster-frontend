@@ -68,7 +68,7 @@
 const handleOpenRpcService = async(chain:string,network:string,userActive:boolean)=>{
   if(userActive){
     // 跳rpc-detail
-    router.push(`/chainlink/RPC/rpc-detail/${chain}`)
+    router.push(`/middleware/dashboard/RPC/rpc-detail/${chain}?fromMiwaspace=1`)
   }else{
     // 跳rpc的折线图
     try {
@@ -78,7 +78,7 @@ const handleOpenRpcService = async(chain:string,network:string,userActive:boolea
       }
       const { data } = await apiPostCustomerOpenService('rpc',params)
       console.log('handleOpenRpcService-data:', data)
-      router.push('/chainlink/rpc')
+      router.push('/middleware/dashboard/rpc')
     } catch(err:any) {
       console.log('handleOpenRpcService-err:', err)
     }

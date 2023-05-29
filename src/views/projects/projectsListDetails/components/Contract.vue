@@ -40,10 +40,11 @@
             <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
               View Deploy Process</div>
-            <div v-else="record.network.String !== ''" @click="goContractDetail(record.version)"
+              <!-- 此处面包屑跳转has a problem，so hide it -->
+            <!-- <div v-else="record.network.String !== ''" @click="goContractDetail(record.version)"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">View
               Dashboard
-            </div>
+            </div> -->
           </template>
           <label class="dark:text-[#E0DBD2] text-[#151210] ml-2 cursor-pointer hoverColor">More</label>
         </a-tooltip>
@@ -56,7 +57,7 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { message } from 'ant-design-vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import {
@@ -67,11 +68,13 @@ import {
 } from "@/apis/projects";
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 const router = useRouter();
+const route = useRoute()
 const props = defineProps({
   detailId: String,
   frameType: Number,
+  name:String
 });
-const { detailId, frameType } = toRefs(props);
+const { detailId, frameType,name } = toRefs(props);
 
 const contractList = ref(["All Contract"]);
 const contract = ref("All Contract");
@@ -240,7 +243,10 @@ const goContractDetail = async (version: String) => {
 };
 
 const goContractDeploy = async (contract: String, version: String) => {
-  router.push("/projects/" + detailId.value + "/artifacts-contract/" + version + "/deploy/" + contract);
+  localStorage.removeItem('fromNamePath')
+  const path = "/projects/" + detailId.value + "/artifacts-contract/" + version + "/deploy/" + contract + `?name=${name.value}`
+  router.push(path);
+  localStorage.setItem('fromNamePath',route.fullPath)
 };
 
 defineExpose({

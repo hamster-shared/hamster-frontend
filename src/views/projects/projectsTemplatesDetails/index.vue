@@ -1,18 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
-      <div class="flex items-center">
-        <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-          <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
-          <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
-          back
-        </div>
-        <div class="ml-4">
-          <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
-        </div>
-        <div class="ml-4 text-[24px] font-bold">{{ templatesDetail.name }}</div>
-      </div>
+      <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
         <a-button type="primary" class="ml-4" :loading="downloadLoading" @click="downloadTemplate">Download</a-button>
@@ -203,11 +192,12 @@ import type { AbiInfoDataItem } from "@/views/projects/components/data"
 import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
 import YAML from "yaml";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 const theme = useThemeStore()
 const downloadLoading = ref(false)
 const downloadLinkRef = ref(null)
 const router = useRouter();
-const { params } = useRoute();
+const { params,query } = useRoute();
 const createTemplateLoading = ref(false);
 const createProjectLoading = ref(false)
 const createTemplate = ref('Create by Template')
@@ -271,11 +261,36 @@ const tableColumns = computed<any[]>(() => [
     key: 'type',
   },
 ]);
+const breadCrumbInfo = ref<any>([])
 
-onMounted(() => {
-  getTemplatesDetail();
+onMounted(async () => {
+  await getTemplatesDetail();
   tokenFrom()
+  judgeOrigin()
 })
+
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'create',
+      path:'/projects/create'
+    },
+    {
+      breadcrumbName:templatesDetail.value.name,
+      path:''
+    },
+  ]
+  // 直接从create界面的模板点击跳转到详情页
+  if(query.fromCreate){
+    return
+  }else{
+    breadCrumbInfo.value.splice(1,0,{
+      breadcrumbName:'template',
+      path:`/projects/template/${params.type}`
+    }) 
+  }
+}
 
 const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
   functionList.value = element.inputs;
@@ -290,9 +305,9 @@ const setEventList = (element: { inputs: never[]; name: any; }) => {
 
 const getTemplatesDetail = async () => {
   if (projectType.value == '1') {
-    getContractTemplatesDetail()
+    await getContractTemplatesDetail()
   } else {
-    getFrontendTemplatesDetail()
+    await getFrontendTemplatesDetail()
   }
 
 };

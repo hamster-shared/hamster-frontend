@@ -1,6 +1,6 @@
 <template>
-    <BreadCrumb currentName="Basic Information" :isClick="breadCrumbLoading" class="mb-6"/>
-    <div class="text-[24px] font-bold">Basic Information</div>
+    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <!-- <div class="text-[24px] font-bold">Basic Information</div> -->
     <div class="mt-[30px]">
         <p>
             <span class="name">ID</span>
@@ -29,6 +29,7 @@
         <p>
             <span class="name">Status</span>
             <span class="font-bold color-[#29C57C ]" :style="{color:detailInfo.status?.toLowerCase()=='pending'?'#1890FF':(detailInfo.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{detailInfo.status || "-"}}</span>
+            <span v-if="detailInfo.errorMessage" class="text-[#FF4A4A]"> ({{detailInfo.errorMessage}})</span>
         </p>
         <p>
             <span class="name">Consumers</span>
@@ -36,7 +37,7 @@
         </p>
         <p>
             <span class="name">amount</span>
-            <span class="text-[#FF4A4A] mr-1 font-bold">{{detailInfo.balance || "-"}}</span>link
+            <span class="text-[#FF4A4A] mr-1 font-bold">{{detailInfo.balance}}</span>link
         </p>
     </div>
     <div class="mt-[40px] pb-[16px] w-[100%]" style="border-bottom: 1px solid #434343;">
@@ -58,9 +59,9 @@
             <span class="mr-16 text-[#FF4A4A]">{{ record.amount }}link</span>
         </template>
         <template #status="{ record }">
-            <svg-icon v-if="record.status=='pending'" name="Pending" size="20"/>
-            <svg-icon v-if="record.status=='failed'" name="chainFailed" size="20" />
-            <span class=" text-[#FF4A4A] inline-block ml-[2px]" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+            <svg-icon v-if="record.status.toLowerCase()=='pending'" name="Pending" size="20"/>
+            <svg-icon v-if="record.status.toLowerCase()=='failed'" name="chainFailed" size="20" />
+            <span :title="record.errorMessage" class=" text-[#FF4A4A] inline-block ml-[2px]" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
         </template>
         <template #transactionTx="{ record }">
             <img v-if="record.transactionTx" src="@/assets/svg/Jump.png" style="display:inline-block"/>
@@ -72,7 +73,7 @@
 import dayjs from "dayjs";
 import { renderTableText } from '@/utils/customRender'
 import { reactive, ref, onMounted } from 'vue'
-import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import { expenseColumns,depositColumns,consumersColumns } from './chainApi/colDetail'
 import {apiSublistDetail,apiExpenseList,apiDepositList,apiConsumerList,apiDelConsumer} from '@/apis/chainlink'
 import { useRoute } from "vue-router";
@@ -87,6 +88,8 @@ const tab = ref(1)
 const subDetailCol = ref<any>([])
 const tableData:any = []
 const detailInfo = ref<any>({})
+const breadCrumbInfo = ref<any>([])
+
 const pagination = reactive({
     // 分页配置器
     pageSize: 10, // 一页的数据限制
@@ -232,6 +235,20 @@ onMounted(async()=>{
     subDetailCol.value = expenseColumns
     getDetailInfo()
     getExpense()
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Oracle',
+        path:'/middleware/dashboard/Oracle'
+      },
+      {
+        breadcrumbName:'My Subscription',
+        path:'/middleware/dashboard/oracle/sublist'
+      },
+      {
+        breadcrumbName:'Basic Information',
+        path:''
+      },
+    ]
 })
 </script>
 <style scoped less>
