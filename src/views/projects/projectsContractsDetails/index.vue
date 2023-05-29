@@ -475,7 +475,7 @@ const judgeOrigin = ()=>{
       path:localStorage.getItem('deplayPath')
     })
   }
-  if(route.query.name){
+  if(route.query.name!='undefined'){
     breadCrumbInfo.value.splice(1,0,{
       breadcrumbName:route.query?.name?.replace('-','#'),
       path:localStorage.getItem('fromNamePath')
