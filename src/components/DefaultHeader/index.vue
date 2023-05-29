@@ -11,8 +11,8 @@
         <div class="text-[#E2B578] text-[16px] cursor-pointer"
           @click.stop id="middle" style="height:64px;line-height:64px;">
           Middleware
-          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden up-tran">
-          <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] up-tran">
+          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
+          <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
         </div>
         <template #overlay>
           <a-menu>
@@ -320,14 +320,14 @@ const setWalletBtn = (val: boolean) => {
   background: transparent;
 }
 
-.up-tran {
+.up-tran:hover {
   transform: rotate(180deg);
   transition: all .3s, visibility 0s;
 }
 
-:deep(.ant-dropdown-open .up-tran) {
-  transform: rotate(0deg);
-}
+// :deep(.ant-dropdown-open .up-tran) {
+//   transform: rotate(0deg);
+// }
 
 :deep(.ant-select-selector) {
   color: #ffffff !important;
