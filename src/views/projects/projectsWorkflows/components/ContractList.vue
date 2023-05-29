@@ -13,8 +13,8 @@
         <template v-if="column.dataIndex === 'network'">
           <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
             :key="indexF" :class="{ 'ml-2': indexF !== 0 }"
-            class="border border-solid rounded-[32px] dark:border-[#E0DBD2] border-[#73706E]  px-3 py-1">{{
-              item
+            class="border border-solid rounded-[32px] dark:border-[#E0DBD2] border-[#73706E]  px-1 py-1">{{
+              item.slice(item?.indexOf('/')+1)
             }}</label>
           <label v-else-if="record.status === 1">Deploying</label>
           <label v-else>-</label>

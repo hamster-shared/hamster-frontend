@@ -50,18 +50,20 @@
       </a-tab-pane>
     </a-tabs>
     <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
-      <span class="text-sm">Project Name</span>
-      <a-input placeholder="Project Name" v-model:value="codeNameValue" allowClear/>
-      <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
+      <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+        <a-form-item label="Project Name" name="name">
+          <a-input v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+        </a-form-item>
+      </a-form>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
-        <a-button id="create-project-btn" type="primary" :loading="createCodeLoading" @click="handleOk">Done</a-button>
+        <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
       </div>
     </a-modal>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Breadcrumb from "../components/Breadcrumb.vue";
 import { erc20, erc721, erc1155, infoDefaults } from '@openzeppelin/wizard';
@@ -85,7 +87,12 @@ const router = useRouter();
 const createCodeLoading = ref(false)
 const createCodeVisible = ref(false)
 const codeNameValue = ref('')
-const errorMsg = ref()
+const createProjectLoading = ref(false)
+const formRef = ref();
+const userInfo = localStorage.getItem('userInfo');
+const formData = reactive({
+  name: '',
+});
 
 const optsERC20 = ref({
   kind: 'ERC20',
@@ -165,7 +172,7 @@ const createProject = async () => {
     // loading.value = true;
     const createProjectTemp = localStorage.getItem('createProjectTemp');
     const params = {
-      name: codeNameValue.value,
+      name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       fileName: optsERC20.value.name,
@@ -191,52 +198,52 @@ const createProject = async () => {
   }
 }
 
-const checkDupName = computed(async () => {
-  try {
-    createCodeLoading.value = true;
-    loading.value = true;
-    //校验仓库名称是否存在
-    const userInfo = localStorage.getItem('userInfo');
-    const params = {
-      owner: JSON.parse(userInfo)?.username,
-      name: codeNameValue.value,
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
+const formRules = computed(() => {
+
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      // console.log('formdataName:', params)
+      const res = await apiDupProjectName(params);
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error: any) {
+      console.log("erro:", error)
+      return Promise.reject("Project Name check failure");
     }
-    const res = await apiDupProjectName(params);
-    console.log('res:',res)
-    if (res.data === false) {
-      createCodeLoading.value = false;
-      return errorMsg.value = "Project Name duplication"
-    } else if(codeNameValue.value == ''){
-      createCodeLoading.value = false;
-      return errorMsg.value = "Please enter Project Name"
-    } else {
-      return true
-    }
-  } catch (error: any) {
-    console.log("erro:", error)
-    createCodeLoading.value = false;
-    return errorMsg.value = "Project Name check failure"
   }
-})
+
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+
+  return {
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
+  };
+});
 
 const handleOk = async ()=>{
-  checkDupName.value.then((result)=>{
-    if (result === true){
-      console.log('success',result)
-      createProject()
-    } else {
-      console.log('fail',result)
-      errorMsg.value = result
-      createCodeLoading.value = false
-    }
-  })
+  await formRef.value.validate();
+  createCodeLoading.value = true;
+  createProjectLoading.value = true
+  loading.value = true;
+  createProject()
 }
 
 const handleCancel = ()=>{
   createCodeLoading.value = false
+  createProjectLoading.value = false
   loading.value = false;
-  errorMsg.value = ''
   codeNameValue.value = ''
+  formRef.value.resetFields()
 }
 // 判断token是钱包的还是真实
 const tokenFrom = ()=>{

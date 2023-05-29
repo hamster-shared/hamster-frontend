@@ -1,6 +1,9 @@
 <template>
-  <div class="font-bold text-[24px]">RPC</div>
-  <div class="">
+  <div class="flex justify-between">
+    <span class="font-bold text-[24px]">RPC</span>
+    <a-button class="w-[80px] !h-[38px]">Doc</a-button>
+  </div>
+  <div>
     <div>
       <a-tabs v-model:activeKey="tabNetwork" @change="changeNetwork">
         <a-tab-pane key="Mainnet" tab="Mainnet"></a-tab-pane>

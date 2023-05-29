@@ -24,9 +24,11 @@
     </div>
     <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible"
       title="Create by template" @cancel="handleCancel">
-      <span class="text-sm">Project Name</span>
-      <a-input placeholder="Project Name" v-model:value="projectNameValue" allowClear />
-      <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
+      <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+        <a-form-item label="Project Name" name="name">
+          <a-input v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+        </a-form-item>
+      </a-form>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
         <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
@@ -210,8 +212,6 @@ const createTemplateLoading = ref(false);
 const createProjectLoading = ref(false)
 const createTemplate = ref('Create by Template')
 const createProjectVisible = ref(false)
-const projectNameValue = ref('')
-const errorMsg = ref()
 const templateId = ref(params.templateId);
 const projectType = ref(params.type);
 const activeKey = ref("1");
@@ -249,6 +249,11 @@ const functionsList = ref<any>([]);
 const moduleName = ref('');
 const sourceList = ref<any>([]);
 const tokenMatemaskWallet = ref()
+const formRef = ref();
+const userInfo = localStorage.getItem('userInfo');
+const formData = reactive({
+  name: '',
+});
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -545,41 +550,44 @@ const showModal = async () => {
   createProjectVisible.value = true
 }
 
-const checkDupName = computed(async () => {
-  try {
-    createProjectLoading.value = true;
-    createTemplateLoading.value = true;
-    createTemplate.value = 'Create by...'
-    //校验仓库名称是否存在
-    const userInfo = localStorage.getItem('userInfo');
-    const params = {
-      owner: JSON.parse(userInfo)?.username,
-      name: projectNameValue.value,
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
+const formRules = computed(() => {
+
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      // console.log('formdataName:', params)
+      const res = await apiDupProjectName(params);
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error: any) {
+      console.log("erro:", error)
+      return Promise.reject("Project Name check failure");
     }
-    const res = await apiDupProjectName(params);
-    console.log('res:', res)
-    if (res.data === false) {
-      createProjectLoading.value = false;
-      return errorMsg.value = "Project Name duplication"
-    } else if (projectNameValue.value == '') {
-      createProjectLoading.value = false;
-      return errorMsg.value = "Please enter Project Name"
-    } else {
-      return true
-    }
-  } catch (error: any) {
-    console.log("erro:", error)
-    createProjectLoading.value = false;
-    return errorMsg.value = "Project Name check failure"
   }
-})
+
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+
+  return {
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
+  };
+});
 
 const createProject = async () => {
   try {
     const userInfo = localStorage.getItem('userInfo');
     const createProjectTemp = localStorage.getItem('createProjectTemp');
     const params = {
-      name: projectNameValue.value,
+      name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
       templateOwner: templatesDetail.value.author,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
@@ -609,24 +617,18 @@ const createProject = async () => {
 }
 
 const handleOk = async () => {
-  checkDupName.value.then((result) => {
-    if (result === true) {
-      console.log('success', result)
-      createProject()
-    } else {
-      console.log('fail', result)
-      errorMsg.value = result
-      createProjectLoading.value = false
-    }
-  })
+  await formRef.value.validate();
+  createProjectLoading.value = true;
+  createTemplateLoading.value = true;
+  createTemplate.value = 'Create by...'
+  createProject()
 }
 
 const handleCancel = () => {
   createProjectLoading.value = false
   createTemplateLoading.value = false;
   createTemplate.value = 'Create by Template'
-  errorMsg.value = ''
-  projectNameValue.value = ''
+  formRef.value.resetFields()
 }
 
 const setText = (str: String) => {

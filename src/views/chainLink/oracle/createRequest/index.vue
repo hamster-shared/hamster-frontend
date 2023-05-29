@@ -15,7 +15,7 @@
           <div v-for=" (item,index) in requestTemplateInfo " :key="index" class="flex flex-col shrink-0 grow-0 basis-[400px] h-[300px] template-container">
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
-              <span class="sub">Submitted by: {{ item.author }}</span>
+              <span class="sub">Submitted by: <span class="text-[#E2B578] cursor-pointer" @click="goAuthor(item.authorUrl)">{{ item.author }}</span></span>
               <div class="item h-[120px] overflow-y-auto">{{ item.description }}</div>
             </div>
             <div class="mt-2">
@@ -44,6 +44,17 @@
       </div>
     </div>
   </div>
+  <a-modal v-model:visible="changeRequestWarning" :footer="null">
+      <p style="font-weight: 700;font-size: 16px;">Warning</p>
+      <template #closeIcon>
+          <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelChange"/>
+      </template>
+      <p>Using the template will overwrite the currently entered request content, please confirm whether to continue.</p>
+      <div class="text-center mt-[16px]">
+          <a-button style="margin-right: 20px;background: transparent;color:#E2B578" @click="cancelChange">Cancel</a-button>
+          <a-button @click="confirmChange">Confirm</a-button>
+      </div>
+  </a-modal>
 </template>
 
 <script lang="ts" setup>
@@ -64,12 +75,15 @@
   const requestName = ref('')
   const alertInfo = ref('')
   const loading = ref(false);
+  const changeRequestWarning = ref(false)
+  const requestTemId = ref()
 
   const requestTemplateInfo = ref<{
     id: number,
     name: string,
     author: string,
-    description: string
+    description: string,
+    authorUrl:string,
   }[]>([])
 
   // 获取模板数据
@@ -86,15 +100,32 @@
   // 获取pipelinefile preview展示的代码
   const pipelinefilePreview = ref()
   const paramsCount = ref()
-  const handleUseNow = async(id:number) => {
+  // 取消改变
+  const cancelChange = ()=>{
+    changeRequestWarning.value = false
+    requestTemId.value = -1
+  }
+  // 确定更改请求模板内容
+  const confirmChange = async()=>{
     try {
-      const { data } = await apiGetShowRequestTemplateScript(id)
+      const { data } = await apiGetShowRequestTemplateScript(requestTemId.value)
       pipelinefilePreview.value = data.script
       paramsCount.value = data.paramsCount
       setCodeHeight(pipelinefilePreview.value)
       console.log('data:',data)
     } catch(err) {
       console.log('err:',err)
+    }
+    changeRequestWarning.value = false
+  }
+  // 使用模板
+  const handleUseNow = async(id:number) => {
+    if(requestTemId.value != id && pipelinefilePreview.value){
+      changeRequestWarning.value = true
+      requestTemId.value = id
+    }else{
+      requestTemId.value = id
+      confirmChange()
     }
   }
 
@@ -138,6 +169,10 @@
       requestName.value = res.data.name
       pipelinefilePreview.value = res.data.script
     }
+  }
+  // 跳转到author
+  const goAuthor = (authorUrl:string)=>{
+    window.open(authorUrl)
   }
   onMounted(async()=>{
     await getTemplateInfo()

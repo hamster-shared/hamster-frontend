@@ -12,7 +12,12 @@
             <div class="network">{{ val.network }}</div>
             <div class="view" @click="networkClick(val)">View</div>
           </div>
-          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goRPC" v-if="RPCList.length>4">More</div>
+
+          <div class="flex justify-between w-full mt-[18px] cursor-pointer text-[#E2B578]" v-if="RPCList.length>4">
+            <span @click="goMiwaspaceTab('RPC')">Add service</span>
+            <span @click="goRPC">View more</span>
+          </div>
+          <div v-else class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goMiwaspaceTab('RPC')">Add service</div>
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
@@ -20,6 +25,7 @@
             <div>{{val}}</div>
             <div class="cursor-pointer text-[#E2B578]" @click="oracleClick">View</div>
           </div>
+          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goMiwaspaceTab('Oracle')">Add service</div>
         </div>
         <div v-else>
           <div class="text-center">
@@ -138,5 +144,6 @@ onMounted(()=>{
   text-align: right;
   float: right;
   top: -40px;
+  padding-right: 10px;
 }
 </style>

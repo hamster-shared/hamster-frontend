@@ -204,10 +204,10 @@ const connectWallet = async () => {
 const deployContract = async (item: any) => {
   loading.value = true;
   try {
-    const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
+    // const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
     // const walletData = await connectWallet();
     const response = await starkWareData.account.deploy({
-      classHash: classHash,
+      classHash: item.byteCode,
       constructorCalldata: []
     })
     setProjectsContractDeploy('', response.contract_address[0], item.id)
@@ -539,7 +539,7 @@ const deploy = () => {
 }
 
 const deployClick = async () => {
-  // frameType 1.evm 2.aptos 3.ton 4.starkware,5: sui
+  // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
@@ -592,6 +592,7 @@ const deployClick = async () => {
       } catch (errorInfo) {
         // 表单校验
         console.log('Failed:', errorInfo);
+        loading.value = false;
       }
     }
   }
@@ -709,6 +710,18 @@ const changeChain = (val: string) => {
       url: 'https://explorer-rpc.testnet.sui.io/',
       networkName: 'Testnet'
     }]
+  }else if (val === 'Filecoin'){
+    networkData.value = [{
+      name: 'Filecoin/Hyperspace',
+      id: 'c45',
+      url: 'https://api.hyperspace.node.glif.io/rpc/v1',
+      networkName: 'Filecoin/Hyperspace'
+    },{
+      name: 'Filecoin/Mainnet',
+      id: '13a',
+      url: 'https://api.node.glif.io/rpc/v1',
+      networkName: 'Filecoin/Mainnet'
+    }]
   }
 }
 
@@ -723,7 +736,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub'])
+        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
@@ -735,7 +748,7 @@ const getProjectsDetail = async () => {
       case 3:
         break;
       case 4:
-        Object.assign(chainData, ['StarkWare'])
+        Object.assign(chainData, ['Starknet'])
         networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
         const data = await connectWallet();
         Object.assign(starkWareData, data)

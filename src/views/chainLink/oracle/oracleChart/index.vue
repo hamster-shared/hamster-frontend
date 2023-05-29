@@ -10,7 +10,6 @@
     <div class="flex">
       <div class="flex-1">
         <div class="flex justify-between">
-          <div class="font-bold text-[20px]">Overview</div>
           <!-- <a-select ref="select" v-model:value="selectTimeValue" style="width: 120px; margin-right: 20px;"
             @change="handleChange">
             <a-select-option value="1">Last 1 days</a-select-option>
@@ -29,7 +28,7 @@
         <div v-for="item in subscripion">
           <div class="flex items-center mb-4 justify-between text-sm border rounded-lg border-[#EBEBEB] border-solid">
             <span class="pl-4">{{ item.title }}</span>
-            <span v-if="item.title=='Funds'" :title="item.number">{{ item.number.slice(0,4) }}<span v-if="parseInt(item.number)">...link</span></span>
+            <span v-if="item.title=='Funds'" :title="item.number">{{ item.number.slice(0,4) }} link</span>
             <span v-else>{{ item.number }}</span>
             <a-button class="is-show-btn" :disabled="item.disabled" type="link" @click="showPop(item.title)">{{ item.btnTitle }}</a-button>
           </div>
@@ -65,6 +64,8 @@ const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
 const tabNetwork = ref('testnet');
+// 获取用户所有订阅金额
+const balance = ref(0)
 
 // 创建echarts
 const myChartRef = ref()
@@ -158,7 +159,7 @@ const getSubscripionInfo = async () => {
   }
   try {
     const { data } = await apiGetSubscriptionParams(params)
-    subscripion[0].number = data.total_subscription?data.total_subscription:'-'
+    subscripion[0].number = data.total_subscription?data.total_subscription:'0'
     if(!data.total_consumers){
       subscripion[1].number = '-'
       subscripion[1].disabled = true
@@ -177,8 +178,6 @@ const getSubscripionInfo = async () => {
   }
 }
 
-// 获取用户所有订阅金额
-const balance = ref(0)
 const getBalance = async()=> {
   try {
     const { data } = await getCustomerBalance()
@@ -187,6 +186,7 @@ const getBalance = async()=> {
       balance.value = item.balance*1 + balance.value
     });
     const testNumber:any = ethers.BigNumber.from(balance.value+'')
+    console.log(111111,parseInt(testNumber,16))
     if(!parseInt(testNumber,16)){
       subscripion[2].number = '-'
     }else{
@@ -232,11 +232,11 @@ const createSubPop = () => {
 // 订阅数据接收
 const getCreateSubInfo = (info: any) => {
   console.log('订阅数据接收', info)
+  getSubscripionInfo()
 }
 // 关闭订阅
 const closeCreateSub = (bool: boolean) => {
   showCreateSub.value = bool
-  getSubscripionInfo()
 }
 
 // 添加消费者弹框
