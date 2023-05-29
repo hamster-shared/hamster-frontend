@@ -88,7 +88,7 @@ const workflowsDetailsData = reactive({
 const breadCrumbInfo = ref<any>([])
 
 const isShowAiAnalysis = computed(() => {
-  return [5, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
+  return [5, 4, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
 })
 
 const getWorkflowsDetails = async () => {
@@ -152,7 +152,7 @@ const getCheckReport = async () => {
   }
 
   data?.filter((item: any) => {
-    if (item.checkTool == 'OpenAI') {
+    if (item.checkTool == 'OpenAI' || item.checkTool == 'AI') {
       openAiInfo.value = item
     }
   })

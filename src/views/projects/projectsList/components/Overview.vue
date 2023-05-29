@@ -36,15 +36,16 @@
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
           </label>
-          <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
+          <!-- <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
             <svg-icon name="check" size="13" />
-          </label>
-          <label v-else class="action-icon mx-[8px]">
+          </label> -->
+          <label class="action-icon mx-[8px]">
             <svg-icon :name="item.url" size="15" />
           </label>
           <!-- 按钮 -->
-          <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label>
-          <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
+          <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
+          <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
+          <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
             {{ item.name }}
           </label>
         </label>
@@ -100,7 +101,6 @@
           </div> -->
 
           <div class="text-[#E2B578] cursor-pointer inline-block"
-            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
             <span>Check Now</span>
@@ -321,6 +321,7 @@ const getDoneData =async (myArray:string[]) => {
       evmCheckVisible.value = false
 
       await apiProjectsCheck(projectId.value);
+      loadView();
 
       message.info("The workflow of checking is running, view now.")
     } else {
@@ -329,9 +330,9 @@ const getDoneData =async (myArray:string[]) => {
 }
 // check
 const projectsCheck = async (id: string, status: number, e: Event) => {
-  if (props.projectType === '1' && props.viewInfo.frameType === 4) {
-    e.stopPropagation()
-  } else {
+  // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
+  //   e.stopPropagation()
+  // } else {
     disabled.value = false;
     try {
       //判断是否为EVM 显示弹框 并且 ipfs不弹
@@ -346,6 +347,7 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
             evmCheckVisible.value=true
           } else {
             await apiProjectsCheck(id);
+            loadView();
           }
         }
       }
@@ -362,8 +364,8 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         } else {
           const res = await apiProjectsCheck(id);
           message.success(res.message);
+          loadView();
         }
-        loadView();
       }
     } catch (error: any) {
       console.log("erro:", error)
@@ -371,7 +373,7 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
     } finally {
       // loading.value = false;
     }
-  }
+  // }
 };
 
 const buildStatusAction = async (id: string, buildData: any) => {
@@ -717,9 +719,22 @@ html[data-theme='light'] {
   }
 }
 .action-button-item:hover {
+  label{
+    color: #E2B578;
+  }
   .action-icon {
     .svg-icon {
       color: #E2B578;
+    }
+  };
+}
+.action-button-item:active {
+  label{
+    color: #CE9C58;
+  }
+  .action-icon {
+    .svg-icon {
+      color: #CE9C58;
     }
   };
 }

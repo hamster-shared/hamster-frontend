@@ -434,9 +434,9 @@ const goBack = () => {
   height: 40px;
 }
 
-:deep(.dark-css .ant-tabs) {
-  color: #E0DBD2;
-}
+// :deep(.dark-css .ant-tabs) {
+//   color: #E0DBD2;
+// }
 
 :deep(.ant-input-affix-wrapper) {
   border-color: #EBEBEB;

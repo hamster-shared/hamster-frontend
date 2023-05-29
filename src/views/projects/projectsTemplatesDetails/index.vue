@@ -730,9 +730,9 @@ ul {
   padding-inline-start: 1rem;
 }
 
-:deep(.dark-css .ant-tabs) {
-  color: #E0DBD2;
-}
+// :deep(.dark-css .ant-tabs) {
+//   color: #E0DBD2;
+// }
 
 :deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
   color: #FFFFFF;

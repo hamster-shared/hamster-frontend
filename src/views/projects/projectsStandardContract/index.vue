@@ -285,9 +285,9 @@ watch(()=>activeKey.value,(old,val)=>{
 </script>
 <style lang='less' scoped>
 
-:deep(.dark-css .ant-tabs){
-  color: #E0DBD2;
-}
+// :deep(.dark-css .ant-tabs){
+//   color: #E0DBD2;
+// }
 :deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
   color: #FFFFFF;
 }
