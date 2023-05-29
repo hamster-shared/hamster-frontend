@@ -774,7 +774,7 @@ const judgeOrigin = ()=>{
     },
   ]
   if(route.query?.name){
-    const name = route.query?.name?.replace('-','#')
+    const name = route.query?.name?.replace('-','#') + '#' + queryParams.version
     breadCrumbInfo.value.splice(1,0,{
       breadcrumbName:name,
       path:localStorage.getItem('fromNamePath')

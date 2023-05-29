@@ -6,7 +6,7 @@
                 <p class="prop">Please select the appropriate tool to check the contract</p>
             </div>
             <div class="center">
-                <p>If you need to modify this configuration later,you can modify it by setting button on the project details page</p>
+                <p>If you need to modify this configuration later, you can modify it by setting button on the project details page</p>
             </div>
 
             <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">

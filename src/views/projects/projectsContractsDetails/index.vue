@@ -399,7 +399,7 @@ const getVersion = async () => {
 }
 
 const deploy = (val: any) => {
-  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}`)
+  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}?from=Dashboard&name=${route.query?.name?.replace('-','#')}`)
 }
 const changeVersion = (val: any) => {
   queryJson.version = val

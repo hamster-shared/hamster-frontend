@@ -95,7 +95,7 @@ const breadCrumbInfo = ref<any>([])
 // 弹出创建evm框
 const showCreateEvm = ()=>{
   if(!name.value.trim()){
-    message.error('Please input Contract Name!')
+    message.error('Please input the Contract Name!')
     return
   }
     createCodeVisible.value = true
