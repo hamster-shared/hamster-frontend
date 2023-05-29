@@ -155,7 +155,6 @@ const getCheckReport = async () => {
       openAiInfo.value = item
     }
   })
-  console.log("lilst AI:",list);
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
