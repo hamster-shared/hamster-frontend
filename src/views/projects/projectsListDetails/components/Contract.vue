@@ -40,10 +40,11 @@
             <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
               View Deploy Process</div>
-            <div v-else="record.network.String !== ''" @click="goContractDetail(record.version)"
+              <!-- 此处面包屑跳转has a problem，so hide it -->
+            <!-- <div v-else="record.network.String !== ''" @click="goContractDetail(record.version)"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">View
               Dashboard
-            </div>
+            </div> -->
           </template>
           <label class="dark:text-[#E0DBD2] text-[#151210] ml-2 cursor-pointer hoverColor">More</label>
         </a-tooltip>

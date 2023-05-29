@@ -469,16 +469,16 @@ const judgeOrigin = ()=>{
       path:''
     },
   ]
+  if(!route.query?.fromList){
+    breadCrumbInfo.value.splice(1,0,{
+      breadcrumbName:'Deploy',
+      path:localStorage.getItem('deplayPath')
+    })
+  }
   if(route.query.name){
     breadCrumbInfo.value.splice(1,0,{
       breadcrumbName:route.query?.name?.replace('-','#'),
       path:localStorage.getItem('fromNamePath')
-    })
-  }
-  if(!route.query?.fromList){
-    breadCrumbInfo.value.splice(1,0,{
-      breadcrumbName:localStorage.getItem("projectName"),
-      path:localStorage.getItem('deplayPath')
     })
   }
   console.log(1111111,breadCrumbInfo.value,frameType.value)
