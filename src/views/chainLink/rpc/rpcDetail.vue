@@ -161,7 +161,7 @@ const getChainData = async () => {
 const addNetwork = ()=>{
   // 如果网络id不一样，需要调小狐狸进行网络切换
   if (ethereum.chainId !== `0x${addNetInfo.chainId}`) {
-        addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,addNetInfo.rpcUrls)
+        addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,newtworkChainsData.http_link)
     }else{
       message.error('The current network has been added')
     }

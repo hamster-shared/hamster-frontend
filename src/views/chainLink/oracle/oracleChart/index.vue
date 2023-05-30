@@ -226,6 +226,7 @@ const getCreateSubInfo = (info: any) => {
   console.log('订阅数据接收', info)
   showCreateSub.value = false
   getSubscripionInfo()
+  router.push('/middleware/dashboard/oracle/sublist')
 }
 // 关闭订阅
 const closeCreateSub = (bool: boolean) => {
