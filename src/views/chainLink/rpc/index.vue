@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-between">
     <span class="font-bold text-[24px]">RPC</span>
-    <a-button class="w-[80px] !h-[38px]">Doc</a-button>
+    <a-button class="w-[80px] !h-[38px]" @click="toDocs">Doc</a-button>
   </div>
   <div>
     <div>
@@ -24,9 +24,6 @@
   </div>
   <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[32px]">
     <div class="font-bold text-[20px]">My Network</div>
-    <div class="text-right">
-      <a-button v-if="false" @click="toDocs">Docs</a-button>
-    </div>
     <div class="mt-[24px]">
       <a-table :dataSource="dataSource" :columns="columns" :pagination="currentPagination">
         <template #bodyCell="{ column, record, index }">

@@ -2,7 +2,7 @@
   <div class="flex flex-col w-full px-6">
     <div class="flex justify-between mb-3">
       <div class="text-2xl font-bold">Hamslink</div>
-      <a-button class="w-[80px] !h-[38px]">Doc</a-button>
+      <a-button class="w-[80px] !h-[38px]" @click="toDocs">Doc</a-button>
     </div>
     <div class="font-bold text-[20px] mb-[10px]">Overview</div>
     <oracleChart></oracleChart>
@@ -11,7 +11,6 @@
         <div class="font-bold text-[20px]">My Request</div>
         <div>
           <a-button @click="router.push('/middleware/dashboard/oracle/create-request')">Create Request</a-button>
-          <a-button v-if="false" class="ml-2" @click="toDocs">Docs</a-button>
         </div>
       </div>
       <div>
