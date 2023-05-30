@@ -25,6 +25,8 @@
   color: #FFFFFF;
 }
 .ant-btn,
+.ant-btn:focus,
+.ant-btn-primary:focus
 .ant-btn-primary,
 .ant-btn-group .ant-btn,
 .ant-radio-group .ant-radio-button-wrapper {
@@ -43,16 +45,29 @@
 }
 
 .ant-btn:active,
-.ant-btn:focus,
-.ant-btn-primary:active,
-.ant-btn-primary:focus{
+.ant-btn-primary:active
+{
   border: #CE9C58;
   background-color: #CE9C58;
+  color: #fff;
 }
 
 .ant-btn-background-ghost.ant-btn-primary,
 .ant-btn-background-ghost.ant-btn-primary:hover,
-.ant-btn-background-ghost.ant-btn-primary:focus {
+.ant-btn-background-ghost.ant-btn-primary:active {
+  color: #E2B578;
+}
+.ant-btn.ant-btn-background-ghost:hover{
+  background: rgba(226,181,120,0.2);
+}
+.ant-btn.ant-btn-background-ghost:active{
+  background: rgba(226,181,120,0.4);
+  border: 1px solid #E2B578;
+}
+
+.ant-btn.ant-btn-background-ghost, 
+.ant-btn.ant-btn-background-ghost:focus{
+  border-color: #E2B578;
   color: #E2B578;
 }
 
