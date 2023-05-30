@@ -477,7 +477,7 @@ const judgeOrigin = ()=>{
   }
   if(route.query.name && route.query.name!='undefined'){
     breadCrumbInfo.value.splice(1,0,{
-      breadcrumbName:route.query?.name?.replace('-','#'),
+      breadcrumbName:route.query?.name?.replace('[','#'),
       path:localStorage.getItem('fromNamePath')
     })
   }

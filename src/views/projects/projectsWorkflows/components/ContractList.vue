@@ -135,7 +135,7 @@ const { contractListData,frameType,currentName } = toRefs(props)
 const toDeployUrl = (val: any) => {
   localStorage.removeItem('fromNamePath')
   const contract = val.id || '00';
-  const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','-')}`
+  const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','[')}`
   router.push(path)
   localStorage.setItem('fromNamePath',route.fullPath)
 }

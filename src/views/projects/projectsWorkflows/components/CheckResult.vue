@@ -10,7 +10,7 @@
         <span class="text-base font-bold">{{ item?.title }}</span>
         <div v-for="content in item?.content" class="py-8">
           <div>
-            <span class="text-4xl cursor-pointer" :id="content?.checkTool" @click="router.push(`${route.fullPath}/${content.checkTool}?reportId=${content.id}&currentName=${currentName.replace('#','-')}`)">{{ content.issues }}</span>
+            <span class="text-4xl cursor-pointer" :id="content?.checkTool" @click="router.push(`${route.fullPath}/${content.checkTool}?reportId=${content.id}&currentName=${currentName.replace('#','[')}`)">{{ content.issues }}</span>
             <span class="block text-2xl">issues</span>
             <span class="text-base">{{ content.checkTool }}</span>
           </div>
@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          <a-button class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail?currentName=${currentName.replace('#','-')}`)">View Detail</a-button>
+          <a-button class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail?currentName=${currentName.replace('#','[')}`)">View Detail</a-button>
         </div>
       </div>
 
