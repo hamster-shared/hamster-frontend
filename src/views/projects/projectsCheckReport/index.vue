@@ -141,7 +141,7 @@
         path:'/projects'
       },
       {
-        breadcrumbName:query?.currentName?.replace('-','#'),
+        breadcrumbName:query?.currentName?.replace('[','#'),
         path:localStorage.getItem('evmCheckWorkflow')
       },
       {
