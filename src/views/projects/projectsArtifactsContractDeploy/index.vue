@@ -773,7 +773,7 @@ const judgeOrigin = ()=>{
       path:''
     },
   ]
-  if(route.query?.name!='undefined'){
+  if(route.query?.name && route.query?.name!='undefined'){
     const name = route.query?.name?.replace('-','#')
     breadCrumbInfo.value.splice(1,0,{
       breadcrumbName:name,
