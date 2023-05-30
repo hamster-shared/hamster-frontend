@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <div class="border border-[#EBEBEB] border-solid rounded-xl h-[455px] p-10">
+    <div class="border border-[#EBEBEB] border-solid rounded-xl p-10">
       <div>
         <span class="text-[#E2B578] font-bold text-2xl">Chainlink</span>
         <div class="text-base text-[#73706E] mt-2.5 mb-7 w-[65%]">The decentralized oracle network was proposed by (DON) Chainlink. 

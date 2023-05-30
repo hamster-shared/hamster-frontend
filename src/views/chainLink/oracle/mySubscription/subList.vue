@@ -228,7 +228,7 @@ onMounted(async()=>{
     getSublist()
     breadCrumbInfo.value = [
       {
-        breadcrumbName:'Oracle',
+        breadcrumbName:'Hamslink',
         path:'/middleware/dashboard/oracle'
       },
       {
