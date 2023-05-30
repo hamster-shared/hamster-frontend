@@ -31,7 +31,7 @@
         <!-- </label> -->
       <div>
 
-        <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
+        <label class="text-center w-[100px] " v-for="(item, index) in actionButtonList">
           <!-- 按钮 -->
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
@@ -39,14 +39,16 @@
           <!-- <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
             <svg-icon name="check" size="13" />
           </label> -->
-          <label class="action-icon mx-[8px]">
-            <svg-icon :name="item.url" size="15" />
-          </label>
-          <!-- 按钮 -->
-          <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
-          <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-          <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
-            {{ item.name }}
+          <label class="action-button-item">
+            <label class="action-icon mx-[8px]">
+              <svg-icon :name="item.url" size="15" />
+            </label>
+            <!-- 按钮 -->
+            <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
+            <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
+            <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+              {{ item.name }}
+            </label>
           </label>
         </label>
       </div>
