@@ -29,7 +29,7 @@
           {{ dayjs( record.DaysOnHamster).diff(new Date(),'day') > 1 ? 'Days' : 'Day' }}
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
+          <div class="open-link-css cursor-pointer" @click="showView(record)">View API Key</div>
         </template>
       </template>
     </a-table>

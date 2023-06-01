@@ -28,7 +28,7 @@
                 <span v-else>
                     <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
                     <img src="@/assets/images/chainlinkFailed.png" v-if="record.status?.toLowerCase()=='failed'" class="h-5 ml-[8px] mr-[12px] inline-block"/>
-                    <span :title="record.errorMessage" class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+                    <span class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
                 </span>
             </template>
         </a-table>

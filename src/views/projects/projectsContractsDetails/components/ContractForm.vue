@@ -22,7 +22,7 @@
     <div class="mb-[24px]">
       <div class="flex justify-between  mb-[12px]">
         <span class="dark:text-[#FFFFFF] text-[#151210]  text-[16px] font-bold">outputs</span>
-        <span class="text-[#E2B578] text-[16px] cursor-pointer" @click="copy">
+        <span class="open-link-css text-[16px] cursor-pointer" @click="copy">
           <img src="@/assets/icons/copy.svg" />
           copy</span>
       </div>

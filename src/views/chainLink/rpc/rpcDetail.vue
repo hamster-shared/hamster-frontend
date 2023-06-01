@@ -6,7 +6,7 @@
       <div class="">
         <img :src="imageUrl" class="h-6;"/>
         <span class="font-bold text-[24px] mr-[20px] align-middle" style="margin-left: 10px;">{{name}}</span>
-        <span v-if="parseInt(chainData.chainID,16) && chainData.isEvm" @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
+        <span v-if="parseInt(chainData.chainID,16) && chainData.isEvm" @click="addNetwork" class="open-link-css border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
           Network</span>
       </div>
       <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
@@ -30,7 +30,7 @@
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
             <div class="font-bold">{{ newtworkChainsData.http_link }}</div>
-            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.http_link)">
+            <div class="open-link-css cursor-pointer" @click="copyInfo(newtworkChainsData.http_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
             </div>
           </div>
@@ -40,7 +40,7 @@
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
             <div class="font-bold">{{ newtworkChainsData.websocket_link }}</div>
-            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_link)">
+            <div class="open-link-css cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
             </div>
           </div>
@@ -56,7 +56,7 @@
             <CodeEditor :readOnly="true" :value="value"></CodeEditor>
           </div>
           <div class="text-right">
-            <span class="text-right cursor-pointer text-[#E2B578]" @click="copyInfo(value)">
+            <span class="text-right cursor-pointer open-link-css" @click="copyInfo(value)">
               <svg-icon name="copy" size="18"></svg-icon>
             </span>
           </div>
@@ -159,8 +159,7 @@ const getChainData = async () => {
 }
 // 添加网络到钱包上
 const addNetwork = ()=>{
-  // 如果网络id不一样，需要调小狐狸进行网络切换
-  addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,newtworkChainsData.http_link)
+  addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,newtworkChainsData.http_link,chainData.nativeToken,chainData.decimals)
 }
 const handleChange = (val: string) => {
   const data:any = chainsList.value.find((item: any) => { return item.network === val });

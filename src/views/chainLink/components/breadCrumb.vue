@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div v-for="(item,index) in showUrl">
-      <span class="text-[#E2B578]">{{ item }}</span>
+      <span class="open-link-css">{{ item }}</span>
       <span v-if="index != (showUrl.length-1)"> > </span>
     </div>
   </div>

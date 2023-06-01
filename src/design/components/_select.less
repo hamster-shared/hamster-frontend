@@ -4,11 +4,6 @@ html[data-theme='dark'] {
     background-color: transparent;
     border: 1px solid #EBEBEB;
   }
-  .ant-select-arrow {
-    svg {
-      color: #E2B578;
-    }
-  }
   .ant-select-selection-item {
     color: #FFFFFF;
   }
@@ -24,7 +19,27 @@ html[data-theme='dark'] {
     background-color: #4D4740;
   }
 }
+.ant-select{
+  color: #000000;
+}
+.ant-select-arrow {
+  svg {
+    color: #E2B578;
+    transform: rotate(0deg);
+    transition: all .3s, visibility 0s;
+  }
+}
+.ant-select-open{
+  .ant-select-arrow {
+    svg {
+      transform: rotate(180deg);
+    }
+  }
 
+}
+.ant-select-item {
+  color: #606266;
+}
 .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
   border: 1px solid #EBEBEB;
 }
@@ -45,3 +60,13 @@ html[data-theme='dark'] {
   border-color: #E2B578;
   box-shadow: none;
 }
+
+.ant-select-item-option-active:not(.ant-select-item-option-disabled){
+  background-color: #F5F5F5;
+  color: #000000;
+}
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #FFFBF0;
+  color: #DEB176 !important;
+}
+

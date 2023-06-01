@@ -2,9 +2,9 @@
   <a-table class="my-4" :columns="tableColumns" :dataSource="tableList" :pagination="pagination">
     <template #bodyCell="{ column, record, index }">
       <template v-if="column.dataIndex === 'action'">
-        <label class="text-[#E2B578] cursor-pointer" v-if="record.domain === ''"
+        <label class="open-link-css cursor-pointer" v-if="record.domain === ''"
           @click="goDeploy(record.projectId ,record.workflowId, record.workflowDetailId)">Deploy</label>
-        <label class="text-[#E2B578] cursor-pointer ml-2" v-else
+        <label class="open-link-css cursor-pointer ml-2" v-else
           @click="goView(record.workflowId, record.workflowDetailId, record.id)">View</label>
 
       </template>
