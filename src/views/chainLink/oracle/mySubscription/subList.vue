@@ -8,7 +8,7 @@
                 <span class="mr-[10px]">Network</span>
                 <a-select class="w-[200px]" v-model:value="netName" autocomplete="off"
                 :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
-                <a-button class="ml-2 mt-2" @click="getSublist">Search</a-button>
+                <a-button class="mt-2 ml-2" @click="getSublist">Search</a-button>
             </div>
             <div>
                 <a-button @click="createSubPop" class="mt-1">Create</a-button>
@@ -27,7 +27,7 @@
                 <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
                 <span v-else>
                     <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
-                    <svg-icon v-if="record.status?.toLowerCase()=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                    <img src="@/assets/images/chainlinkFailed.png" v-if="record.status?.toLowerCase()=='failed'" class="h-5 ml-[8px] mr-[12px] inline-block"/>
                     <span :title="record.errorMessage" class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
                 </span>
             </template>
