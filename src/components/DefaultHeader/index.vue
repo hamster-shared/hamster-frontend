@@ -104,7 +104,7 @@
 <script lang="ts" setup>
 import { watch } from "vue";
 import { useRouter } from "vue-router";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref,onBeforeUnmount } from "vue";
 import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -223,6 +223,10 @@ onMounted(() => {
     walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
   }
 });
+// 需要清除，要不然更改url会有问题
+onBeforeUnmount(()=>{
+  localStorage.removeItem('isProject')
+})
 
 watch(
   () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),

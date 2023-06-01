@@ -159,8 +159,7 @@ const getChainData = async () => {
 }
 // 添加网络到钱包上
 const addNetwork = ()=>{
-  // 如果网络id不一样，需要调小狐狸进行网络切换
-  addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,newtworkChainsData.http_link)
+  addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,newtworkChainsData.http_link,chainData.nativeToken,chainData.decimals)
 }
 const handleChange = (val: string) => {
   const data:any = chainsList.value.find((item: any) => { return item.network === val });
