@@ -779,7 +779,7 @@ pre {
 .create-template-modal {
   .ant-modal-body {
     .ant-input-affix-wrapper {
-      border-color: #d9d9d9;
+      // border-color: #d9d9d9;
       margin: 8px 0;
     }
   }

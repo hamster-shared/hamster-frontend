@@ -341,10 +341,10 @@ span{
 .subscripion-divider {
   margin: 16px auto;
 }
-&:deep(.is-show-btn){
-  color: #E2B578;
-  &:hover{
-    color: #E2B578;
-  }
-}
+// &:deep(.is-show-btn){
+//   color: #E2B578;
+//   &:hover{
+//     color: #E2B578;
+//   }
+// }
 </style>
