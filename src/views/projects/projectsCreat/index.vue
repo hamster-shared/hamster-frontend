@@ -79,7 +79,7 @@
             <div class="font-bold text-[16px]">Popular Template</div>
             <div class="cursor-pointer" @click="goNext">
               <img src="@/assets/icons/explore-template.svg" class="h-[20px]" />
-              <span class="text-[#E2B578] align-middle text-[16px]"> Explore all template</span>
+              <span class="open-link-css align-middle text-[16px]"> Explore all template</span>
             </div>
           </div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1' && formData.frameType != '6'">A collection of our most

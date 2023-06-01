@@ -14,7 +14,7 @@
           <div v-for=" (item,index) in requestTemplateInfo " :key="index" class="flex flex-col shrink-0 grow-0 basis-[400px] h-[300px] template-container">
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
-              <span class="sub">Submitted by: <span class="text-[#E2B578] cursor-pointer" @click="goAuthor(item.authorUrl)">{{ item.author }}</span></span>
+              <span class="sub">Submitted by: <span class="open-link-css cursor-pointer" @click="goAuthor(item.authorUrl)">{{ item.author }}</span></span>
               <div class="item h-[120px] overflow-y-auto">{{ item.description }}</div>
             </div>
             <div class="mt-2">

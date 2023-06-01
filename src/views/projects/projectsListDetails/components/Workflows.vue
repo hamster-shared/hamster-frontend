@@ -38,12 +38,12 @@
           <div v-else></div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <label class="cursor-pointer text-[#E2B578] hover:text-[#E4C08F] focus:text-[#CE9C58]"
+          <label class="cursor-pointer open-link-css hover:text-[#E4C08F] active:text-[#CE9C58]"
             @click="goWorkflowsDetail(record.type, record.id, record.detailId)">Details</label>
-          <label v-if="record.status === 1" class=" text-[#FF8A5B] hover:text-[#EBA183] focus:text-[#EA7D51] ml-2 cursor-pointer"
+          <label v-if="record.status === 1" class=" text-[#FF8A5B] hover:text-[#EBA183] active:text-[#EA7D51] ml-2 cursor-pointer"
             @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
           <label v-if="record.status !== 1" @click="deleteWorkflow(record.id, record.detailId)"
-            class="text-[#F52222] hover:text-[#EE6A6A] focus:text-[#CF2C2C] ml-2 cursor-pointer ">Delete</label>
+            class="text-[#F52222] hover:text-[#EE6A6A] active:text-[#CF2C2C] ml-2 cursor-pointer ">Delete</label>
         </template>
       </template>
     </a-table>

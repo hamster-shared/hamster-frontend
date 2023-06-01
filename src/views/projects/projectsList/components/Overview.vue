@@ -5,7 +5,7 @@
       <div class="first">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="project-title text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
+          <div class="project-title text-[24px] font-bold cursor-pointer hover:open-link-css"
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -46,7 +46,7 @@
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -102,15 +102,15 @@
             Check Now
           </div> -->
 
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
             <span>Check Now</span>
           </div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
             v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View
             Now</div>
         </div>
@@ -126,25 +126,25 @@
             </div>
           </div>
 
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType,viewInfo.type)" v-if="viewInfo.recentBuild.status === 0">Build Now
           </div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 2">
             View Now
             </div>
           <div v-else>
             <div v-if="projectType === '1'">
-              <div class="text-[#E2B578] cursor-pointer inline-block"
+              <div class="open-link-css cursor-pointer inline-block"
                 @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)">
                 View Now
               </div>
             </div>
-            <div class="text-[#E2B578] cursor-pointer inline-block"
+            <div class="open-link-css cursor-pointer inline-block"
               @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)" v-else>Deploy Now</div>
           </div>
         </div>
@@ -165,7 +165,7 @@
               </div>
             </div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
-            <div v-else class="text-[#E2B578] cursor-pointer inline-block">
+            <div v-else class="open-link-css cursor-pointer inline-block">
               <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
               <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
             </div>
@@ -181,7 +181,7 @@
               </div>
             </div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
-            <div v-else class="text-[#E2B578] cursor-pointer inline-block"
+            <div v-else class="open-link-css cursor-pointer inline-block"
               @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
               View FrontEnd</div>
           </div>

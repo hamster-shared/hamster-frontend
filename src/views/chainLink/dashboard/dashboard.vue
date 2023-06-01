@@ -13,19 +13,19 @@
             <div class="view" @click="networkClick(val)">View</div>
           </div>
 
-          <div class="flex justify-between w-full mt-[18px] cursor-pointer text-[#E2B578]" v-if="RPCList.length>4">
+          <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css" v-if="RPCList.length>4">
             <span @click="goMiwaspaceTab('RPC')">Add service</span>
             <span @click="goRPC">View more</span>
           </div>
-          <div v-else class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goMiwaspaceTab('RPC')">Add service</div>
+          <div v-else class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('RPC')">Add service</div>
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
             class="flex justify-between pt-[6px] border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6] pb-[14px]">
             <div>{{val}}</div>
-            <div class="cursor-pointer text-[#E2B578]" @click="oracleClick">View</div>
+            <div class="cursor-pointer open-link-css" @click="oracleClick">View</div>
           </div>
-          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goMiwaspaceTab('Oracle')">Add service</div>
+          <div class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
         </div>
         <div v-else>
           <div class="text-center">
@@ -34,7 +34,7 @@
           </div>
 
           <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The service has not been opened yet</div>
-          <div class="text-center mt-[10px] text-[#E2B578] cursor-pointer" @click="goMiwaspaceTab(item)">Get service now</div>
+          <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Get service now</div>
         </div>
       </div>
     </div>

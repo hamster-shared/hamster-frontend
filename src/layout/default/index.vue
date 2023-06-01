@@ -66,7 +66,7 @@ const layoutClass = computed(() => {
 </style>
 <style lang="less">
 
-.open-chainIDE-css{
+.open-link-css{
   color: #E2B578;
   .svg-icon {
     color: #E2B578;

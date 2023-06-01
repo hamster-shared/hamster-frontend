@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
-      <span class="text-sm text-[#E2B578] cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
+      <span class="text-sm open-link-css cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
     </div>
     <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue" placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
 

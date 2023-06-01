@@ -14,7 +14,7 @@
         <div class="text-[#151210] mb-[12px]">Transaction Hash</div>
         <a-input v-model:value="deployTxHash" :placeholder="'Getting now，please wait a moment...'" disabled>
           <template #suffix>
-            <span class="text-[#E2B578] font-bold cursor-pointer" @click="queryDeploy">Query</span>
+            <span class="open-link-css font-bold cursor-pointer" @click="queryDeploy">Query</span>
           </template>
         </a-input>
       </a-form-item>
