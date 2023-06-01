@@ -2,7 +2,7 @@
   <div>
     <div class="my-10">
       <span class="text-2xl font-bold">RPC</span>
-      <div class="text-base w-[70%] mt-2">
+      <div class="text-base mt-2" style="text-align: justify; text-justify: inter-word;">
         Web3 development is inseparable from the support of blockchain nodes, 
         and building and maintaining nodes requires a lot of cost and effort. 
         In order to enable developers to obtain efficient and stable node services, 

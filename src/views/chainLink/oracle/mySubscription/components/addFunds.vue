@@ -68,7 +68,7 @@ const getSublistData = async()=>{
     console.log('获取订阅数据',res)
     if(res.code===200 && res.data?.length){
         subOptions.value = res.data.map((item:any)=>{
-            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.chainSubscriptionId
+            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.id
             return {
                 label:tem,
                 value:item.id,

@@ -2,32 +2,37 @@
     <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
 
     <!-- <div class="text-[24px] font-bold">My Subscription</div> -->
-    <div class="flex justify-between items-center mt-[30px]">
-        <div>
-            <span class="mr-[10px]">Network</span>
-            <a-select class="w-[200px]" @change="setSubNetwork" v-model:value="netName" autocomplete="off"
-            :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
-            <a-button class="ml-2 mt-2" @click="getSublist">Search</a-button>
+    <div class="content">
+        <div class="flex justify-between items-center mt-[30px]">
+            <div>
+                <span class="mr-[10px]">Network</span>
+                <a-select class="w-[200px]" v-model:value="netName" autocomplete="off"
+                :options="netOptions.map((item:any) => ({ value: item }))" ></a-select>
+                <a-button class="ml-2 mt-2" @click="getSublist">Search</a-button>
+            </div>
+            <div>
+                <a-button @click="createSubPop" class="mt-1">Create</a-button>
+                <a-button @click="addConsumerPop" class="mx-2 mt-1">Add Consumers</a-button>
+                <a-button @click="addFundsPop" class="mt-1">Add Funds</a-button>
+            </div>
         </div>
-        <div>
-            <a-button @click="createSubPop" class="mt-1">Create</a-button>
-            <a-button @click="addConsumerPop" class="mx-2 mt-1">Add Consumers</a-button>
-            <a-button @click="addFundsPop" class="mt-1">Add Funds</a-button>
-        </div>
+        <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
+            <template #operation="{ record }">
+                <a @click="goSubDetail(record)" class="mr-16 !text-[#E2B578]">View</a>
+            </template>
+            <template #network="{ record }">
+                <span>{{record.chain}} {{record.network}}</span>
+            </template>
+            <template #id="{ record }">
+                <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
+                <span v-else>
+                    <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                    <svg-icon v-if="record.status?.toLowerCase()=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
+                    <span :title="record.errorMessage" class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+                </span>
+            </template>
+        </a-table>
     </div>
-    <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
-        <template #operation="{ record }">
-            <a @click="goSubDetail(record)" class="mr-16 !text-[#E2B578]">View</a>
-        </template>
-        <template #id="{ record }">
-            <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
-            <span v-else>
-                <svg-icon v-if="record.status?.toLowerCase()=='pending'" name="Pending" size="20" class="ml-[8px] mr-[12px] inline-block" />
-                <svg-icon v-if="record.status?.toLowerCase()=='failed'" name="chainFailed" size="20" class="ml-[8px] mr-[12px] inline-block" />
-                <span :title="record.errorMessage" class=" text-[#FF4A4A] inline-block" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
-            </span>
-        </template>
-    </a-table>
     <createSub v-if="showCreateSub" :showCreateSub="showCreateSub" @getCreateSubInfo="getCreateSubInfo" @closeCreateSub="closeCreateSub"/>
     <addFunds v-if="showAddFund" :showAddFund="showAddFund" @getAddFundInfo="getAddFundInfo" @closeAddFund="closeAddFund"/>
     <addConsumers v-if="showAddConsumers" :showAddConsumers="showAddConsumers" @getAddConsumersInfo="getAddConsumersInfo" @closeAddConsumers="closeAddConsumers"/>
@@ -78,7 +83,8 @@ const subListColumns:any = [
     {
         title: 'Network',
         dataIndex: 'network',
-        align:'left'
+        align:'left',
+        slots: { customRender: 'network' },
     },
     {
         title: 'Consumers',
@@ -239,6 +245,9 @@ onMounted(async()=>{
 })
 </script>
 <style scoped less>
+.content{
+    min-height: 810px;
+}
 .table{
     width: 100%;
     margin-bottom: 64px;
