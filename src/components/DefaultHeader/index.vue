@@ -142,6 +142,7 @@ const goHome = () => {
 const goPrjects = () => {
   router.push("/projects");
   isProject.value = true;
+  localStorage.setItem('isProject','true')
 }
 
 // 跳官网文档
@@ -152,6 +153,7 @@ const goDoc = () => {
 const goMiwaspace = () => {
   router.push("/middleware/miwaspace?key=1");
   isProject.value = false;
+  localStorage.setItem('isProject','false')
   // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
   // // 如果 local storage 里没有保存的钱包，直接返回
   // if (connectedWallets == null || connectedWallets === '[]') {
@@ -165,6 +167,7 @@ const goMiwaspace = () => {
 const goDashboard = () => {
   router.push("/middleware/dashboard");
   isProject.value = false;
+  localStorage.setItem('isProject','false')
 }
 
 const changeTheme = (val: string) => {
@@ -201,6 +204,12 @@ const signOut = () => {
 };
 
 onMounted(() => {
+  // 解决middle刷新页面选中在projects tab下问题
+  if(localStorage.getItem('isProject')=='false'){
+    isProject.value = false
+  }else{
+    isProject.value = true
+  }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
