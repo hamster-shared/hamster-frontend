@@ -128,7 +128,9 @@ const handleCreateSub = async()=>{
       emit('closeCreateSub',false)
       createSubLoading.value = false
       console.log('error',error)
-    });
+    }).catch((err:any)=>{
+        createSubLoading.value = false
+    })
 }
 // 取消订阅
 const cancelCreateSub = ()=>{

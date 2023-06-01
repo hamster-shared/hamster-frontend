@@ -11,7 +11,7 @@
         In order to enable developers to obtain efficient and stable node services,
         Miwago provides RPC services to meet the development needs of developers for various ecological projects .
       </span>
-      <a-button @click="router.push('/miwaspace?key=1')">Get service now</a-button>
+      <a-button @click="router.push('/middleware/miwaspace?key=1')">Get service now</a-button>
     </div>
   </div>
 
@@ -28,7 +28,7 @@
         In order to allow developers to quickly access more suitable oracle services with zero code or low code,
         the Hamster platform aggregates various oracle solution middleware on the market.
       </span>
-      <a-button @click="router.push('/miwaspace?key=2')">Get service now</a-button>
+      <a-button @click="router.push('/middleware/miwaspace?key=2')">Get service now</a-button>
     </div>
   </div>
 </template>
