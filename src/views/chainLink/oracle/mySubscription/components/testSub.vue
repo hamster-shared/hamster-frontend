@@ -13,7 +13,7 @@
                 :options="conOptions" allow-clear></a-select>
                 <div v-if="false" class="w-[100%] bg-[#FFF9F2] p-[10px] mt-[10px]" style="border:1px solid #E2B578;border-radius: 8px;">
                     The contract address needs to be added to the current Subsripion to complete the test, please ask whether to continue to complete the binding relationship.
-                    <div class="text-[#E2B578] flex justify-end cursor-pointer" @click="bind">Binding</div>
+                    <div class="open-link-css flex justify-end cursor-pointer" @click="bind">Binding</div>
                 </div>
             </a-form-item>
             <a-form-item label="Secrets Loaction" name="secretsLoaction" >

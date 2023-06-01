@@ -73,7 +73,7 @@
                   <div class="output-css dark:!shadow-none p-[20px] hidden" :id="`div${moduleName}${items.title}`">
                     <div class="flex justify-between mb-[12px]">
                       <span class="font-normal">Output</span>
-                      <span class="text-[#E2B578] cursor-pointer" @click="copyInfo(`send${moduleName}${items.title}`, 'id')">
+                      <span class="open-link-css cursor-pointer" @click="copyInfo(`send${moduleName}${items.title}`, 'id')">
                         <img src="@/assets/icons/copy.svg" />Copy
                       </span>
                     </div>

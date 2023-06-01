@@ -67,7 +67,7 @@
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionsList(item)"
-                    :class="[{ '!text-[#E2B578]': item.name === moduleName },{'mt-4': index != 0}]"
+                    :class="[{ '!open-link-css': item.name === moduleName },{'mt-4': index != 0}]"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px]"
                     v-for="(item, index) in moduleList" :key="index">{{ item.name }}</div>
                 </div>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionList(item, index)"
-                    :class="{ '!text-[#E2B578]': item.name === functionName && slectedIndex === index }"
+                    :class="{ '!open-link-css': item.name === functionName && slectedIndex === index }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
                 </div>
@@ -108,7 +108,7 @@
                 </div>
                 <div class="pb-4 "><!-- h-[130px] overflow-auto -->
                   <div @click="setFunctionList(item, index)"
-                    :class="{ '!text-[#E2B578]': item.name === functionName && slectedIndex === index }"
+                    :class="{ '!open-link-css': item.name === functionName && slectedIndex === index }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
                   <!-- <div @click="setFunctionList(item)"
@@ -130,7 +130,7 @@
           <a-tab-pane key="2" tab="Events" v-if="eventAllList.length > 0 && frameType !=2">
             <div class="flex">
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4"><!--  h-[300px] overflow-auto -->
-                <div @click="setEventList(item)" :class="{ '!text-[#E2B578]': item.name === eventName }"
+                <div @click="setEventList(item)" :class="{ '!open-link-css': item.name === eventName }"
                   class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer"
                   v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
               </div>

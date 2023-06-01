@@ -69,7 +69,7 @@
             </div>
           </div>
           <template #extra>
-            <div class="open-chainIDE-css">
+            <div class="open-link-css">
               <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.Details.length + ' issues found' }}
               </span>
