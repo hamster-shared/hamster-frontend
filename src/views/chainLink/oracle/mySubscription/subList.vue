@@ -1,7 +1,5 @@
 <template>
     <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
-
-    <!-- <div class="text-[24px] font-bold">My Subscription</div> -->
     <div class="content">
         <div class="flex justify-between items-center mt-[30px]">
             <div>
@@ -22,6 +20,9 @@
             </template>
             <template #network="{ record }">
                 <span>{{record.chain}} {{record.network}}</span>
+            </template>
+            <template #balance="{ record }">
+                <span>{{record.balance}}</span>
             </template>
             <template #id="{ record }">
                 <span v-if="record.status?.toLowerCase()=='success'">{{record.id}}</span>
@@ -46,16 +47,19 @@ import addFunds from './components/addFunds.vue'
 import addConsumers from './components/addConsumers.vue'
 import { apiSublist } from '@/apis/chainlink'
 import dayjs from "dayjs";
+import { useContractApi } from "@/stores/chainlink";
+import { ethers } from "ethers";
 const router = useRouter();
 // 'Hamster Moonbeam Testnet'经产品要求，隐藏掉这个网络
 const netOptions = ref<any>(['All','Ethereum Sepolia Testnet','Polygon Mumbai Testnet'])
 const netName = ref('All')
 const loading = ref(false)
-const breadCrumbLoading = ref(false)
 const showCreateSub = ref(false)
 const showAddFund = ref(false)
 const showAddConsumers = ref(false)
 const showTestSub = ref(false)
+const contractApi = useContractApi()
+const { registryApi, linkTokenApi, walletAddress } = useContractApi()
 
 const breadCrumbInfo = ref<any>([])
 
@@ -102,13 +106,7 @@ const subListColumns:any = [
         title: 'Balance',
         dataIndex: 'balance',
         align:'center',
-        customRender: ({ text }:any) => {
-            if (typeof text == 'number') {
-                return text
-            }else{
-                return '-'
-            }
-        },
+        slots: { customRender: 'balance' },
     },
     {
         title: 'Action',
@@ -155,6 +153,11 @@ const getSublist = async()=>{
     const res = await apiSublist(params)
     if(res.code === 200&& res.data?.data?.length){
         subListData.value = res.data?.data
+        for(let i=0;i<subListData.value.length;i++){
+            registryApi?.getSubscription(subListData.value[i].chainSubscriptionId).then((t:any) => {
+                subListData.value[i].balance = ethers.utils.formatEther(t.balance);
+            })
+        }
         pagination.total = res.data.total
     }else{
         subListData.value = []
