@@ -207,7 +207,7 @@ onMounted(() => {
   // 解决middle刷新页面选中在projects tab下问题
   if(localStorage.getItem('isProject')=='false'){
     isProject.value = false
-  }else{
+  }else if(localStorage.getItem('isProject')=='true'){
     isProject.value = true
   }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
