@@ -27,7 +27,7 @@
             <a-select class="inline-block" dropdownClassName="modal-select-dropdown" style="margin-right:10px;width: 220px;" @change="setProject" v-model:value="formData.project" placeholder="Please select a subscription" autocomplete="off"
                 allow-clear :options="projectOptions"></a-select>
             <a-select class="inline-block" dropdownClassName="modal-select-dropdown" :placeholder="subOptionsNet" disabled></a-select>
-            <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
+            <a-table class="mt-[16px] modal-table" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
                       <a-radio-group v-model:value="radioFlag" @change="changeRadio">
                          <a-radio :checked="record.address === radioFlag" :value='record.address' >
