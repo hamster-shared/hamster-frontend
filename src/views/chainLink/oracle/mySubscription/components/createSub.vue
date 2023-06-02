@@ -5,7 +5,7 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Network" name="network" >
-                <a-select @change="setSubNetwork" v-model:value="formData.network" placeholder="Choose" autocomplete="off"
+                <a-select @change="setSubNetwork" dropdownClassName="modal-select-dropdown" v-model:value="formData.network" placeholder="Choose" autocomplete="off"
                 :options="subNetOptions" allow-clear class="sel"></a-select>
             </a-form-item>
             <a-form-item label="Subscription Name" name="name" >
@@ -14,7 +14,7 @@
         </a-form>
         <div class="text-center flex justify-center">
             <a-button class="done-btn" style="margin-right: 20px;" @click="handleCreateSub" :loading="createSubLoading">Confirm</a-button>
-            <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelCreateSub">Cancel</a-button>
+            <a-button class="done-btn" ghost @click="cancelCreateSub">Cancel</a-button>
         </div>
     </a-modal>
 </template>

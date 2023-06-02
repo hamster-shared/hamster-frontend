@@ -27,7 +27,7 @@
           allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="serviceProtocol" name="serviceProtocol">
-        <a-select v-model:value="formData.serviceProtocol" placeholder="serviceProtocol" autocomplete="off"
+        <a-select dropdownClassName="modal-select-dropdown" v-model:value="formData.serviceProtocol" placeholder="serviceProtocol" autocomplete="off"
           :options="serviceProtocolList.map(item => ({ value: item }))">
         </a-select>
       </a-form-item>

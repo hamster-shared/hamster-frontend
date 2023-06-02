@@ -48,7 +48,7 @@
           <a-input disabled autocomplete="off" v-model:value="contractFormData.projectName" placeholder="Automated recognition"/>
         </a-form-item>
         <a-form-item class="select-type" label="Affiliated Ecosystem" name="contractSelectChain" :rules="[{ required: true, message: 'Please select your chain!' }]">
-          <a-select autocomplete="off" v-model:value="contractFormData.contractSelectChain" placeholder="Please select...">
+          <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="contractFormData.contractSelectChain" placeholder="Please select...">
             <a-select-option value="1">EVM</a-select-option>
             <a-select-option value="2">Aptos</a-select-option>
             <!-- <a-select-option value="3">TON</a-select-option> -->
@@ -78,7 +78,7 @@
           <a-input disabled autocomplete="off" v-model:value="frontEndFormData.frontEndProjectName" placeholder="Automated recognition"/>
         </a-form-item>
         <a-form-item class="select-type" label="Framework Preset" name="frontEndSelectFramework" :rules="[{ required: true, message: 'Please select your framework!' }]">
-          <a-select autocomplete="off" v-model:value="frontEndFormData.frontEndSelectFramework" placeholder="Please select...">
+          <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="frontEndFormData.frontEndSelectFramework" placeholder="Please select...">
             <a-select-option value="1">Vue.js</a-select-option>
             <a-select-option value="2">React.js</a-select-option>
             <a-select-option value="3" v-if="frontEndFormData.frontEndMethod == '2'">Nuxt.js</a-select-option>
