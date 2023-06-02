@@ -7,7 +7,7 @@
             <span class="font-bold">{{detailInfo.id || "-"}}</span>
         </p>
         <p>
-            <span class="name">currentName</span>
+            <span class="name">Name</span>
             <span class="font-bold">{{detailInfo.name || "-"}}</span>
         </p>
         <p>
