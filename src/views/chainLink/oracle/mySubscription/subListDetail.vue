@@ -63,9 +63,8 @@
         </template>
         <template #status="{ record }">
             <svg-icon v-if="record.status.toLowerCase()=='pending'" name="Pending" size="20"/>
-            <!-- <svg-icon v-if="record.status.toLowerCase()=='failed'" name="chainFailed" size="20" /> -->
             <img src="@/assets/images/chainlinkFailed.png" v-if="record.status.toLowerCase()=='failed'" class="h-5"/>
-            <span v-if="false" :title="record.errorMessage" class=" text-[#FF4A4A] inline-block ml-[2px]" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
+            <span class=" text-[#FF4A4A] inline-block ml-[2px]" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
         </template>
         <template #transactionTx="{ record }">
             <img v-if="record.transactionTx" src="@/assets/svg/Jump.png" style="display:inline-block"/>
