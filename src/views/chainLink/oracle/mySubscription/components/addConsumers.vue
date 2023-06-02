@@ -5,7 +5,7 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
-                <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
+                <a-select @change="setSubscription" dropdownClassName="modal-select-dropdown" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions" allow-clear></a-select>
             </a-form-item>
             
@@ -24,9 +24,9 @@
             </a-form-item>
         </a-form>
         <div v-if="isOrigin" class="-mt-[10px]">
-            <a-select class="inline-block" style="margin-right:10px;width: 220px;" @change="setProject" v-model:value="formData.project" placeholder="Please select a subscription" autocomplete="off"
+            <a-select class="inline-block" dropdownClassName="modal-select-dropdown" style="margin-right:10px;width: 220px;" @change="setProject" v-model:value="formData.project" placeholder="Please select a subscription" autocomplete="off"
                 allow-clear :options="projectOptions"></a-select>
-            <a-select class="inline-block" :placeholder="subOptionsNet" disabled></a-select>
+            <a-select class="inline-block" dropdownClassName="modal-select-dropdown" :placeholder="subOptionsNet" disabled></a-select>
             <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
                       <a-radio-group v-model:value="radioFlag" @change="changeRadio">
@@ -39,7 +39,7 @@
             </a-table>
         </div>
         <div class="text-center flex justify-between mt-[16px]">
-            <a-button style="margin-right: 20px;background: transparent;color:#E2B578" @click="goHamster">Create Consumer by Hamster</a-button>
+            <a-button ghost style="margin-right: 20px;" @click="goHamster">Create Consumer by Hamster</a-button>
             <a-button @click="handleFund" :loading="addConsumerLoading">Confirm</a-button>
         </div>
     </a-modal>

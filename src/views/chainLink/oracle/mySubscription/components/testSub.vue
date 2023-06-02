@@ -5,11 +5,11 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
-                <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
+                <a-select dropdownClassName="modal-select-dropdown" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions" allow-clear></a-select>
             </a-form-item>
             <a-form-item label="Consumers" name="consumers" >
-                <a-select @change="setConsumers" show-search v-model:value="formData.consumers" placeholder="Please input contract address" autocomplete="off"
+                <a-select dropdownClassName="modal-select-dropdown" @change="setConsumers" show-search v-model:value="formData.consumers" placeholder="Please input contract address" autocomplete="off"
                 :options="conOptions" allow-clear></a-select>
                 <div v-if="false" class="w-[100%] bg-[#FFF9F2] p-[10px] mt-[10px]" style="border:1px solid #E2B578;border-radius: 8px;">
                     The contract address needs to be added to the current Subsripion to complete the test, please ask whether to continue to complete the binding relationship.
@@ -17,7 +17,7 @@
                 </div>
             </a-form-item>
             <a-form-item label="Secrets Loaction" name="secretsLoaction" >
-                <a-select @change="setLoaction" v-model:value="formData.loaction" placeholder="Please select a loaction" autocomplete="off"
+                <a-select dropdownClassName="modal-select-dropdown" @change="setLoaction" v-model:value="formData.loaction" placeholder="Please select a loaction" autocomplete="off"
                 :options="loactionOptions.map((item:any) => ({ value: item }))" allow-clear></a-select>
             </a-form-item>
             <a-form-item v-if="formData.loaction=='Inline'" label="Secrets" name="secrets" >

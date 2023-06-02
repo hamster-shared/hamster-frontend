@@ -5,7 +5,7 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
-                <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
+                <a-select dropdownClassName="modal-select-dropdown" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions" allow-clear></a-select>
             </a-form-item>
             <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-[#FF4A4A]">{{subBalance}}link</span></div>
@@ -16,7 +16,7 @@
         <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-[#E2B578]">{{balance}}link</span></div>
         <div class="text-center flex justify-center">
             <a-button class="done-btn" style="margin-right: 20px;" @click="handleFund" :loading="addFundLoading">Confirm</a-button>
-            <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelFund">Cancel</a-button>
+            <a-button class="done-btn" ghost @click="cancelFund">Cancel</a-button>
         </div>
     </a-modal>
 </template>
