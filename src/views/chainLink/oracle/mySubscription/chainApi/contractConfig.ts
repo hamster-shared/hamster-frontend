@@ -2019,11 +2019,6 @@ export const abis = {
           "type": "bytes"
         },
         {
-          "internalType": "enum Functions.Location",
-          "name": "secretsLocation",
-          "type": "uint8"
-        },
-        {
           "internalType": "string[]",
           "name": "args",
           "type": "string[]"
