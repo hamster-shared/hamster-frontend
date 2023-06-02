@@ -184,7 +184,7 @@ const getlistData = async()=>{
     const res = await consumerTable(formData.project,params)
     console.log('res',res.data.data)
     if(res.code===200){
-        consumersData.value = res.data.data
+        consumersData.value = [...res.data.data,...res.data.data]
         pagination.total = res.data.total
     }else{
         consumersData.value = []
