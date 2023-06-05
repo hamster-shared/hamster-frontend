@@ -42,10 +42,10 @@
 
       <a-form layout="vertical" class="!mt-3" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
         <a-form-item v-if="contractRepositoryVisible" label="Repository URL" name="importRepositoryContractProjectUrl">
-          <a-input autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
+          <a-input class="modal-input" autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
         <a-form-item label="Project Name" name="projectName" :rules="[{ required: true, message: 'Please enter your name!' }]">
-          <a-input disabled autocomplete="off" v-model:value="contractFormData.projectName" placeholder="Automated recognition"/>
+          <a-input class="modal-input" disabled autocomplete="off" v-model:value="contractFormData.projectName" placeholder="Automated recognition"/>
         </a-form-item>
         <a-form-item class="select-type" label="Affiliated Ecosystem" name="contractSelectChain" :rules="[{ required: true, message: 'Please select your chain!' }]">
           <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="contractFormData.contractSelectChain" placeholder="Please select...">
@@ -72,10 +72,10 @@
 
       <a-form layout="vertical" class="!mt-3" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
         <a-form-item v-if="frontEndRepositoryVisible" label="Repository URL" name="importRepositoryFrontEndProjectUrl">
-          <a-input autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
+          <a-input class="modal-input" autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
         <a-form-item label="Project Name" name="frontEndProjectName" :rules="[{ required: true, message: 'Please enter your project name!' }]">
-          <a-input disabled autocomplete="off" v-model:value="frontEndFormData.frontEndProjectName" placeholder="Automated recognition"/>
+          <a-input class="modal-input" disabled autocomplete="off" v-model:value="frontEndFormData.frontEndProjectName" placeholder="Automated recognition"/>
         </a-form-item>
         <a-form-item class="select-type" label="Framework Preset" name="frontEndSelectFramework" :rules="[{ required: true, message: 'Please select your framework!' }]">
           <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="frontEndFormData.frontEndSelectFramework" placeholder="Please select...">

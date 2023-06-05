@@ -73,7 +73,7 @@
             :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="(item, _) in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
-        <a-input v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
+        <a-input class="modal-input" v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
       </a-form-item>
     </a-form>
     <div class="text-center">

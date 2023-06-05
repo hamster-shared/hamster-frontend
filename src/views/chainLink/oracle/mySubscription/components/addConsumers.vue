@@ -19,7 +19,7 @@
                     <div class="ml-[25px] text-gray-400 text-[12px]">Input your consumer contract address for using funds of this subscription</div>
                 </div>
                 <div v-if="!isOrigin">
-                    <a-input class="mt-[10px]" v-model:value="formData.consumer" placeholder="Please input consumer" allow-clear autocomplete="off" />
+                    <a-input class="mt-[10px] modal-input" v-model:value="formData.consumer" placeholder="Please input consumer" allow-clear autocomplete="off" />
                 </div>
             </a-form-item>
         </a-form>

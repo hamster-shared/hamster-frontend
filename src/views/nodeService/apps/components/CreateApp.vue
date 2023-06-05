@@ -3,10 +3,10 @@
     <div class="text-[24px] text-[#151210] font-bold mb-4">Create App</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Name" name="name" >
-        <a-input v-model:value="formData.name" placeholder="Please enter Name" allow-clear autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Name" allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="Description" name="description" >
-        <a-input v-model:value="formData.description" placeholder="Please enter Description" allow-clear autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.description" placeholder="Please enter Description" allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="Chain" name="chain" >
         <a-select dropdownClassName="modal-select-dropdown" @change="setNetwork" v-model:value="formData.chain" placeholder="Please enter Chain" allow-clear autocomplete="off"

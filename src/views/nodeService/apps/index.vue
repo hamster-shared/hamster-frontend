@@ -39,7 +39,7 @@
     <div class="text-[24px] text-[#151210] font-bold mb-4">Connent to Hamster</div>
     <a-form :model="appInfo" layout="vertical">
       <a-form-item label="API KEY" name="api_key" >
-        <a-input disabled="true" v-model:value="appInfo.api_key">
+        <a-input class="modal-input" disabled="true" v-model:value="appInfo.api_key">
           <template #suffix>
             <img @click="copyInfo(appInfo.api_key)"
               src="@/assets/icons/copy.svg"
@@ -49,7 +49,7 @@
         </a-input>
       </a-form-item>
       <a-form-item label="HTTPS" name="http_link" >
-        <a-input disabled="true" v-model:value="appInfo.http_link">
+        <a-input class="modal-input" disabled="true" v-model:value="appInfo.http_link">
           <template #suffix>
             <img @click="copyInfo(appInfo.http_link)"
               src="@/assets/icons/copy.svg"
@@ -59,7 +59,7 @@
         </a-input>
       </a-form-item>
       <a-form-item label="WEBSOCKETS" name="websocket_link" >
-        <a-input disabled="true" v-model:value="appInfo.websocket_link">
+        <a-input class="modal-input" disabled="true" v-model:value="appInfo.websocket_link">
           <template #suffix>
             <img @click="copyInfo(appInfo.websocket_link)"
               src="@/assets/icons/copy.svg"
