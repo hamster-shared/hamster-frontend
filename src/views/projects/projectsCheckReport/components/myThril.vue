@@ -92,13 +92,16 @@
     reportFileDataMyThril.forEach(async( item:any )=>{
       try {
         const { data } = await apiGetContractContent(projectId, item.name)
-        const tempFile = data.split('\n')
-        // console.log('mythril-data:', tempFile)
+        if (data !== null && data !== undefined) {
+          
+          const tempFile = data.split('\n')
+          // console.log('mythril-data:', tempFile)
 
-        item.message?.forEach( (message:any) => {
-          message.file = tempFile.slice(message.line*1-1, message.line*1)[0]
-          // console.log('message.file:', message.file)
-        })
+          item.message?.forEach( (message:any) => {
+            message.file = tempFile.slice(message.line*1-1, message.line*1)[0]
+            // console.log('message.file:', message.file)
+          })
+        }
       } catch(err:any){
         console.log('mythril-err:',err)
       }

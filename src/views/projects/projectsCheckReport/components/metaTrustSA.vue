@@ -173,30 +173,32 @@ const getMetascanFile = async () => {
     let fileKey = reportFileDataSA[key].fileKey;
     try {
       const { data } = await apiGetMetascanFile(fileKey);
-      const tempFile = data.split('\n');
-      //截取需要显示的代码
-      reportFileDataSA[key].mwe.forEach((element, index) => {
-        let tempData = []
-        let lineTotal = 0;
-        if (tempFile.length >= element.lineStart) {
-          let endNum = element.lineEnd;
-          if (tempFile.length < element.lineEnd) {
-            endNum = tempFile.length;
+      if (data !== null && data !== undefined) {
+        const tempFile = data.split('\n');
+        //截取需要显示的代码
+        reportFileDataSA[key].mwe.forEach((element, index) => {
+          let tempData = []
+          let lineTotal = 0;
+          if (tempFile.length >= element.lineStart) {
+            let endNum = element.lineEnd;
+            if (tempFile.length < element.lineEnd) {
+              endNum = tempFile.length;
+            }
+            for (let i = element.lineStart; i <= endNum; i++) {
+              // tempData.push({
+              //   lineNum: i,
+              //   lineText: tempFile[i-1]
+              // });
+              tempData.push(tempFile[i - 1]);
+              lineTotal++;
+            }
           }
-          for (let i = element.lineStart; i <= endNum; i++) {
-            // tempData.push({
-            //   lineNum: i,
-            //   lineText: tempFile[i-1]
-            // });
-            tempData.push(tempFile[i - 1]);
-            lineTotal++;
-          }
-        }
-        reportFileDataSA[key].mwe[index].fileContent = [{
-          lineNum: lineTotal,
-          lineText: tempData.join("\n")
-        }]
-      });
+          reportFileDataSA[key].mwe[index].fileContent = [{
+            lineNum: lineTotal,
+            lineText: tempData.join("\n")
+          }]
+        });
+      }
     } catch (error: any) {
       console.log("erro:", error)
     }
