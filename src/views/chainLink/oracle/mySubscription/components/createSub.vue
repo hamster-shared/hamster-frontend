@@ -9,7 +9,7 @@
                 :options="subNetOptions" allow-clear class="sel"></a-select>
             </a-form-item>
             <a-form-item label="Subscription Name" name="name" >
-                <a-input v-model:value="formData.name" placeholder="Please input Subscription Name" allow-clear autocomplete="off" />
+                <a-input class="modal-input" v-model:value="formData.name" placeholder="Please input Subscription Name" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
         <div class="text-center flex justify-center">

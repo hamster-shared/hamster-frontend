@@ -12,7 +12,7 @@
       :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item>
         <div class="text-[#151210] mb-[12px]">Transaction Hash</div>
-        <a-input v-model:value="deployTxHash" :placeholder="'Getting now，please wait a moment...'" disabled>
+        <a-input class="modal-input" v-model:value="deployTxHash" :placeholder="'Getting now，please wait a moment...'" disabled>
           <template #suffix>
             <span class="open-link-css font-bold cursor-pointer" @click="queryDeploy">Query</span>
           </template>

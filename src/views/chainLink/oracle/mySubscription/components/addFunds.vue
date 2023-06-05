@@ -10,7 +10,7 @@
             </a-form-item>
             <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-[#FF4A4A]">{{subBalance}}link</span></div>
             <a-form-item label="Amount" name="amount" >
-                <a-input v-model:value="formData.amount" placeholder="Please enter the amount" allow-clear autocomplete="off" />
+                <a-input class="modal-input" v-model:value="formData.amount" placeholder="Please enter the amount" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
         <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-[#E2B578]">{{balance}}link</span></div>
