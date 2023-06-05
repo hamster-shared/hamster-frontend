@@ -104,7 +104,7 @@
 <script lang="ts" setup>
 import { watch } from "vue";
 import { useRouter } from "vue-router";
-import { onMounted, reactive, ref,onBeforeUnmount } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -142,7 +142,6 @@ const goHome = () => {
 const goPrjects = () => {
   router.push("/projects");
   isProject.value = true;
-  localStorage.setItem('isProject','true')
 }
 
 // 跳官网文档
@@ -153,7 +152,6 @@ const goDoc = () => {
 const goMiwaspace = () => {
   router.push("/middleware/miwaspace?key=1");
   isProject.value = false;
-  localStorage.setItem('isProject','false')
   // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
   // // 如果 local storage 里没有保存的钱包，直接返回
   // if (connectedWallets == null || connectedWallets === '[]') {
@@ -167,7 +165,6 @@ const goMiwaspace = () => {
 const goDashboard = () => {
   router.push("/middleware/dashboard");
   isProject.value = false;
-  localStorage.setItem('isProject','false')
 }
 
 const changeTheme = (val: string) => {
@@ -205,9 +202,9 @@ const signOut = () => {
 
 onMounted(() => {
   // 解决middle刷新页面选中在projects tab下问题
-  if(localStorage.getItem('isProject')=='false'){
+  if(window.location.href.indexOf('middleware') != -1){
     isProject.value = false
-  }else if(localStorage.getItem('isProject')=='true'){
+  }else if(window.location.href.indexOf('projects') != -1){
     isProject.value = true
   }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
@@ -223,10 +220,6 @@ onMounted(() => {
     walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
   }
 });
-// 需要清除，要不然更改url会有问题
-onBeforeUnmount(()=>{
-  localStorage.removeItem('isProject')
-})
 
 watch(
   () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
