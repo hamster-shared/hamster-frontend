@@ -545,16 +545,16 @@ const judgeOrigin = ()=>{
   border-radius: 5px;
 }
 
-:deep(.ant-input, .ant-input-affix-wrapper){
-  padding: 26px 16px;
-}
-:deep(.dark-css .ant-input, .ant-input-affix-wrapper){
-  background-color: #2B2B2B !important;
-  border-color: #2B2B2B !important;
-  color: white !important;
-}
-:deep(.white-css .ant-input, .ant-input-affix-wrapper){
-  background-color: #F6F6F6 !important;
-  border-color: #F6F6F6 !important;
-}
+// :deep(.ant-input, .ant-input-affix-wrapper){
+//   padding: 26px 16px;
+// }
+// :deep(.dark-css .ant-input, .ant-input-affix-wrapper){
+//   background-color: #2B2B2B !important;
+//   border-color: #2B2B2B !important;
+//   color: white !important;
+// }
+// :deep(.white-css .ant-input, .ant-input-affix-wrapper){
+//   background-color: #F6F6F6 !important;
+//   border-color: #F6F6F6 !important;
+// }
 </style>
