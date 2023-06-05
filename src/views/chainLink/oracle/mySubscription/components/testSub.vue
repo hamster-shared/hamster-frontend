@@ -25,10 +25,10 @@
                     <a-input-group>
                         <a-row :gutter="8" v-for="item in formData.secretArr" class="mt-[5px]">
                             <a-col :span="11">
-                                <a-input v-model:value="item.secretName" allow-clear autocomplete="off" />
+                                <a-input class="modal-input" v-model:value="item.secretName" allow-clear autocomplete="off" />
                             </a-col>
                             <a-col :span="11">
-                                <a-input v-model:value="item.secretValue" allow-clear autocomplete="off" />
+                                <a-input class="modal-input" v-model:value="item.secretValue" allow-clear autocomplete="off" />
                             </a-col>
                             <a-col :span="2" class="cursor-pointer" @click="addSecret(item)">
                                 <svg-icon style="border:#E2B578" :name="item.icon" size="40" class="mr-[10px]" />
@@ -38,10 +38,10 @@
                 </div>
             </a-form-item>
             <a-form-item v-if="formData.loaction=='Remote'" label="SecretURL" name="secreturl" >
-                <a-input v-model:value="formData.secreturl" allow-clear autocomplete="off" />
+                <a-input class="modal-input" v-model:value="formData.secreturl" allow-clear autocomplete="off" />
             </a-form-item>
             <a-form-item v-for="(item,index) in formData.args" :label="item.key" >
-                <a-input v-model:value="item.value" allow-clear autocomplete="off" />
+                <a-input class="modal-input" v-model:value="item.value" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
         <div class="text-center flex justify-center">

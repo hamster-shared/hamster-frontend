@@ -7,7 +7,7 @@
     <div class="text-[#73706E] mb-4">set parameters to create Container for deploy this FrontEnd on.</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="containerSize" name="containerSize">
-        <a-input v-model:value="formData.containerSize" placeholder="containerSize" disabled="true" autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.containerSize" placeholder="containerSize" disabled="true" autocomplete="off" />
       </a-form-item>
       <div>
         
@@ -23,7 +23,7 @@
             </a-tooltip>
           </div>
         </span>
-        <a-input onchange="" @change="setPortData" v-model:value="formData.containerPort" placeholder="containerPort"
+        <a-input class="modal-input" onchange="" @change="setPortData" v-model:value="formData.containerPort" placeholder="containerPort"
           allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="serviceProtocol" name="serviceProtocol">
@@ -41,7 +41,7 @@
             </a-tooltip>
           </div>
         </span>
-        <a-input v-model:value="formData.servicePort" placeholder="servicePort" allow-clear autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.servicePort" placeholder="servicePort" allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item name="serviceTargetPort">
         <span slot="label">
@@ -53,7 +53,7 @@
             </a-tooltip>
           </div>
         </span>
-        <a-input v-model:value="formData.serviceTargetPort" placeholder="serviceTargetPort" allow-clear
+        <a-input class="modal-input" v-model:value="formData.serviceTargetPort" placeholder="serviceTargetPort" allow-clear
           autocomplete="off" />
       </a-form-item>
     </a-form>

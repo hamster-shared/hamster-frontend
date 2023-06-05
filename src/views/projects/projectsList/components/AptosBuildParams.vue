@@ -10,7 +10,7 @@
       <template v-for="(item, index) in aptosBuildParams">
         <a-input type="hidden" :name="[index, 'key']" v-model:value="formData[index].key"></a-input>
         <a-form-item :label="item.key" :name="[index, 'value']" :rules="[{ required: true, trigger: 'change', message: 'Cannot be empty' }]" >
-          <a-input v-model:value="formData[index].value" allowClear />
+          <a-input class="modal-input" v-model:value="formData[index].value" allowClear />
         </a-form-item>
       </template>
     </a-form>
