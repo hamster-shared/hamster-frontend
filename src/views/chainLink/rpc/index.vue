@@ -31,7 +31,7 @@
             <label>{{record.chain}} {{record.network}}</label>
           </template>
           <template v-if="column.dataIndex === 'action'">
-            <label class="text-[#F5B50D] ml-2 cursor-pointer" @click="toDetails(record)">View</label>
+            <a @click="toDetails(record)">View</a>
           </template>
         </template>
       </a-table>

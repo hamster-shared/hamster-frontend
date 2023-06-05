@@ -19,8 +19,8 @@ export const addToChain = (chainId: string,chainName:string,rpcUrl:string,symbol
         },
     ],
     }).then((res: any) => {
-    message.info('successfully added')
-    // console.log(res)
+      message.info('operate successfully')
+      // console.log(res)
     }).catch((err: any) => {
     console.log(err.code, 'code')
     if (err.code === 4001) {
