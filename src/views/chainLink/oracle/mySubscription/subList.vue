@@ -16,7 +16,7 @@
         </div>
         <a-table :loading="loading" :dataSource="subListData" :columns="subListColumns" :pagination="pagination" class="table">
             <template #operation="{ record }">
-                <a @click="goSubDetail(record)" class="mr-16">View</a>
+                <a @click="goSubDetail(record)">View</a>
             </template>
             <template #network="{ record }">
                 <span>{{record.chain}} {{record.network}}</span>
@@ -111,6 +111,7 @@ const subListColumns:any = [
     {
         title: 'Action',
         dataIndex: 'operation',
+        align:'center',
         slots: { customRender: 'operation' },
     }
 ]
