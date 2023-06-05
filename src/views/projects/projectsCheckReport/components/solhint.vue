@@ -94,17 +94,20 @@ const getMetascanFile = async () => {
   for (let key in reportFileData) {
     try {
       const { data } = await apiGetContractContent(params.id, reportFileData[key].name);
-      const tempFile = data.split('\n');
+      if (data !== null && data !== undefined) {
+        const tempFile = data.split('\n');
 
-      //截取需要显示的代码
-      reportFileData[key].message.forEach((element, index) => {
-        let tempData = '';
-        if (tempFile.length >= element.line) {
-          tempData = tempFile[parseInt(element.line) - 1];
-        }
-        element.fileContent = tempData;
-        // reportFileData[ind].message[index].fileContent = tempData;
-      });
+        //截取需要显示的代码
+        reportFileData[key].message.forEach((element, index) => {
+          let tempData = '';
+          if (tempFile.length >= element.line) {
+            tempData = tempFile[parseInt(element.line) - 1];
+          }
+          element.fileContent = tempData;
+          // reportFileData[ind].message[index].fileContent = tempData;
+        });
+      }
+      
     } catch (error: any) {
       console.log("erro:", error)
     }

@@ -169,14 +169,16 @@
       // console.log('fileKey',fileKey)
       try {
         const { data } = await apiGetMetascanFile(fileKey);
-        const tempFile = data.split('\n')
+        if (data !== null && data !== undefined) {
+          const tempFile = data.split('\n')
 
-        // console.log('fileKey-data:',tempFile)
+          // console.log('fileKey-data:',tempFile)
 
-        reportFileDataCQ[key]?.Details?.forEach((item:any)=>{
-          item.file = tempFile.slice(item.AffectedFiles.Line*1-1, item.AffectedFiles.Line*1)[0]
-          // console.log('item:',item)
-        })
+          reportFileDataCQ[key]?.Details?.forEach((item:any)=>{
+            item.file = tempFile.slice(item.AffectedFiles.Line*1-1, item.AffectedFiles.Line*1)[0]
+            // console.log('item:',item)
+          })
+        }
       } catch (error: any) {
         console.log("erro:", error)
       }
