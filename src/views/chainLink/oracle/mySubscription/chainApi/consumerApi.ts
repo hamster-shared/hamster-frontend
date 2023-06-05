@@ -23,14 +23,12 @@ export class ConsumerApi {
   async executeRequest(
     source: string,
     secrets: string,
-    secretsLocation: number,
     args: string[],
     subscriptionId: number,
     gasLimit: number): Promise<any> {
     return this.contractApi.sendTransaction(
       'executeRequest',
       source, secrets,
-      secretsLocation,
       args,
       subscriptionId,
       gasLimit,

@@ -276,7 +276,7 @@ const handleConfirm = async()=>{
     }else{
         secretUrl = formData.secreturl
     }
-    consumerApi.value.executeRequest(record.value.script, '0x', secretsloction, argsArray, subId.value, gasLimit).then((tx:any)=>{
+    consumerApi.value.executeRequest(record.value.script, '0x', argsArray, subId.value, gasLimit).then((tx:any)=>{
         const params = {
             subscriptionId:parseInt(keyId.value),
             secretsloction,
