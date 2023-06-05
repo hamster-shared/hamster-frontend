@@ -10,7 +10,7 @@
           <div v-for="val in RPCList" :key="val.id" class="box">
             <div class="name">{{ val.chain }}</div>
             <div class="network">{{ val.network }}</div>
-            <div class="view" @click="networkClick(val)">View</div>
+            <div class="view open-link-css" @click="networkClick(val)">View</div>
           </div>
 
           <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css" v-if="RPCList.length>4">
@@ -140,7 +140,7 @@ onMounted(()=>{
   width: 50px;
   height: 40px;
   cursor: pointer;
-  color:#E2B578; 
+  // color:#E2B578; 
   text-align: right;
   float: right;
   top: -40px;
