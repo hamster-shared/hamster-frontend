@@ -28,7 +28,7 @@
     <div class="border border-solid border-[#EBEBEB] rounded-xl mt-12 p-4">
       <div class="mb-6">
         <span class="block mb-2 text-base font-bold"><span class="text-[red]">* </span>Request Name</span>
-        <a-input v-model:value.trim="requestName" placeholder="Please input request name" class="!w-[50%]"/>
+        <a-input v-model:value.trim="requestName" placeholder="Please input request name" class="!w-[50%] dark:text-[#FFFFFF]"/>
         <span class="text-[red] block" v-show="alertInfo">{{ alertInfo }}</span>
       </div>
       <div class="bg-[#F6F6F6] dark:bg-[#35322E] h-[60px] rounded-t-xl">
