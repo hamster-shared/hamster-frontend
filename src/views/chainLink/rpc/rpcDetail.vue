@@ -246,9 +246,10 @@ const judgeOrigin = ()=>{
 }
 onMounted(async () => {
   await getChainData();
-  getRequestLogData();
+  await getRequestLogData();
   console.log('tabNetwork',tabNetwork.value)
   judgeOrigin()
+  handleChange(tabNetwork.value)
 })
 </script>
 <style lang='less' scoped>

@@ -218,7 +218,11 @@ const getProjectsWorkflows = async () => {
   }
 };
 const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
-  router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
+  if (type == '1') {
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
+  } else if(type == '2'){
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
+  }
 }
 const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
   delWorkflowId.value = workflowId;
