@@ -86,7 +86,7 @@
   const reportIssue = metaTrustData.value.issues
   const projectId = metaTrustData.value.projectId
   const reportFileDataMyThril = Object.assign([], metaTrustData.value.reportFileData);
-
+console.log("reportFileDataMyThril:",reportFileDataMyThril);
   //获取显示的代码
   const getMythrilscanFile = () => {
     reportFileDataMyThril.forEach(async( item:any )=>{
