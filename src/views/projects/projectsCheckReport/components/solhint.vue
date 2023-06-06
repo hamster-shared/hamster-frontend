@@ -10,7 +10,7 @@
       </div>
       <a-collapse v-else v-model:activeKey="activeKey" v-for="(val,key) in reportFileData" :key="key">
         <a-collapse-panel :key="key" :header="val.name" :showArrow="false">
-          <div v-if="val.message.length === 0" class="text-center">
+          <div v-if="val.message === null || val.message.length === 0" class="text-center">
             <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
             <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
