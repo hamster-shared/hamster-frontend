@@ -188,8 +188,11 @@ const getProjectsContract = async () => {
 const getProjectsVersion = async () => {
   try {
     const { data } = await apiProjectsVersion(detailId.value.toString());
+    const items = data.filter(function (val: any) {
+        return val && val.trim(); 
+    })
     versionList.value.length = 1;
-    versionList.value = versionList.value.concat(data);
+    versionList.value = versionList.value.concat(items);
 
   } catch (error: any) {
     console.log("erro:", error)
@@ -200,9 +203,11 @@ const getProjectsVersion = async () => {
 const getProjectsContractNetwork = async () => {
   try {
     const { data } = await apiProjectsContractNetwork(detailId.value.toString());
+    const items = data.filter(function (val: any) {
+        return val && val.trim(); 
+    })
     networkList.value.length = 1;
-    networkList.value = networkList.value.concat(data);
-
+    networkList.value = networkList.value.concat(items);
   } catch (error: any) {
     console.log("erro:", error)
   } finally {
@@ -213,8 +218,11 @@ const getProjectsContractNetwork = async () => {
 const getProjectsContractName = async () => {
   try {
     const { data } = await apiProjectsContractName(detailId.value.toString());
+    const items = data.filter(function (val: any) {
+        return val && val.trim(); 
+    })
     contractList.value.length = 1;
-    contractList.value = contractList.value.concat(data);
+    contractList.value = contractList.value.concat(items);
 
   } catch (error: any) {
     console.log("erro:", error)
