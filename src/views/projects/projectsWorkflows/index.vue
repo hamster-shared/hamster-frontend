@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo"></Breadcrumb>
+      <Breadcrumb :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>

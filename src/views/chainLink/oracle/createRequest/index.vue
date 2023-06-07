@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <!-- <div class="mb-4 text-2xl font-bold">Create Request</div> -->
 
     <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB] mt-4">

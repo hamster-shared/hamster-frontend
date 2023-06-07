@@ -1,5 +1,5 @@
 <template>
-    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div class="content">
         <div class="flex justify-between items-center mt-[30px]">
             <div>

@@ -1,5 +1,5 @@
 <template>
-  <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"></bread-crumb>
+  <bread-crumb :routes="breadCrumbInfo"></bread-crumb>
   <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" class="mt-[20px]"></WorkflowsInfo>
   <MetaTrustSA :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
   <MetaTrustSP :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>

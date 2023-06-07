@@ -1,5 +1,5 @@
 <template>
-  <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+  <bread-crumb :routes="breadCrumbInfo"/>
   <div
       class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
     <div class="grid grid-cols-5 gap-4">

@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+  <Breadcrumb :routes="breadCrumbInfo"/>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
     <a-button v-if="tokenMatemaskWallet" type="primary" style="float:right;margin-right: 20px;" @click="downloadInfo">Download</a-button>
     <a-tabs v-model:activeKey="activeKey">

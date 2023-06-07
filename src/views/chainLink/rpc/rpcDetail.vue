@@ -1,6 +1,6 @@
 <template>
   <div class="rpc-detail">
-    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div
       class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="">

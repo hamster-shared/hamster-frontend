@@ -1,6 +1,6 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
 
     <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2'">
     </FrontendTemplate>
