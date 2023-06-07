@@ -277,19 +277,14 @@ const judgeOrigin = ()=>{
       path:'/projects/create'
     },
     {
+      breadcrumbName:'template',
+      path:`/projects/template/${params.type}`
+    },
+    {
       breadcrumbName:templatesDetail.value.name,
       path:''
     },
   ]
-  // 直接从create界面的模板点击跳转到详情页
-  if(query.fromCreate){
-    return
-  }else{
-    breadCrumbInfo.value.splice(1,0,{
-      breadcrumbName:'template',
-      path:`/projects/template/${params.type}`
-    }) 
-  }
 }
 
 const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
