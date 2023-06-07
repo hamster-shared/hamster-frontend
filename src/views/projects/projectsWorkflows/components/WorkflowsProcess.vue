@@ -195,9 +195,15 @@ watch(
     })
   }, { deep: true, immediate: true }
 );
-
+const timer = ref();
 onMounted(() => {
   initScroll()
+  timer.value = setTimeout(() => {
+    nextTick(() => { 
+      bscroll.value && bscroll.value.refresh();
+    })
+    clearTimeout(timer.value);
+  }, 1000)
 })
 
 onUnmounted(() => {
