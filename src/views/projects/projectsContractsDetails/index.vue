@@ -161,6 +161,8 @@ const providers = new WalletStandardAdapterProvider()
 // get tokens from the DevNet faucet server
 const provider = providers.get()[0]
 
+const workflowsDetailsData = ref<any>({})
+
 const setFunctionList = (moduleVal: string) => {
   getFunctionList(moduleVal);
   moduleName.value = moduleVal;
@@ -374,6 +376,7 @@ const sendFunction = async (moduleName: string, functionName: string) => {
 
 const getProjectsDetail = async () => {
   const { data } = await apiGetProjectsDetail(queryJson.id)
+  Object.assign(workflowsDetailsData,data)
   frameType.value = data.frameType
   projectType.value = data.type;
   deployType.value = data.deployType;
@@ -465,23 +468,14 @@ const judgeOrigin = ()=>{
       path:'/projects'
     },
     {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
       breadcrumbName:'Dashboard',
       path:''
     },
   ]
-  if(!route.query?.fromList){
-    breadCrumbInfo.value.splice(1,0,{
-      breadcrumbName:'Deploy',
-      path:localStorage.getItem('deplayPath')
-    })
-  }
-  if(route.query.name && route.query.name!='undefined'){
-    breadCrumbInfo.value.splice(1,0,{
-      breadcrumbName:route.query?.name?.replace('[','#'),
-      path:localStorage.getItem('fromNamePath')
-    })
-  }
-  console.log(1111111,breadCrumbInfo.value,frameType.value)
 }
 
 </script>
