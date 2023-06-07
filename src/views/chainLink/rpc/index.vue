@@ -181,7 +181,7 @@ const currentPagination = reactive({
 });
 
 const toDocs = () => {
-  window.open('https://hamsternet.io/docs/')
+  window.open('https://hamsternet.io/docs/Middleware/User%20Guide/RPC/')
 }
 
 const initChart = (chartElement: HTMLElement, themeValue: string) => {

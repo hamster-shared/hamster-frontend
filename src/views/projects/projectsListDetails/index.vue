@@ -32,7 +32,7 @@
                 <a href="javascript:;" style="color:#151210">General</a>
               </a-menu-item>
               <!-- Check Setting -->
-              <a-menu-item v-if="frameType === 1" @click="GetCheck" :visible="visible">
+              <a-menu-item v-if="frameType === 1 && projectType=='1'" @click="GetCheck" :visible="visible">
                 <a href="javascript:;" style="color:#151210">Check Setting</a>
               </a-menu-item>
 

@@ -145,7 +145,7 @@ const getCheckReport = async () => {
     }
   })
   // evm的错误统计
-  if(contractFrameType=='1'){
+  if(contractFrameType=='1' && data?.length){
     for(let i=0;i<data.length;i++){
       issue += data[i].issues
     }

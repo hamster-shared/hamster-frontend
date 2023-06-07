@@ -119,21 +119,6 @@ const openChainIDE = (name: string) => {
 }
 </script>
 <style lang='less' scoped>
-.Severity-btn{
-  margin-left: 16px;
-  width: 100px;
-  background-color: transparent;
-  border: 2px solid #E2B578;
-  color: #E2B578;
-}
-.Severity-btn-hover:hover{
-  background: rgba(226,181,120,0.2);
-  color: #E2B578;
-}
-.Severity-btn-checked{
-  background: #E2B578;
-  color: #FFFFFF;
-}
 .svg-icon {
   transform: rotate(180deg);
   transition: all .3s, visibility 0s;
