@@ -1,6 +1,6 @@
 <template>
   <div class="contractSetails flex justify-between mb-[24px]">
-    <Breadcrumb class="!text-[24px]" :routes="breadCrumbInfo">
+    <Breadcrumb :routes="breadCrumbInfo">
       <template v-slot:tags>
         <span
           class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">

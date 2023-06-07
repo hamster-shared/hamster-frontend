@@ -1,7 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
-      <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+      <bread-crumb :routes="breadCrumbInfo"/>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
         <a-button type="primary" class="ml-4" :loading="downloadLoading" @click="downloadTemplate">Download</a-button>

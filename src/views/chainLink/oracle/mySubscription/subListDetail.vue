@@ -1,5 +1,5 @@
 <template>
-    <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div class="text-[24px] font-bold mt-[10px]">Basic Information</div>
     <div class="mt-[20px]">
         <p>

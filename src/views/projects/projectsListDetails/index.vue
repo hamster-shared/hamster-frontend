@@ -2,7 +2,7 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
       <div class="flex items-center">
-        <bread-crumb class="!text-[24px]" :routes="breadCrumbInfo"/>
+        <bread-crumb :routes="breadCrumbInfo"/>
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
           <label v-if="projectType === '1'">
             <div>{{ ContractFrameTypeEnum[projectsDetail.frameType] }}</div>
