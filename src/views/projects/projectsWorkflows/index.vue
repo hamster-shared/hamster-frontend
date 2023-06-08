@@ -10,7 +10,7 @@
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- frameType == '1' && queryJson.type === '1',也就是evm 的 check 走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="contractFrameType == '1' && queryJson.type === '1'" :currentName="currentName"></CheckResult>
+      <CheckResult v-if="workflowsDetailsData.frameType == 1 && queryJson.type === '1'" :currentName="currentName"></CheckResult>
       <div v-else>
         <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
@@ -27,7 +27,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
-    <AiAnalysis v-if="isShowAiAnalysis && contractFrameType != '1'" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
+    <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
@@ -51,7 +51,6 @@ import CheckResult from './components/CheckResult.vue'
 
 const { t } = useI18n()
 const { params,query } = useRoute();
-const contractFrameType = ref()
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -145,7 +144,7 @@ const getCheckReport = async () => {
     }
   })
   // evm的错误统计
-  if(contractFrameType=='1' && data?.length){
+  if(workflowsDetailsData.frameType==1 && data?.length){
     for(let i=0;i<data.length;i++){
       issue += data[i].issues
     }
@@ -243,7 +242,6 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    contractFrameType.value = data.frameType
     // console.log("data project:", data);
     Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status,name:data.name,id:data.id,type:data.type })
     localStorage.setItem('frameType',data.frameType)
