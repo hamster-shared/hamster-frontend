@@ -710,10 +710,10 @@ const changeChain = (val: string) => {
     }]
   }else if (val === 'Filecoin'){
     networkData.value = [{
-      name: 'Filecoin/Hyperspace',
-      id: 'c45',
-      url: 'https://api.hyperspace.node.glif.io/rpc/v1',
-      networkName: 'Filecoin/Hyperspace'
+      name: 'Filecoin/Calibrationnet',
+      id: '4cb2f',
+      url: 'https://api.calibration.node.glif.io/rpc/v1',
+      networkName: 'Filecoin/Calibrationnet'
     },{
       name: 'Filecoin/Mainnet',
       id: '13a',
