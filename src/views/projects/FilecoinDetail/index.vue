@@ -208,11 +208,11 @@ onMounted(async()=>{
   await getContent()
   breadCrumbInfo.value = [
       {
-        breadcrumbName:'Create',
+        breadcrumbName:'Create Project',
         path:'/projects/create'
       },
       {
-        breadcrumbName:'Filecoin Contract Editor',
+        breadcrumbName:activeKey.value,
         path:''
       },
     ]
