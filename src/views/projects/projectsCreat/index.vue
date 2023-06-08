@@ -247,7 +247,7 @@ const goDetail = async (val: any) => {
   if (val.lastVersion !== 'Coming soon') {
     localStorage.setItem("createFormData", JSON.stringify(formData));
     localStorage.setItem('frontendTemplateDetail', JSON.stringify(val));
-    setCreateProjectValue("/projects/templates/" + val.id + "/details/" + formData.type+'?fromCreate=1')
+    setCreateProjectValue("/projects/templates/" + val.id + "/details/" + formData.type)
   }
 }
 

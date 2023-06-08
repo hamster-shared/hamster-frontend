@@ -50,13 +50,18 @@
     repositoryUrl: '',
     errorNumber: 0,
     duration: 0,
+    name:'',
+    type:0,
+    id:0
   });
 
   const getCodeRepository = async() => {
     try {
       const { data } = await apiGetProjectsDetail(queryJson.id);
-      // console.log("getCodeRepository-data:",data);
       workflowsDetailsData.repositoryUrl = data.repositoryUrl;
+      workflowsDetailsData.name = data.name;
+      workflowsDetailsData.id = data.id;
+      workflowsDetailsData.type = data.type
       gistId.value = data.gistId;
     } catch (error: any) {
       console.log("erro:", error)
@@ -126,29 +131,37 @@
     } 
     return issue;
   }
-  onMounted(() => {
+  // 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:query?.currentName?.replace('[','#'),
+      path:localStorage.getItem('evmCheckWorkflow')
+    },
+    {
+      breadcrumbName:'Check Report',
+      path:''
+    },
+  ]
+}
+  onMounted(async() => {
     console.log('queryJson:',queryJson,query)
-    getCodeRepository()
+    await getCodeRepository()
     getTime()
     if (params.checktype == 'gasInfoDetail') {
       getCheckReport();
     } else {
       getReportInfo();
     }
-    breadCrumbInfo.value = [
-      {
-        breadcrumbName:'projects',
-        path:'/projects'
-      },
-      {
-        breadcrumbName:query?.currentName?.replace('[','#'),
-        path:localStorage.getItem('evmCheckWorkflow')
-      },
-      {
-        breadcrumbName:'Check Report',
-        path:''
-      },
-    ]
+    judgeOrigin()
   })
 
 </script>

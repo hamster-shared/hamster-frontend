@@ -9,8 +9,8 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'" :currentName="currentName"></CheckResult>
+      <!-- frameType == '1' && queryJson.type === '1',也就是evm 的 check 走统计表格，其它情况走原来的流水线 -->
+      <CheckResult v-if="contractFrameType == '1' && queryJson.type === '1'" :currentName="currentName"></CheckResult>
       <div v-else>
         <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
@@ -51,7 +51,7 @@ import CheckResult from './components/CheckResult.vue'
 
 const { t } = useI18n()
 const { params,query } = useRoute();
-const contractFrameType = localStorage.getItem('frameType')
+const contractFrameType = ref()
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -84,6 +84,9 @@ const workflowsDetailsData = reactive({
   frameType: 0,
   deployType: 0,
   checkStatus: 0,
+  name:'',
+  type:0,
+  id:0
 });
 const breadCrumbInfo = ref<any>([])
 
@@ -240,8 +243,9 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
+    contractFrameType.value = data.frameType
     // console.log("data project:", data);
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status })
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status,name:data.name,id:data.id,type:data.type })
     localStorage.setItem('frameType',data.frameType)
   } catch (err: any) {
     console.info(err)
@@ -266,21 +270,28 @@ const setCurrentName = () => {
     currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
   }
 }
-
-onMounted(async() => {
-  await getWorkflowsDetails();
-  getProjectsDetailData();
-  loadInfo();
+// 判断跳转来源
+const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
       breadcrumbName:'projects',
       path:'/projects'
     },
     {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
       breadcrumbName:currentName.value,
       path:''
     },
   ]
+}
+onMounted(async() => {
+  await getWorkflowsDetails();
+  await getProjectsDetailData();
+  await loadInfo();
+  judgeOrigin()
 })
 
 onUnmounted(() => {

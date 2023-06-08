@@ -174,6 +174,8 @@ const breadCrumbInfo = ref<any>([])
 // sui
 const suiWallet = new WalletStandardAdapterProvider()
 
+const workflowsDetailsData = ref<any>({})
+
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -213,7 +215,7 @@ const deployContract = async (item: any) => {
     localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
     if (receiptResponsePromise.status === 'ACCEPTED_ON_L2') {
       // contract_address.value = response.contract_address[0]
-      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}?name=${route.query.name}`)
+      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
     } else {
       loading.value = false
     }
@@ -343,7 +345,7 @@ const deploySuiContract = async (item: any)=> {
 
   loading.value = false
 
-  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}?name=${route.query.name}`)
+  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
 // 查询版本号
@@ -608,7 +610,7 @@ const setContractFactory = async (nameData: any) => {
   const result = res.some(it => {
     return it !== undefined
   })
-  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}?name=${route.query.name}`) : loading.value = false
+  result ? router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`) : loading.value = false
 }
 
 const setAbiInfo = (selectItem: any) => {
@@ -729,6 +731,7 @@ const changeVersion = (val: string) => {
 const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryParams.id);
+    Object.assign(workflowsDetailsData,data)
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
@@ -769,17 +772,14 @@ const judgeOrigin = ()=>{
       path:'/projects'
     },
     {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
       breadcrumbName:'Deploy',
       path:''
     },
   ]
-  if(route.query?.name && route.query?.name!='undefined'){
-    const name = route.query?.name?.replace('[','#')
-    breadCrumbInfo.value.splice(1,0,{
-      breadcrumbName:name,
-      path:localStorage.getItem('fromNamePath')
-    })
-  }
 }
 onMounted(async () => {
   localStorage.removeItem('deplayPath')
@@ -787,7 +787,7 @@ onMounted(async () => {
   getVersion()
   await getProjectsDetail();
   await getProjectsContract()
-  judgeOrigin()
+  await judgeOrigin()
 })
 
 </script>

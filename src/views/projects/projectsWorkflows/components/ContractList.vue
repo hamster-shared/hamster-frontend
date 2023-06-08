@@ -33,11 +33,10 @@
               <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
                 View Deploy Process</div>
-                 <!-- 此处面包屑跳转has a problem，so hide it -->
-              <!-- <div v-if="record.network.String !== ''"
+              <div v-if="record.network.String !== ''"
                 class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor"
                 @click="toDetailUrl(record)">View Dashboard
-              </div> -->
+              </div>
             </template>
             <label class="dark:text-[#E0DBD2] text-[#151210] cursor-pointer hoverColor">More</label>
           </a-tooltip>
@@ -133,11 +132,9 @@ const props = defineProps({
 const { contractListData,frameType,currentName } = toRefs(props)
 
 const toDeployUrl = (val: any) => {
-  localStorage.removeItem('fromNamePath')
   const contract = val.id || '00';
   const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','[')}`
   router.push(path)
-  localStorage.setItem('fromNamePath',route.fullPath)
 }
 
 const toDetailUrl = (val: any) => {
