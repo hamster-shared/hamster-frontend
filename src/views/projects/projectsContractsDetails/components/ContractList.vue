@@ -43,7 +43,7 @@
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive, toRefs } from "vue";
+import { ref, reactive, toRefs,onMounted } from "vue";
 import YAML from "yaml";
 import ContractForm from "./ContractForm.vue";
 import { useThemeStore } from "@/stores/useTheme";
@@ -76,29 +76,6 @@ if (data.abi) {
 } else {
   Object.assign(abiInfoData, data)
 }
-nextTick(()=>{
-  // debugger send call
-  if(frameType?.value && frameType?.value==2){
-    Object.assign(sendAbis, data.exposed_functions)
-    Object.assign(callAbis, data.structs)
-    console.log('sendAbis,callAbis',sendAbis,callAbis)
-    aptosName.value = data.name
-    aptosAddress.value = data.address
-    commonFirst()
-  }else{
-    console.log('others~~~~~~~')
-    abiInfoData.map((item: any) => {
-      if (item.type === "function") {
-        if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
-          sendAbis.push(item)
-        } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
-          callAbis.push(item)
-        }
-      }
-      commonFirst()
-    })
-  }
-})
 const commonFirst = ()=>{
   if (sendAbis.length > 0) {
     checkValue.value = sendAbis[0]?.name;
@@ -171,6 +148,32 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
   emit("checkContract", inputs, name);
   emit("checkContract", outputs, name);
 }
+
+onMounted(()=>{
+  // debugger send call
+  // debugger
+  console.log(111111111111111,contractAddress?.value, abiInfo?.value, frameType?.value)
+  if(frameType?.value && frameType?.value==2){
+    Object.assign(sendAbis, data.exposed_functions)
+    Object.assign(callAbis, data.structs)
+    console.log('sendAbis,callAbis',sendAbis,callAbis)
+    aptosName.value = data.name
+    aptosAddress.value = data.address
+    commonFirst()
+  }else{
+    console.log('000000000000000')
+    abiInfoData.map((item: any) => {
+      if (item.type === "function") {
+        if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
+          sendAbis.push(item)
+        } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+          callAbis.push(item)
+        }
+      }
+      commonFirst()
+    })
+  }
+})
 
 </script>
 <style lang='less' scoped>

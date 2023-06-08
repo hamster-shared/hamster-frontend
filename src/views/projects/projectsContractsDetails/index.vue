@@ -30,7 +30,7 @@
         </a-table>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
+          <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
             @checkContract="checkContract">
           </ContractList>
         </div>
