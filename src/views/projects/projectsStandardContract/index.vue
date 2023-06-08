@@ -147,9 +147,9 @@ onMounted(async () => {
 // 判断跳转来源
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
-    {
-      breadcrumbName:'Projects',
-      path:'/projects'
+  {
+      breadcrumbName:'Create Project',
+      path:'/projects/create'
     },
     {
       breadcrumbName:'Template',
