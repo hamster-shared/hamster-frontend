@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          <a-button class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail?currentName=${currentName.replace('#','[')}`)">View Detail</a-button>
+          <a-button id="view-detail" class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail?currentName=${currentName.replace('#','[')}`)">View Detail</a-button>
         </div>
       </div>
 

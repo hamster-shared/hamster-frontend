@@ -273,7 +273,7 @@ onMounted(async () => {
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'Create',
+      breadcrumbName:'Create Project',
       path:'/projects/create'
     },
     {
