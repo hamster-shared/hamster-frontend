@@ -86,11 +86,11 @@ onMounted(() => {
   getTemplatesCategory();
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'create',
+      breadcrumbName:'Create',
       path:'/projects/create'
     },
     {
-      breadcrumbName:'template',
+      breadcrumbName:'Template',
       path:''
     },
   ]

@@ -269,7 +269,7 @@ onMounted(async() => {
   await getProjectsDetail();
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'projects',
+      breadcrumbName:'Projects',
       path:'/projects'
     },
     {

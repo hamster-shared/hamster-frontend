@@ -1,6 +1,6 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <div class="flex justify-between">
+    <div class="flex justify-between items-center">
       <bread-crumb :routes="breadCrumbInfo"/>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
@@ -273,11 +273,11 @@ onMounted(async () => {
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'create',
+      breadcrumbName:'Create',
       path:'/projects/create'
     },
     {
-      breadcrumbName:'template',
+      breadcrumbName:'Template',
       path:`/projects/template/${params.type}`
     },
     {

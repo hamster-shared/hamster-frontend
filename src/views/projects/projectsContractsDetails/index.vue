@@ -1,5 +1,5 @@
 <template>
-  <div class="contractSetails flex justify-between mb-[24px]">
+  <div class="contractSetails flex justify-between mb-[24px] items-center">
     <Breadcrumb :routes="breadCrumbInfo">
       <template v-slot:tags>
         <span
@@ -464,7 +464,7 @@ onBeforeMount(async() => {
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'projects',
+      breadcrumbName:'Projects',
       path:'/projects'
     },
     {
