@@ -148,11 +148,11 @@ onMounted(async () => {
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'projects',
+      breadcrumbName:'Projects',
       path:'/projects'
     },
     {
-      breadcrumbName:'template',
+      breadcrumbName:'Template',
       path:`/projects/template/1`
     },
     {

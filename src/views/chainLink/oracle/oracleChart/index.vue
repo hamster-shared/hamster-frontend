@@ -181,7 +181,7 @@ const getOracleChart = async ()=> {
     xAxisData.value = data.xaxisData
     const seriesDataInfo =  data.seriesData?.map((item:any) => {
       item['type'] = 'line'
-      item['stack'] = 'Total'
+      // item['stack'] = 'Total'
 
       return item
     });

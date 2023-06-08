@@ -768,7 +768,7 @@ const judgeOrigin = ()=>{
   localStorage.setItem('deplayPath',route.fullPath)
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'projects',
+      breadcrumbName:'Projects',
       path:'/projects'
     },
     {

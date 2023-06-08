@@ -135,7 +135,7 @@
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'projects',
+      breadcrumbName:'Projects',
       path:'/projects'
     },
     {

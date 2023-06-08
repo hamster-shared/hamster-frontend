@@ -131,12 +131,12 @@ const setEchartData = async() => {
     })
     const seriesDataInfo =  data.seriesData?.map((item:any) => {
       item['type'] = 'line'
-      item['stack'] = 'Total'
+      // item['stack'] = 'Total'
 
       return item
     });
     seriesData.value = seriesDataInfo
-    console.log('getOracleChart-data:', data)
+    console.log('getOracleChart-data:', data,seriesDataInfo)
   } catch(err:any){
     console.log('getOracleChart-err:', err)
   }
