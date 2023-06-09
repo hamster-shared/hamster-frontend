@@ -34,8 +34,8 @@
           </div>
           
           <template #extra>
-            <div>
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div class="open-link-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.message.length + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -86,19 +86,22 @@
   const reportIssue = metaTrustData.value.issues
   const projectId = metaTrustData.value.projectId
   const reportFileDataMyThril = Object.assign([], metaTrustData.value.reportFileData);
-
+  
   //获取显示的代码
   const getMythrilscanFile = () => {
     reportFileDataMyThril.forEach(async( item:any )=>{
       try {
         const { data } = await apiGetContractContent(projectId, item.name)
-        const tempFile = data.split('\n')
-        // console.log('mythril-data:', tempFile)
+        if (data !== null && data !== undefined) {
+          
+          const tempFile = data.split('\n')
+          // console.log('mythril-data:', tempFile)
 
-        item.message?.forEach( (message:any) => {
-          message.file = tempFile.slice(message.line*1-1, message.line*1)[0]
-          // console.log('message.file:', message.file)
-        })
+          item.message?.forEach( (message:any) => {
+            message.file = tempFile.slice(message.line*1-1, message.line*1)[0]
+            // console.log('message.file:', message.file)
+          })
+        }
       } catch(err:any){
         console.log('mythril-err:',err)
       }
@@ -116,21 +119,6 @@
 </script>
 
 <style lang='less' scoped>
-.severity-btn{
-  margin-left: 16px;
-  width: 100px;
-  background: rgba(255,255,255,0.2);
-  border: 2px solid #E2B578;
-  color: #E2B578;
-}
-.severity-btn-hover:hover{
-  background: rgba(226,181,120,0.2);
-  color: #E2B578;
-}
-.severity-btn-checked{
-  background: #E2B578;
-  color: #FFFFFF;
-}
 .svg-icon {
   transform: rotate(180deg);
   transition: all .3s, visibility 0s;

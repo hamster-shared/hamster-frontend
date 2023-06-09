@@ -1,11 +1,11 @@
 const chainlinkRoute = [
   {
-      path: "/dashboard",
-      redirect: "/chainlink",
+      path: "/middleware/dashboard",
+      redirect: "/middleware/dashboard",
       component:() => import('@/views/chainLink/dashboard/index.vue'),
       children: [
         {
-          path: "/chainlink/dashboard",
+          path: "/middleware/dashboard",
           name: "Dashboard",
           component:() => import('@/views/chainLink/dashboard/dashboard.vue'),
           meta:{
@@ -14,7 +14,7 @@ const chainlinkRoute = [
           }
         },
         {
-          path: "/chainlink/default/:type",
+          path: "/middleware/dashboard/default/:type",
           name: "Default",
           component:() => import('@/views/chainLink/components/rpcAndOracleDefault.vue'),
           meta:{
@@ -22,15 +22,15 @@ const chainlinkRoute = [
           },
         },
         {
-          path: "/chainlink/RPC",
+          path: "/middleware/dashboard/RPC",
           name: "RPC",
-          redirect: "/chainlink/RPC",
+          redirect: "/middleware/dashboard/RPC",
           meta:{
             isShow: true,
           },
           children: [
             {
-              path: "/chainlink/RPC",
+              path: "/middleware/dashboard/RPC",
               name: "RPC",
               component:() => import('@/views/chainLink/rpc/index.vue'),
               meta:{
@@ -38,7 +38,7 @@ const chainlinkRoute = [
               }
             },
             {
-              path: "/chainlink/RPC/rpc-detail/:chain",
+              path: "/middleware/dashboard/RPC/rpc-detail/:chain",
               name: "rpcDetail",
               component:() => import('@/views/chainLink/rpc/rpcDetail.vue'),
               meta:{
@@ -48,15 +48,15 @@ const chainlinkRoute = [
           ]
         },
         {
-          path: "/chainlink/oracle",
+          path: "/middleware/dashboard/oracle",
           name: "Oracle",
-          redirect: "/chainlink/oracle",
+          redirect: "/middleware/dashboard/oracle",
           meta:{
             isShow: true,
           },
           children:[
               {
-                  path: "/chainlink/oracle",
+                  path: "/middleware/dashboard/oracle",
                   name: "Oracle",
                   component:() => import('@/views/chainLink/oracle/index.vue'),
                   meta:{
@@ -64,7 +64,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/sublist",
+                  path: "/middleware/dashboard/oracle/sublist",
                   name: "subList",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subList.vue'),
                   meta:{
@@ -72,7 +72,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                  path: "/chainlink/oracle/subList/sublist-detail",
+                  path: "/middleware/dashboard/oracle/subList/sublist-detail",
                   name: "subListDetail",
                   component:() => import('@/views/chainLink/oracle/mySubscription/subListDetail.vue'),
                   meta:{
@@ -80,7 +80,7 @@ const chainlinkRoute = [
                   }
               },
               {
-                path: "/chainlink/oracle/create-request",
+                path: "/middleware/dashboard/oracle/create-request",
                 name: "CreateRequest",
                 component:() => import('@/views/chainLink/oracle/createRequest/index.vue'),
                 meta:{
@@ -90,9 +90,9 @@ const chainlinkRoute = [
           ]
         },
         {
-          path: "/chainlink/ZKP",
+          path: "/middleware/dashboard/ZKP",
           name: 'ZKP',
-          redirect: "/chainlink/ZKP",
+          redirect: "/middleware/dashboard/ZKP",
           meta:{
             isShow: true,
             isTag: true,
@@ -100,16 +100,16 @@ const chainlinkRoute = [
           },
           children:[
             {
-              path: "/chainlink/ZKP",
+              path: "/middleware/dashboard/ZKP",
               name: "ZKP",
               component:() => import('@/views/chainLink/miwaspace/index.vue'),
             },
           ]
         },
         {
-          path: "/chainlink/graph",
+          path: "/middleware/dashboard/graph",
           name: 'Graph',
-          redirect: "/chainlink/graph",
+          redirect: "/middleware/dashboard/graph",
           meta:{
             isShow: true,
             isTag: true,
@@ -117,16 +117,16 @@ const chainlinkRoute = [
           },
           children:[
             {
-              path: "/chainlink/graph",
+              path: "/middleware/dashboard/graph",
               name: "Graph",
               component:() => import('@/views/chainLink/miwaspace/index.vue'),
             },
           ]
         },
         {
-          path: "/chainlink/storage",
+          path: "/middleware/dashboard/storage",
           name: 'Storage',
-          redirect: "/chainlink/storage",
+          redirect: "/middleware/dashboard/storage",
           meta:{
             isShow: true,
             isTag: true,
@@ -134,16 +134,16 @@ const chainlinkRoute = [
           },
           children:[
             {
-              path: "/chainlink/storage",
+              path: "/middleware/dashboard/storage",
               name: "Storage",
               component:() => import('@/views/chainLink/miwaspace/index.vue'),
             },
           ]
         },
         {
-          path: "/chainlink/others",
+          path: "/middleware/dashboard/others",
           name: "Others",
-          redirect: "/chainlink/others",
+          redirect: "/middleware/dashboard/others",
           meta:{
             isShow: true,
             isTag: true,
@@ -151,7 +151,7 @@ const chainlinkRoute = [
           },
           children:[
             {
-              path: "/chainlink/others",
+              path: "/middleware/dashboard/others",
               name: "Others",
               component:() => import('@/views/chainLink/miwaspace/index.vue'),
             },
@@ -160,11 +160,11 @@ const chainlinkRoute = [
       ],
   },
   {
-    path: "/miwaspace",
-    redirect: "/chainlink/miwaspace",
+    path: "/middleware/miwaspace",
+    redirect: "/middleware/miwaspace",
     children:[
       {
-        path: "/chainlink/miwaspace",
+        path: "/middleware/miwaspace",
         name: "Miwaspace",
         component:() => import('@/views/chainLink/miwaspace/index.vue'),
       },

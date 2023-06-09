@@ -5,7 +5,7 @@
       <div class="first">
         <div v-if="viewType === 'detail'" class="text-[24px]">Overview</div>
         <div v-else class="flex items-center">
-          <div class="project-title text-[24px] font-bold cursor-pointer hover:text-[#E2B578]"
+          <div class="project-title text-[24px] font-bold cursor-pointer hover:open-link-css"
             @click="goDetail(viewInfo.id, viewInfo.type)">{{ viewInfo.name }}</div>
           <div
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -31,21 +31,24 @@
         <!-- </label> -->
       <div>
 
-        <label class="text-center w-[100px] action-button-item" v-for="(item, index) in actionButtonList">
+        <label class="text-center w-[100px] " v-for="(item, index) in actionButtonList">
           <!-- 按钮 -->
           <label v-if="index !== 0">
             <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;"/>
           </label>
-          <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
+          <!-- <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
             <svg-icon name="check" size="13" />
-          </label>
-          <label v-else class="action-icon mx-[8px]">
-            <svg-icon :name="item.url" size="15" />
-          </label>
-          <!-- 按钮 -->
-          <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label>
-          <label class="hover:text-[#E2B578] ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''">
-            {{ item.name }}
+          </label> -->
+          <label class="action-button-item">
+            <label class="action-icon mx-[8px]">
+              <svg-icon :name="item.url" size="15" />
+            </label>
+            <!-- 按钮 -->
+            <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
+            <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
+            <label class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+              {{ item.name }}
+            </label>
           </label>
         </label>
       </div>
@@ -99,16 +102,15 @@
             Check Now
           </div> -->
 
-          <div class="text-[#E2B578] cursor-pointer inline-block"
-            :class="projectType === '1' && viewInfo.frameType === 4 ? 'disabledCheckCss' : ''"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
             v-if="viewInfo.recentCheck.status === 0">
             <span>Check Now</span>
           </div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
             v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View
             Now</div>
         </div>
@@ -124,25 +126,25 @@
             </div>
           </div>
 
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="projectsBuild(viewInfo.id, viewInfo.recentBuild, viewInfo.frameType,viewInfo.type)" v-if="viewInfo.recentBuild.status === 0">Build Now
           </div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
-          <div class="text-[#E2B578] cursor-pointer inline-block"
+          <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 2">
             View Now
             </div>
           <div v-else>
             <div v-if="projectType === '1'">
-              <div class="text-[#E2B578] cursor-pointer inline-block"
+              <div class="open-link-css cursor-pointer inline-block"
                 @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)">
                 View Now
               </div>
             </div>
-            <div class="text-[#E2B578] cursor-pointer inline-block"
+            <div class="open-link-css cursor-pointer inline-block"
               @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)" v-else>Deploy Now</div>
           </div>
         </div>
@@ -163,7 +165,7 @@
               </div>
             </div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
-            <div v-else class="text-[#E2B578] cursor-pointer inline-block">
+            <div v-else class="open-link-css cursor-pointer inline-block">
               <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
               <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
             </div>
@@ -179,7 +181,7 @@
               </div>
             </div>
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
-            <div v-else class="text-[#E2B578] cursor-pointer inline-block"
+            <div v-else class="open-link-css cursor-pointer inline-block"
               @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
               View FrontEnd</div>
           </div>
@@ -321,6 +323,7 @@ const getDoneData =async (myArray:string[]) => {
       evmCheckVisible.value = false
 
       await apiProjectsCheck(projectId.value);
+      loadView();
 
       message.info("The workflow of checking is running, view now.")
     } else {
@@ -329,9 +332,9 @@ const getDoneData =async (myArray:string[]) => {
 }
 // check
 const projectsCheck = async (id: string, status: number, e: Event) => {
-  if (props.projectType === '1' && props.viewInfo.frameType === 4) {
-    e.stopPropagation()
-  } else {
+  // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
+  //   e.stopPropagation()
+  // } else {
     disabled.value = false;
     try {
       //判断是否为EVM 显示弹框 并且 ipfs不弹
@@ -346,6 +349,7 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
             evmCheckVisible.value=true
           } else {
             await apiProjectsCheck(id);
+            loadView();
           }
         }
       }
@@ -362,8 +366,8 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         } else {
           const res = await apiProjectsCheck(id);
           message.success(res.message);
+          loadView();
         }
-        loadView();
       }
     } catch (error: any) {
       console.log("erro:", error)
@@ -371,7 +375,7 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
     } finally {
       // loading.value = false;
     }
-  }
+  // }
 };
 
 const buildStatusAction = async (id: string, buildData: any) => {
@@ -471,7 +475,8 @@ const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    router.push("/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId);
+    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1'
+    router.push(path);
   }
 };
 const loadView = async () => {
@@ -479,17 +484,19 @@ const loadView = async () => {
   emit("loadProjects");
 };
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
+  localStorage.removeItem('evmCheckWorkflow')
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("frameType", viewInfo.value.frameType)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value);
-  // message.info("Executing Now，please wait a moment.")
+  const path = "/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value
+  router.push(path);
+  localStorage.setItem('evmCheckWorkflow',path)
 };
 
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value+'?isBuild=1');
+  router.push("/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/2/" + projectType?.value);
   // message.info("Executing Now，please wait a moment.")
 };
 
@@ -519,7 +526,7 @@ const goContractDeploy = async (id: string, status: string | Number) => {
 const goContractDetail = async (id: string, version: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/contracts-details/" + version);
+  router.push("/projects/" + id + "/contracts-details/" + version + '?fromList=1');
 }
 const goFrontendDeploy = async () => {
   try {
@@ -714,9 +721,22 @@ html[data-theme='light'] {
   }
 }
 .action-button-item:hover {
+  label{
+    color: #E2B578;
+  }
   .action-icon {
     .svg-icon {
       color: #E2B578;
+    }
+  };
+}
+.action-button-item:active {
+  label{
+    color: #CE9C58;
+  }
+  .action-icon {
+    .svg-icon {
+      color: #CE9C58;
     }
   };
 }

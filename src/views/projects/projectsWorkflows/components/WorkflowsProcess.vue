@@ -3,7 +3,7 @@
     <div class="process-content">
       <div class="flex justify-between">
         <span class="process-content-title">{{ $t('workFlows.executionProcess') }}</span>
-        <span class="text-[14px] text-[#E2B578] cursor-pointer" @click="checkAllLogs">
+        <span class="text-[14px] open-link-css cursor-pointer" @click="checkAllLogs">
           {{ $t('workFlows.viewFullLogs') }}
         </span>
       </div>
@@ -195,9 +195,15 @@ watch(
     })
   }, { deep: true, immediate: true }
 );
-
+const timer = ref();
 onMounted(() => {
   initScroll()
+  timer.value = setTimeout(() => {
+    nextTick(() => { 
+      bscroll.value && bscroll.value.refresh();
+    })
+    clearTimeout(timer.value);
+  }, 1000)
 })
 
 onUnmounted(() => {

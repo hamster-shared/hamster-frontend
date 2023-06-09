@@ -1,5 +1,5 @@
 <template>
-<BreadCrumb currentName="Filecoin Contract Editor" :isClick="false" class="mb-6"/>
+<bread-crumb :routes="breadCrumbInfo"/>
 <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
     <a-button type="primary" style="float:right;margin-right: 20px;" @click="showCreateEvm">Create by Code</a-button>
     <a-tabs v-model:activeKey="activeKey">
@@ -40,20 +40,22 @@
         </div>
       </a-tab-pane>
     </a-tabs>
-    <a-modal :footer="null" centered="true" v-model:visible="createCodeVisible" title="Create by template" @cancel="createCodeVisible = false">
-      <span class="text-sm">Project Name</span>
-      <a-input placeholder="Project Name" v-model:value="codeNameValue" allowClear class="my-1"/>
-      <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
+    <a-modal :footer="null" centered="true" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
+      <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+        <a-form-item label="Project Name" name="name">
+          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+        </a-form-item>
+      </a-form>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
-        <a-button id="create-project-btn" type="primary" :loading="createCodeLoading" @click="handleOk">Done</a-button>
+        <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
       </div>
     </a-modal>
   </div>
 </template>
 <script setup lang="ts">
-import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
-import { ref,computed,onMounted } from 'vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
+import { ref,computed,onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import CodeEditor from '@/components/CodeEditor.vue';
@@ -65,7 +67,6 @@ const theme = useThemeStore()
 const activeKey = ref('Solidity')
 const createCodeVisible = ref(false)
 const codeNameValue = ref()
-const errorMsg = ref()
 const createCodeLoading = ref()
 const loading = ref(false)
 const router = useRouter()
@@ -83,54 +84,62 @@ const getDealBool = ref(false)
 const handleFileCoinBool = ref(false)
 const updateActivationStatusBool = ref(false)
 const balanceBool = ref(false)
+const formRef = ref();
+const createProjectLoading = ref(false)
+const userInfo = localStorage.getItem('userInfo');
+const formData = reactive({
+  name: '',
+});
+const breadCrumbInfo = ref<any>([])
 
 // 弹出创建evm框
 const showCreateEvm = ()=>{
   if(!name.value.trim()){
-    message.error('Please input Contract Name!')
+    message.error('Please input the Contract Name!')
     return
   }
     createCodeVisible.value = true
 }
-const checkDupName = computed(async () => {
-  try {
-    createCodeLoading.value = true;
-    loading.value = true;
-    //校验仓库名称是否存在
-    const userInfo = localStorage.getItem('userInfo');
-    const params = {
-      owner: JSON.parse(userInfo)?.username,
-      name: codeNameValue.value,
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
+const formRules = computed(() => {
+
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      // console.log('formdataName:', params)
+      const res = await apiDupProjectName(params);
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error: any) {
+      console.log("erro:", error)
+      return Promise.reject("Project Name check failure");
     }
-    const res = await apiDupProjectName(params);
-    console.log('res:',res)
-    if (res.data === false) {
-      createCodeLoading.value = false;
-      return errorMsg.value = "Project Name duplication"
-    } else if(codeNameValue.value == ''){
-      createCodeLoading.value = false;
-      return errorMsg.value = "Please enter Project Name"
-    } else {
-      return true
-    }
-  } catch (error: any) {
-    console.log("erro:", error)
-    createCodeLoading.value = false;
-    return errorMsg.value = "Project Name check failure"
   }
-})
+
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+
+  return {
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
+  };
+});
 // 表单数据校验
-const handleOk = async ()=>{
-  checkDupName.value.then((result)=>{
-    if (result === true){
-      console.log('success',result)
-      createProject()
-    } else {
-      console.log('fail',result)
-      errorMsg.value = result
-      createCodeLoading.value = false
-    }
-  })
+const handleOk = async () => {
+  await formRef.value.validate();
+  createProjectLoading.value = true;
+  createProject()
+}
+const handleCancel = () => {
+  createProjectLoading.value = false
+  formRef.value.resetFields()
 }
 
 // 创建evm合约
@@ -140,7 +149,7 @@ const createProject = async () => {
     const createProjectTemp = localStorage.getItem('createFormData');
     console.log('createProjectTemp',createProjectTemp)
     const params = {
-      name: codeNameValue.value,
+      name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       fileName: name.value,
@@ -195,8 +204,18 @@ const balanceFn = async (bool:boolean) => {
   balanceBool.value = !bool
   getContent()
 }
-onMounted(()=>{
-  getContent()
+onMounted(async()=>{
+  await getContent()
+  breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Create Project',
+        path:'/projects/create'
+      },
+      {
+        breadcrumbName:activeKey.value,
+        path:''
+      },
+    ]
 })
 </script>
 <style scoped lang="less">

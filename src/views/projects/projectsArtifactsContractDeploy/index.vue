@@ -1,12 +1,5 @@
 <template>
-  <Breadcrumb :currentName="projectName" :isClick="loading">
-    <template v-slot:tags>
-      <span
-          class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">
-        {{ ContractFrameTypeEnum[frameType] }}
-      </span>
-    </template>
-  </Breadcrumb>
+  <bread-crumb :routes="breadCrumbInfo"/>
   <div
       class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
     <div class="grid grid-cols-5 gap-4">
@@ -80,7 +73,7 @@
             :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="(item, _) in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
-        <a-input v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
+        <a-input class="modal-input" v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
       </a-form-item>
     </a-form>
     <div class="text-center">
@@ -108,10 +101,10 @@
 import {onMounted, reactive, ref} from "vue";
 import type {FormInstance} from 'ant-design-vue';
 import {message} from "ant-design-vue";
-import {useRouter} from "vue-router";
+import {useRouter,useRoute} from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
-import Breadcrumb from "../components/Breadcrumb.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
 import {useThemeStore} from "@/stores/useTheme";
@@ -135,6 +128,7 @@ const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const router = useRouter();
+const route = useRoute()
 const { t } = useI18n()
 
 const frameType = ref(1);
@@ -175,8 +169,12 @@ const aptosNetwork = ref('')
 const aptosNetworkVisible = ref(false)
 const abiFn = ref<any>()
 
+const breadCrumbInfo = ref<any>([])
+
 // sui
 const suiWallet = new WalletStandardAdapterProvider()
+
+const workflowsDetailsData = ref<any>({})
 
 
 const formState = reactive({
@@ -539,7 +537,7 @@ const deploy = () => {
 }
 
 const deployClick = async () => {
-  // frameType 1.evm 2.aptos 3.ton 4.starkware,5: sui
+  // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
@@ -712,10 +710,10 @@ const changeChain = (val: string) => {
     }]
   }else if (val === 'Filecoin'){
     networkData.value = [{
-      name: 'Filecoin/Hyperspace',
-      id: 'c45',
-      url: 'https://api.hyperspace.node.glif.io/rpc/v1',
-      networkName: 'Filecoin/Hyperspace'
+      name: 'Filecoin/Calibrationnet',
+      id: '4cb2f',
+      url: 'https://api.calibration.node.glif.io/rpc/v1',
+      networkName: 'Filecoin/Calibrationnet'
     },{
       name: 'Filecoin/Mainnet',
       id: '13a',
@@ -733,6 +731,7 @@ const changeVersion = (val: string) => {
 const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryParams.id);
+    Object.assign(workflowsDetailsData,data)
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
@@ -748,7 +747,7 @@ const getProjectsDetail = async () => {
       case 3:
         break;
       case 4:
-        Object.assign(chainData, ['StarkWare'])
+        Object.assign(chainData, ['Starknet'])
         networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
         const data = await connectWallet();
         Object.assign(starkWareData, data)
@@ -764,11 +763,31 @@ const getProjectsDetail = async () => {
   }
 }
 
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  localStorage.setItem('deplayPath',route.fullPath)
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:'Deploy',
+      path:''
+    },
+  ]
+}
 onMounted(async () => {
+  localStorage.removeItem('deplayPath')
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   await getProjectsDetail();
   await getProjectsContract()
+  await judgeOrigin()
 })
 
 </script>

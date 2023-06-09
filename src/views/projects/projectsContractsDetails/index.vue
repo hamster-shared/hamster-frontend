@@ -1,6 +1,6 @@
 <template>
-  <div class="contractSetails flex justify-between mb-[24px]">
-    <Breadcrumb :currentName="projectName" :isClick="false">
+  <div class="contractSetails flex justify-between mb-[24px] items-center">
+    <Breadcrumb :routes="breadCrumbInfo">
       <template v-slot:tags>
         <span
           class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
@@ -30,7 +30,7 @@
         </a-table>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
+          <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
             @checkContract="checkContract">
           </ContractList>
         </div>
@@ -73,7 +73,7 @@
                   <div class="output-css dark:!shadow-none p-[20px] hidden" :id="`div${moduleName}${items.title}`">
                     <div class="flex justify-between mb-[12px]">
                       <span class="font-normal">Output</span>
-                      <span class="text-[#E2B578] cursor-pointer" @click="copyInfo(`send${moduleName}${items.title}`, 'id')">
+                      <span class="open-link-css cursor-pointer" @click="copyInfo(`send${moduleName}${items.title}`, 'id')">
                         <img src="@/assets/icons/copy.svg" />Copy
                       </span>
                     </div>
@@ -90,11 +90,11 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onBeforeMount, type HtmlHTMLAttributes } from "vue";
+import { ref, reactive, onBeforeMount, type HtmlHTMLAttributes,onMounted } from "vue";
 import { message } from 'ant-design-vue'
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
-import Breadcrumb from "../components/Breadcrumb.vue";
+import Breadcrumb from "@/components/BreadCrumb.vue";
 import ContractList from "./components/ContractList.vue";
 import NoData from "@/components/NoData.vue"
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
@@ -106,6 +106,7 @@ import {useI18n} from "vue-i18n";
 import {sleep} from "@/utils/tool";
 
 const router = useRouter();
+const route = useRoute()
 const theme = useThemeStore();
 const { t } = useI18n()
 
@@ -127,6 +128,7 @@ const moduleName = ref('cesh');
 const contractName = ref('');
 const contractAddress = ref('');
 const selectedRow = ref(0);
+const breadCrumbInfo = ref<any>([])
 const columns = [
   {
     title: 'Network',
@@ -158,6 +160,8 @@ const contractInfo = reactive({})
 const providers = new WalletStandardAdapterProvider()
 // get tokens from the DevNet faucet server
 const provider = providers.get()[0]
+
+const workflowsDetailsData = ref<any>({})
 
 const setFunctionList = (moduleVal: string) => {
   getFunctionList(moduleVal);
@@ -372,6 +376,7 @@ const sendFunction = async (moduleName: string, functionName: string) => {
 
 const getProjectsDetail = async () => {
   const { data } = await apiGetProjectsDetail(queryJson.id)
+  Object.assign(workflowsDetailsData,data)
   frameType.value = data.frameType
   projectType.value = data.type;
   deployType.value = data.deployType;
@@ -397,7 +402,7 @@ const getVersion = async () => {
 }
 
 const deploy = (val: any) => {
-  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}`)
+  router.push(`/projects/${queryJson.id}/artifacts-contract/${queryJson.version}/deploy/${activeKeyId.value}?from=Dashboard&name=${route.query?.name}`)
 }
 const changeVersion = (val: any) => {
   queryJson.version = val
@@ -448,18 +453,30 @@ const copyInfo = (info: string, type: string) => {
   message.success('copy success')
 }
 
-onBeforeMount(() => {
-  // provider.connect().then(() => {
-
-  // }).catch(reject => {
-  //   console.log(reject)
-  // })
-
+onBeforeMount(async() => {
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
-  getContractDeployDetail()
-  getProjectsDetail()
+  await getContractDeployDetail()
+  await getProjectsDetail()
+  judgeOrigin()
 })
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:'Dashboard',
+      path:''
+    },
+  ]
+}
 
 </script>
 <style lang='less' scoped>
@@ -522,16 +539,16 @@ onBeforeMount(() => {
   border-radius: 5px;
 }
 
-:deep(.ant-input, .ant-input-affix-wrapper){
-  padding: 26px 16px;
-}
-:deep(.dark-css .ant-input, .ant-input-affix-wrapper){
-  background-color: #2B2B2B !important;
-  border-color: #2B2B2B !important;
-  color: white !important;
-}
-:deep(.white-css .ant-input, .ant-input-affix-wrapper){
-  background-color: #F6F6F6 !important;
-  border-color: #F6F6F6 !important;
-}
+// :deep(.ant-input, .ant-input-affix-wrapper){
+//   padding: 26px 16px;
+// }
+// :deep(.dark-css .ant-input, .ant-input-affix-wrapper){
+//   background-color: #2B2B2B !important;
+//   border-color: #2B2B2B !important;
+//   color: white !important;
+// }
+// :deep(.white-css .ant-input, .ant-input-affix-wrapper){
+//   background-color: #F6F6F6 !important;
+//   border-color: #F6F6F6 !important;
+// }
 </style>

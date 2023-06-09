@@ -5,14 +5,14 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" style="height:64px;line-height:64px" 
-        class="text-[#E2B578] text-[16px] cursor-pointer ml-12 mr-8" id="pro">Projects</div>
+      <div @click="goPrjects" :class="{ 'header-menu-line': isProject }"
+        class="header-text-css ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown v-if="!isShowMiddleware">
-        <div class="text-[#E2B578] text-[16px] cursor-pointer"
-          @click.stop id="middle" style="height:64px;line-height:64px;">
+        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }"
+          @click.stop>
           Middleware
-          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden up-tran">
-          <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] up-tran">
+          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
+          <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
         </div>
         <template #overlay>
           <a-menu>
@@ -25,8 +25,8 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" style="color:#E2B578;height:64px;line-height:64px" 
-        class="text-[16px] cursor-pointer ml-12 mr-8" id="docs">Docs</div>
+      <div @click="goDoc" 
+        class="header-text-css  ml-12 mr-8">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -72,7 +72,7 @@
               </div>
               <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
               <a-menu-item class="text-center ">
-                <div class="text-[#E2B578] py-[4px]" @click="signOut">Sign out</div>
+                <div class="open-link-css py-[4px]" @click="signOut">Sign out</div>
               </a-menu-item>
             </a-menu>
           </template>
@@ -150,7 +150,7 @@ const goDoc = () => {
 }
 
 const goMiwaspace = () => {
-  router.push("/chainlink/miwaspace?key=1");
+  router.push("/middleware/miwaspace?key=1");
   isProject.value = false;
   // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
   // // 如果 local storage 里没有保存的钱包，直接返回
@@ -163,7 +163,7 @@ const goMiwaspace = () => {
   // }
 }
 const goDashboard = () => {
-  router.push("/chainlink/dashboard");
+  router.push("/middleware/dashboard");
   isProject.value = false;
 }
 
@@ -201,6 +201,12 @@ const signOut = () => {
 };
 
 onMounted(() => {
+  // 解决middle刷新页面选中在projects tab下问题
+  if(window.location.href.indexOf('middleware') != -1){
+    isProject.value = false
+  }else if(window.location.href.indexOf('projects') != -1){
+    isProject.value = true
+  }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
@@ -252,13 +258,8 @@ const setWalletBtn = (val: boolean) => {
 
 <style lang="less" scoped>
 @btnColor: #E2B578;
-#docs:hover{
-  border-bottom: 3px solid #E2B578;
-}
-#middle:hover{
-  border-bottom: 3px solid #E2B578;
-}
-#pro:hover{
+
+.header-menu-line{
   border-bottom: 3px solid #E2B578;
 }
 .default-header {
@@ -320,14 +321,14 @@ const setWalletBtn = (val: boolean) => {
   background: transparent;
 }
 
-.up-tran {
+.up-tran:hover {
   transform: rotate(180deg);
   transition: all .3s, visibility 0s;
 }
 
-:deep(.ant-dropdown-open .up-tran) {
-  transform: rotate(0deg);
-}
+// :deep(.ant-dropdown-open .up-tran) {
+//   transform: rotate(0deg);
+// }
 
 :deep(.ant-select-selector) {
   color: #ffffff !important;
@@ -337,5 +338,10 @@ html[data-theme='dark'] {
   :deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
     border: 1px solid #EBEBEB;
   }
+}
+</style>
+<style scoped>
+.header-text-css{
+  @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
 }
 </style>

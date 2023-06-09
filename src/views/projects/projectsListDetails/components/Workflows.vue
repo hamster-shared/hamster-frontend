@@ -38,12 +38,12 @@
           <div v-else></div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <label class="cursor-pointer"
+          <label class="cursor-pointer open-link-css hover:text-[#E4C08F] active:text-[#CE9C58]"
             @click="goWorkflowsDetail(record.type, record.id, record.detailId)">Details</label>
-          <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer"
+          <label v-if="record.status === 1" class=" text-[#FF8A5B] hover:text-[#EBA183] active:text-[#EA7D51] ml-2 cursor-pointer"
             @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
           <label v-if="record.status !== 1" @click="deleteWorkflow(record.id, record.detailId)"
-            class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
+            class="text-[#F52222] hover:text-[#EE6A6A] active:text-[#CF2C2C] ml-2 cursor-pointer ">Delete</label>
         </template>
       </template>
     </a-table>
@@ -218,7 +218,11 @@ const getProjectsWorkflows = async () => {
   }
 };
 const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
-  router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
+  if (type == '1') {
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
+  } else if(type == '2'){
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
+  }
 }
 const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
   delWorkflowId.value = workflowId;

@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
+      <Breadcrumb :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
     <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
@@ -9,14 +9,14 @@
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <!-- frameType == '1',也就是evm走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="contractFrameType == '1' && query.isBuild !='1'"></CheckResult>
+      <!-- frameType == '1' && queryJson.type === '1',也就是evm 的 check 走统计表格，其它情况走原来的流水线 -->
+      <CheckResult v-if="workflowsDetailsData.frameType == 1 && queryJson.type === '1'" :currentName="currentName"></CheckResult>
       <div v-else>
         <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
         <GasUsageReport :gasUsageReportData="gasUsageReportData"
           v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType"></ContractList>
+        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
       </div>
     </div>
     <div v-else>
@@ -27,7 +27,7 @@
       <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
       </Deployment>
     </div>
-    <AiAnalysis v-if="isShowAiAnalysis && contractFrameType != '1'" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
+    <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
@@ -38,7 +38,7 @@ import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, 
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 import YAML from "yaml";
-import Breadcrumb from '../components/Breadcrumb.vue';
+import Breadcrumb from '@/components/BreadCrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
@@ -51,7 +51,6 @@ import CheckResult from './components/CheckResult.vue'
 
 const { t } = useI18n()
 const { params,query } = useRoute();
-const contractFrameType = localStorage.getItem('frameType')
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -84,10 +83,14 @@ const workflowsDetailsData = reactive({
   frameType: 0,
   deployType: 0,
   checkStatus: 0,
+  name:'',
+  type:0,
+  id:0
 });
+const breadCrumbInfo = ref<any>([])
 
 const isShowAiAnalysis = computed(() => {
-  return [5, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
+  return [5, 4, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
 })
 
 const getWorkflowsDetails = async () => {
@@ -141,7 +144,7 @@ const getCheckReport = async () => {
     }
   })
   // evm的错误统计
-  if(contractFrameType=='1'){
+  if(workflowsDetailsData.frameType==1 && data?.length){
     for(let i=0;i<data.length;i++){
       issue += data[i].issues
     }
@@ -151,7 +154,7 @@ const getCheckReport = async () => {
   }
 
   data?.filter((item: any) => {
-    if (item.checkTool == 'OpenAI') {
+    if (item.checkTool == 'OpenAI' || item.checkTool == 'AI') {
       openAiInfo.value = item
     }
   })
@@ -240,7 +243,7 @@ const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
     // console.log("data project:", data);
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status })
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status,name:data.name,id:data.id,type:data.type })
     localStorage.setItem('frameType',data.frameType)
   } catch (err: any) {
     console.info(err)
@@ -265,11 +268,28 @@ const setCurrentName = () => {
     currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
   }
 }
-
-onMounted(() => {
-  getWorkflowsDetails();
-  getProjectsDetailData();
-  loadInfo();
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:currentName.value,
+      path:''
+    },
+  ]
+}
+onMounted(async() => {
+  await getWorkflowsDetails();
+  await getProjectsDetailData();
+  await loadInfo();
+  judgeOrigin()
 })
 
 onUnmounted(() => {

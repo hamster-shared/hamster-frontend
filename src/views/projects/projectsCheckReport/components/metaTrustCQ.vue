@@ -52,8 +52,8 @@
             <div class="text-[#73706E]">{{ item.Description }}</div>
           </div>
           <template #extra>
-            <div>
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div class="open-link-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.Details.length + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -169,14 +169,16 @@
       // console.log('fileKey',fileKey)
       try {
         const { data } = await apiGetMetascanFile(fileKey);
-        const tempFile = data.split('\n')
+        if (data !== null && data !== undefined) {
+          const tempFile = data.split('\n')
 
-        // console.log('fileKey-data:',tempFile)
+          // console.log('fileKey-data:',tempFile)
 
-        reportFileDataCQ[key]?.Details?.forEach((item:any)=>{
-          item.file = tempFile.slice(item.AffectedFiles.Line*1-1, item.AffectedFiles.Line*1)[0]
-          // console.log('item:',item)
-        })
+          reportFileDataCQ[key]?.Details?.forEach((item:any)=>{
+            item.file = tempFile.slice(item.AffectedFiles.Line*1-1, item.AffectedFiles.Line*1)[0]
+            // console.log('item:',item)
+          })
+        }
       } catch (error: any) {
         console.log("erro:", error)
       }
@@ -197,7 +199,7 @@
 .severity-btn{
   margin-left: 16px;
   width: 100px;
-  background: rgba(255,255,255,0.2);
+  background-color: transparent;
   border: 2px solid #E2B578;
   color: #E2B578;
 }

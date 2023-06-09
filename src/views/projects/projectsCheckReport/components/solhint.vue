@@ -10,7 +10,7 @@
       </div>
       <a-collapse v-else v-model:activeKey="activeKey" v-for="(val,key) in reportFileData" :key="key">
         <a-collapse-panel :key="key" :header="val.name" :showArrow="false">
-          <div v-if="val.message.length === 0" class="text-center">
+          <div v-if="val.message === null || val.message.length === 0" class="text-center">
             <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
             <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
             <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
@@ -40,8 +40,8 @@
             </div>
           </div>
           <template #extra>
-            <div>
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div class="open-link-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.issue + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -94,17 +94,20 @@ const getMetascanFile = async () => {
   for (let key in reportFileData) {
     try {
       const { data } = await apiGetContractContent(params.id, reportFileData[key].name);
-      const tempFile = data.split('\n');
+      if (data !== null && data !== undefined) {
+        const tempFile = data.split('\n');
 
-      //截取需要显示的代码
-      reportFileData[key].message.forEach((element, index) => {
-        let tempData = '';
-        if (tempFile.length >= element.line) {
-          tempData = tempFile[parseInt(element.line) - 1];
-        }
-        element.fileContent = tempData;
-        // reportFileData[ind].message[index].fileContent = tempData;
-      });
+        //截取需要显示的代码
+        reportFileData[key].message.forEach((element, index) => {
+          let tempData = '';
+          if (tempFile.length >= element.line) {
+            tempData = tempFile[parseInt(element.line) - 1];
+          }
+          element.fileContent = tempData;
+          // reportFileData[ind].message[index].fileContent = tempData;
+        });
+      }
+      
     } catch (error: any) {
       console.log("erro:", error)
     }
@@ -116,21 +119,6 @@ const openChainIDE = (name: string) => {
 }
 </script>
 <style lang='less' scoped>
-.Severity-btn{
-  margin-left: 16px;
-  width: 100px;
-  background: rgba(255,255,255,0.2);
-  border: 2px solid #E2B578;
-  color: #E2B578;
-}
-.Severity-btn-hover:hover{
-  background: rgba(226,181,120,0.2);
-  color: #E2B578;
-}
-.Severity-btn-checked{
-  background: #E2B578;
-  color: #FFFFFF;
-}
 .svg-icon {
   transform: rotate(180deg);
   transition: all .3s, visibility 0s;

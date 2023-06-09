@@ -22,7 +22,7 @@
     <div class="mb-[24px]">
       <div class="flex justify-between  mb-[12px]">
         <span class="dark:text-[#FFFFFF] text-[#151210]  text-[16px] font-bold">outputs</span>
-        <span class="text-[#E2B578] text-[16px] cursor-pointer" @click="copy">
+        <span class="open-link-css text-[16px] cursor-pointer" @click="copy">
           <img src="@/assets/icons/copy.svg" />
           copy</span>
       </div>
@@ -366,57 +366,57 @@ watch(
   height: 43px;
 }
 
-:deep(.ant-btn-primary[disabled]) {
-  background-color: #E2B578;
-  color: #ffffff;
-  border-color: #E2B578;
-}
+// :deep(.ant-btn-primary[disabled]) {
+//   background-color: #E2B578;
+//   color: #ffffff;
+//   border-color: #E2B578;
+// }
 
-:deep(.ant-btn-primary[disabled]:hover) {
-  background-color: #E2B578;
-  color: #ffffff;
-  border-color: #E2B578;
-}
+// :deep(.ant-btn-primary[disabled]:hover) {
+//   background-color: #E2B578;
+//   color: #ffffff;
+//   border-color: #E2B578;
+// }
 
-.ant-input-affix-wrapper {
-  background: transparent;
-  border-radius: 8px;
-  border: 1px solid #EBEBEB;
-}
+// .ant-input-affix-wrapper {
+//   background: transparent;
+//   border-radius: 8px;
+//   border: 1px solid #EBEBEB;
+// }
 
-:deep(.ant-input) {
-  height: 32px;
-  background: transparent;
-  color: #121211;
-}
+// :deep(.ant-input) {
+//   height: 32px;
+//   background: transparent;
+//   color: #121211;
+// }
 
-:deep(.ant-input.ant-input-disabled) {
-  height: unset;
-  background: transparent;
-  color: #ffffff;
-}
+// :deep(.ant-input.ant-input-disabled) {
+//   height: unset;
+//   background: transparent;
+//   color: #ffffff;
+// }
 
-:deep(.ant-input[disabled]:hover) {
-  border-color: #E2B578;
-}
+// :deep(.ant-input[disabled]:hover) {
+//   border-color: #E2B578;
+// }
 
-html[data-theme="dark"] {
-  .ant-input-affix-wrapper {
-    border: 1px solid #302D2D;
-    color: #ffffff;
-  }
-}
+// html[data-theme="dark"] {
+//   .ant-input-affix-wrapper {
+//     border: 1px solid #302D2D;
+//     color: #ffffff;
+//   }
+// }
 
-.dark-css {
-  :deep(.ant-input) {
-    color: #ffffff;
-  }
-}
+// .dark-css {
+//   :deep(.ant-input) {
+//     color: #ffffff;
+//   }
+// }
 
-input::-webkit-input-placeholder,
-input:-moz-placeholder,
-input::-moz-placeholder,
-input:-ms-input-placeholder {
-  color: #E0DBD2;
-}
+// input::-webkit-input-placeholder,
+// input:-moz-placeholder,
+// input::-moz-placeholder,
+// input:-ms-input-placeholder {
+//   color: #E0DBD2;
+// }
 </style>

@@ -2,7 +2,7 @@
   <div>
     <div class="my-10">
       <span class="text-2xl font-bold">Oracle</span>
-      <div class="text-base w-[70%] mt-2">
+      <div class="text-base mt-2" style="text-align: justify; text-justify: inter-word;">
         The Oracle is the messenger for the interaction between the blockchain and the real world data. 
         It is an indispensable infrastructure for the web3 ecology, 
         and its development plays a vital role in the prosperity of the web3 ecology. 
@@ -11,10 +11,10 @@
       </div>
     </div>
 
-    <div class="border border-[#EBEBEB] border-solid rounded-xl h-[455px] p-10">
+    <div class="border border-[#EBEBEB] border-solid rounded-xl p-10">
       <div>
         <span class="text-[#E2B578] font-bold text-2xl">Chainlink</span>
-        <div class="text-base text-[#73706E] mt-2.5 mb-7 w-[65%]">The decentralized oracle network was proposed by (DON) Chainlink. 
+        <div class="text-base text-[#73706E] mt-2.5" style="text-align: justify; text-justify: inter-word;">The decentralized oracle network was proposed by (DON) Chainlink. 
           This method not only enhances data reliability, but also endows the oracle with computing power, 
           greatly enhancing the usage scenarios of the oracle.
         </div>
@@ -22,26 +22,17 @@
 
       <div class="relative oracle-container">
         <span class="text-base font-bold">Hamslink</span>
-        <div class="mt-5">
-          <span class="text-sm chainlink-description">Chainlink Functions is a web3 serverless development platform that allows you to fetch data from any API and perform 
-          custom computations on Chainlink's highly secure and reliable network. However, Chainlink Functions operations are relatively complex
-          </span>
-          <div class="text-left">
-            <a-button type="link" class="!p-0" @click="showMore = true">View More</a-button>
-          </div>
-        </div>
-        <div class="mt-4">
-          <a-button class="!h-[43px] w-[169px]" v-if="openService" @click="router.push('/chainlink/oracle')">Enter Now</a-button>
-          <a-button class="!h-[43px] w-[169px]" v-else @click="handleOpenService">Get Service Now</a-button>
-        </div>
-
-        <div class="absolute top-0 left-0 viewmore-container " v-if="showMore" @click="showMore = false">
+        <div class="text-sm h-[110px] content overflow-y-auto">
           Chainlink Functions is a web3 serverless development platform that allows you to fetch data from any API and perform 
           custom computations on Chainlink's highly secure and reliable network. However, Chainlink Functions operations are relatively complex, the
           visual interface is insufficient, and a certain level of coding ability is required. To simplify
           Chainlink Functions operations and allow more developers to easily access Chainlink
           Functions services, Hamster has integrated and developed a Chainlink Functions service
           middleware.
+        </div>
+        <div class="mt-4">
+          <a-button class="!h-[43px] w-[169px]" v-if="openService" @click="router.push('/middleware/dashboard/oracle')">Enter Now</a-button>
+          <a-button class="!h-[43px] w-[169px]" v-else @click="handleOpenService">Get Service Now</a-button>
         </div>
       </div>
     </div>
@@ -79,27 +70,17 @@
 
 <style lang="less" scoped>
   .oracle-container {
-    width: 453px;
-    height: 237px;
+    display: inline-block;
+    margin-right: 20px;
+    width: 456px;
+    height: 266px;
     padding: 30px;
     background: rgba(226,181,120,0.1);
     border-radius: 12px;
     border: 1px solid #EBEBEB;
+    margin-top: 20px;
   }
-  .viewmore-container {
-    width: 453px;
-    height: 237px;
-    padding: 15px 30px;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    border-radius: 12px;
-    border: 1px solid #EBEBEB;
-  }
-  .chainlink-description {
-    display: -webkit-box; 
-    -webkit-box-orient: vertical; 
-    -webkit-line-clamp: 2; 
-    word-break: normal; 
-    overflow: hidden;
+  .content{
+    margin: 10px 0;
   }
 </style>

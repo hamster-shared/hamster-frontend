@@ -56,8 +56,8 @@
             <div class="text-[#73706E] dark:text-[#B4AFAD]">{{ item.recommendation }}</div>
           </div>
           <template #extra>
-            <div v-if="val?.mwe?.length">
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div v-if="val?.mwe?.length" class="open-link-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.mwe.length + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -173,30 +173,32 @@ const getMetascanFile = async () => {
     let fileKey = reportFileDataSA[key].fileKey;
     try {
       const { data } = await apiGetMetascanFile(fileKey);
-      const tempFile = data.split('\n');
-      //截取需要显示的代码
-      reportFileDataSA[key].mwe.forEach((element, index) => {
-        let tempData = []
-        let lineTotal = 0;
-        if (tempFile.length >= element.lineStart) {
-          let endNum = element.lineEnd;
-          if (tempFile.length < element.lineEnd) {
-            endNum = tempFile.length;
+      if (data !== null && data !== undefined) {
+        const tempFile = data.split('\n');
+        //截取需要显示的代码
+        reportFileDataSA[key].mwe.forEach((element, index) => {
+          let tempData = []
+          let lineTotal = 0;
+          if (tempFile.length >= element.lineStart) {
+            let endNum = element.lineEnd;
+            if (tempFile.length < element.lineEnd) {
+              endNum = tempFile.length;
+            }
+            for (let i = element.lineStart; i <= endNum; i++) {
+              // tempData.push({
+              //   lineNum: i,
+              //   lineText: tempFile[i-1]
+              // });
+              tempData.push(tempFile[i - 1]);
+              lineTotal++;
+            }
           }
-          for (let i = element.lineStart; i <= endNum; i++) {
-            // tempData.push({
-            //   lineNum: i,
-            //   lineText: tempFile[i-1]
-            // });
-            tempData.push(tempFile[i - 1]);
-            lineTotal++;
-          }
-        }
-        reportFileDataSA[key].mwe[index].fileContent = [{
-          lineNum: lineTotal,
-          lineText: tempData.join("\n")
-        }]
-      });
+          reportFileDataSA[key].mwe[index].fileContent = [{
+            lineNum: lineTotal,
+            lineText: tempData.join("\n")
+          }]
+        });
+      }
     } catch (error: any) {
       console.log("erro:", error)
     }
@@ -211,7 +213,8 @@ const openChainIDE = (name: any) => {
 .severity-btn{
   margin-left: 16px;
   width: 100px;
-  background: rgba(255,255,255,0.2);
+  // background: rgba(255,255,255,0.2);
+  background-color: transparent;
   border: 2px solid #E2B578;
   color: #E2B578;
 }

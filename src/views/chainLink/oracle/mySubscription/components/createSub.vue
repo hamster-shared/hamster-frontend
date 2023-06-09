@@ -5,16 +5,16 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Network" name="network" >
-                <a-select @change="setSubNetwork" v-model:value="formData.network" placeholder="Choose" autocomplete="off"
+                <a-select @change="setSubNetwork" dropdownClassName="modal-select-dropdown" v-model:value="formData.network" placeholder="Choose" autocomplete="off"
                 :options="subNetOptions" allow-clear class="sel"></a-select>
             </a-form-item>
             <a-form-item label="Subscription Name" name="name" >
-                <a-input v-model:value="formData.name" placeholder="Please input Subscription Name" allow-clear autocomplete="off" />
+                <a-input class="modal-input" v-model:value="formData.name" placeholder="Please input Subscription Name" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
         <div class="text-center flex justify-center">
-            <a-button class="done-btn" style="margin-right: 20px;" @click="handleCreateSub">Confirm</a-button>
-            <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelCreateSub">Cancel</a-button>
+            <a-button class="done-btn" style="margin-right: 20px;" @click="handleCreateSub" :loading="createSubLoading">Confirm</a-button>
+            <a-button class="done-btn" ghost @click="cancelCreateSub">Cancel</a-button>
         </div>
     </a-modal>
 </template>
@@ -39,6 +39,7 @@ const formRef = ref();
 const chainName = ref()
 const rpcUrl = ref()
 const router = useRouter()
+const createSubLoading = ref(false)
 // ETH
 // 经产品要求，隐藏掉这个网络{label: 'Hamster Moonbeam Testnet',networkName: 'Hamster Moonbeam', value: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}
 // networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }, {name: 'Testnet/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
@@ -75,12 +76,13 @@ const handleCreateSub = async()=>{
     // 钱包地址
     const walletAdr = localStorage.getItem('walletAccount');
     console.log('walletAdr',walletAdr,contractApi)
+    createSubLoading.value = true
     const tx = contractApi.registryApi?.createSubscription().then(async(tx:any)=>{
         const chainNetArr = formData?.network?.split(' ')
         const params = {
             chain:chainNetArr[0],
             network:chainNetArr.slice(1,chainNetArr.length).join(' '),
-            name:formData.name,
+            name:formData.name?.replaceAll('_',''),
             // subscriptionId:'',
             admin:walletAdr,
             transactionTx:tx.hash
@@ -88,12 +90,12 @@ const handleCreateSub = async()=>{
         console.log('tx111111',tx)
         // 创建订阅存入后端接口   
         const res = await apiCreateSub(params)
-        if(res.code===200){
-            message.success(res.message)
-        }else{
-            message.error('Failed')
-        }
-        emit('closeCreateSub',false)
+        // if(res.code===200){
+        //     message.success(res.message)
+        // }else{
+        //     message.error('Failed')
+        // }
+        // emit('closeCreateSub',false)
         console.log('创建订阅存入后端接口',res)
         id.value = res.data
         return tx.wait()
@@ -115,15 +117,20 @@ const handleCreateSub = async()=>{
       const res = await updateSub(params)
       if(res.code===200){
             message.success(res.message)
-            emit('getCreateSubInfo',true)
+            createSubLoading.value = false
+            emit('getCreateSubInfo')
         }else{
             message.error('Failed '+res.data)
+            createSubLoading.value = false
         }
     }, (error:any) => {
       message.error('Failed')
       emit('closeCreateSub',false)
+      createSubLoading.value = false
       console.log('error',error)
-    });
+    }).catch((err:any)=>{
+        createSubLoading.value = false
+    })
 }
 // 取消订阅
 const cancelCreateSub = ()=>{

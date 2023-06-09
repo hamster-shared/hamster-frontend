@@ -11,6 +11,7 @@
     </a-breadcrumb>
 </template>
 <script setup lang="ts" name="BreadCrumb">
+import { defineProps } from 'vue'
     defineProps({
         routes: {
             type: Array,

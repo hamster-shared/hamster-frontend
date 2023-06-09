@@ -1,10 +1,9 @@
 <template>
   <div class="mx-auto" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <BreadCrumb currentName="Create Request" :isClick="loading" class="mb-6"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
+    <!-- <div class="mb-4 text-2xl font-bold">Create Request</div> -->
 
-    <div class="mb-4 text-2xl font-bold">Create Request</div>
-
-    <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB]">
+    <div class="p-4 border border-solid rounded-xl dark:border-[#434343] border-[#EBEBEB] mt-4">
       <div class="flex justify-between mb-4">
         <span class="items-center self-center font-bold">You can choose the following templates to quickly create a Request</span>
         <a-button v-if="false" type="link">View All</a-button>
@@ -15,7 +14,7 @@
           <div v-for=" (item,index) in requestTemplateInfo " :key="index" class="flex flex-col shrink-0 grow-0 basis-[400px] h-[300px] template-container">
             <div class="flex-1">
               <div class="mb-2 text-base font-bold">{{ item.name }}</div>
-              <span class="sub">Submitted by: <span class="text-[#E2B578] cursor-pointer" @click="goAuthor(item.authorUrl)">{{ item.author }}</span></span>
+              <span class="sub">Submitted by: <span class="open-link-css cursor-pointer" @click="goAuthor(item.authorUrl)">{{ item.author }}</span></span>
               <div class="item h-[120px] overflow-y-auto">{{ item.description }}</div>
             </div>
             <div class="mt-2">
@@ -29,7 +28,7 @@
     <div class="border border-solid border-[#EBEBEB] rounded-xl mt-12 p-4">
       <div class="mb-6">
         <span class="block mb-2 text-base font-bold"><span class="text-[red]">* </span>Request Name</span>
-        <a-input v-model:value.trim="requestName" placeholder="Please input request name" class="!w-[50%]"/>
+        <a-input v-model:value.trim="requestName" placeholder="Please input request name" class="!w-[50%] dark:text-[#FFFFFF]"/>
         <span class="text-[red] block" v-show="alertInfo">{{ alertInfo }}</span>
       </div>
       <div class="bg-[#F6F6F6] dark:bg-[#35322E] h-[60px] rounded-t-xl">
@@ -39,7 +38,7 @@
         <CodeEditor v-model:value="pipelinefilePreview" class="request-codeeditor"></CodeEditor>
       </div>
       <div class="mt-4 text-center">
-        <a-button class="inline-block mr-4 back-btn" @click="router.push('/chainlink/oracle')">Back</a-button>
+        <a-button class="inline-block mr-4 back-btn" @click="router.push('/middleware/dashboard/oracle')">Back</a-button>
         <a-button @click="handleCreateTemplate">{{id?'Save':'Create'}}</a-button>
       </div>
     </div>
@@ -61,7 +60,7 @@
   import { ref, reactive, onMounted, watch } from 'vue';
   import { useRouter,useRoute } from 'vue-router'
   import { useThemeStore } from "@/stores/useTheme";
-  import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+  import BreadCrumb from "@/components/BreadCrumb.vue";
   import { apiGetRequestTemplate, apiGetShowRequestTemplateScript, apiPostCreateRequest,apiDetailRequest,apiPostUpdateRequest } from '@/apis/chainlink'
   import CodeEditor from '@/components/CodeEditor.vue'
   import { message } from 'ant-design-vue';
@@ -77,6 +76,7 @@
   const loading = ref(false);
   const changeRequestWarning = ref(false)
   const requestTemId = ref()
+  const breadCrumbInfo = ref<any>([])
 
   const requestTemplateInfo = ref<{
     id: number,
@@ -154,7 +154,7 @@
 
     try {
       const { data } = id ? await apiPostUpdateRequest(id,params) : await apiPostCreateRequest(params)
-      router.push('/chainlink/oracle')
+      router.push('/middleware/dashboard/oracle')
       console.log('createTemplate-data:',data)
     } catch(err:any) {
       message.error(err.message)
@@ -179,6 +179,16 @@
     if(id){
       getDetailInfo()
     }
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Hamslink',
+        path:'/middleware/dashboard/Oracle'
+      },
+      {
+        breadcrumbName:id ? 'Edit Request' : 'Create Request',
+        path:''
+      },
+    ]
   })
 </script>
 
@@ -215,7 +225,7 @@
     }
   }
   .back-btn {
-    background-color: #1D1C1A;
+    background: transparent;
     color: #E2B578;
   }
   .item{

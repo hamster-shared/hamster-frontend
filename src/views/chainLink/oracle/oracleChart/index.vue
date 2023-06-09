@@ -101,16 +101,6 @@ const initChart = (chartElement: HTMLElement, themeValue: string) => {
   myChart.value = chart
 }
 
-// 监测主题变化，改变echarts主题
-watch(() => theme.themeValue,
-  (value: any) => {
-    // console.log(value, 'theme')
-    // console.log("dispose", myChart.dispose, value)
-    myChart.value && myChart.value.dispose()
-    initChart(myChartRef.value, value);
-  }
-)
-
 // 监测时间变化
 // const selectTimeValue = ref('Last 7 days')
 // const handleChange = () => {
@@ -121,6 +111,66 @@ watch(() => theme.themeValue,
 const legendData = ref<[] | null>()
 const xAxisData = ref([])
 const seriesData = ref<[] | null>()
+
+// 获取my subscription的数据
+const subscripion = reactive<any>([
+  { title: 'Subscription', number: '', btnTitle: 'Create',disabled:false },
+  { title: 'Consumers', number: '-', btnTitle: 'Add',disabled:false },
+  { title: 'Funds', number: '-', btnTitle: 'Add',disabled:false },
+])
+const getSubscripionInfo = async () => {
+  const token = localStorage.getItem('token')
+  const params = {
+    network: tabNetwork.value,
+    token
+  }
+  try {
+    const { data } = await apiGetSubscriptionParams(params)
+    subscripion[0].number = data.total_subscription?data.total_subscription:'0'
+    console.log('subscripion[0].number:',subscripion[0].number)
+    // if(!data.total_consumers){
+    //   subscripion[1].number = '-'
+    //   subscripion[1].disabled = true
+    // }else{
+    //   subscripion[1].number = data.total_consumers
+    //   subscripion[1].disabled = false
+    // }
+    subscripion[1].number = subscripion[0].number == '0' ? '-' : data.total_consumers
+    if(subscripion[0].number == '0'){
+      subscripion[1].disabled = true
+    }else{
+      subscripion[1].disabled = false
+    }
+    console.log('data:', data)
+  } catch (err: any) {
+    console.log('err:', err)
+  }
+}
+
+const getBalance = async()=> {
+  if(subscripion[0].number == '0'){
+    subscripion[2].disabled = true
+    return
+  }
+  try {
+    const { data } = await getCustomerBalance()
+    console.log('balance-data:', data)
+    data?.forEach((item:any) => {
+      balance.value = item.balance*1 + balance.value
+    });
+    const testNumber:any = ethers.BigNumber.from(balance.value+'')
+    console.log(111111,parseInt(testNumber,16))
+    // if(!parseInt(testNumber,16)){
+    //   subscripion[2].number = '-'
+    // }else{
+    //   subscripion[2].number = ethers.utils.formatEther(testNumber);
+    // }
+    subscripion[2].number = ethers.utils.formatEther(testNumber);
+    subscripion[2].disabled = false
+  } catch(err:any) {
+    console.log('balance-err:',err)
+  }
+}
 const getOracleChart = async ()=> {
   legendData.value = []
   xAxisData.value = []
@@ -131,7 +181,7 @@ const getOracleChart = async ()=> {
     xAxisData.value = data.xaxisData
     const seriesDataInfo =  data.seriesData?.map((item:any) => {
       item['type'] = 'line'
-      item['stack'] = 'Total'
+      // item['stack'] = 'Total'
 
       return item
     });
@@ -144,64 +194,6 @@ const getOracleChart = async ()=> {
   myChart.value && myChart.value.dispose()
   initChart(myChartRef.value, theme.themeValue);
 }
-
-// 获取my subscription的数据
-const subscripion = reactive<any>([
-  { title: 'Subscription', number: '', btnTitle: 'Create',disabled:false },
-  { title: 'Consumers', number: '', btnTitle: 'Add',disabled:false },
-  { title: 'Funds', number: '', btnTitle: 'Add',disabled:false },
-])
-const getSubscripionInfo = async () => {
-  const token = localStorage.getItem('token')
-  const params = {
-    network: tabNetwork.value,
-    token
-  }
-  try {
-    const { data } = await apiGetSubscriptionParams(params)
-    subscripion[0].number = data.total_subscription?data.total_subscription:'0'
-    if(!data.total_consumers){
-      subscripion[1].number = '-'
-      subscripion[1].disabled = true
-    }else{
-      subscripion[1].number = data.total_consumers
-      subscripion[1].disabled = false
-    }
-    if(!subscripion[0].number){
-      subscripion[1].disabled = true
-    }else{
-      subscripion[1].disabled = false
-    }
-    console.log('data:', data)
-  } catch (err: any) {
-    console.log('err:', err)
-  }
-}
-
-const getBalance = async()=> {
-  try {
-    const { data } = await getCustomerBalance()
-    console.log('balance-data:', data)
-    data?.forEach((item:any) => {
-      balance.value = item.balance*1 + balance.value
-    });
-    const testNumber:any = ethers.BigNumber.from(balance.value+'')
-    console.log(111111,parseInt(testNumber,16))
-    if(!parseInt(testNumber,16)){
-      subscripion[2].number = '-'
-    }else{
-      subscripion[2].number = ethers.utils.formatEther(testNumber);
-    }
-    if(!subscripion[0].number){
-      subscripion[2].disabled = true
-    }else{
-      subscripion[2].disabled = false
-    }
-  } catch(err:any) {
-    console.log('balance-err:',err)
-  }
-}
-
 // 切换网络
 const changeNetwork = ()=>{
   console.log('tabNetwork',tabNetwork.value)
@@ -232,11 +224,14 @@ const createSubPop = () => {
 // 订阅数据接收
 const getCreateSubInfo = (info: any) => {
   console.log('订阅数据接收', info)
+  showCreateSub.value = false
   getSubscripionInfo()
+  router.push('/middleware/dashboard/oracle/sublist')
 }
 // 关闭订阅
 const closeCreateSub = (bool: boolean) => {
   showCreateSub.value = bool
+  getSubscripionInfo()
 }
 
 // 添加消费者弹框
@@ -247,6 +242,8 @@ const addConsumerPop = () => {
 // 添加消费者数据接收
 const getAddConsumersInfo = (consumersInfo: any) => {
   console.log('添加消费者数据接收', consumersInfo)
+  showAddConsumers.value = false
+  getSubscripionInfo()
 }
 // 关闭消费者
 const closeAddConsumers = (bool: boolean) => {
@@ -262,6 +259,8 @@ const addFundsPop = () => {
 // 添加资金数据接收
 const getAddFundInfo = (fundInfo: any) => {
   console.log('添加消费者数据接收', fundInfo)
+  showAddFund.value = false
+  getBalance()
 }
 // 关闭资金
 const closeAddFund = (bool: boolean) => {
@@ -282,8 +281,8 @@ onMounted(async () => {
   const handleWindowResize = () => myChart.value.resize();
   window.addEventListener("resize", handleWindowResize)
 
-  getSubscripionInfo()
-  getBalance()
+  await getSubscripionInfo()
+  await getBalance()
 })
 
 onBeforeUnmount(() => {
@@ -292,8 +291,17 @@ onBeforeUnmount(() => {
 })
 // 跳转subList
 const goSublist = () => {
-  router.push('/chainlink/oracle/sublist')
+  router.push('/middleware/dashboard/oracle/sublist')
 }
+// 监测主题变化，改变echarts主题
+watch(() => theme.themeValue,
+  (value: any) => {
+    // console.log(value, 'theme')
+    // console.log("dispose", myChart.dispose, value)
+    myChart.value && myChart.value.dispose()
+    initChart(myChartRef.value, value);
+  }
+)
 </script>
 
 <style scoped lang="less">
@@ -333,10 +341,10 @@ span{
 .subscripion-divider {
   margin: 16px auto;
 }
-&:deep(.is-show-btn){
-  color: #E2B578;
-  &:hover{
-    color: #E2B578;
-  }
-}
+// &:deep(.is-show-btn){
+//   color: #E2B578;
+//   &:hover{
+//     color: #E2B578;
+//   }
+// }
 </style>

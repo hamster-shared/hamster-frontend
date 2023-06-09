@@ -2,17 +2,7 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between">
       <div class="flex items-center">
-        <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-          <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
-          <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
-          back
-        </div>
-        <div class="ml-4">
-          <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
-        </div>
-        
-        <div class="ml-4 text-[24px] font-bold">{{ projectsDetail.name }}</div>
+        <bread-crumb :routes="breadCrumbInfo"/>
         <div class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
           <label v-if="projectType === '1'">
             <div>{{ ContractFrameTypeEnum[projectsDetail.frameType] }}</div>
@@ -42,7 +32,7 @@
                 <a href="javascript:;" style="color:#151210">General</a>
               </a-menu-item>
               <!-- Check Setting -->
-              <a-menu-item v-if="frameType === 1" @click="GetCheck" :visible="visible">
+              <a-menu-item v-if="frameType === 1 && projectType=='1'" @click="GetCheck" :visible="visible">
                 <a href="javascript:;" style="color:#151210">Check Setting</a>
               </a-menu-item>
 
@@ -66,7 +56,7 @@
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
-          <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" />
+          <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" :name="projectsDetail.name"/>
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
@@ -80,11 +70,11 @@
       </a-tabs>
     </div>
   </div>
-  <a-modal v-model:visible="visibleModal" :footer="null">
+  <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Project Name" name="name">
-        <a-input v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
       </a-form-item>
     </a-form>
     <div class="mt-4 text-center">
@@ -136,6 +126,7 @@ import {apiIsCheck} from '@/apis/workFlows'
 import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 const theme = useThemeStore()
 const projectId = ref('')
 
@@ -158,7 +149,7 @@ const formData = reactive({
   name: '',
   userId: JSON.parse(userInfo)?.id,
 });
-const projectsDetail = ref({});
+const projectsDetail = ref<any>({});
 const frameType = ref(0);
 const containerVisible = ref(false);
 const aptosBuildVisible = ref(false);
@@ -173,6 +164,7 @@ const msgParam = ref({
 const aptosBuildParams = ref([]);
 const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
+const breadCrumbInfo = ref<any>([])
 
 // 弹框
 let visible=ref(false)
@@ -242,6 +234,7 @@ const getDoneData =async (myArray:string[]) => {
     }
 }
 
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
 const formRules = computed(() => {
 
   const checkDupName = async () => {
@@ -252,7 +245,9 @@ const formRules = computed(() => {
         name: formData.name,
       }
       const res = await apiDupProjectName(params);
-      if (res.data === false) {
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
         return Promise.reject("Project Name duplication");
       } else {
         return Promise.resolve()
@@ -266,12 +261,22 @@ const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
   return {
-    name: [requiredRule('Name'), { validator: checkDupName, trigger: "change" }],
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
   };
 });
 
-onMounted(() => {
-  getProjectsDetail();
+onMounted(async() => {
+  await getProjectsDetail();
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:projectsDetail.value.name,
+      path:''
+    },
+  ]
 })
 
 onBeforeUnmount(() => {
@@ -429,9 +434,9 @@ const goBack = () => {
   height: 40px;
 }
 
-:deep(.dark-css .ant-tabs) {
-  color: #E0DBD2;
-}
+// :deep(.dark-css .ant-tabs) {
+//   color: #E0DBD2;
+// }
 
 :deep(.ant-input-affix-wrapper) {
   border-color: #EBEBEB;

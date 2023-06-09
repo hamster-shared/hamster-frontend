@@ -1,12 +1,12 @@
 <template>
   <div class="rpc-detail">
-    <Breadcrumb :currentName="projectName" :isClick="loading"></Breadcrumb>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div
       class="dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px] mt-[24px] border border-solid dark:border-[#434343] border-[#EBEBEB]">
       <div class="">
         <img :src="imageUrl" class="h-6;"/>
         <span class="font-bold text-[24px] mr-[20px] align-middle" style="margin-left: 10px;">{{name}}</span>
-        <span v-if="parseInt(chainData.chainID,16) && chainData.isEvm" @click="addNetwork" class="text-[#E2B578] border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
+        <span v-if="parseInt(chainData.chainID,16) && chainData.isEvm" @click="addNetwork" class="open-link-css border border-solid border-[#E2B578] rounded-[32px] px-[15px] py-[6px] cursor-pointer">Add
           Network</span>
       </div>
       <a-tabs v-model:activeKey="tabNetwork" @change="handleChange">
@@ -25,12 +25,12 @@
             <div>{{ chainData.explorerUrl }}</div>
           </div>
         </div>
-        <div>
+        <div v-if="newtworkChainsData.http_link">
           <div class="text-[16px] mb-[12px] mt-[32px]">RPC</div>
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
             <div class="font-bold">{{ newtworkChainsData.http_link }}</div>
-            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.http_link)">
+            <div class="open-link-css cursor-pointer" @click="copyInfo(newtworkChainsData.http_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
             </div>
           </div>
@@ -40,7 +40,7 @@
           <div
             class="flex justify-between p-[16px] border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px]">
             <div class="font-bold">{{ newtworkChainsData.websocket_link }}</div>
-            <div class="text-[#E2B578] cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_link)">
+            <div class="open-link-css cursor-pointer" @click="copyInfo(newtworkChainsData.websocket_link)">
               <svg-icon name="copy" size="18" class="mr-[4px]" />
             </div>
           </div>
@@ -56,7 +56,7 @@
             <CodeEditor :readOnly="true" :value="value"></CodeEditor>
           </div>
           <div class="text-right">
-            <span class="text-right cursor-pointer text-[#E2B578]" @click="copyInfo(value)">
+            <span class="text-right cursor-pointer open-link-css" @click="copyInfo(value)">
               <svg-icon name="copy" size="18"></svg-icon>
             </span>
           </div>
@@ -71,7 +71,7 @@
 <script lang='ts' setup>
 import { ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import Breadcrumb from "@/views/projects/components/Breadcrumb.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { message } from "ant-design-vue";
@@ -100,6 +100,12 @@ const addNetInfo = reactive<any>({
   chainName:'',
   rpcUrls:''
 })
+const breadCrumbInfo = ref<any>([])
+// 从Dashboard进来
+const fromDashboard = query.fromDashboard
+// 从fromMiwaspace进来
+const fromMiwaspace = query.fromMiwaspace
+console.log('fromDashboard',fromDashboard,query)
 
 const columns = [
   {
@@ -153,10 +159,7 @@ const getChainData = async () => {
 }
 // 添加网络到钱包上
 const addNetwork = ()=>{
-  // 如果网络id不一样，需要调小狐狸进行网络切换
-  if (ethereum.chainId !== `0x${addNetInfo.chainId}`) {
-        addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,addNetInfo.rpcUrls)
-    }
+  addToChain(`0x${addNetInfo.chainId}`,addNetInfo.chainName,newtworkChainsData.http_link,chainData.nativeToken,chainData.decimals)
 }
 const handleChange = (val: string) => {
   const data:any = chainsList.value.find((item: any) => { return item.network === val });
@@ -216,11 +219,37 @@ const copyInfo = async (_items: any) => {
   inp.remove();
   message.success('copy success')
 }
-
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  let name = ''
+  let jumpPath = ''
+  if(fromDashboard){
+    name = 'Dashboard'
+    jumpPath = '/middleware/dashboard'
+  }else if(fromMiwaspace){
+    name = 'Miwaspace'
+    jumpPath = '/middleware/miwaspace?key=1'
+  }else{
+    name = 'Rpc'
+    jumpPath = '/middleware/dashboard/rpc'
+  }
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName: name,
+      path: jumpPath
+    },
+    {
+      breadcrumbName:projectName.value,
+      path:''
+    },
+  ]
+}
 onMounted(async () => {
   await getChainData();
-  getRequestLogData();
+  await getRequestLogData();
   console.log('tabNetwork',tabNetwork.value)
+  judgeOrigin()
+  handleChange(tabNetwork.value)
 })
 </script>
 <style lang='less' scoped>

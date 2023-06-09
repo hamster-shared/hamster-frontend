@@ -5,7 +5,7 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
-                <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
+                <a-select @change="setSubscription" dropdownClassName="modal-select-dropdown" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions" allow-clear></a-select>
             </a-form-item>
             
@@ -19,15 +19,15 @@
                     <div class="ml-[25px] text-gray-400 text-[12px]">Input your consumer contract address for using funds of this subscription</div>
                 </div>
                 <div v-if="!isOrigin">
-                    <a-input class="mt-[10px]" v-model:value="formData.consumer" placeholder="Please input consumer" allow-clear autocomplete="off" />
+                    <a-input class="mt-[10px] modal-input" v-model:value="formData.consumer" placeholder="Please input consumer" allow-clear autocomplete="off" />
                 </div>
             </a-form-item>
         </a-form>
         <div v-if="isOrigin" class="-mt-[10px]">
-            <a-select class="inline-block" style="margin-right:10px;width: 220px;" @change="setProject" v-model:value="formData.project" placeholder="Please select a subscription" autocomplete="off"
+            <a-select class="inline-block" dropdownClassName="modal-select-dropdown" style="margin-right:10px;width: 220px;" @change="setProject" v-model:value="formData.project" placeholder="Please select a subscription" autocomplete="off"
                 allow-clear :options="projectOptions"></a-select>
-            <a-select class="inline-block" :placeholder="subOptionsNet" disabled></a-select>
-            <a-table class="mt-[16px]" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
+            <a-select class="inline-block" dropdownClassName="modal-select-dropdown" :placeholder="subOptionsNet" disabled></a-select>
+            <a-table class="mt-[16px] modal-table" :loading="loading" :columns="consumersColumns" :dataSource="consumersData" :pagination="pagination">
                 <template #address="{ record }">
                       <a-radio-group v-model:value="radioFlag" @change="changeRadio">
                          <a-radio :checked="record.address === radioFlag" :value='record.address' >
@@ -39,8 +39,8 @@
             </a-table>
         </div>
         <div class="text-center flex justify-between mt-[16px]">
-            <a-button style="margin-right: 20px;background: transparent;color:#E2B578" @click="goHamster">Create Consumer by Hamster</a-button>
-            <a-button @click="handleFund">Confirm</a-button>
+            <a-button ghost style="margin-right: 20px;" @click="goHamster">Create Consumer by Hamster</a-button>
+            <a-button @click="handleFund" :loading="addConsumerLoading">Confirm</a-button>
         </div>
     </a-modal>
 </template>
@@ -124,6 +124,7 @@ const keyId = ref()
 // Penning id
 const temId = ref()
 const radioFlag = ref('')
+const addConsumerLoading = ref(false)
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -138,7 +139,7 @@ const getSublistData = async()=>{
     const res = await consumerSublist()
     if(res.code===200 && res.data?.length){
         subOptions.value = res.data.map((item:any)=>{
-            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.chainSubscriptionId
+            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.id
             return {
                 label:tem,
                 value:item.id,
@@ -229,6 +230,7 @@ const goHamster = ()=>{
 const handleFund = async()=>{
     await formRef.value.validate();
     console.log(' id 是订阅Id addConsumerAddress 合约地址',parseInt(subId.value),formData.consumer)
+    addConsumerLoading.value = true
     if (contractApi.apiStatus) {
         // id 是订阅Id addConsumerAddress 合约地址
         registryApi?.addConsumer(parseInt(subId.value), formData.consumer).then(async(tx:any)=>{
@@ -239,14 +241,14 @@ const handleFund = async()=>{
                 transactionTx:tx.hash
             }
             const res = await apiConsumerAdd(params)
-            if(res.code===200){
-                temId.value = res.data
-                message.success(res.message)
-            }else{
-                message.error(res.message)
-            }
-            emit('getAddConsumersInfo',formData)
-            emit('closeAddConsumers',false)
+            // if(res.code===200){
+            //     message.success(res.message)
+            // }else{
+            //     message.error(res.message)
+            // }
+            temId.value = res.data
+            // emit('getAddConsumersInfo',formData)
+            // emit('closeAddConsumers',false)
             return tx.wait()
         }).then(async(receipt:any) => {
             const params = {
@@ -259,13 +261,17 @@ const handleFund = async()=>{
             const res = await updateConsumer(params)
             if(res.code===200){
                 message.success(res.message)
+                addConsumerLoading.value = false
+                emit('getAddConsumersInfo')
             }else{
                 message.error(res.data)
+                addConsumerLoading.value = false
             }
             console.log("addConsumer", receipt);
         }).catch((err:any)=>{
             message.error('Failed')
             emit('closeAddConsumers',false)
+            addConsumerLoading.value = false
             console.log('err111111',err)
         })
     }

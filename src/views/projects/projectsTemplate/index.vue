@@ -1,17 +1,6 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <div class="mb-[32px] flex items-center">
-      <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-        <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
-        <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
-        back
-      </div>
-      <div class="ml-4">
-        <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
-        <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
-      </div>
-      <div class="ml-4 text-[24px] font-bold">Select template</div>
-    </div>
+    <bread-crumb :routes="breadCrumbInfo"/>
 
     <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2'">
     </FrontendTemplate>
@@ -74,6 +63,7 @@ import { useRouter, useRoute } from "vue-router";
 import { apiTemplatesCategory, apiTemplatesCategoryById } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import FrontendTemplate from "./components/FrontendTemplate.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 const theme = useThemeStore()
 const { params } = useRoute();
 
@@ -90,9 +80,20 @@ const templateBuild = reactive([
   { name: "ERC721", description: "real estate, voting rights, or collectibles,", },
   { name: "ERC1155", description: "Create a fungibility-agnostic and gas-efficient token contract.", },
 ]);
+const breadCrumbInfo = ref<any>([])
 
 onMounted(() => {
   getTemplatesCategory();
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Create Project',
+      path:'/projects/create'
+    },
+    {
+      breadcrumbName:'Template',
+      path:''
+    },
+  ]
 })
 
 const frameTypeInfo = ref()

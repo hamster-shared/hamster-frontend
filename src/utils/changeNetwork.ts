@@ -1,5 +1,6 @@
 import { message } from 'ant-design-vue'
-export const addToChain = (chainId: string,chainName:string,rpcUrl:string) => {
+export const addToChain = (chainId: string,chainName:string,rpcUrl:string,symbol?:string,decimals?:any) => {
+    console.log('chainId,chainName,rpcUrl',chainId,chainName,rpcUrl,symbol,decimals)
     window.ethereum && window.ethereum.request({
     method: "wallet_addEthereumChain",
     params: [
@@ -8,20 +9,18 @@ export const addToChain = (chainId: string,chainName:string,rpcUrl:string) => {
             chainName: chainName,
             rpcUrls: [rpcUrl],
             /*
-              name：本地货币名称；
               symbol：本地货币符号；
               decimals：本地货币精度；
             */
-            // nativeCurrency: {
-            //   name: 'Hm',
-            //   symbol: 'M',
-            //   decimals: 18,
-            // },
+            nativeCurrency: {
+              symbol: symbol,
+              decimals: decimals,
+            },
         },
     ],
     }).then((res: any) => {
-    message.info('successfully added')
-    // console.log(res)
+      message.info('operate successfully')
+      // console.log(res)
     }).catch((err: any) => {
     console.log(err.code, 'code')
     if (err.code === 4001) {

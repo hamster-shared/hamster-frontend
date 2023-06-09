@@ -3,11 +3,11 @@
     <span class="text-[24px] leading-[32px] font-bold">Issues Files</span>
     <div class="mt-4" v-if="metaTrustData.issues > 0">
       <label class="dark:text-[#E0DBD2]">Severity: </label>
-      <a-button class="Severity-btn" :class="[checkExitBtn('CRITICAL') ? 'Severity-btn-checked':'Severity-btn-hover']" @click="showContent('CRITICAL')">Critical: {{ SeverityBtnData.CRITICAL }}</a-button>
-      <a-button class="Severity-btn" :class="[checkExitBtn('HIGH') ? 'Severity-btn-checked':'Severity-btn-hover']" @click="showContent('HIGH')">High:  {{ SeverityBtnData.HIGH }}</a-button>
-      <a-button class="Severity-btn" :class="[checkExitBtn('MEDIUM') ? 'Severity-btn-checked':'Severity-btn-hover']" @click="showContent('MEDIUM')">Medium:  {{ SeverityBtnData.MEDIUM }} </a-button>
-      <a-button class="Severity-btn" :class="[checkExitBtn('LOW') ? 'Severity-btn-checked':'Severity-btn-hover']" @click="showContent('LOW')">Low:  {{ SeverityBtnData.LOW }}</a-button>
-      <a-button class="Severity-btn" :class="[checkExitBtn('INFORMATIONAL') ? 'Severity-btn-checked':'Severity-btn-hover']" @click="showContent('INFORMATIONAL')">Info:  {{ SeverityBtnData.INFORMATIONAL }}</a-button>
+      <a-button class="severity-btn" :class="[checkExitBtn('CRITICAL') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('CRITICAL')">Critical: {{ SeverityBtnData.CRITICAL }}</a-button>
+      <a-button class="severity-btn" :class="[checkExitBtn('HIGH') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('HIGH')">High:  {{ SeverityBtnData.HIGH }}</a-button>
+      <a-button class="severity-btn" :class="[checkExitBtn('MEDIUM') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('MEDIUM')">Medium:  {{ SeverityBtnData.MEDIUM }} </a-button>
+      <a-button class="severity-btn" :class="[checkExitBtn('LOW') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('LOW')">Low:  {{ SeverityBtnData.LOW }}</a-button>
+      <a-button class="severity-btn" :class="[checkExitBtn('INFORMATIONAL') ? 'severity-btn-checked':'severity-btn-hover']" @click="showContent('INFORMATIONAL')">Info:  {{ SeverityBtnData.INFORMATIONAL }}</a-button>
     </div>
     <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="box-card">
       <div v-if="checkedBtn.length === 0" class="text-[#BBBAB9] text-center py-[80px]">
@@ -69,8 +69,8 @@
             </div>
           </div>
           <template #extra>
-            <div>
-              <span class="mr-[8px] text-[14px] text-[#E2B578] font-normal">
+            <div class="open-link-css">
+              <span class="mr-[8px] text-[14px] font-normal">
                 {{ val.Details.length + ' issues found' }}
               </span>
               <svg-icon name="up-arrow" size="12" />
@@ -211,18 +211,18 @@ const openChainIDE = (name: any) => {
 }
 </script>
 <style lang='less' scoped>
-.Severity-btn{
+.severity-btn{
   margin-left: 16px;
   width: 100px;
-  background: rgba(255,255,255,0.2);
+  background-color: transparent;
   border: 2px solid #E2B578;
   color: #E2B578;
 }
-.Severity-btn-hover:hover{
+.severity-btn-hover:hover{
   background: rgba(226,181,120,0.2);
   color: #E2B578;
 }
-.Severity-btn-checked{
+.severity-btn-checked{
   background: #E2B578;
   color: #FFFFFF;
 }

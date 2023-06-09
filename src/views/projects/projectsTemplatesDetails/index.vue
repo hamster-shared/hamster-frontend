@@ -1,18 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <div class="flex justify-between">
-      <div class="flex items-center">
-        <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-          <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
-          <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
-          back
-        </div>
-        <div class="ml-4">
-          <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
-          <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
-        </div>
-        <div class="ml-4 text-[24px] font-bold">{{ templatesDetail.name }}</div>
-      </div>
+    <div class="flex justify-between items-center">
+      <bread-crumb :routes="breadCrumbInfo"/>
       <div>
         <a-button type="primary" ghost @click="getProjectsContract">{{ templatesDetail.version }}（latest）</a-button>
         <a-button type="primary" class="ml-4" :loading="downloadLoading" @click="downloadTemplate">Download</a-button>
@@ -24,9 +13,11 @@
     </div>
     <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible"
       title="Create by template" @cancel="handleCancel">
-      <span class="text-sm">Project Name</span>
-      <a-input placeholder="Project Name" v-model:value="projectNameValue" allowClear />
-      <span v-if="errorMsg" class="block text-[red]">{{ errorMsg }}</span>
+      <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+        <a-form-item label="Project Name" name="name">
+          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+        </a-form-item>
+      </a-form>
       <span class="text-sm">Great project names are short and memorable.</span>
       <div class="mt-8 text-center">
         <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
@@ -76,7 +67,7 @@
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionsList(item)"
-                    :class="[{ '!text-[#E2B578]': item.name === moduleName },{'mt-4': index != 0}]"
+                    :class="[{ '!open-link-css': item.name === moduleName },{'mt-4': index != 0}]"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px]"
                     v-for="(item, index) in moduleList" :key="index">{{ item.name }}</div>
                 </div>
@@ -107,7 +98,7 @@
                 </div>
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionList(item, index)"
-                    :class="{ '!text-[#E2B578]': item.name === functionName && slectedIndex === index }"
+                    :class="{ '!open-link-css': item.name === functionName && slectedIndex === index }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
                 </div>
@@ -117,7 +108,7 @@
                 </div>
                 <div class="pb-4 "><!-- h-[130px] overflow-auto -->
                   <div @click="setFunctionList(item, index)"
-                    :class="{ '!text-[#E2B578]': item.name === functionName && slectedIndex === index }"
+                    :class="{ '!open-link-css': item.name === functionName && slectedIndex === index }"
                     class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
                     v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
                   <!-- <div @click="setFunctionList(item)"
@@ -139,7 +130,7 @@
           <a-tab-pane key="2" tab="Events" v-if="eventAllList.length > 0 && frameType !=2">
             <div class="flex">
               <div class="p-4 border-r-[#302D2D] border-r border w-1/4"><!--  h-[300px] overflow-auto -->
-                <div @click="setEventList(item)" :class="{ '!text-[#E2B578]': item.name === eventName }"
+                <div @click="setEventList(item)" :class="{ '!open-link-css': item.name === eventName }"
                   class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer"
                   v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
               </div>
@@ -201,17 +192,16 @@ import type { AbiInfoDataItem } from "@/views/projects/components/data"
 import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
 import YAML from "yaml";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 const theme = useThemeStore()
 const downloadLoading = ref(false)
 const downloadLinkRef = ref(null)
 const router = useRouter();
-const { params } = useRoute();
+const { params,query } = useRoute();
 const createTemplateLoading = ref(false);
 const createProjectLoading = ref(false)
 const createTemplate = ref('Create by Template')
 const createProjectVisible = ref(false)
-const projectNameValue = ref('')
-const errorMsg = ref()
 const templateId = ref(params.templateId);
 const projectType = ref(params.type);
 const activeKey = ref("1");
@@ -249,6 +239,11 @@ const functionsList = ref<any>([]);
 const moduleName = ref('');
 const sourceList = ref<any>([]);
 const tokenMatemaskWallet = ref()
+const formRef = ref();
+const userInfo = localStorage.getItem('userInfo');
+const formData = reactive({
+  name: '',
+});
 
 const tableColumns = computed<any[]>(() => [
   {
@@ -266,11 +261,31 @@ const tableColumns = computed<any[]>(() => [
     key: 'type',
   },
 ]);
+const breadCrumbInfo = ref<any>([])
 
-onMounted(() => {
-  getTemplatesDetail();
+onMounted(async () => {
+  await getTemplatesDetail();
   tokenFrom()
+  judgeOrigin()
 })
+
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Create Project',
+      path:'/projects/create'
+    },
+    {
+      breadcrumbName:'Template',
+      path:`/projects/template/${params.type}`
+    },
+    {
+      breadcrumbName:templatesDetail.value.name,
+      path:''
+    },
+  ]
+}
 
 const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
   functionList.value = element.inputs;
@@ -285,9 +300,9 @@ const setEventList = (element: { inputs: never[]; name: any; }) => {
 
 const getTemplatesDetail = async () => {
   if (projectType.value == '1') {
-    getContractTemplatesDetail()
+    await getContractTemplatesDetail()
   } else {
-    getFrontendTemplatesDetail()
+    await getFrontendTemplatesDetail()
   }
 
 };
@@ -545,41 +560,44 @@ const showModal = async () => {
   createProjectVisible.value = true
 }
 
-const checkDupName = computed(async () => {
-  try {
-    createProjectLoading.value = true;
-    createTemplateLoading.value = true;
-    createTemplate.value = 'Create by...'
-    //校验仓库名称是否存在
-    const userInfo = localStorage.getItem('userInfo');
-    const params = {
-      owner: JSON.parse(userInfo)?.username,
-      name: projectNameValue.value,
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
+const formRules = computed(() => {
+
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      // console.log('formdataName:', params)
+      const res = await apiDupProjectName(params);
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error: any) {
+      console.log("erro:", error)
+      return Promise.reject("Project Name check failure");
     }
-    const res = await apiDupProjectName(params);
-    console.log('res:', res)
-    if (res.data === false) {
-      createProjectLoading.value = false;
-      return errorMsg.value = "Project Name duplication"
-    } else if (projectNameValue.value == '') {
-      createProjectLoading.value = false;
-      return errorMsg.value = "Please enter Project Name"
-    } else {
-      return true
-    }
-  } catch (error: any) {
-    console.log("erro:", error)
-    createProjectLoading.value = false;
-    return errorMsg.value = "Project Name check failure"
   }
-})
+
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+
+  return {
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
+  };
+});
 
 const createProject = async () => {
   try {
     const userInfo = localStorage.getItem('userInfo');
     const createProjectTemp = localStorage.getItem('createProjectTemp');
     const params = {
-      name: projectNameValue.value,
+      name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
       templateOwner: templatesDetail.value.author,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
@@ -609,24 +627,18 @@ const createProject = async () => {
 }
 
 const handleOk = async () => {
-  checkDupName.value.then((result) => {
-    if (result === true) {
-      console.log('success', result)
-      createProject()
-    } else {
-      console.log('fail', result)
-      errorMsg.value = result
-      createProjectLoading.value = false
-    }
-  })
+  await formRef.value.validate();
+  createProjectLoading.value = true;
+  createTemplateLoading.value = true;
+  createTemplate.value = 'Create by...'
+  createProject()
 }
 
 const handleCancel = () => {
   createProjectLoading.value = false
   createTemplateLoading.value = false;
   createTemplate.value = 'Create by Template'
-  errorMsg.value = ''
-  projectNameValue.value = ''
+  formRef.value.resetFields()
 }
 
 const setText = (str: String) => {
@@ -713,9 +725,9 @@ ul {
   padding-inline-start: 1rem;
 }
 
-:deep(.dark-css .ant-tabs) {
-  color: #E0DBD2;
-}
+// :deep(.dark-css .ant-tabs) {
+//   color: #E0DBD2;
+// }
 
 :deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
   color: #FFFFFF;
@@ -762,7 +774,7 @@ pre {
 .create-template-modal {
   .ant-modal-body {
     .ant-input-affix-wrapper {
-      border-color: #d9d9d9;
+      // border-color: #d9d9d9;
       margin: 8px 0;
     }
   }

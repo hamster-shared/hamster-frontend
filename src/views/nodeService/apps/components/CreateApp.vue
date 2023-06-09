@@ -3,18 +3,18 @@
     <div class="text-[24px] text-[#151210] font-bold mb-4">Create App</div>
     <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Name" name="name" >
-        <a-input v-model:value="formData.name" placeholder="Please enter Name" allow-clear autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Name" allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="Description" name="description" >
-        <a-input v-model:value="formData.description" placeholder="Please enter Description" allow-clear autocomplete="off" />
+        <a-input class="modal-input" v-model:value="formData.description" placeholder="Please enter Description" allow-clear autocomplete="off" />
       </a-form-item>
       <a-form-item label="Chain" name="chain" >
-        <a-select @change="setNetwork" v-model:value="formData.chain" placeholder="Please enter Chain" allow-clear autocomplete="off"
+        <a-select dropdownClassName="modal-select-dropdown" @change="setNetwork" v-model:value="formData.chain" placeholder="Please enter Chain" allow-clear autocomplete="off"
         :options="chainList.map(item => ({ value: item }))" >
         </a-select>
       </a-form-item>
       <a-form-item label="Network" name="network" >
-        <a-select v-model:value="formData.network" placeholder="Please enter Network" allow-clear autocomplete="off"
+        <a-select dropdownClassName="modal-select-dropdown" v-model:value="formData.network" placeholder="Please enter Network" allow-clear autocomplete="off"
         :options="currNetworkList.map(item => ({ value: item }))">
         </a-select>
       </a-form-item>

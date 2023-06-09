@@ -6,11 +6,11 @@
         <span class="check-container-title">Check Result</span>
       </div>
 
-      <div v-for="(item, index) in resultInfo" v-if="resultInfo" :key="index" class="items-center grid grid-cols-4 pl-10 rounded-xl my-8 border border-[#B5B5B5] border-solid">
+      <div v-for="(item, index) in resultInfo" v-if="resultInfo?.length" :key="index" class="items-center grid grid-cols-4 pl-10 rounded-xl my-8 border border-[#B5B5B5] border-solid">
         <span class="text-base font-bold">{{ item?.title }}</span>
         <div v-for="content in item?.content" class="py-8">
           <div>
-            <span class="text-4xl cursor-pointer" @click="router.push(`${route.fullPath}/${content.checkTool}?reportId=${content.id}`)">{{ content.issues }}</span>
+            <span class="text-4xl cursor-pointer" :id="content?.checkTool" @click="router.push(`${route.fullPath}/${content.checkTool}?reportId=${content.id}&currentName=${currentName.replace('#','[')}`)">{{ content.issues }}</span>
             <span class="block text-2xl">issues</span>
             <span class="text-base">{{ content.checkTool }}</span>
           </div>
@@ -36,7 +36,7 @@
               </div>
             </div>
           </div>
-          <a-button class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail`)">View Detail</a-button>
+          <a-button id="view-detail" class="view-detail-btn" type="link" @click="router.push(`${route.fullPath}/gasInfoDetail?currentName=${currentName.replace('#','[')}`)">View Detail</a-button>
         </div>
       </div>
 
@@ -52,10 +52,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted,toRefs } from 'vue'
   import { useRoute, useRouter } from 'vue-router';
   import { apiGetCheckResult } from "@/apis/workFlows";
-
+  const props = defineProps({
+    currentName:{
+      type:String,
+      default:''
+    }
+  })
+  const { currentName } = toRefs(props)
   const { params } = useRoute();
   const route = useRoute()
   const router = useRouter()

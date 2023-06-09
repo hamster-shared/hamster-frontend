@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
-      <span class="text-sm text-[#E2B578] cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
+      <span class="text-sm open-link-css cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
     </div>
     <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue" placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
 
@@ -42,17 +42,17 @@
 
       <a-form layout="vertical" class="!mt-3" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
         <a-form-item v-if="contractRepositoryVisible" label="Repository URL" name="importRepositoryContractProjectUrl">
-          <a-input autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
+          <a-input class="modal-input" autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
         <a-form-item label="Project Name" name="projectName" :rules="[{ required: true, message: 'Please enter your name!' }]">
-          <a-input disabled autocomplete="off" v-model:value="contractFormData.projectName" placeholder="Automated recognition"/>
+          <a-input class="modal-input" disabled autocomplete="off" v-model:value="contractFormData.projectName" placeholder="Automated recognition"/>
         </a-form-item>
         <a-form-item class="select-type" label="Affiliated Ecosystem" name="contractSelectChain" :rules="[{ required: true, message: 'Please select your chain!' }]">
-          <a-select autocomplete="off" v-model:value="contractFormData.contractSelectChain" placeholder="Please select...">
+          <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="contractFormData.contractSelectChain" placeholder="Please select...">
             <a-select-option value="1">EVM</a-select-option>
             <a-select-option value="2">Aptos</a-select-option>
             <!-- <a-select-option value="3">TON</a-select-option> -->
-            <a-select-option value="4">StarkWare</a-select-option>
+            <a-select-option value="4">Starknet</a-select-option>
             <a-select-option value="5">Sui</a-select-option>
           </a-select>
         </a-form-item>
@@ -72,13 +72,13 @@
 
       <a-form layout="vertical" class="!mt-3" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
         <a-form-item v-if="frontEndRepositoryVisible" label="Repository URL" name="importRepositoryFrontEndProjectUrl">
-          <a-input autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
+          <a-input class="modal-input" autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
         <a-form-item label="Project Name" name="frontEndProjectName" :rules="[{ required: true, message: 'Please enter your project name!' }]">
-          <a-input disabled autocomplete="off" v-model:value="frontEndFormData.frontEndProjectName" placeholder="Automated recognition"/>
+          <a-input class="modal-input" disabled autocomplete="off" v-model:value="frontEndFormData.frontEndProjectName" placeholder="Automated recognition"/>
         </a-form-item>
         <a-form-item class="select-type" label="Framework Preset" name="frontEndSelectFramework" :rules="[{ required: true, message: 'Please select your framework!' }]">
-          <a-select autocomplete="off" v-model:value="frontEndFormData.frontEndSelectFramework" placeholder="Please select...">
+          <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="frontEndFormData.frontEndSelectFramework" placeholder="Please select...">
             <a-select-option value="1">Vue.js</a-select-option>
             <a-select-option value="2">React.js</a-select-option>
             <a-select-option value="3" v-if="frontEndFormData.frontEndMethod == '2'">Nuxt.js</a-select-option>

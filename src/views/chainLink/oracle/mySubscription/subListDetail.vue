@@ -1,13 +1,13 @@
 <template>
-    <BreadCrumb currentName="Basic Information" :isClick="breadCrumbLoading" class="mb-6"/>
-    <div class="text-[24px] font-bold">Basic Information</div>
-    <div class="mt-[30px]">
+    <bread-crumb :routes="breadCrumbInfo"/>
+    <div class="text-[24px] font-bold mt-[10px]">Basic Information</div>
+    <div class="mt-[20px]">
         <p>
             <span class="name">ID</span>
             <span class="font-bold">{{detailInfo.id || "-"}}</span>
         </p>
         <p>
-            <span class="name">currentName</span>
+            <span class="name">Name</span>
             <span class="font-bold">{{detailInfo.name || "-"}}</span>
         </p>
         <p>
@@ -21,7 +21,7 @@
         <p>
             <span class="name">TxID</span>
             <span style="color:#017AFF;border:1px solid #434343;border-radius: 4px;padding:10px">
-                <span v-if="detailInfo.transactionTx" class="cursor-pointer font-bold mr-[10px]" @click="goTxSearch">{{detailInfo.transactionTx}}</span>
+                <span v-if="detailInfo.transactionTx" class="cursor-pointer font-bold mr-[10px]" @click="goTxSearch(detailInfo)">{{detailInfo.transactionTx}}</span>
                 <img v-if="detailInfo.transactionTx" src="@/assets/svg/Jump.png"/>
                 <span v-if="!detailInfo.transactionTx">-</span>
             </span> 
@@ -29,22 +29,26 @@
         <p>
             <span class="name">Status</span>
             <span class="font-bold color-[#29C57C ]" :style="{color:detailInfo.status?.toLowerCase()=='pending'?'#1890FF':(detailInfo.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{detailInfo.status || "-"}}</span>
+            <span v-if="detailInfo.errorMessage && false" class="text-[#FF4A4A]"> ({{detailInfo.errorMessage}})</span>
         </p>
         <p>
             <span class="name">Consumers</span>
             <span class="font-bold">{{detailInfo.consumers}}</span>
         </p>
         <p>
-            <span class="name">amount</span>
-            <span class="text-[#FF4A4A] mr-1 font-bold">{{detailInfo.balance || "-"}}</span>link
+            <span class="name">Balance</span>
+            <span class="text-[#FF4A4A] mr-1 font-bold">{{detailInfo.balance}}</span>link
         </p>
     </div>
-    <div class="mt-[40px] pb-[16px] w-[100%]" style="border-bottom: 1px solid #434343;">
-        <span class="cursor-pointer font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==1? '1px solid #E2B578':''}" @click="getExpense">Expense</span>
-        <span class="cursor-pointer mx-[60px] font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==2? '1px solid #E2B578':''}" @click="getDeposit">Deposit</span>
-        <span class="cursor-pointer font-bold text-[16px] pb-[17px]" :style="{borderBottom: tab==3? '1px solid #E2B578':''}" @click="getConsumers">Consumers</span>
-    </div>
-    <div v-if="tab==1 && false" class="flex items-center mt-[20px]">
+    <a-tabs v-model:activeKey="tab" @tabClick="handleTabChange">
+        <a-tab-pane key="1" tab="Expense">
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="Deposit">
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="Consumers">
+        </a-tab-pane>
+    </a-tabs>
+    <div v-if="tab=='1' && false" class="flex items-center mt-[20px]">
         <span class="mr-[10px]">Request</span>
         <a-input v-model:value="reqName" class="req-input" placeholder="Please input request name" allow-clear autocomplete="off"/>
         <a-button class="mx-[10px]" @click="getExpense">Search</a-button>
@@ -58,8 +62,8 @@
             <span class="mr-16 text-[#FF4A4A]">{{ record.amount }}link</span>
         </template>
         <template #status="{ record }">
-            <svg-icon v-if="record.status=='pending'" name="Pending" size="20"/>
-            <svg-icon v-if="record.status=='failed'" name="chainFailed" size="20" />
+            <svg-icon v-if="record.status.toLowerCase()=='pending'" name="Pending" size="20"/>
+            <img src="@/assets/images/chainlinkFailed.png" v-if="record.status.toLowerCase()=='failed'" class="h-5"/>
             <span class=" text-[#FF4A4A] inline-block ml-[2px]" :style="{color:record.status?.toLowerCase()=='pending'?'#1890FF':(record.status?.toLowerCase()=='success' ? '#29C57C':'#FF4A4A')}">{{ record.status }}</span>
         </template>
         <template #transactionTx="{ record }">
@@ -70,23 +74,22 @@
 </template>
 <script setup lang="ts" name="subListDetail">
 import dayjs from "dayjs";
-import { renderTableText } from '@/utils/customRender'
 import { reactive, ref, onMounted } from 'vue'
-import BreadCrumb from '@/views/projects/components/Breadcrumb.vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import { expenseColumns,depositColumns,consumersColumns } from './chainApi/colDetail'
 import {apiSublistDetail,apiExpenseList,apiDepositList,apiConsumerList,apiDelConsumer} from '@/apis/chainlink'
 import { useRoute } from "vue-router";
 import { message } from "ant-design-vue";
 const route = useRoute()
 const id:any = route.query.subId
-console.log('router~~~~~',route.query.subId)
 const loading = ref(false)
-const breadCrumbLoading = ref(false)
 const reqName = ref('')
-const tab = ref(1)
+const tab = ref("1")
 const subDetailCol = ref<any>([])
 const tableData:any = []
 const detailInfo = ref<any>({})
+const breadCrumbInfo = ref<any>([])
+
 const pagination = reactive({
     // 分页配置器
     pageSize: 10, // 一页的数据限制
@@ -103,39 +106,58 @@ const pagination = reactive({
         pagination.current = current;
         pagination.pageSize = pagesize;
         // 默认拿Expense表单数据，点击tab切换回调
-        if(tab.value==1){
+        if(tab.value=='1'){
             getExpense()
-        }else if(tab.value==2){
+        }else if(tab.value=='2'){
             getDeposit()
-        }else if(tab.value==3){
+        }else if(tab.value=='3'){
             getConsumers()
         }
     },
     onChange: (current: number) => {
         // 切换分页时的回调，
         pagination.current = current;
-        if(tab.value==1){
+        if(tab.value=='1'){
             getExpense()
-        }else if(tab.value==2){
+        }else if(tab.value=='2'){
             getDeposit()
-        }else if(tab.value==3){
+        }else if(tab.value=='3'){
             getConsumers()
         }
     },
-    // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
 // 跳到以太坊的交易记录
 const goTxSearch = (record?:any)=>{
-    if(record.transactionTx){
-        window.open(`https://etherscan.io/tx/${record.transactionTx}`)
-    }else{
-        window.open(`https://etherscan.io/tx/${detailInfo.value.transactionTx}`)
+    console.log('跳到以太坊的交易记录',record)
+    // 每个网络跳的地址不一样
+    if(detailInfo.value.network?.toLowerCase()?.indexOf('mumbai')!='-1'){
+        if(record.transactionTx){
+            window.open(`https://mumbai.polygonscan.com/tx/${record.transactionTx}`)
+        }else{
+            window.open(`https://mumbai.polygonscan.com/tx/${detailInfo.value.transactionTx}`)
+        }
+    }else if(detailInfo.value.network?.toLowerCase()?.indexOf('sepolia')!='-1'){
+        if(record.transactionTx){
+            window.open(`https://sepolia.etherscan.io/tx/${record.transactionTx}`)
+        }else{
+            window.open(`https://sepolia.etherscan.io/tx/${detailInfo.value.transactionTx}`)
+        }
+    }
+    
+}
+// tab change
+const handleTabChange = (tab:string)=>{
+    if(tab=='1'){
+        getExpense()
+    }else if(tab=='2'){
+        getDeposit()
+    }else if(tab=='3'){
+        getConsumers()
     }
 }
 // Expense 表单数据
 const getExpense = async()=>{
-    // debugger
-    tab.value = 1
+    tab.value = '1'
     loading.value = true
     subDetailCol.value = expenseColumns
     const params:any = {
@@ -172,7 +194,7 @@ const resetExpense = async()=>{
 }
 // Deposit 表单数据
 const getDeposit = async()=>{
-    tab.value = 2
+    tab.value = '2'
     loading.value = true
     subDetailCol.value = depositColumns
     const params = {
@@ -190,7 +212,7 @@ const getDeposit = async()=>{
 }
 // Consumers 表单数据
 const getConsumers = async()=>{
-    tab.value = 3
+    tab.value = '3'
     loading.value = true
     subDetailCol.value = consumersColumns
     const params = {
@@ -210,7 +232,7 @@ const delConsumer = async(record:any)=>{
     const delRes = await apiDelConsumer(id,record.id)
     if(delRes.code===200){
         getConsumers()
-        message.success('删除成功')
+        message.success('Deletion successful')
     }else{
         message.error(delRes.data)
     }
@@ -232,6 +254,20 @@ onMounted(async()=>{
     subDetailCol.value = expenseColumns
     getDetailInfo()
     getExpense()
+    breadCrumbInfo.value = [
+      {
+        breadcrumbName:'Hamslink',
+        path:'/middleware/dashboard/Oracle'
+      },
+      {
+        breadcrumbName:'My Subscription',
+        path:'/middleware/dashboard/oracle/sublist'
+      },
+      {
+        breadcrumbName:'Details',
+        path:''
+      },
+    ]
 })
 </script>
 <style scoped less>

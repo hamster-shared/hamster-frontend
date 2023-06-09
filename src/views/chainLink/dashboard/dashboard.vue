@@ -10,22 +10,22 @@
           <div v-for="val in RPCList" :key="val.id" class="box">
             <div class="name">{{ val.chain }}</div>
             <div class="network">{{ val.network }}</div>
-            <div class="view" @click="networkClick(val)">View</div>
+            <div class="view open-link-css" @click="networkClick(val)">View</div>
           </div>
 
-          <div class="flex justify-between w-full mt-[18px] cursor-pointer text-[#E2B578]" v-if="RPCList.length>4">
+          <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css" v-if="RPCList.length>4">
             <span @click="goMiwaspaceTab('RPC')">Add service</span>
             <span @click="goRPC">View more</span>
           </div>
-          <div v-else class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goMiwaspaceTab('RPC')">Add service</div>
+          <div v-else class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('RPC')">Add service</div>
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
             class="flex justify-between pt-[6px] border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6] pb-[14px]">
             <div>{{val}}</div>
-            <div class="cursor-pointer text-[#E2B578]" @click="oracleClick">View</div>
+            <div class="cursor-pointer open-link-css" @click="oracleClick">View</div>
           </div>
-          <div class="text-center mt-[18px] cursor-pointer text-[#E2B578]" @click="goMiwaspaceTab('Oracle')">Add service</div>
+          <div class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
         </div>
         <div v-else>
           <div class="text-center">
@@ -34,7 +34,7 @@
           </div>
 
           <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The service has not been opened yet</div>
-          <div class="text-center mt-[10px] text-[#E2B578] cursor-pointer" @click="goMiwaspaceTab(item)">Get service now</div>
+          <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Get service now</div>
         </div>
       </div>
     </div>
@@ -55,15 +55,15 @@ const isShowOracle = ref(false)
 const oracleList = ref<any>([])
 const networkClick = (val: any) => {
   console.log('networkClick',val)
-  router.push(`/chainlink/RPC/rpc-detail/${val.chain}?network=${val.network}`)
+  router.push(`/middleware/dashboard/RPC/rpc-detail/${val.chain}?network=${val.network}&fromDashboard=1`)
 }
 // more 跳转rpc
 const goRPC = ()=>{
-  router.push('/chainlink/RPC')
+  router.push('/middleware/dashboard/RPC')
 }
 
 const oracleClick = () => {
-  router.push('/chainlink/Oracle')
+  router.push('/middleware/dashboard/Oracle')
 }
 const getChains = async()=>{
   const params = {
@@ -100,7 +100,7 @@ const goMiwaspaceTab = (tab:any)=>{
         break;
       default: break;
     }
-  router.push(`/chainlink/miwaspace?key=${index.value}`)
+  router.push(`/middleware/miwaspace?key=${index.value}`)
 }
 const openService = async()=>{
   const res = await apiGetIfOpenService('oracle')
@@ -140,7 +140,7 @@ onMounted(()=>{
   width: 50px;
   height: 40px;
   cursor: pointer;
-  color:#E2B578; 
+  // color:#E2B578; 
   text-align: right;
   float: right;
   top: -40px;

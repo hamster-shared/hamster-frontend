@@ -64,3 +64,26 @@ const layoutClass = computed(() => {
   border: 1px solid transparent;
 }
 </style>
+<style lang="less">
+
+.open-link-css{
+  color: #E2B578;
+  .svg-icon {
+    color: #E2B578;
+  }
+  &:hover{
+    color: #E4C08F;
+    .svg-icon {
+      color: #E4C08F;
+    }
+  }
+  &:active{
+    color: #CE9C58;
+    .svg-icon {
+      color: #CE9C58;
+    }
+  }
+}
+
+
+</style>

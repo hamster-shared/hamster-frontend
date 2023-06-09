@@ -17,7 +17,7 @@
       <div class="ml-[64px] w-3/5">
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex">
-          <div class="text-ellipsis mr-[12px] cursor-pointer text-[#E2B578]" @click="openDomain">
+          <div class="text-ellipsis mr-[12px] cursor-pointer open-link-css" @click="openDomain">
             {{ packageInfo.domain }}
           </div>
           <div class="w-[20px] flex items-center">

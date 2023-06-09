@@ -2,7 +2,7 @@
   <div class="flex flex-col w-full px-6">
     <div class="flex justify-between mb-3">
       <div class="text-2xl font-bold">Hamslink</div>
-      <a-button class="w-[80px] !h-[38px]">Doc</a-button>
+      <a-button class="w-[80px] !h-[38px]" @click="toDocs">Doc</a-button>
     </div>
     <div class="font-bold text-[20px] mb-[10px]">Overview</div>
     <oracleChart></oracleChart>
@@ -10,17 +10,16 @@
       <div class="flex justify-between my-4">
         <div class="font-bold text-[20px]">My Request</div>
         <div>
-          <a-button @click="router.push('/chainlink/oracle/create-request')">Create Request</a-button>
-          <a-button v-if="false" class="ml-2" @click="toDocs">Docs</a-button>
+          <a-button @click="router.push('/middleware/dashboard/oracle/create-request')">Create Request</a-button>
         </div>
       </div>
       <div>
         <a-table :dataSource="oracleListData" :columns="oracleColumns" :pagination="pagination" style="width:100%">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <a-button class="table-btn" @click="showTestSubBtn(record)">Test</a-button>
-              <a-button class="mx-2 table-btn-disable" @click="editRequest(record)">Edit</a-button>
-              <a-button class="table-btn-disable" @click="downloadRequest(record)">Download</a-button>
+              <a-button class="table-btn mt-1" @click="showTestSubBtn(record)">Test</a-button>
+              <a-button class="mx-2 table-btn-disable mt-1" @click="editRequest(record)">Edit</a-button>
+              <a-button class="table-btn-disable mt-1" @click="downloadRequest(record)">Download</a-button>
             </template>
           </template>
         </a-table>
@@ -134,7 +133,7 @@
   }
 
   const toDocs = () => {
-    window.open('https://hamsternet.io/docs/')
+    window.open('https://hamsternet.io/docs/Middleware/User%20Guide/Hamslink/')
   }
 
   onMounted(()=>{
@@ -152,7 +151,7 @@
   // 跳转编辑请求页面（创建共用一个页面）
   const editRequest = (record:any)=>{
     console.log('跳转编辑请求页面（创建共用一个页面）',record)
-    router.push(`/chainlink/oracle/create-request?id=${record.id}`)
+    router.push(`/middleware/dashboard/oracle/create-request?id=${record.id}`)
   }
 
   // 下载请求

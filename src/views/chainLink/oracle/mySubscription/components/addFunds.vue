@@ -5,18 +5,18 @@
         </template>
         <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
-                <a-select @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
+                <a-select dropdownClassName="modal-select-dropdown" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions" allow-clear></a-select>
             </a-form-item>
             <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-[#FF4A4A]">{{subBalance}}link</span></div>
             <a-form-item label="Amount" name="amount" >
-                <a-input v-model:value="formData.amount" placeholder="Please enter the amount" allow-clear autocomplete="off" />
+                <a-input class="modal-input" v-model:value="formData.amount" placeholder="Please enter the amount" allow-clear autocomplete="off" />
             </a-form-item>
         </a-form>
         <div class="flex justify-end -mt-[20px] mb-2">Blance:<span class="text-[#E2B578]">{{balance}}link</span></div>
         <div class="text-center flex justify-center">
-            <a-button class="done-btn" style="margin-right: 20px;" @click="handleFund">Confirm</a-button>
-            <a-button class="done-btn" style="background: transparent;color:#E2B578" @click="cancelFund">Cancel</a-button>
+            <a-button class="done-btn" style="margin-right: 20px;" @click="handleFund" :loading="addFundLoading">Confirm</a-button>
+            <a-button class="done-btn" ghost @click="cancelFund">Cancel</a-button>
         </div>
     </a-modal>
 </template>
@@ -52,6 +52,7 @@ const formData = reactive({
 // 订阅号余额
 const subBalance = ref()
 const balance = ref()
+const addFundLoading = ref(false)
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -67,7 +68,7 @@ const getSublistData = async()=>{
     console.log('获取订阅数据',res)
     if(res.code===200 && res.data?.length){
         subOptions.value = res.data.map((item:any)=>{
-            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.chainSubscriptionId
+            let tem = item.name+'('+item.chainAndNetwork+')'+'_'+item.id
             return {
                 label:tem,
                 value:item.id,
@@ -97,6 +98,7 @@ const handleFund = async()=>{
     await formRef.value.validate();
     let data = ethers.utils.defaultAbiCoder.encode(["uint64"], [subId.value]);
     const weiValue = ethers.utils.parseEther(formData.amount.toString());
+    addFundLoading.value = true
     if (contractApi.apiStatus) {
         linkTokenApi?.transferAndCall(registryApi?.contract.address, weiValue, data).then(async(tx:any)=>{
             const walletAccount = localStorage.getItem('walletAccount') 
@@ -107,13 +109,7 @@ const handleFund = async()=>{
             }
             console.log('tx',tx,'params',params)
             const res = await apiPayFund(keyId.value,params)
-            if(res.code===200){
-                temId.value = res.data
-                message.success(res.message)
-            }else{
-                message.error('Failed'+res.message)
-            }
-            emit('closeAddFund',false)
+            temId.value = res.data
             return tx.wait()
         }).then(async(receipt:any) => {
             console.log("receipt",receipt);
@@ -126,12 +122,16 @@ const handleFund = async()=>{
             const res = await updateFund(params)
             if(res.code===200){
                 message.success(res.message)
+                addFundLoading.value = false
+                emit('getAddFundInfo')
             }else{
                 message.error(res.data)
+                addFundLoading.value = false
             }
         }).catch((err:any)=>{
             message.error('Failed')
             emit('closeAddFund',false)
+            addFundLoading.value = false
             console.log(err)
         })
     }

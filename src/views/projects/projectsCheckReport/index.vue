@@ -1,6 +1,6 @@
 <template>
-  <BreadCrumb currentName="Check Report" :isClick="loading" class="mb-6"></BreadCrumb>
-  <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+  <bread-crumb :routes="breadCrumbInfo"></bread-crumb>
+  <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" class="mt-[20px]"></WorkflowsInfo>
   <MetaTrustSA :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
   <MetaTrustSP :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
   <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
@@ -25,7 +25,7 @@
   import { apiGetWorkflowsDetail, apiGetWorkFlowsReport } from "@/apis/workFlows";
   import { apiGetReport } from "@/apis/checkReport";
   import YAML from "yaml";
-  import BreadCrumb from '../components/Breadcrumb.vue'
+  import BreadCrumb from '@/components/BreadCrumb.vue';
 
   const { params,query } = useRoute();
   const queryJson = reactive({
@@ -39,6 +39,8 @@
   const title = ref('Check');
   const processData = ref([]);
   const inRunning = ref(true);
+  const breadCrumbInfo = ref<any>([])
+
   const gistId = ref('');
   const gasUsageReportData = reactive([])
   const reportId:any = query.reportId; //SP:2295,SA:2224,OSA:2244,CQ:2225,myThril:2320,Solhint:2319
@@ -48,13 +50,18 @@
     repositoryUrl: '',
     errorNumber: 0,
     duration: 0,
+    name:'',
+    type:0,
+    id:0
   });
 
   const getCodeRepository = async() => {
     try {
       const { data } = await apiGetProjectsDetail(queryJson.id);
-      // console.log("getCodeRepository-data:",data);
       workflowsDetailsData.repositoryUrl = data.repositoryUrl;
+      workflowsDetailsData.name = data.name;
+      workflowsDetailsData.id = data.id;
+      workflowsDetailsData.type = data.type
       gistId.value = data.gistId;
     } catch (error: any) {
       console.log("erro:", error)
@@ -124,16 +131,37 @@
     } 
     return issue;
   }
-  onMounted(() => {
-    // console.log('queryJson:',queryJson)
-    getCodeRepository()
+  // 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:query?.currentName?.replace('[','#'),
+      path:localStorage.getItem('evmCheckWorkflow')
+    },
+    {
+      breadcrumbName:'Check Report',
+      path:''
+    },
+  ]
+}
+  onMounted(async() => {
+    console.log('queryJson:',queryJson,query)
+    await getCodeRepository()
     getTime()
-
     if (params.checktype == 'gasInfoDetail') {
       getCheckReport();
     } else {
       getReportInfo();
     }
+    judgeOrigin()
   })
 
 </script>
