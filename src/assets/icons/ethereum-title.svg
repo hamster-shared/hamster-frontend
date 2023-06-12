@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="48px" viewBox="0 0 30 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Ethereum iCON</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="(B)Miwaspace-Node" transform="translate(-1384.000000, -554.000000)" fill-rule="nonzero">
+            <g id="编组-3备份" transform="translate(1171.000000, 524.000000)">
+                <g id="Ethereum-iCON" transform="translate(213.000000, 30.000000)">
+                    <polygon id="路径" fill="#343434" points="14.6298552 0 14.3100708 1.08622206 14.3100708 32.6030801 14.6298552 32.9221183 29.2593372 24.2745071"></polygon>
+                    <polygon id="路径" fill="#8C8C8C" points="14.6298552 0 0 24.2745071 14.6298552 32.9221183 14.6298552 17.6247086"></polygon>
+                    <polygon id="路径" fill="#3C3C3B" points="14.6298552 35.6919659 14.4496266 35.9117477 14.4496266 47.13853 14.6298552 47.6646629 29.2682927 27.0488325"></polygon>
+                    <polygon id="路径" fill="#8C8C8C" points="14.6298552 47.6646629 14.6298552 35.6919659 0 27.0488325"></polygon>
+                    <polygon id="路径" fill="#141414" points="14.6298552 32.9221183 29.2593372 24.2745071 14.6298552 17.6247086"></polygon>
+                    <polygon id="路径" fill="#393939" points="0 24.2745071 14.6298552 32.9221183 14.6298552 17.6247086"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

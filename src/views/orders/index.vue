@@ -1,13 +1,16 @@
 <template>
     <div>
-      <div class="flex justify-between mb-[25px]">
-        <div class="text-[24px] font-bold">Node</div>
-        <a-button type="primary" @click="launchNode">Launch Node</a-button>
+      <div class="text-[24px] font-bold mb-[25px]">Your Orders</div>
+      <div class="mb-[25px] flex">
+        <a-range-picker format="YYYY-MM-DD" @change="handleSearch" class="w-1/2" v-model:value="searchData.orderDate" />
+        <a-input @change="handleSearch" class="ml-[30px]" v-model:value="searchData.keyword" autocomplete="off" placeholder="Search here..." allowClear></a-input>
+
       </div>
-      <a-table :dataSource="nodeListData" :columns="nodeColumns" :pagination="pagination" style="width:100%">
+      <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link">Detail</a-button>
+            <label class="cursor-pointer open-link-css">Pay</label>
+            <label class="cursor-pointer open-link-css ml-4">Cancel</label>
           </template>
         </template>
       </a-table>
@@ -15,45 +18,52 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { useRouter, useRoute } from "vue-router";
 
-const router = useRouter();
-const route = useRoute()
-const nodeListData = ref([{name:'123'}])
-const nodeColumns = reactive([
+const orderListData = ref([{ name: '123' }])
+const searchData = ref({
+  keyword: '',
+  orderDate: '',
+})
+const orderColumns = reactive([
   {
-    title: 'ID',
+    title: 'Order Time',
     dataIndex: 'id',
     key: 'id',
     align: 'center',
     customRender: ({ index }:any) => index+1,
   },
   {
-    title: 'Name',
+    title: 'Order ID',
     dataIndex: 'name',
     key: 'name',
     align: 'center',
   },
   {
-    title: 'Chain',
+    title: 'Order Type',
     dataIndex: 'chain',
     key: 'chain',
     align: 'center',
   },
   {
-    title: 'Node Status',
+    title: 'Resource Type',
     dataIndex: 'status',
     key: 'status',
     align: 'center',
   },
   {
-    title: 'Public IP',
+    title: 'Order Status',
     dataIndex: 'ip',
     key: 'ip',
     align: 'center',
   },
   {
-    title: 'Region',
+    title: 'Chain',
+    dataIndex: 'region',
+    key: 'region',
+    align: 'center',
+  },
+  {
+    title: 'Amount',
     dataIndex: 'region',
     key: 'region',
     align: 'center',
@@ -105,8 +115,9 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
     console.log('tableDataErr:', err)
   }
 }
-const launchNode = () => {
-  router.push(route.fullPath + "/create");
+const handleSearch = (value: any,dateString: any[]) => {
+  console.log("searchData: ",value)
+  console.log("searchData: ",dateString[0])
 }
 </script>
 <style lang="less">
