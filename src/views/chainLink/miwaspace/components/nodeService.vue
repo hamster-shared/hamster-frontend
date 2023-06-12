@@ -39,8 +39,7 @@
               </div>
             </a-form-item>
             <a-form-item label="Node Name" name="nodeName" >
-              <a-input v-model:value="formData.nodeName" autocomplete="off" placeholder="Please input node name"
-                :options="regionOptions" allowClear></a-input>
+              <a-input v-model:value="formData.nodeName" autocomplete="off" placeholder="Please input node name" allowClear></a-input>
             </a-form-item>
           </a-form>
           <hr />
