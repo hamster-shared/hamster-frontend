@@ -72,6 +72,9 @@
       case '6':
         activeKey.value = 'Others';
         break;
+      case '7':
+        activeKey.value = 'Node';
+        break;
       default: break;
     }
   }
