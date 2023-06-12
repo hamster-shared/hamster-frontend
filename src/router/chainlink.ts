@@ -48,6 +48,24 @@ const chainlinkRoute = [
           ]
         },
         {
+          path: "/middleware/dashboard/node",
+          name: "Node",
+          redirect: "/middleware/dashboard/node",
+          meta:{
+            isShow: true,
+          },
+          children: [
+            {
+              path: "/middleware/dashboard/node",
+              name: "Node",
+              component:() => import('@/views/chainLink/Node/index.vue'),
+              meta:{
+                sidebarMap: ['Node'],
+              }
+            },
+          ]
+        },
+        {
           path: "/middleware/dashboard/oracle",
           name: "Oracle",
           redirect: "/middleware/dashboard/oracle",

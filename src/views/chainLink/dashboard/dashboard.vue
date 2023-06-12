@@ -27,6 +27,15 @@
           </div>
           <div class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
         </div>
+        <div v-else-if="item === 'Node'">
+          <div class="text-center">
+            <img src="@/assets/images/cl-noData-block.png" class="w-[128px] h-[128px] hidden dark:inline-block" />
+            <img src="@/assets/images/cl-noData-white.jpg" class="w-[128px] h-[128px] dark:hidden" />
+          </div>
+
+          <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The node has not been created yet</div>
+          <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Add node</div>
+        </div>
         <div v-else>
           <div class="text-center">
             <img src="@/assets/images/cl-noData-block.png" class="w-[128px] h-[128px] hidden dark:inline-block" />
@@ -45,7 +54,7 @@ import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { apiGetMynetwork } from '@/apis/rpcs'
 import { apiGetIfOpenService } from '@/apis/middleWare'
-const dashboardList = ref(['RPC', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
+const dashboardList = ref(['RPC','Node', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
 const RPCList = ref<any>([]);
 const router = useRouter();
 // 用来记录跳转的具体页面
@@ -97,6 +106,9 @@ const goMiwaspaceTab = (tab:any)=>{
         break;
       case 'Others':
         index.value = 6;
+        break;
+      case 'Node':
+        index.value = 7;
         break;
       default: break;
     }
