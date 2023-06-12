@@ -76,6 +76,11 @@ const chainlinkRoute = [
             name: "pay",
             component: () => import('@/views/chainLink/pay/index.vue'),
           },
+          {
+            path: "/middleware/dashboard/node/pay/status",
+            name: "payStatus",
+            component: () => import('@/views/chainLink/pay/payStatus.vue'),
+          },
         ]
       },
       {
