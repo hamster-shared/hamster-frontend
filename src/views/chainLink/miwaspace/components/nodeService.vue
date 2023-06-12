@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="my-10">
-      <div class=" grid grid-cols-3">
-        <div class="col-span-2 bg-[#36322D] rounded-[12px] mr-[30px] p-[30px] text-[#FFFFFF]">
-          <div class="text-[24px] font-bold text-center mb-[30px]">Launch Node</div>
-          <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
+      <div :class="{'grid grid-cols-3' : pageType !== 'create'}">
+        <div class="rounded-[12px] mr-[30px] p-[30px] text-[#FFFFFF]" :class="[pageType === 'create' ? 'border border-solid border-[#434343]' : 'col-span-2 bg-[#36322D]']">
+          <div class="text-[24px] font-bold mb-[30px]" :class="{'text-center' : pageType !== 'create'}">Launch Node</div>
+          <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical" :class="{'w-[75%]' : pageType === 'create'}">
             <a-form-item label="Protocol" name="protocol" >
               <a-select @change="setOtherInfo" v-model:value="formData.protocol" autocomplete="off"
                 :options="protocolOptions" ></a-select>
@@ -42,17 +42,17 @@
               <a-input v-model:value="formData.nodeName" autocomplete="off" placeholder="Please input node name"
                 :options="regionOptions" allowClear></a-input>
             </a-form-item>
-            <hr />
-            <div class="flex justify-between items-center">
-              <div class="text-[#FFFFFF] font-bold text-[16px]">Cost:<span class="text-[#E2B578] text-[24px] ml-2">${{ resourceInfo.cost }}</span><span class="mx-1">/</span>Month</div>
-              <div>
-                <a-button type="primary" ghost class=" w-[120px]" @click="cancel">Cancel</a-button>
-                <a-button type="primary" class="ml-[20px] w-[120px]" @click="goLaunch">Launch</a-button>
-              </div>
-            </div>
           </a-form>
+          <hr />
+          <div class="flex justify-between items-center">
+            <div class="text-[#FFFFFF] font-bold text-[16px]">Cost:<span class="text-[#E2B578] text-[24px] ml-2">${{ resourceInfo.cost }}</span><span class="mx-1">/</span>Month</div>
+            <div>
+              <a-button type="primary" ghost class=" w-[120px]" @click="cancel">Cancel</a-button>
+              <a-button type="primary" class="ml-[20px] w-[120px]" @click="goLaunch">Launch</a-button>
+            </div>
+          </div>
         </div>
-        <div class="bg-[#36322D] rounded-[12px] p-[30px]">
+        <div class="bg-[#36322D] rounded-[12px] p-[30px]" v-if="pageType !== 'create'">
           <div class="text-center mb-[40px]">
             <svg-icon name="ethereum-title" size="40" />
             <div class="text-[18px] font-bold text-[#E2B578] mt-[20px]">The benefits of Ethereum</div>
@@ -90,9 +90,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, toRefs } from 'vue';
 import { useRouter } from "vue-router";
+const props = defineProps({
+  pageType: String,
 
+});
+const { pageType } = toRefs(props);
+    
 const router = useRouter();
 const formRef = ref()
 const formData = reactive({
