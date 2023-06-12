@@ -138,8 +138,9 @@ const setOtherInfo = (val: string) => {
   console.log("val:",val);
   resourceInfo.value = resourceList.value[val];
 }
-const goLaunch = () => {
-  formRef.value.validate();
+const goLaunch = async() => {
+  await formRef.value.validate();
+  router.push('/middleware/dashboard/node/pay')
   console.log("go...");
 }
 const cancel = () => {

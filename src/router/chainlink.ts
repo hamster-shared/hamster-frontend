@@ -71,6 +71,11 @@ const chainlinkRoute = [
               sidebarMap: ['Node'],
             }
           },
+          {
+            path: "/middleware/dashboard/node/pay",
+            name: "pay",
+            component: () => import('@/views/chainLink/pay/index.vue'),
+          },
         ]
       },
       {
