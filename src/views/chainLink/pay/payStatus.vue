@@ -1,5 +1,5 @@
 <template>
-    <div class="text-[24px] font-bold">Payment</div>
+    <div class="text-[24px] font-bold mb-[24px]">Payment</div>
     <Header />
     
 </template>
