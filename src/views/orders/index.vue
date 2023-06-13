@@ -1,23 +1,25 @@
 <template>
     <div>
       <div class="text-[24px] font-bold mb-[25px]">Your Orders</div>
-      <div class="mb-[25px] flex">
-        <a-range-picker format="YYYY-MM-DD" @change="handleSearch" class="w-1/2" v-model:value="searchData.orderDate" />
-        <a-input @change="handleSearch" class="ml-[30px]" v-model:value="searchData.keyword" autocomplete="off" placeholder="Search here..." allowClear></a-input>
-
-      </div>
-      <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'action'">
-            <label class="cursor-pointer open-link-css">Pay</label>
-            <label class="cursor-pointer open-link-css ml-4">Cancel</label>
+      <div class="dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
+        <div class="mb-[25px] flex">
+          <a-range-picker format="YYYY-MM-DD" @change="handleSearch" class="w-1/2" v-model:value="searchData.orderDate" />
+          <a-input-search @search="handleSearch" class="ml-[30px]" v-model:value="searchData.keyword" autocomplete="off" placeholder="Search here..."></a-input-search>
+        </div>
+        <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'action'">
+              <label class="cursor-pointer open-link-css">Pay</label>
+              <label class="cursor-pointer open-link-css ml-4">Cancel</label>
+            </template>
           </template>
-        </template>
-      </a-table>
+        </a-table>
+      </div>
     </div>
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { CopyOutlined } from '@ant-design/icons-vue';
 
 const orderListData = ref([{ name: '123' }])
 const searchData = ref({
