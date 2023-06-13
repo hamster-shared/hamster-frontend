@@ -87,16 +87,49 @@
       </div>
     </div>
   </div>
+  <a-modal v-model:visible="showPayFailedModal" :footer="null">
+      <template #closeIcon>
+          <img class="" src="@/assets/icons/closeIcon.svg" @click="closePayModal"/>
+      </template>
+      <div style="text-align:center">
+        <svg-icon name="payFail" size="80" class="block mt-[20px]"/>
+        <div class="text-[24px] font-bold text-[#151210] mt-[20px]">Payment Failed</div>
+        <div class="text-[16px]">Payment failed, please try again.</div>
+      </div>
+      <div style="width:100%;display:flex;justify-content: center;margin-top: 20px;">
+          <a-button @click="closePayModal">Confirm</a-button>
+      </div>
+  </a-modal>
+  <a-modal v-model:visible="showPayProgressModal" :footer="null"  :maskClosable="false">
+    <template #closeIcon></template>
+    <div style="text-align:center">
+      <a-spin :indicator="indicator"/>
+      <div class="text-[24px] font-bold text-[#151210] mt-[20px]">Payment In Progress</div>
+      <div class="text-[16px] mb-[30px]">This may take a few moment, please wait.</div>
+    </div>
+  </a-modal>
 </template>
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs } from 'vue';
+import { computed, reactive, ref, toRefs,h } from 'vue';
 import { useRouter } from "vue-router";
+import { LoadingOutlined } from '@ant-design/icons-vue';
+
 const props = defineProps({
   pageType: String,
 
 });
 const { pageType } = toRefs(props);
-    
+
+const showPayFailedModal = ref(false)
+const showPayProgressModal = ref(false)
+const indicator = h(LoadingOutlined, {
+  style: {
+    fontSize: '60px',
+    marginTop: '30px'
+  },
+  spin: true,
+});
+
 const router = useRouter();
 const formRef = ref()
 const formData = reactive({
@@ -140,11 +173,15 @@ const setOtherInfo = (val: string) => {
 }
 const goLaunch = async() => {
   await formRef.value.validate();
-  router.push('/middleware/dashboard/node/pay')
+  showPayProgressModal.value = true
+  window.open('/middleware/pay')
   console.log("go...");
 }
 const cancel = () => {
   router.go(-1)
+}
+const closePayModal = ()=>{
+  showPayProgressModal.value = false
 }
 </script>
 <style lang="less" scoped>
