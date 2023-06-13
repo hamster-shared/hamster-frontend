@@ -1,9 +1,9 @@
 const payRoute = [
 {
-    path: "/pay",
+    path: "/middleware/pay",
     children: [
         {
-            path: "/pay",
+            path: "/middleware/pay",
             name: "pay",
             component: () => import('@/views/pay/index.vue'),
         },
