@@ -17,13 +17,13 @@
       <div class="bg-[#36322D] p-[32px] rounded-[12px]">
         <div class="font-bold mb-[10px]">USDT address</div>
         <div>0xdd4475015329d303d6e89c8bb113a6388f9184e7
-          <svg-icon name="copy" size="18" class="ml-4" />
+          <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('0xdd4475015329d303d6e89c8bb113a6388f9184e7')"/>
         </div>
       </div>
       <div class="bg-[#36322D] p-[32px] rounded-[12px] mt-[25px]">
         <div class="font-bold mb-[10px]">Total amount</div>
         <div>530.00 USDT
-          <svg-icon name="copy" size="18" class="ml-4" />
+          <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('530.00 USDT')"/>
         </div>
       </div>
       <div class="tips-info">
@@ -31,7 +31,7 @@
         Send USDT only from the Ethereum network to this address. Do not send USDT from other networks, otherwise it may lead to loss of funds.
       </div>
       <div class="text-center mt-[32px]">
-        <a-button type="primary" ghost class=" w-[120px]">Cancel</a-button>
+        <a-button type="primary" ghost class=" w-[120px]" @click="closePage">Cancel</a-button>
       </div>
     </div>
     <div v-else-if="status === 2" class="text-center my-[40px]">
@@ -41,7 +41,7 @@
       <div class="text-[40px] font-bold text-[#E2B578] mt-[20px]">530.00 USDT</div>
       <div class="text-[21px] text-[#E0DBD2]">= $530.00</div>
       <div class="text-[21px] mt-[50px] text-[#E0DBD2]">
-        Page redirecting automatically. If failed, please <label class="text-[#E2B578]">click here</label>
+        Page redirecting automatically. If failed, please <label class="text-[#E2B578] cursor-pointer" @click="goBack">click here</label>
       </div>
     </div>
     <div v-else-if="status === 3">
@@ -58,11 +58,11 @@
       <div class="bg-[#36322D] p-[32px] rounded-[12px] mt-[30px]">
         <div class="font-bold mb-[10px]">Your order ID</div>
         <div>M2EY4Y7
-          <svg-icon name="copy" size="18" class="ml-4" />
+          <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('M2EY4Y7')"/>
         </div>
       </div>
       <div class="text-center mt-[32px]">
-        <a-button type="primary" ghost class=" w-[120px]">Cancel</a-button>
+        <a-button type="primary" ghost class=" w-[120px]" @click="closePage">Cancel</a-button>
       </div>
     </div>
     <div v-else-if="status === 4" class="text-center">
@@ -71,15 +71,23 @@
       <div class="text-[#E0DBD2] text-[21px] ">
         The user canceled the payment
       </div>
-      <a-button type="primary" ghost class="mt-[32px] mb-[100px] w-[120px]">Cancel</a-button>
+      <a-button type="primary" ghost class="mt-[32px] mb-[100px] w-[120px]" @click="closePage">Cancel</a-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
 import Header from './components/header.vue'
+import { copyToClipboard } from '@/utils/tool'
 
-const status = ref(4);
+const status = ref(1);
+
+const goBack = () => {
+
+}
+const closePage = () => {
+  window.close()
+}
 </script>
 <style lang="less" scoped>
 .tips-info{
