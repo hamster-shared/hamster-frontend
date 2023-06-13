@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-between h-[156px] items-center border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] p-[32px] dark:bg-[#36322D] bg-[#ffffff]">
+    <div class="flex justify-between h-[156px] items-center rounded-[12px] p-[32px] dark:bg-[#1D1C1A] bg-[#ffffff]">
         <div class="flex items-center">
             <svg-icon name="node-Service" size="108"/>
             <div class="inline-block ml-[30px]">
