@@ -14,54 +14,51 @@
     </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter, useRoute } from "vue-router";
+import { NodeStatusEnum } from "@/enums/statusEnum";
+import { apiGetNodeList } from "@/apis/node";
 
 const router = useRouter();
 const route = useRoute()
-const nodeListData = ref([{name:'123'}])
+const nodeListData = ref([])
 const nodeColumns = reactive([
   {
     title: 'ID',
     dataIndex: 'id',
     key: 'id',
-    align: 'center',
     customRender: ({ index }:any) => index+1,
   },
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    align: 'center',
   },
   {
     title: 'Chain',
-    dataIndex: 'chain',
-    key: 'chain',
-    align: 'center',
+    dataIndex: 'chainProtocol',
+    key: 'chainProtocol',
+    align: 'chainProtocol',
   },
   {
     title: 'Node Status',
     dataIndex: 'status',
     key: 'status',
-    align: 'center',
+    customRender: ({ text }) => `${NodeStatusEnum[text]}`,
   },
   {
     title: 'Public IP',
-    dataIndex: 'ip',
-    key: 'ip',
-    align: 'center',
+    dataIndex: 'publicIp',
+    key: 'publicIp',
   },
   {
     title: 'Region',
     dataIndex: 'region',
     key: 'region',
-    align: 'center',
   },
   {
     title: 'Action',
     key: 'action',
-    align: 'center'
   },
 ])
 const pagination = reactive({
@@ -88,19 +85,16 @@ const pagination = reactive({
   },
 });
 const getTableData = async(page:number = pagination.current, size:number = pagination.pageSize) => {
-  const token = localStorage.getItem('token')
-  const params = {
-    page,
-    size,
-    token
-  }
+
+  
   try {
-    // const { data } = await apiGetOracleTableParams(params)
-    // pagination.total = data.total
-    // pagination.current = data.page
-    // pagination.pageSize = data.pageSize
-    // oracleListData.value = data.data
-    // console.log('tableData:', oracleListData.value)
+    const { data } = await apiGetNodeList({ page, size })
+    
+    pagination.total = data.total
+    pagination.current = data.page
+    pagination.pageSize = data.pageSize
+    nodeListData.value = data.data
+    
   } catch(err:any) {
     console.log('tableDataErr:', err)
   }
@@ -108,6 +102,9 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
 const launchNode = () => {
   router.push(route.fullPath + "/create");
 }
+onMounted(() => {
+  getTableData();
+})
 </script>
 <style lang="less">
 </style>
