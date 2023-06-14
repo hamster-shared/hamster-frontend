@@ -184,13 +184,13 @@ const goLaunch = async() => {
     formData.nodeResource = resourceInfo.value.cpu+'C'+resourceInfo.value.memory+'GB '+resourceInfo.value.disk+'GB'; 
     formData.resourceType = formData.protocol + ' | ' + formData.region  + ' | ' + formData.nodeResource;
     formData.amount = resourceInfo.value.cost;
-    const { data } = await apiAddProjects(formData)
-    console.log("data:",data);
+    const res = await apiAddProjects(formData)
+    if (res.code === 200) {
+      showPayProgressModal.value = true
+      window.open('/middleware/pay?id='+res.data)
+    }
   } catch(err:any) {
     console.log('tableDataErr:', err)
-  } finally {
-    showPayProgressModal.value = true
-    window.open('/middleware/pay')
   }
 }
 const cancel = () => {
