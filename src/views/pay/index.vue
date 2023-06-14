@@ -1,11 +1,11 @@
 <template>
   <div class="text-[24px] font-bold mb-[24px]">Payment</div>
   <Header />
-  <div class="bg-[#1D1C1A] mt-[25px] rounded-[12px] p-[32px]">
+  <div class="bg-[#FFFFFF] dark:bg-[#1D1C1A] mt-[25px] rounded-[12px] p-[32px]">
     <div v-if="status === 1">
-      <div class="text-[24px] text-[#FFFFFF] font-bold">Send USDT on the Ethereum network</div>
+      <div class="text-[24px] font-bold">Send USDT on the Ethereum network</div>
       <div class="flex justify-between items-center">
-        <div class="text-[#E0DBD2]">Open your crypto wallet, scan the QR code or copy the USDT address below to pay</div>
+        <div class="text-[#73706E] dark:text-[#E0DBD2]">Open your crypto wallet, scan the QR code or copy the USDT address below to pay</div>
         <div class="text-[32px] font-bold flex items-center">
           <svg-icon name="pay-time" size="24" class="mr-2 mt-[5px]" />
           20:35
@@ -14,13 +14,13 @@
       <div class="flex justify-center py-[50px]">
         <img src="@/assets/images/pay-code.png" class="w-[200px]" />
       </div>
-      <div class="bg-[#36322D] p-[32px] rounded-[12px]">
+      <div class="card-div dark:bg-[#36322D] p-[32px] rounded-[12px]">
         <div class="font-bold mb-[10px]">USDT address</div>
         <div>0xdd4475015329d303d6e89c8bb113a6388f9184e7
           <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('0xdd4475015329d303d6e89c8bb113a6388f9184e7')"/>
         </div>
       </div>
-      <div class="bg-[#36322D] p-[32px] rounded-[12px] mt-[25px]">
+      <div class="card-div dark:bg-[#36322D] p-[32px] rounded-[12px] mt-[25px]">
         <div class="font-bold mb-[10px]">Total amount</div>
         <div>530.00 USDT
           <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('530.00 USDT')"/>
@@ -39,9 +39,9 @@
       <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
       <div class="text-[28px] font-bold">payment Successful</div>
       <div class="text-[40px] font-bold text-[#E2B578] mt-[20px]">530.00 USDT</div>
-      <div class="text-[21px] text-[#E0DBD2]">= $530.00</div>
-      <div class="text-[21px] mt-[50px] text-[#E0DBD2]">
-        Page redirecting automatically. If failed, please <label class="text-[#E2B578] cursor-pointer" @click="goBack">click here</label>
+      <div class="text-[21px] text-[#73706E] dark:text-[#E0DBD2]">= $530.00</div>
+      <div class="text-[21px] mt-[50px] text-[#73706E] dark:text-[#E0DBD2]">
+        Page redirecting automatically. If failed, please <label class="text-[#E2B578] cursor-pointer font-bold" @click="goBack">click here</label>
       </div>
     </div>
     <div v-else-if="status === 3">
@@ -51,11 +51,11 @@
       </div>
       <div class="text-[28px] font-bold text-center mt-[30px] mb-[20px]">NO payment</div>
       <div class="flex justify-center">
-        <div class="text-[#E0DBD2] text-[21px] w-[930px] text-center">
+        <div class="text-[#73706E] dark:text-[#E0DBD2] text-[21px] w-[930px] text-center">
           We continuously monitor the network, but have not detected any payment. If you have paid, please contact the merchant through <label class="text-[#E2B578]">hamster@hamsternet.io</label>
         </div>
       </div>
-      <div class="bg-[#36322D] p-[32px] rounded-[12px] mt-[30px]">
+      <div class="card-div dark:bg-[#36322D] p-[32px] rounded-[12px] mt-[30px]">
         <div class="font-bold mb-[10px]">Your order ID</div>
         <div>M2EY4Y7
           <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('M2EY4Y7')"/>
@@ -68,7 +68,7 @@
     <div v-else-if="status === 4" class="text-center">
       <img src="@/assets/images/Failed.png" class="w-[173px] " />
       <div class="text-[28px] font-bold mt-[30px] mb-[20px]">Payment Failed</div>
-      <div class="text-[#E0DBD2] text-[21px] ">
+      <div class="text-[#73706E] dark:text-[#E0DBD2] text-[21px] ">
         The user canceled the payment
       </div>
       <a-button type="primary" ghost class="mt-[32px] mb-[100px] w-[120px]" @click="closePage">Cancel</a-button>
@@ -80,7 +80,7 @@ import { ref } from 'vue';
 import Header from './components/header.vue'
 import { copyToClipboard } from '@/utils/tool'
 
-const status = ref(1);
+const status = ref(4);
 
 const goBack = () => {
 
@@ -90,6 +90,13 @@ const closePage = () => {
 }
 </script>
 <style lang="less" scoped>
+html[data-theme='light'] {
+  .card-div{
+    box-shadow: 0px 0px 10px 0px rgba(191,191,191,0.2);
+    border-radius: 12px;
+    border: 1px solid #EBEBEB;
+  }
+}
 .tips-info{
   background: rgba(226,181,120,0.1);
   border-radius: 12px;
