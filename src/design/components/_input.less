@@ -66,9 +66,13 @@ html[data-theme='dark'] {
   border-radius: 0px 8px 8px 0px;
   width: 54px;
 }
-.ant-input-search-button{
+.ant-input-search-button,.ant-input-search-button:hover,.ant-input-search-button:active{
   background-color: transparent;
-    border-color:  transparent;
+  border-color:  transparent;
+}
+.ant-input-search .ant-input:focus+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary), 
+.ant-input-search .ant-input:hover+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary){
+  border-left-color: transparent;
 }
 .anticon-search{
   color: #E2B578;

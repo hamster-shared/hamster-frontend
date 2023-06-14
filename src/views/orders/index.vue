@@ -3,14 +3,27 @@
       <div class="text-[24px] font-bold mb-[25px]">Your Orders</div>
       <div class="dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
         <div class="mb-[25px] flex">
-          <a-range-picker format="YYYY-MM-DD" @change="handleSearch" class="w-1/2" v-model:value="searchData.orderDate" />
-          <a-input-search @search="handleSearch" class="ml-[30px]" v-model:value="searchData.keyword" autocomplete="off" placeholder="Search here..."></a-input-search>
+          <a-range-picker format="YYYY-MM-DD" @change="handleSearchDate" class="w-1/2" v-model:value="searchData.orderDate" />
+          <a-input-search @search="getTableData()" class="ml-[30px]" v-model:value="searchData.query" autocomplete="off" placeholder="Search here..."></a-input-search>
         </div>
         <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
           <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'orderId'">
+              <label>{{record.orderId}} <svg-icon name="copy" size="18" @click="copyToClipboard(record.orderId)" /></label>
+            </template>
+            <template v-if="column.dataIndex === 'resourceType'">
+              <label>{{record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))}}<br/>
+                {{record.resourceType.substring(record.resourceType.lastIndexOf("|")+1)}} | {{record.buyTime}} Month</label>
+            </template>
+            <template v-if="column.dataIndex === 'amount'">
+              <label>{{record.amount}} USDT <br/>= ${{record.amount}}</label>
+            </template>
             <template v-if="column.key === 'action'">
-              <label class="cursor-pointer open-link-css">Pay</label>
-              <label class="cursor-pointer open-link-css ml-4">Cancel</label>
+              <label v-if="record.status === 1">
+                <label class="cursor-pointer open-link-css">Pay</label>
+                <label class="cursor-pointer open-link-css ml-4">Cancel</label>
+              </label>
+              <label v-else>-</label>
             </template>
           </template>
         </a-table>
@@ -18,62 +31,61 @@
     </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { CopyOutlined } from '@ant-design/icons-vue';
+import { onMounted, reactive, ref } from 'vue';
+import { formatDateToLocale } from '@/utils/dateUtil';
+import { copyToClipboard } from '@/utils/tool'
+import { OrderStatusEnum ,OrderTypeEnum } from "@/enums/statusEnum";
+import { apiGetOrderList } from "@/apis/node";
 
-const orderListData = ref([{ name: '123' }])
+const orderListData = ref([])
 const searchData = ref({
-  keyword: '',
+  query: '',
   orderDate: '',
+  'X-Start': '',
+  'X-End': '',
 })
 const orderColumns = reactive([
   {
     title: 'Order Time',
-    dataIndex: 'id',
-    key: 'id',
-    align: 'center',
-    customRender: ({ index }:any) => index+1,
+    dataIndex: 'orderTime',
+    key: 'orderTime',
+    customRender: ({ text: date }:any) => formatDateToLocale(date.Time).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Order ID',
-    dataIndex: 'name',
-    key: 'name',
-    align: 'center',
+    dataIndex: 'orderId',
+    key: 'orderId',
   },
   {
     title: 'Order Type',
-    dataIndex: 'chain',
-    key: 'chain',
-    align: 'center',
+    dataIndex: 'orderType',
+    key: 'orderType',
+    customRender: ({text}:any) => `${OrderTypeEnum[text]}`,
   },
   {
     title: 'Resource Type',
-    dataIndex: 'status',
-    key: 'status',
-    align: 'center',
+    dataIndex: 'resourceType',
+    key: 'resourceType',
   },
   {
     title: 'Order Status',
-    dataIndex: 'ip',
-    key: 'ip',
-    align: 'center',
+    dataIndex: 'status',
+    key: 'status',
+    customRender: ({text}:any) => `${OrderStatusEnum[text]}`,
   },
   {
     title: 'Chain',
-    dataIndex: 'region',
-    key: 'region',
-    align: 'center',
+    dataIndex: 'chain',
+    key: 'chain',
   },
   {
     title: 'Amount',
-    dataIndex: 'region',
-    key: 'region',
-    align: 'center',
+    dataIndex: 'amount',
+    key: 'amount',
   },
   {
     title: 'Action',
     key: 'action',
-    align: 'center'
   },
 ])
 const pagination = reactive({
@@ -100,27 +112,38 @@ const pagination = reactive({
   },
 });
 const getTableData = async(page:number = pagination.current, size:number = pagination.pageSize) => {
-  const token = localStorage.getItem('token')
+
   const params = {
-    page,
-    size,
-    token
+    page: page,
+    size: size,
+    query: searchData.value.query,
+    'X-Start': searchData.value['X-Start'],
+    'X-End': searchData.value['X-End'],
   }
   try {
-    // const { data } = await apiGetOracleTableParams(params)
-    // pagination.total = data.total
-    // pagination.current = data.page
-    // pagination.pageSize = data.pageSize
-    // oracleListData.value = data.data
-    // console.log('tableData:', oracleListData.value)
+    const { data } = await apiGetOrderList(params)
+    
+    pagination.total = data.total
+    pagination.current = data.page
+    pagination.pageSize = data.pageSize
+    orderListData.value = data.data
+    
   } catch(err:any) {
     console.log('tableDataErr:', err)
   }
 }
-const handleSearch = (value: any,dateString: any[]) => {
-  console.log("searchData: ",value)
-  console.log("searchData: ",dateString[0])
+const handleSearchDate = (value: any, dateString: any[]) => {
+  searchData.value['X-Start'] = dateString[0];
+  searchData.value['X-End'] = dateString[1];
+  getTableData()
 }
+onMounted(() => {
+  getTableData();
+})
 </script>
 <style lang="less">
+
+.svg-icon{
+  color: #E2B578;
+}
 </style>
