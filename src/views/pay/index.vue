@@ -13,7 +13,7 @@
       </div>
       <div class="flex justify-center py-[50px]">
         <!-- <img src="@/assets/images/pay-code.png" class="w-[200px]" /> -->
-        <qrcode-vue :value="qrcodeUrl" :size="200"/>
+        <qrcode-vue v-if="qrcodeUrl" :value="qrcodeUrl" :size="200"/>
       </div>
       <div class="card-div dark:bg-[#36322D] p-[32px] rounded-[12px]">
         <div class="font-bold mb-[10px]">USDT address</div>
@@ -39,8 +39,8 @@
       <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
       <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
       <div class="text-[28px] font-bold">payment Successful</div>
-      <div class="text-[40px] font-bold text-[#E2B578] mt-[20px]">530.00 USDT</div>
-      <div class="text-[21px] text-[#73706E] dark:text-[#E0DBD2]">= $530.00</div>
+      <div class="text-[40px] font-bold text-[#E2B578] mt-[20px]">{{orderInfo.amount}} USDT</div>
+      <div class="text-[21px] text-[#73706E] dark:text-[#E0DBD2]">= ${{orderInfo.amount}}</div>
       <div class="text-[21px] mt-[50px] text-[#73706E] dark:text-[#E0DBD2]">
         Page redirecting automatically. If failed, please <label class="text-[#E2B578] cursor-pointer font-bold" @click="goBack">click here</label>
       </div>
@@ -59,7 +59,7 @@
       <div class="card-div dark:bg-[#36322D] p-[32px] rounded-[12px] mt-[30px]">
         <div class="font-bold mb-[10px]">Your order ID</div>
         <div>{{orderInfo.orderId}}
-          <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard('M2EY4Y7')"/>
+          <svg-icon name="copy" size="18" class="ml-4" @click="copyToClipboard(orderInfo.orderId)"/>
         </div>
       </div>
       <div class="text-center mt-[32px]">
@@ -77,10 +77,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useRoute } from "vue-router";
 import Header from './components/header.vue'
 import { copyToClipboard } from '@/utils/tool'
+import dayjs from 'dayjs';
 import QrcodeVue from "qrcode.vue"
 import web3 from 'web3';
 import { apiOrderDetail, apiCloseOrder } from '@/apis/chainlink'
@@ -90,26 +91,53 @@ const status = ref(1);
 const qrcodeUrl = ref('')
 const orderInfo = ref<any>({})
 const time = ref('60:00')
-const router = useRouter()
-const id = router.query.id
+const timeId = ref()
+const route = useRoute()
+const id:any = route.query.id
 
 const goBack = () => {
+  window.close()
 }
+
 // 获取订单信息
 const getOrderDetailInfo = async() => {
-  const res = await apiOrderDetail('1')
+  const res = await apiOrderDetail(id)
   orderInfo.value = res.data
-  console.log('获取订单信息',res)
+  console.log('获取订单信息',res.data)
 }
 // 关闭当前页
 const closePage = async() => {
   await apiCloseOrder(id)
   window.close()
 }
+// 生产二维码
+const createQRcode = () => {
+  const money = web3.utils.toWei(orderInfo.value.amount, 'ether');
+  qrcodeUrl.value = `ethereum:0x4776969C722ae534dD4346aef8aA3c1497c05d13@1281/transfer?address=${orderInfo.value.receiveAddress}&uint256=${money}`
+}
+const change = (time:any) => {
+  console.log('change00000',time)
+  const date = new Date(time);
+  const mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+  const ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+  return mm + ss
+}
+// 倒计时
+const countTime = () => {
+  let duration:any = 3600000
+  timeId.value = setInterval(async() => {
+    --duration
+    time.value = dayjs(duration).format('mm:ss')
+    console.log('倒计时',duration,time.value)
+  }, 1000);
+} 
 onMounted(async()=>{
   await getOrderDetailInfo()
-  // const a = web3.utils.toWei('560', 'ether');
-  // qrcodeUrl.value = `ethereum:0x4776969C722ae534dD4346aef8aA3c1497c05d13@1281/transfer?address=${}&uint256=${}`
+  createQRcode()
+  countTime()
+})
+onUnmounted(()=>{
+  clearInterval(timeId.value)
 })
 </script>
 <style lang="less" scoped>
