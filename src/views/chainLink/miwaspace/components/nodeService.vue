@@ -2,7 +2,7 @@
   <div>
     <div class="my-10">
       <div :class="{'grid grid-cols-3' : pageType !== 'create'}">
-        <div class="rounded-[12px] mr-[30px] p-[30px] text-[#FFFFFF]" :class="[pageType === 'create' ? 'border border-solid border-[#434343]' : 'col-span-2 bg-[#36322D]']">
+        <div class="rounded-[12px] mr-[30px] p-[30px] text-[#151210] dark:text-[#FFFFFF]" :class="[pageType === 'create' ? 'border border-solid border-[#EBEBEB] dark:border-[#434343]' : theme.themeValue === 'dark' ? 'col-span-2 dark:bg-[#36322D]' : 'col-span-2 box-div border border-solid border-[#EBEBEB]']">
           <div class="text-[24px] font-bold mb-[30px]" :class="{'text-center' : pageType !== 'create'}">Launch Node</div>
           <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical" :class="{'w-[75%]' : pageType === 'create'}">
             <a-form-item label="Protocol" name="protocol" >
@@ -14,27 +14,27 @@
                 :options="regionOptions" ></a-select>
             </a-form-item>
             <a-form-item label="Recommended Resource" >
-              <div class="border border-solid border-[#434343] rounded-[12px] grid grid-cols-3">
+              <div :class="{'box-div' : theme.themeValue !== 'dark' && pageType === 'create' }" class="border border-solid  border-[#EBEBEB] dark:border-[#434343] rounded-[12px] grid grid-cols-3">
                 <div class="p-[20px] text-center">
-                  <div class="text-[#E0DBD2] text-[16px] font-bold flex justify-center items-center">
+                  <div class="text-[#151210] dark:text-[#E0DBD2] text-[16px] font-bold flex justify-center items-center">
                     <svg-icon name="cpu" size="18" class="mr-2" />CPU
                   </div>
                   <div class="text-[36px] mt-[10px]">{{ resourceInfo.cpu }}</div>
-                  <div class="text-[#E0DBD2]">Cores</div>
+                  <div class="text-[#73706E] dark:text-[#E0DBD2]">Cores</div>
                 </div>
                 <div class="p-[20px] text-center">
-                  <div class="text-[#E0DBD2] text-[16px] font-bold flex justify-center items-center">
+                  <div class="text-[#151210] dark:text-[#E0DBD2] text-[16px] font-bold flex justify-center items-center">
                     <svg-icon name="memory" size="18" class="mr-2" />Memory
                   </div>
                   <div class="text-[36px] mt-[10px]">{{ resourceInfo.memory }}</div>
-                  <div class="text-[#E0DBD2]">GB</div>
+                  <div class="text-[#73706E] dark:text-[#E0DBD2]">GB</div>
                 </div>
                 <div class="p-[20px] text-center">
-                  <div class="text-[#E0DBD2] text-[16px] font-bold flex justify-center items-center">
+                  <div class="text-[#151210] dark:text-[#E0DBD2] text-[16px] font-bold flex justify-center items-center">
                     <svg-icon name="disk" size="18" class="mr-2" />Disk
                   </div>
                   <div class="text-[36px] mt-[10px]">{{ resourceInfo.disk }}</div>
-                  <div class="text-[#E0DBD2]">GB</div>
+                  <div class="text-[#73706E] dark:text-[#E0DBD2]">GB</div>
                 </div>
               </div>
             </a-form-item>
@@ -44,14 +44,14 @@
           </a-form>
           <hr />
           <div class="flex justify-between items-center">
-            <div class="text-[#FFFFFF] font-bold text-[16px]">Cost:<span class="text-[#E2B578] text-[24px] ml-2">${{ resourceInfo.cost }}</span><span class="mx-1">/</span>Month</div>
+            <div class="text-[#151210] dark:text-[#FFFFFF] font-bold text-[16px]">Cost:<span class="text-[#E2B578] text-[24px] ml-2">${{ resourceInfo.cost }}</span><span class="mx-1">/</span>Month</div>
             <div>
               <a-button type="primary" ghost class=" w-[120px]" @click="cancel">Cancel</a-button>
               <a-button type="primary" class="ml-[20px] w-[120px]" @click="goLaunch">Launch</a-button>
             </div>
           </div>
         </div>
-        <div class="bg-[#36322D] rounded-[12px] p-[30px]" v-if="pageType !== 'create'">
+        <div class="rounded-[12px] p-[30px]" v-if="pageType !== 'create'" :class="[theme.themeValue === 'dark' ? 'dark:bg-[#36322D]' : 'box-div border border-solid border-[#EBEBEB]']">
           <div class="text-center mb-[40px]">
             <svg-icon name="ethereum-title" size="40" />
             <div class="text-[18px] font-bold text-[#E2B578] mt-[20px]">The benefits of Ethereum</div>
@@ -61,8 +61,8 @@
               <svg-icon name="decentralized" size="24" />
             </div>
             <div class="benefit-bg">
-              <div class="text-[#FFFFFF]">Decentralized architecture</div>
-              <div class="text-[#E0DBD2]">Decentralized network, high security and stability.</div>
+              <div class="text-[#151210] dark:text-[#FFFFFF]">Decentralized architecture</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2]">Decentralized network, high security and stability.</div>
             </div>
           </div>
           <div class="flex mt-[30px]">
@@ -70,8 +70,8 @@
               <svg-icon name="contracts" size="24" />
             </div>
             <div class="benefit-bg">
-              <div class="text-[#FFFFFF]">Smart contracts</div>
-              <div class="text-[#E0DBD2]">Automatically execute business terms, simplify processes and reduce costs.</div>
+              <div class="text-[#151210] dark:text-[#FFFFFF]">Smart contracts</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2]">Automatically execute business terms, simplify processes and reduce costs.</div>
             </div>
           </div>
           <div class="flex mt-[30px]">
@@ -79,8 +79,8 @@
               <svg-icon name="developer" size="24" />
             </div>
             <div class="benefit-bg">
-              <div class="text-[#FFFFFF]">Developer-friendly</div>
-              <div class="text-[#E0DBD2]">Complete tools and resources to encourage ecosystem development.</div>
+              <div class="text-[#151210] dark:text-[#FFFFFF]">Developer-friendly</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2]">Complete tools and resources to encourage ecosystem development.</div>
             </div>
           </div>
         </div>
@@ -112,8 +112,11 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, toRefs,h } from 'vue';
 import { useRouter } from "vue-router";
+import { useThemeStore } from "@/stores/useTheme";
 import { LoadingOutlined } from '@ant-design/icons-vue';
+import { apiAddProjects } from "@/apis/node";
 
+const theme = useThemeStore();
 const props = defineProps({
   pageType: String,
 
@@ -133,9 +136,13 @@ const indicator = h(LoadingOutlined, {
 const router = useRouter();
 const formRef = ref()
 const formData = reactive({
-    protocol: 'Ethereum',
-    region: 'US East',
-    nodeName: '',
+  protocol: 'Ethereum',
+  region: 'US East',
+  nodeName: '',
+  resourceType: '',
+  nodeResource: '',
+  buyTime: 1,
+  amount: 0
 });
 
 const protocolOptions = ref([
@@ -173,9 +180,18 @@ const setOtherInfo = (val: string) => {
 }
 const goLaunch = async() => {
   await formRef.value.validate();
-  showPayProgressModal.value = true
-  window.open('/middleware/pay')
-  console.log("go...");
+  try {
+    formData.nodeResource = resourceInfo.value.cpu+'C'+resourceInfo.value.memory+'GB '+resourceInfo.value.disk+'GB'; 
+    formData.resourceType = formData.protocol + ' | ' + formData.region  + ' | ' + formData.nodeResource;
+    formData.amount = resourceInfo.value.cost;
+    const { data } = await apiAddProjects(formData)
+    console.log("data:",data);
+  } catch(err:any) {
+    console.log('tableDataErr:', err)
+  } finally {
+    showPayProgressModal.value = true
+    window.open('/middleware/pay')
+  }
 }
 const cancel = () => {
   router.go(-1)
@@ -185,8 +201,13 @@ const closePayModal = ()=>{
 }
 </script>
 <style lang="less" scoped>
+html[data-theme='dark'] {
+  hr{
+    border-color: #434343;
+  }
+}
 hr{
-  border: 1px solid #434343;
+  border: 1px solid #EBEBEB;
   margin-top: 40px;
   margin-bottom: 30px;
 }
@@ -197,5 +218,8 @@ hr{
 }
 .svg-icon{
   color: #E2B578;
+}
+.box-div{
+  box-shadow: 0px 0px 10px 0px rgba(191,191,191,0.2);
 }
 </style>
