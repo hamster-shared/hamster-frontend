@@ -7,18 +7,25 @@
                     Hamster Node Service
                 </div>
                 <div class="text-[16px]">
-                    <span>Ethereum</span> | <span>US East</span> | <span>4C32GB</span> <span>3000GB</span>
+                    <span>{{orderInfo.resourceType}}</span>
                 </div>
                 <div class="text-[16px]">
-                    1 Month
+                    {{orderInfo.buyTime}} Month
                 </div>
             </div>
         </div>
-        <div class="text-[24px] font-blod text-[#E2B578]">$530.00</div>
+        <div class="text-[24px] font-blod text-[#E2B578]">${{orderInfo.amount}}</div>
     </div>
 </template>
 <script setup lang="ts">
-
+import { defineProps, toRefs } from 'vue';
+const props = defineProps({
+    orderInfo:{
+        type:Object,
+        default:{}
+    }
+})
+const { orderInfo } = toRefs(props);
 </script>
 <style lang="less">
 </style>

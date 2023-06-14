@@ -250,3 +250,19 @@ export function apiDetailRequest(id:string) {
         method: "get",
     })
 }
+
+// 订单详情
+export function apiOrderDetail(id:string) {
+    return httpRequest({
+        url: `/api/node/order/${id}`,
+        method: "get",
+    })
+}
+
+// 关闭订单
+export function apiCloseOrder(id:string) {
+    return httpRequest({
+        url: `/api/node/order/${id}/cancel`,
+        method: "put",
+    })
+}
