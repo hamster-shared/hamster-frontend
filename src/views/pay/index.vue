@@ -81,7 +81,6 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from "vue-router";
 import Header from './components/header.vue'
 import { copyToClipboard } from '@/utils/tool'
-import dayjs from 'dayjs';
 import QrcodeVue from "qrcode.vue"
 import web3 from 'web3';
 import { apiOrderDetail, apiCloseOrder } from '@/apis/chainlink'
@@ -115,22 +114,26 @@ const createQRcode = () => {
   const money = web3.utils.toWei(orderInfo.value.amount, 'ether');
   qrcodeUrl.value = `ethereum:0x4776969C722ae534dD4346aef8aA3c1497c05d13@1281/transfer?address=${orderInfo.value.receiveAddress}&uint256=${money}`
 }
-const change = (time:any) => {
-  console.log('change00000',time)
-  const date = new Date(time);
-  const mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-  const ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
-  return mm + ss
-}
 // 倒计时
 const countTime = () => {
-  let duration:any = 3600000
-  timeId.value = setInterval(async() => {
+  let duration:any = 10
+  timeId.value = setInterval(() => {
     --duration
-    time.value = dayjs(duration).format('mm:ss')
+    time.value = formatTimeCallback(duration)
     console.log('倒计时',duration,time.value)
+    if(duration<1){
+      clearInterval(timeId.value)
+      status.value = 4
+    }
   }, 1000);
-} 
+}
+const formatTimeCallback = (timestamp: number): string => {
+  const minutes = Math.floor(timestamp / 60);
+  const seconds = timestamp % 60;
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(seconds).padStart(2, '0');
+  return `${formattedMinutes}:${formattedSeconds}`;
+};
 onMounted(async()=>{
   await getOrderDetailInfo()
   createQRcode()
