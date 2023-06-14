@@ -115,6 +115,7 @@ import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import { apiAddProjects } from "@/apis/node";
+import { message } from 'ant-design-vue';
 
 const theme = useThemeStore();
 const props = defineProps({
@@ -180,6 +181,7 @@ const setOtherInfo = (val: string) => {
 }
 const goLaunch = async() => {
   await formRef.value.validate();
+  
   try {
     formData.nodeResource = resourceInfo.value.cpu+'C'+resourceInfo.value.memory+'GB '+resourceInfo.value.disk+'GB'; 
     formData.resourceType = formData.protocol + ' | ' + formData.region  + ' | ' + formData.nodeResource;
@@ -189,8 +191,10 @@ const goLaunch = async() => {
       showPayProgressModal.value = true
       window.open('/middleware/pay?id='+res.data)
     }
+    console.log("res:",res);
   } catch(err:any) {
-    console.log('tableDataErr:', err)
+    console.log('tableDataErr:', err);
+    message.error("node name: "+formData.nodeName+" is areadly exists");
   }
 }
 const cancel = () => {
