@@ -27,7 +27,7 @@
           </div>
           <div class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
         </div>
-        <div v-else-if="item === 'Node' && true">
+        <div v-else-if="item === 'Node' && false">
           <div class="text-center">
             <img src="@/assets/images/cl-noData-block.png" class="w-[128px] h-[128px] hidden dark:inline-block" />
             <img src="@/assets/images/cl-noData-white.jpg" class="w-[128px] h-[128px] dark:hidden" />
@@ -36,7 +36,7 @@
           <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The node has not been created yet</div>
           <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Add node</div>
         </div>
-        <div v-else-if="item === 'Node' && false">
+        <div v-else-if="item === 'Node' && true">
           <span class="open-link-css cursor-pointer node-view" @click="goNode(item)">View</span>
           <div class="text-center">
             <div class="text-[60px] text-[#E2B578]">4</div>
