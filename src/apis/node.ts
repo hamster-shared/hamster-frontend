@@ -51,3 +51,10 @@ export function apiGetOrderList(params: GetOrderParams) {
     }
   });
 }
+// node统计信息
+export function apiGetNodeStatistics() {
+  return httpRequest({
+    url: "/api/node/statistics-info",
+    method: "get",
+  });
+}

@@ -191,10 +191,8 @@ const goLaunch = async() => {
       showPayProgressModal.value = true
       window.open('/middleware/pay?id='+res.data)
     }
-    console.log("res:",res);
   } catch(err:any) {
-    console.log('tableDataErr:', err);
-    message.error("node name: "+formData.nodeName+" is areadly exists");
+    message.error(err.response.data.message);
   }
 }
 const cancel = () => {
