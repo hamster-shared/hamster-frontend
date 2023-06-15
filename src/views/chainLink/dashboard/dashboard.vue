@@ -148,7 +148,6 @@ const goNode = (item:any)=>{
 }
 const getNodeStatistics = async()=>{
   const { data } = await apiGetNodeStatistics()
-  console.log("res:", data);
   if (data.halted > 0 || data.nodes > 0 || data.synced > 0) {
     nodeInfo.value = data;
   }
