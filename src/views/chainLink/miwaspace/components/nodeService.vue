@@ -110,12 +110,14 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs,h } from 'vue';
+import { computed, reactive, ref, toRefs,h,onUnmounted } from 'vue';
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import { apiAddProjects } from "@/apis/node";
 import { message } from 'ant-design-vue';
+import { apiOrderDetail } from '@/apis/chainlink'
+import { io } from "socket.io-client";
 
 const theme = useThemeStore();
 const props = defineProps({
@@ -169,6 +171,20 @@ const resourceList = ref<any>({
 });
 const resourceInfo = ref(resourceList.value.Ethereum);
 
+const orderId = ref()
+const socket = io("");
+socket.on('message', (data)=>{
+    console.log(data);
+    // if(){
+    // 支付成功
+    // router.push('/middleware/dashboard/node')
+    // }else if(){
+    // 支付失败
+    // showPayProgressModal.value = false
+    // showPayFailedModal.value = true
+    // }
+});
+
 const formRules = computed(() => {
     const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
     return {
@@ -190,6 +206,9 @@ const goLaunch = async() => {
     if (res.code === 200) {
       showPayProgressModal.value = true
       window.open('/middleware/pay?id='+res.data)
+      const result = await apiOrderDetail(res.data)
+      orderId.value = result.data.orderId
+      socket.emit('orderId',orderId)
     }
   } catch(err:any) {
     message.error(err.response.data.message);
@@ -201,6 +220,9 @@ const cancel = () => {
 const closePayModal = ()=>{
   showPayProgressModal.value = false
 }
+onUnmounted(()=>{
+  socket.close()
+})
 </script>
 <style lang="less" scoped>
 html[data-theme='dark'] {

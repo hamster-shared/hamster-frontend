@@ -86,7 +86,7 @@ import { copyToClipboard } from '@/utils/tool'
 import QrcodeVue from "qrcode.vue"
 import web3 from 'web3';
 import { apiOrderDetail, apiCloseOrder } from '@/apis/chainlink'
-
+import { io } from "socket.io-client";
 
 const status = ref(1);
 const qrcodeUrl = ref('')
@@ -95,6 +95,19 @@ const time = ref('60:00')
 const timeId = ref()
 const route = useRoute()
 const id:any = route.query.id
+
+const socket = io("");
+socket.emit('orderId',orderInfo.orderId)
+socket.on('message', (data)=>{
+    console.log(data);
+    // if(){
+    //   // 支付成功
+    //   status.value = 2
+    // }else if(){
+    //   // 支付失败
+    //   status.value = 4
+    // }
+});
 
 const goBack = () => {
   window.close()
@@ -113,8 +126,8 @@ const closePage = async() => {
 }
 // 生产二维码
 const createQRcode = () => {
-  const money = web3.utils.toWei(orderInfo.value.amount, 'ether');
-  qrcodeUrl.value = `ethereum:0x4776969C722ae534dD4346aef8aA3c1497c05d13@1281/transfer?address=${orderInfo.value.receiveAddress}&uint256=${money}`
+  const money = web3.utils.toWei(orderInfo.value.amount, 'mwei');
+  qrcodeUrl.value = `ethereum:0xC77bBf637d91C114F70f167a9a391A0486270854@80001/transfer?address=${orderInfo.value.receiveAddress}&uint256=${money}`
 }
 // 倒计时
 const countTime = () => {
@@ -143,6 +156,7 @@ onMounted(async()=>{
 })
 onUnmounted(()=>{
   clearInterval(timeId.value)
+  socket.close()
 })
 </script>
 <style lang="less" scoped>
