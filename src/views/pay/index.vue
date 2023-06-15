@@ -116,14 +116,14 @@ const createQRcode = () => {
 }
 // 倒计时
 const countTime = () => {
-  let duration:any = 10
+  let duration:any = 3600
   timeId.value = setInterval(() => {
     --duration
     time.value = formatTimeCallback(duration)
     console.log('倒计时',duration,time.value)
     if(duration<1){
       clearInterval(timeId.value)
-      status.value = 4
+      status.value = 3
     }
   }, 1000);
 }
