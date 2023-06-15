@@ -13,7 +13,9 @@
       </div>
       <div class="flex justify-center py-[50px]">
         <!-- <img src="@/assets/images/pay-code.png" class="w-[200px]" /> -->
-        <qrcode-vue v-if="qrcodeUrl" :value="qrcodeUrl" :size="200"/>
+        <div class="bg-[#FFFFFF] p-[12px] border border-dashed dark:border-none">
+          <qrcode-vue v-if="qrcodeUrl" :value="qrcodeUrl" :size="200"/>
+        </div>
       </div>
       <div class="card-div dark:bg-[#36322D] p-[32px] rounded-[12px]">
         <div class="font-bold mb-[10px]">USDT address</div>
