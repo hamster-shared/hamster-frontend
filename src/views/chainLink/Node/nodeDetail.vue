@@ -147,7 +147,7 @@ await getNodeDetailInfo()
 <style lang="less" scoped>
 .borderbox{
   border-radius: 12px;
-  border: 1px solid #434343;
+  border: 1px solid #EBEBEB;
     .font_style{
     height: 24px;
     font-size: 18px;
@@ -189,6 +189,9 @@ html[data-theme='dark'] {
   }
   .font_color2{
     color: #FFFFFF;
+  }
+  .borderbox{
+    border-color: #434343;
   }
 }
 .font_color1{
