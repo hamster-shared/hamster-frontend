@@ -96,9 +96,13 @@ const timeId = ref()
 const route = useRoute()
 const id:any = route.query.id
 
-const socket = io("");
-socket.emit('orderId',orderInfo.orderId)
-socket.on('message', (data)=>{
+const socket = io("http://61.172.179.6:30314/");
+debugger
+socket.on("connect", () => {
+  console.log('connect success');
+});
+socket.emit('order_status',orderInfo.orderId)
+socket.on('order_result', (data)=>{
     console.log(data);
     // if(){
     //   // 支付成功
@@ -131,11 +135,11 @@ const createQRcode = () => {
 }
 // 倒计时
 const countTime = () => {
-  let duration:any = 3600
+  let duration:any = 180
   timeId.value = setInterval(() => {
     --duration
     time.value = formatTimeCallback(duration)
-    console.log('倒计时',duration,time.value)
+    // console.log('倒计时',duration,time.value)
     if(duration<1){
       clearInterval(timeId.value)
       status.value = 3

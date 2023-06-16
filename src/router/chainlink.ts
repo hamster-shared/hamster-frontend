@@ -71,6 +71,11 @@ const chainlinkRoute = [
               sidebarMap: ['Node'],
             }
           },
+          {
+            path: "/middleware/dashboard/node/detail",
+            name: "nodeDetail",
+            component: () => import('@/views/chainLink/Node/nodeDetail.vue'),
+          },
         ]
       },
       {

@@ -163,8 +163,11 @@ const formData = reactive({
 const resourceInfo = ref<any>({});
 
 const orderId = ref()
-const socket = io("");
-socket.on('message', (data)=>{
+const socket = io("http://61.172.179.6:30314/");
+socket.on("connect", () => {
+  console.log('service connect success');
+});
+socket.on('order_result', (data)=>{
     console.log(data);
     // if(){
     // 支付成功
@@ -195,7 +198,7 @@ const goLaunch = async() => {
       window.open('/middleware/pay?id='+res.data)
       const result = await apiOrderDetail(res.data)
       orderId.value = result.data.orderId
-      socket.emit('orderId',orderId)
+      socket.emit('order_status',orderId)
     }
   } catch(err:any) {
     message.error(err.response.data.message);

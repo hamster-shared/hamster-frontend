@@ -7,7 +7,7 @@
       <a-table :dataSource="nodeListData" :columns="nodeColumns" :pagination="pagination" style="width:100%">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link">Detail</a-button>
+            <a-button type="link" @click="goNodeDetail(record.id)">Detail</a-button>
           </template>
         </template>
       </a-table>
@@ -98,6 +98,9 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
   } catch(err:any) {
     console.log('tableDataErr:', err)
   }
+}
+const goNodeDetail = (id:number)=>{
+  router.push(`/middleware/dashboard/node/detail?id=${id}`)
 }
 const launchNode = () => {
   router.push(route.fullPath + "/create");
