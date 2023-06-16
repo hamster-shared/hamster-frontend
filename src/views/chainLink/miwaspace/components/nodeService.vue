@@ -152,8 +152,8 @@ const regionOptions = ref([
 ]);
 const formRef = ref()
 const formData = reactive({
-  protocol: 'Ethereum',
-  region: 'US East',
+  protocol: protocolOptions.value[0].value,
+  region: regionOptions.value[0].value,
   nodeName: '',
   resourceType: '',
   nodeResource: '',
