@@ -1,42 +1,55 @@
 <template>
-    <div>
-      <div class="text-[24px] font-bold mb-[25px]">Your Orders</div>
-      <div class="dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
-        <div class="mb-[25px] flex">
-          <a-range-picker format="YYYY-MM-DD" @change="handleSearchDate" class="w-1/2" v-model:value="searchData.orderDate" />
-          <a-input-search @search="getTableData()" class="ml-[30px]" v-model:value="searchData.query" autocomplete="off" placeholder="Search here..."></a-input-search>
-        </div>
-        <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'orderId'">
-              <label>{{record.orderId}} <svg-icon name="copy" size="18" @click="copyToClipboard(record.orderId)" /></label>
-            </template>
-            <template v-if="column.dataIndex === 'resourceType'">
-              <label>{{record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))}}<br/>
-                {{record.resourceType.substring(record.resourceType.lastIndexOf("|")+1)}} | {{record.buyTime}} Month</label>
-            </template>
-            <template v-if="column.dataIndex === 'amount'">
-              <label>{{record.amount}} USDT <br/>= ${{record.amount}}</label>
-            </template>
-            <template v-if="column.key === 'action'">
-              <label v-if="record.status === 1">
-                <label class="cursor-pointer open-link-css">Pay</label>
-                <label class="cursor-pointer open-link-css ml-4">Cancel</label>
-              </label>
-              <label v-else>-</label>
-            </template>
-          </template>
-        </a-table>
+  <div>
+    <div class="text-[24px] font-bold mb-[25px]">Your Orders</div>
+    <div class="dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
+      <div class="mb-[25px] flex">
+        <a-range-picker format="YYYY-MM-DD" @change="handleSearchDate" class="w-1/2" v-model:value="searchData.orderDate" />
+        <a-input-search @search="getTableData()" class="ml-[30px]" v-model:value="searchData.query" autocomplete="off" placeholder="Search here..."></a-input-search>
       </div>
+      <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'orderId'">
+            <label>{{record.orderId}} <svg-icon name="copy" size="18" @click="copyToClipboard(record.orderId)" /></label>
+          </template>
+          <template v-if="column.dataIndex === 'resourceType'">
+            <label>{{record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))}}<br/>
+              {{record.resourceType.substring(record.resourceType.lastIndexOf("|")+1)}} | {{record.buyTime}} Month</label>
+          </template>
+          <template v-if="column.dataIndex === 'amount'">
+            <label>{{record.amount}} USDT <br/>= ${{record.amount}}</label>
+          </template>
+          <template v-if="column.key === 'action'">
+            <label v-if="record.status === 1">
+              <label class="cursor-pointer open-link-css" @click="orderPay(record.id)">Pay</label>
+              <label class="cursor-pointer open-link-css ml-4" @click="orderCancel(record.id)">Cancel</label>
+            </label>
+            <label v-else>-</label>
+          </template>
+        </template>
+      </a-table>
     </div>
+  </div>
+    
+  <a-modal v-model:visible="cancelModal" :footer="null">
+    <div class="text-[24px] text-[#151210] font-bold mb-4">Cancel</div>
+    <div>Are you sure cancel this order?</div>
+    <div class="mt-8 text-center">
+      <a-button type="primary" @click="cancelModal = false">NO</a-button>
+      <a-button class="ml-[24px]" type="primary" :loading="loading" @click="orderCancelContent">YES</a-button>
+    </div>
+  </a-modal>
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { copyToClipboard } from '@/utils/tool'
 import { OrderStatusEnum ,OrderTypeEnum } from "@/enums/statusEnum";
-import { apiGetOrderList } from "@/apis/node";
+import { apiGetOrderList, apiOrderCancel } from "@/apis/node";
+import { message } from 'ant-design-vue';
 
+const cancelModal = ref(false);
+const loading = ref(false);
+const cancelId = ref();
 const orderListData = ref([])
 const searchData = ref({
   query: '',
@@ -136,6 +149,25 @@ const handleSearchDate = (value: any, dateString: any[]) => {
   searchData.value['X-Start'] = dateString[0];
   searchData.value['X-End'] = dateString[1];
   getTableData()
+}
+const orderPay = (id: number) => {
+  window.open('/middleware/pay?id='+ id)
+}
+const orderCancel = (id: number) => {
+  cancelId.value = id;
+  cancelModal.value = true;
+}
+const orderCancelContent = async () => {
+  try {
+    const res = await apiOrderCancel(cancelId.value)
+    if (res.code === 200) {
+      cancelModal.value = false;
+      getTableData();
+      message.success(res.message);
+    }
+  } catch(err:any) {
+    message.error(err.response.data.message);
+  }
 }
 onMounted(() => {
   getTableData();
