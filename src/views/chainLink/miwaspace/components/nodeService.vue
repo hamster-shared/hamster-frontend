@@ -6,7 +6,7 @@
           <div class="text-[24px] font-bold mb-[30px]" :class="{'text-center' : pageType !== 'create'}">Launch Node</div>
           <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical" :class="{'w-[75%]' : pageType === 'create'}">
             <a-form-item label="Protocol" name="protocol" >
-              <a-select @change="setOtherInfo" v-model:value="formData.protocol" autocomplete="off"
+              <a-select @change="getNodeResource" v-model:value="formData.protocol" autocomplete="off"
                 :options="protocolOptions" ></a-select>
             </a-form-item>
             <a-form-item label="Region" name="region" >
@@ -44,7 +44,7 @@
           </a-form>
           <hr />
           <div class="flex justify-between items-center">
-            <div class="text-[#151210] dark:text-[#FFFFFF] font-bold text-[16px]">Cost:<span class="text-[#E2B578] text-[24px] ml-2">${{ resourceInfo.cost }}</span><span class="mx-1">/</span>Month</div>
+            <div class="text-[#151210] dark:text-[#FFFFFF] font-bold text-[16px]">Cost:<span class="text-[#E2B578] text-[24px] ml-2">${{ resourceInfo.costPerMonth }}</span><span class="mx-1">/</span>Month</div>
             <div>
               <a-button type="primary" ghost class=" w-[120px]" @click="cancel">Cancel</a-button>
               <a-button type="primary" class="ml-[20px] w-[120px]" @click="goLaunch">Launch</a-button>
@@ -53,8 +53,8 @@
         </div>
         <div class="rounded-[12px] p-[30px]" v-if="pageType !== 'create'" :class="[theme.themeValue === 'dark' ? 'dark:bg-[#36322D]' : 'box-div border border-solid border-[#EBEBEB]']">
           <div class="text-center mb-[40px]">
-            <svg-icon name="ethereum-title" size="40" />
-            <div class="text-[18px] font-bold text-[#E2B578] mt-[20px]">The benefits of Ethereum</div>
+            <svg-icon :name="`${formData.protocol}-logo`" size="40" />
+            <div class="text-[18px] font-bold text-[#E2B578] mt-[20px]">The benefits of {{ formData.protocol }}</div>
           </div>
           <div class="flex">
             <div class="flex items-center mr-[10px]">
@@ -110,11 +110,11 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs,h,onUnmounted } from 'vue';
+import { computed, reactive, ref, toRefs,h,onUnmounted, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 import { LoadingOutlined } from '@ant-design/icons-vue';
-import { apiAddProjects } from "@/apis/node";
+import { apiAddProjects, apiGetNodeResource } from "@/apis/node";
 import { message } from 'ant-design-vue';
 import { apiOrderDetail } from '@/apis/chainlink'
 import { io } from "socket.io-client";
@@ -137,16 +137,6 @@ const indicator = h(LoadingOutlined, {
 });
 
 const router = useRouter();
-const formRef = ref()
-const formData = reactive({
-  protocol: 'Ethereum',
-  region: 'US East',
-  nodeName: '',
-  resourceType: '',
-  nodeResource: '',
-  buyTime: 1,
-  amount: 0
-});
 
 const protocolOptions = ref([
   {lable: 'Ethereum', value: 'Ethereum'},
@@ -160,16 +150,17 @@ const protocolOptions = ref([
 const regionOptions = ref([
   {lable: 'US East', value: 'US East'}
 ]);
-const resourceList = ref<any>({
-  Ethereum: {cpu: '4', memory: '32', disk: '3000', cost: '530'},
-  Sui: {cpu: '8', memory: '32', disk: '300', cost: '657.2'},
-  Near: {cpu: '4', memory: '8', disk: '1300', cost: '318'},
-  Starknet: {cpu: '2', memory: '4', disk: '500', cost: '95.4'},
-  Aptos: {cpu: '8', memory: '32', disk: '2000', cost: '551.2'},
-  Optimism: {cpu: '4', memory: '16', disk: '200', cost: '164.3'},
-  Avalanche: {cpu: '8', memory: '16', disk: '1000', cost: '413.4'},
+const formRef = ref()
+const formData = reactive({
+  protocol: protocolOptions.value[0].value,
+  region: regionOptions.value[0].value,
+  nodeName: '',
+  resourceType: '',
+  nodeResource: '',
+  buyTime: 1,
+  amount: 0
 });
-const resourceInfo = ref(resourceList.value.Ethereum);
+const resourceInfo = ref<any>({});
 
 const orderId = ref()
 const socket = io("");
@@ -191,17 +182,13 @@ const formRules = computed(() => {
         nodeName: [requiredRule('')],
     };
 });
-const setOtherInfo = (val: string) => {
-  console.log("val:",val);
-  resourceInfo.value = resourceList.value[val];
-}
 const goLaunch = async() => {
   await formRef.value.validate();
   
   try {
     formData.nodeResource = resourceInfo.value.cpu+'C'+resourceInfo.value.memory+'GB '+resourceInfo.value.disk+'GB'; 
     formData.resourceType = formData.protocol + ' | ' + formData.region  + ' | ' + formData.nodeResource;
-    formData.amount = resourceInfo.value.cost;
+    formData.amount = resourceInfo.value.costPerMonth;
     const res = await apiAddProjects(formData)
     if (res.code === 200) {
       showPayProgressModal.value = true
@@ -214,12 +201,23 @@ const goLaunch = async() => {
     message.error(err.response.data.message);
   }
 }
+const getNodeResource = async () => {
+  try {
+    const { data } = await apiGetNodeResource(formData.protocol);
+    resourceInfo.value = data;
+  } catch(err:any) {
+    message.error(err.response.data.message);
+  }
+}
 const cancel = () => {
   router.go(-1)
 }
 const closePayModal = ()=>{
   showPayProgressModal.value = false
 }
+onMounted(() => {
+  getNodeResource();
+})
 onUnmounted(()=>{
   socket.close()
 })
