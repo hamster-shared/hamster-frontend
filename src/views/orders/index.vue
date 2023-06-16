@@ -44,7 +44,8 @@ import { onMounted, reactive, ref } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { copyToClipboard } from '@/utils/tool'
 import { OrderStatusEnum ,OrderTypeEnum } from "@/enums/statusEnum";
-import { apiGetOrderList, apiOrderCancel } from "@/apis/node";
+import { apiGetOrderList } from "@/apis/node";
+import { apiCloseOrder } from "@/apis/chainlink";
 import { message } from 'ant-design-vue';
 
 const cancelModal = ref(false);
@@ -159,7 +160,7 @@ const orderCancel = (id: number) => {
 }
 const orderCancelContent = async () => {
   try {
-    const res = await apiOrderCancel(cancelId.value)
+    const res = await apiCloseOrder(cancelId.value)
     if (res.code === 200) {
       cancelModal.value = false;
       getTableData();

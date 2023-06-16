@@ -65,10 +65,3 @@ export function apiGetNodeResource(protocol: string) {
     method: "get",
   });
 }
-// 关闭订单
-export function apiOrderCancel(id: number) {
-  return httpRequest({
-    url: `/api/node/order/${id}/cancel`,
-    method: "put",
-  });
-}
