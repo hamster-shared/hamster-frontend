@@ -266,3 +266,11 @@ export function apiCloseOrder(id:string) {
         method: "put",
     })
 }
+
+// node详情页数据
+export function apiNodeDetail(id:number) {
+    return httpRequest({
+        url: `/api/node/${id}`,
+        method: "get",
+    })
+}

@@ -102,7 +102,7 @@ const getChains = async()=>{
     size:10
   }
   const res = await apiGetMynetwork(params)
-  if(res.code===200 && res.data.length){
+  if(res.code===200 && res.data?.length){
     console.log('getChains',res)
     RPCList.value = res.data.splice(0,5)
   }
