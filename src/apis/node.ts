@@ -58,3 +58,10 @@ export function apiGetNodeStatistics() {
     method: "get",
   });
 }
+// 资源规格信息
+export function apiGetNodeResource(protocol: string) {
+  return httpRequest({
+    url: `/api/node/resource-standard/${protocol}`,
+    method: "get",
+  });
+}
