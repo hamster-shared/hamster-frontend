@@ -66,6 +66,14 @@ export default ({ mode }: ConfigEnv) => defineConfig({
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/nodeService/, ""),
       },
+      "/socket.io": {
+        // VUE_APP_BASE_RUL = 'ws://172.16.31.68:9898/socket.io'
+        target:
+          "http://61.172.179.6:30314/socket.io",
+        changeOrigin: true, //是否跨域
+        ws:true,
+        rewrite: (path) => path.replace(/^\/socket.io/, ""),
+      },
     },
     host: true,//同一局域网可以访问本地服务
   },
