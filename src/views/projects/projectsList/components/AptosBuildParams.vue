@@ -6,7 +6,7 @@
     <div class="text-[24px] text-[#151210] font-bold">Set Build Parameters</div>
     <div class="text-[#73706E] mb-4">set parameters of Aptos Contract for Build this Contract.</div>
 
-    <a-form :model="formData" layout="vertical" ref="formRef">
+    <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef">
       <template v-for="(item, index) in aptosBuildParams">
         <a-input type="hidden" :name="[index, 'key']" v-model:value="formData[index].key"></a-input>
         <a-form-item :label="item.key" :name="[index, 'value']" :rules="[{ required: true, trigger: 'change', message: 'Cannot be empty' }]" >
