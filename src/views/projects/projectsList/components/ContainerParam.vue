@@ -5,7 +5,7 @@
     </template>
     <div class="text-[24px] text-[#151210] font-bold">Set Container Parameters</div>
     <div class="text-[#73706E] mb-4">set parameters to create Container for deploy this FrontEnd on.</div>
-    <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+    <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="containerSize" name="containerSize">
         <a-input class="modal-input" v-model:value="formData.containerSize" placeholder="containerSize" disabled="true" autocomplete="off" />
       </a-form-item>
