@@ -61,8 +61,8 @@
               <svg-icon name="decentralized" size="24" />
             </div>
             <div class="benefit-bg">
-              <div class="text-[#151210] dark:text-[#FFFFFF]">Decentralized architecture</div>
-              <div class="text-[#73706E] dark:text-[#E0DBD2]">Decentralized network, high security and stability.</div>
+              <div class="title text-[#151210] dark:text-[#FFFFFF]">{{ benefitsInfo.title1 }}</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2]">{{ benefitsInfo.desc1 }}</div>
             </div>
           </div>
           <div class="flex mt-[30px]">
@@ -70,8 +70,8 @@
               <svg-icon name="contracts" size="24" />
             </div>
             <div class="benefit-bg">
-              <div class="text-[#151210] dark:text-[#FFFFFF]">Smart contracts</div>
-              <div class="text-[#73706E] dark:text-[#E0DBD2]">Automatically execute business terms, simplify processes and reduce costs.</div>
+              <div class="title text-[#151210] dark:text-[#FFFFFF]">{{ benefitsInfo.title2 }}</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2]">{{ benefitsInfo.desc2 }}</div>
             </div>
           </div>
           <div class="flex mt-[30px]">
@@ -79,8 +79,8 @@
               <svg-icon name="developer" size="24" />
             </div>
             <div class="benefit-bg">
-              <div class="text-[#151210] dark:text-[#FFFFFF]">Developer-friendly</div>
-              <div class="text-[#73706E] dark:text-[#E0DBD2]">Complete tools and resources to encourage ecosystem development.</div>
+              <div class="title text-[#151210] dark:text-[#FFFFFF]">{{ benefitsInfo.title3 }}</div>
+              <div class="text-[#73706E] dark:text-[#E0DBD2]">{{ benefitsInfo.desc3 }}</div>
             </div>
           </div>
         </div>
@@ -150,6 +150,44 @@ const protocolOptions = ref([
 const regionOptions = ref([
   {lable: 'US East', value: 'US East'}
 ]);
+const benefitsList = ref<any>({
+  Ethereum: {
+    title1: 'Decentralized architecture', desc1: 'Decentralized network, high security and stability.',
+    title2: 'Smart contracts', desc2: 'Automatically execute business terms, simplify processes and reduce costs.',
+    title3: 'Developer-friendly', desc3: 'Complete tools and resources to encourage ecosystem development.'
+  },
+  Sui: {
+    title1: 'High performance', desc1: 'Sui uses its own consensus algorithm and blockchain structure to achieve tens of thousands of transactions per second, with extremely high performance.',
+    title2: 'Zero-knowledge proof', desc2: 'While ensuring high performance, Sui achieves complete privacy protection and uses zero-knowledge proof for anonymous transfers and smart contract deployments.',
+    title3: 'Easy to develop', desc3: 'Sui provides an easy-to-use programming framework and language, so that developers can easily develop DApps and smart contracts on Sui'
+  },
+  Near: {
+    title1: 'Scalability', desc1: 'Near achieves high performance and scalability through techniques like sharding, handling an enormous number of transactions per second.',
+    title2: 'Low cost', desc2: 'Running smart contracts and applications on Near is very cost-effective, benefiting both developers and users.',
+    title3: 'Developer-friendly', desc3: 'Near allows developers to build blockchain applications in an easy manner with low deployment and usage costs.'
+  },
+  Starknet: {
+    title1: 'Scalability', desc1: 'Starknet achieves high performance and scalability using zero-knowledge proofs, handling thousands of transactions per second',
+    title2: 'Low cost', desc2: 'Starknet greatly reduces the cost of deploying and running smart contracts. The contracts are small in size but powerful in function',
+    title3: 'Privacy', desc3: 'Starknet protects the privacy of on-chain data and computations using zero-knowledge proofs without revealing user private information'
+  },
+  Aptos: {
+    title1: 'Scalability', desc1: 'Aptos achieves high performance and scalability using its own Move language and sharding technology, handling tens of thousands of transactions per second.',
+    title2: 'Security', desc2: 'Aptos is backed by Libra\'s technical team and can provide a secure and stable blockchain mainnet service.',
+    title3: 'Low cost', desc3: 'Compared with traditional public chains, Aptos greatly reduces the cost for users and developers to use the blockchain.'
+  },
+  Optimism: {
+    title1: 'Scalability', desc1: 'As a Layer 2 scaling solution, Optimism can greatly expand Ethereum\'s transaction processing capacity to tens of thousands of transactions per second',
+    title2: 'Low cost', desc2: 'By aggregating transactions, Optimism reduces the gas fees on the Ethereum mainnet to achieve low-cost on-chain transactions and applications',
+    title3: 'Ethereum compatible', desc3: 'Optimism is fully compatible with the Ethereum mainnet, and can directly use Ethereum wallets, assets, tools, and dapps'
+  },
+  Avalanche: {
+    title1: 'Scalability', desc1: 'Avalanche achieves tens of thousands of transactions per second, outperforming Ethereum and other public chains',
+    title2: 'Low cost', desc2: 'By using subnets and parallel chains, Avalanche greatly reduces the cost of running dapps with gas fees far lower than Ethereum',
+    title3: 'Interoperability', desc3: 'Avalanche aims to connect existing public and private chains to enable cross-chain interoperability of assets and data'
+  },
+});
+const benefitsInfo = ref<any>(benefitsList.value[protocolOptions.value[0].value]);
 const formRef = ref()
 const formData = reactive({
   protocol: protocolOptions.value[0].value,
@@ -208,6 +246,9 @@ const getNodeResource = async () => {
   try {
     const { data } = await apiGetNodeResource(formData.protocol);
     resourceInfo.value = data;
+    if (pageType?.value !== 'create') {
+      benefitsInfo.value = benefitsList.value[formData.protocol];
+    }
   } catch(err:any) {
     message.error(err.response.data.message);
   }
@@ -240,6 +281,10 @@ hr{
   border-radius: 8px;
   background: rgba(226,181,120,0.1);
   padding: 10px;
+  .title{
+    font-family: NotoSans-Regular, NotoSans;
+    font-weight: 400;
+  }
 }
 .svg-icon{
   color: #E2B578;
