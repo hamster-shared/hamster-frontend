@@ -86,7 +86,7 @@ import { copyToClipboard } from '@/utils/tool'
 import QrcodeVue from "qrcode.vue"
 import web3 from 'web3';
 import { apiOrderDetail, apiCloseOrder } from '@/apis/chainlink'
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 
 const status = ref(1);
 const qrcodeUrl = ref('')
@@ -96,13 +96,15 @@ const timeId = ref()
 const route = useRoute()
 const id:any = route.query.id
 
-const socket = io("http://61.172.179.6:30314/");
-debugger
+const socket = io();
 socket.on("connect", () => {
   console.log('connect success');
 });
-socket.emit('order_status',orderInfo.orderId)
-socket.on('order_result', (data)=>{
+socket.on("connect_error", (err:any) => {
+  console.log('pay connect failed ',err);
+});
+//socket.emit('order_status',orderInfo.orderId)
+socket.on('order_result', (data:any)=>{
     console.log(data);
     // if(){
     //   // 支付成功

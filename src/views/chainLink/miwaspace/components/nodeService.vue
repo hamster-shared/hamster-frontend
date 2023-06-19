@@ -117,7 +117,7 @@ import { LoadingOutlined } from '@ant-design/icons-vue';
 import { apiAddProjects, apiGetNodeResource } from "@/apis/node";
 import { message } from 'ant-design-vue';
 import { apiOrderDetail } from '@/apis/chainlink'
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 
 const theme = useThemeStore();
 const props = defineProps({
@@ -163,11 +163,14 @@ const formData = reactive({
 const resourceInfo = ref<any>({});
 
 const orderId = ref()
-const socket = io("http://61.172.179.6:30314/");
+const socket = io();
 socket.on("connect", () => {
   console.log('service connect success');
 });
-socket.on('order_result', (data)=>{
+socket.on("connect_error", (err:any) => {
+  console.log('service connect failed ',err);
+});
+socket.on('order_result', (data:any)=>{
     console.log(data);
     // if(){
     // 支付成功
