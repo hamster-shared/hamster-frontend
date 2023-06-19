@@ -34,7 +34,7 @@
         Send USDT only from the Ethereum network to this address. Do not send USDT from other networks, otherwise it may lead to loss of funds.
       </div>
       <div class="text-center mt-[32px]">
-        <a-button type="primary" ghost class=" w-[120px]" @click="closePage">Cancel</a-button>
+        <a-button type="primary" ghost class=" w-[120px]" @click="cancelOrder">Cancel</a-button>
       </div>
     </div>
     <div v-else-if="status === 2" class="text-center my-[40px]">
@@ -65,7 +65,7 @@
         </div>
       </div>
       <div class="text-center mt-[32px]">
-        <a-button type="primary" ghost class=" w-[120px]" @click="closePage">Cancel</a-button>
+        <a-button type="primary" ghost class=" w-[120px]" @click="cancelOrder">Cancel</a-button>
       </div>
     </div>
     <div v-else-if="status === 4" class="text-center">
@@ -74,7 +74,7 @@
       <div class="text-[#73706E] dark:text-[#E0DBD2] text-[21px] ">
         The user canceled the payment
       </div>
-      <a-button type="primary" ghost class="mt-[32px] mb-[100px] w-[120px]" @click="closePage">Cancel</a-button>
+      <a-button type="primary" ghost class="mt-[32px] mb-[100px] w-[120px]" @click="closePage">Close</a-button>
     </div>
   </div>
 </template>
@@ -87,6 +87,7 @@ import QrcodeVue from "qrcode.vue"
 import web3 from 'web3';
 import { apiOrderDetail, apiCloseOrder } from '@/apis/chainlink'
 import io from "socket.io-client";
+import { message } from 'ant-design-vue';
 
 const status = ref(1);
 const qrcodeUrl = ref('')
@@ -103,16 +104,19 @@ socket.on("connect", () => {
 socket.on("connect_error", (err:any) => {
   console.log('pay connect failed ',err);
 });
-//socket.emit('order_status',orderInfo.orderId)
 socket.on('order_result', (data:any)=>{
     console.log(data);
-    // if(){
-    //   // 支付成功
-    //   status.value = 2
-    // }else if(){
-    //   // 支付失败
-    //   status.value = 4
-    // }
+    // data 2成功 3失败
+    if(data==2){
+      // 支付成功
+      status.value = 2
+      setTimeout(() => {
+        window.close()
+      }, 5000);
+    }else if(data==3){
+      // 支付失败
+      status.value = 4
+    }
 });
 
 const goBack = () => {
@@ -123,11 +127,22 @@ const goBack = () => {
 const getOrderDetailInfo = async() => {
   const res = await apiOrderDetail(id)
   orderInfo.value = res.data
+  console.log(11111111111111,res.data.id)
+  socket.emit('order_status',res.data.id)
   console.log('获取订单信息',res.data)
 }
+// 取消订单
+const cancelOrder = async() => {
+  try{
+    await apiCloseOrder(id)
+    window.close()
+  }catch(err:any){
+    console.log('取消订单',err)
+    message.error(err.response.data.message)
+  }
+}
 // 关闭当前页
-const closePage = async() => {
-  await apiCloseOrder(id)
+const closePage = ()=>{
   window.close()
 }
 // 生产二维码
@@ -137,7 +152,7 @@ const createQRcode = () => {
 }
 // 倒计时
 const countTime = () => {
-  let duration:any = 180
+  let duration:any = 3600
   timeId.value = setInterval(() => {
     --duration
     time.value = formatTimeCallback(duration)

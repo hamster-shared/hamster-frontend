@@ -69,7 +69,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       "/socket.io": {
         // VUE_APP_BASE_RUL = 'ws://172.16.31.68:9898/socket.io'
         target:
-          "ws://172.16.31.68:9898/socket.io",
+          "http://61.172.179.6:30314/socket.io",
         changeOrigin: true, //是否跨域
         ws:true,
         rewrite: (path) => path.replace(/^\/socket.io/, ""),

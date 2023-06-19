@@ -116,7 +116,6 @@ import { useThemeStore } from "@/stores/useTheme";
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import { apiAddProjects, apiGetNodeResource } from "@/apis/node";
 import { message } from 'ant-design-vue';
-import { apiOrderDetail } from '@/apis/chainlink'
 import io from "socket.io-client";
 
 const theme = useThemeStore();
@@ -162,7 +161,6 @@ const formData = reactive({
 });
 const resourceInfo = ref<any>({});
 
-const orderId = ref()
 const socket = io();
 socket.on("connect", () => {
   console.log('service connect success');
@@ -172,14 +170,15 @@ socket.on("connect_error", (err:any) => {
 });
 socket.on('order_result', (data:any)=>{
     console.log(data);
-    // if(){
-    // 支付成功
-    // router.push('/middleware/dashboard/node')
-    // }else if(){
-    // 支付失败
-    // showPayProgressModal.value = false
-    // showPayFailedModal.value = true
-    // }
+    if(data==2){
+      // 支付成功
+      showPayProgressModal.value = false
+      router.push('/middleware/dashboard/node')
+    }else if(data==3){
+      // 支付失败
+      showPayProgressModal.value = false
+      showPayFailedModal.value = true
+    }
 });
 
 const formRules = computed(() => {
@@ -199,9 +198,7 @@ const goLaunch = async() => {
     if (res.code === 200) {
       showPayProgressModal.value = true
       window.open('/middleware/pay?id='+res.data)
-      const result = await apiOrderDetail(res.data)
-      orderId.value = result.data.orderId
-      socket.emit('order_status',orderId)
+      socket.emit('order_status',res.data)
     }
   } catch(err:any) {
     message.error(err.response.data.message);
@@ -219,7 +216,7 @@ const cancel = () => {
   router.go(-1)
 }
 const closePayModal = ()=>{
-  showPayProgressModal.value = false
+  showPayFailedModal.value = false
 }
 onMounted(() => {
   getNodeResource();
