@@ -1,11 +1,11 @@
 <template>
   <bread-crumb :routes="breadCrumbInfo"></bread-crumb>
   <WorkflowsInfo :checkType="params.checktype" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" class="mt-[20px]"></WorkflowsInfo>
-  <MetaTrustSA :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
+  <MetaTrustSA :gistId="gistId" :workflowsDetailsData="workflowsDetailsData" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (SA)' && params.checktype == 'MetaTrust (SA)' "></MetaTrustSA>
   <MetaTrustSP :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool == 'MetaTrust (SP)' && params.checktype == 'MetaTrust (SP)' "></MetaTrustSP>
   <MetaTrustOSA :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (OSA)' && params.checktype == 'MetaTrust (OSA)' "></MetaTrustOSA>
-  <MetaTrustCQ :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
-  <Solhint :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
+  <MetaTrustCQ :gistId="gistId" :workflowsDetailsData="workflowsDetailsData" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'MetaTrust (CQ)' && params.checktype == 'MetaTrust (CQ)' "></MetaTrustCQ>
+  <Solhint :gistId="gistId" :workflowsDetailsData="workflowsDetailsData" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
   <MyThril :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
   <GasUsageReport :gasUsageReportData="gasUsageReportData" v-if="params.checktype == 'gasInfoDetail' "></GasUsageReport>
 </template>

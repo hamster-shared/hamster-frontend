@@ -66,9 +66,13 @@
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
-          <!-- <div v-if="projectType === '1'">
+          <div v-if="projectType === '1' && viewInfo.defaultFile != ''">
             <div>
-              <a-button @click="openInChainIDE(viewInfo.gistId,viewInfo.defaultFile)">Open with ChainIDE</a-button>
+              <div class="open-link-css cursor-pointer inline-block"
+                   @click="openInChainIDE(viewInfo)"
+                   >
+                <span>Open with ChainIDE</span>
+              </div>
             </div>
           </div >
           <div v-else>
@@ -76,11 +80,11 @@
               <svg-icon name="white-link" size="16" />
               main
             </div>
-          </div> -->
-          <div>
-            <svg-icon name="white-link" size="16" />
-            main
           </div>
+<!--          <div>-->
+<!--            <svg-icon name="white-link" size="16" />-->
+<!--            main-->
+<!--          </div>-->
         </div>
 
 
@@ -644,8 +648,11 @@ const getImageUrl = (status: any) => {
     .href;
 };
 
-const openInChainIDE = (gistId:string,fileName:string) => {
-  var url = `https://chainide.com/s/createGistProject?gist=${gistId}&open=${fileName}`
+const openInChainIDE = (data: any) => {
+  const repoUrl = data.repositoryUrl
+  const fileName = "contracts/" + data.defaultFile
+  const projectId = data.id
+  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
   window.open(url)
 }
 </script>

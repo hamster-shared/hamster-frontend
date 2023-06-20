@@ -25,9 +25,9 @@
               </div>
               <div class="bg-color mt-[20px]">
                 <div class="flex justify-end">
-                  <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(val.name)">
+                  <div class="text-[#E2B578] text-[14px] cursor-pointer mr-4" @click="openChainIDE(item,val.name)">
                     <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-                  </div> -->
+                  </div>
                 </div>
                 <PrismEditor :code="item.fileContent" :isShowlineNumbers="false"></PrismEditor>
                 <!-- <div class="mt-4 text-[14px] whitespace-pre-wrap">
@@ -60,7 +60,14 @@ import PrismEditor from "@/components/PrismEditor.vue";
 import { apiGetContractContent } from "@/apis/checkReport";
 const theme = useThemeStore();
 const { params } = useRoute();
-
+interface WorkflowsDetailsData {
+  repositoryUrl: string,
+  status: number,
+  startTime: string,
+  errorNumber: number,
+  duration: string,
+  id: string,
+}
 interface MessageData {
   level: string,
   line: string,
@@ -79,6 +86,7 @@ interface MetaTrustData {
 const props = defineProps<{
   metaTrustData: MetaTrustData,
   gistId: string,
+  workflowsDetailsData: WorkflowsDetailsData,
 }>()
 const { metaTrustData, gistId } = toRefs(props)
 
@@ -113,9 +121,16 @@ const getMetascanFile = async () => {
     }
   }
 }
-const openChainIDE = (name: string) => {
-  const openVal = name.substring(name.lastIndexOf("/")+1)
-  window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
+const openChainIDE = (item: any,name: string) => {
+  const repoUrl = props.workflowsDetailsData.repositoryUrl
+  const fileName = name
+  const projectId = props.workflowsDetailsData.id
+  let line = "L1"
+  if (item.line != "") {
+    line = "L" + item.line
+  }
+  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${line}-${line}`
+  window.open(url)
 }
 </script>
 <style lang='less' scoped>
