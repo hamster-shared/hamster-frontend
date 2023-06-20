@@ -92,11 +92,6 @@ const projectsRoute = [
         path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
         name: "projectsFrontendDetails",
         component: () => import('@/views/projects/projectsFrontendDetails/index.vue'),
-      },
-      {
-        path: "/projects/orders",
-        name: "orders",
-        component: () => import('@/views/projects/orders/index.vue'),
       }
     ]
   }
