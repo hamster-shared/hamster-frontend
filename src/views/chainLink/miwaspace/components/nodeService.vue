@@ -236,7 +236,7 @@ const goLaunch = async() => {
     if (res.code === 200) {
       showPayProgressModal.value = true
       window.open('/middleware/pay?id='+res.data)
-      socket.emit('order_status',res.data)
+      socket.emit('order_status_model',res.data)
     }
   } catch(err:any) {
     message.error(err.response.data.message);

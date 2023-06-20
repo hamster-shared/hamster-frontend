@@ -97,7 +97,7 @@ const timeId = ref()
 const route = useRoute()
 const id:any = route.query.id
 
-const socket = io();
+const socket = io('/page');
 socket.on("connect", () => {
   console.log('connect success');
 });
@@ -127,8 +127,7 @@ const goBack = () => {
 const getOrderDetailInfo = async() => {
   const res = await apiOrderDetail(id)
   orderInfo.value = res.data
-  console.log(11111111111111,res.data.id)
-  socket.emit('order_status',res.data.id)
+  socket.emit('order_status_page',res.data.id)
   console.log('获取订单信息',res.data)
 }
 // 取消订单
