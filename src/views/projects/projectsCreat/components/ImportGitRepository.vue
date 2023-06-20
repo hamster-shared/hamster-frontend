@@ -40,7 +40,7 @@
       <div class="text-2xl text-[#151210] mb-1 font-bold" v-else>Import a Third-Party Git Repository</div>
       <span v-if="nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}</span>
 
-      <a-form layout="vertical" class="!mt-3" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
+      <a-form layout="vertical" class="!mt-3 modal-form" :model="contractFormData" ref="contractFormRef" :rules="contractRules">
         <a-form-item v-if="contractRepositoryVisible" label="Repository URL" name="importRepositoryContractProjectUrl">
           <a-input class="modal-input" autocomplete="off" v-model:value="contractFormData.importRepositoryContractProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>
@@ -70,7 +70,7 @@
       <div class="text-2xl text-[#151210] mb-1 font-bold" v-else>Import a Third-Party Git Repository</div>
       <span v-if="nameDupErrInfo" class="block text-[red]">{{ nameDupErrInfo }}</span>
 
-      <a-form layout="vertical" class="!mt-3" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
+      <a-form layout="vertical" class="!mt-3 modal-form" :model="frontEndFormData" ref="frontEndFormRef" :rules="frontEndRules">
         <a-form-item v-if="frontEndRepositoryVisible" label="Repository URL" name="importRepositoryFrontEndProjectUrl">
           <a-input class="modal-input" autocomplete="off" v-model:value="frontEndFormData.importRepositoryFrontEndProjectUrl" placeholder="Please input..." allow-clear/>
         </a-form-item>

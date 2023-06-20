@@ -3,7 +3,7 @@
     <div class="font-bold text-[24px] mb-[8px]">My Middleware</div>
     <div class="grid grid-cols-3 gap-4 ">
       <div v-for="item in dashboardList" :key="item"
-        class="border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] p-[24px] dark:bg-[#36322D] bg-[#ffffff]">
+        class="border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] p-[24px] dark:bg-[#36322D] bg-[#ffffff] relative">
         <div class="text-[16px] font-bold mb-[16px]">{{ item }}</div>
 
         <div v-if="RPCList.length && item === 'RPC'">
@@ -27,6 +27,35 @@
           </div>
           <div class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
         </div>
+        <div v-else-if="item === 'Node'">
+          <div v-if="JSON.stringify(nodeInfo)=='{}'">
+            <div class="text-center">
+              <img src="@/assets/images/cl-noData-block.png" class="w-[128px] h-[128px] hidden dark:inline-block" />
+              <img src="@/assets/images/cl-noData-white.jpg" class="w-[128px] h-[128px] dark:hidden" />
+            </div>
+
+            <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The node has not been created yet</div>
+            <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Add node</div>
+          </div>
+          <div v-else>
+            <span class="open-link-css cursor-pointer node-view" @click="goNode(item)">View</span>
+            <div class="text-center">
+              <div class="text-[60px] text-[#E2B578]">{{ nodeInfo.nodes }}</div>
+              <div class="text-[16px] mb-[16px]">Nodes</div>
+            </div>
+            <div class="flex justify-between border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6]">
+              <div>
+                <span class="mr-[10px] font-light">Synced</span>
+                <span class="text-[18px]">{{ nodeInfo.synced }}</span>
+              </div>
+              <div>
+                <span class="mr-[10px] font-light">Halted</span>
+                <span class="text-[18px]">{{ nodeInfo.halted }}</span>
+              </div>
+            </div>
+            <div class="text-center mt-[18px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Add node</div>
+          </div>
+        </div>
         <div v-else>
           <div class="text-center">
             <img src="@/assets/images/cl-noData-block.png" class="w-[128px] h-[128px] hidden dark:inline-block" />
@@ -44,9 +73,11 @@
 import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { apiGetMynetwork } from '@/apis/rpcs'
+import { apiGetNodeStatistics } from '@/apis/node'
 import { apiGetIfOpenService } from '@/apis/middleWare'
-const dashboardList = ref(['RPC', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
+const dashboardList = ref(['RPC','Node', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
 const RPCList = ref<any>([]);
+const nodeInfo = ref<any>({});
 const router = useRouter();
 // 用来记录跳转的具体页面
 const index = ref()
@@ -71,7 +102,7 @@ const getChains = async()=>{
     size:10
   }
   const res = await apiGetMynetwork(params)
-  if(res.code===200 && res.data.length){
+  if(res.code===200 && res.data?.length){
     console.log('getChains',res)
     RPCList.value = res.data.splice(0,5)
   }
@@ -98,6 +129,9 @@ const goMiwaspaceTab = (tab:any)=>{
       case 'Others':
         index.value = 6;
         break;
+      case 'Node':
+        index.value = 7;
+        break;
       default: break;
     }
   router.push(`/middleware/miwaspace?key=${index.value}`)
@@ -109,9 +143,19 @@ const openService = async()=>{
     oracleList.value = res.data.childList
   }
 }
+const goNode = (item:any)=>{
+  router.push('/middleware/dashboard/node')
+}
+const getNodeStatistics = async()=>{
+  const { data } = await apiGetNodeStatistics()
+  if (data.halted > 0 || data.nodes > 0 || data.synced > 0) {
+    nodeInfo.value = data;
+  }
+}
 onMounted(()=>{
   getChains()
   openService()
+  getNodeStatistics();
 })
 </script>
 <style scoped lang="less">
@@ -145,5 +189,10 @@ onMounted(()=>{
   float: right;
   top: -40px;
   padding-right: 10px;
+}
+.node-view{
+  position: absolute;
+  top: -39px;
+  right: 0;
 }
 </style>

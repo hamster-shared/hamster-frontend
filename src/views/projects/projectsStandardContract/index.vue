@@ -50,7 +50,7 @@
       </a-tab-pane>
     </a-tabs>
     <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
-      <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+      <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
         <a-form-item label="Project Name" name="name">
           <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
         </a-form-item>

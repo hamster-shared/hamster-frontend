@@ -3,7 +3,7 @@
         <template #closeIcon>
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelFund"/>
         </template>
-        <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
+        <a-form class="modal-form" :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Subscription" name="subscription" >
                 <a-select dropdownClassName="modal-select-dropdown" @change="setSubscription" v-model:value="formData.subscription" placeholder="Please select a subscription" autocomplete="off"
                 :options="subOptions" allow-clear></a-select>

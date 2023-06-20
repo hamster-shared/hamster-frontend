@@ -10,6 +10,9 @@
       <a-tab-pane key="RPC" tab="RPC">
         <rpcMiwaspace :rpcPageInfo="rpcPageInfo"/>
       </a-tab-pane>
+      <a-tab-pane key="Node" tab="Node">
+        <nodeService />
+      </a-tab-pane>
       <a-tab-pane key="Oracle" tab="Oracle">
         <oracleMiwaspace :openService="openService"/>
       </a-tab-pane>
@@ -40,6 +43,7 @@
   import rpcMiwaspace from "./components/rpcMiwaspace.vue";
   import storageMiwaspace from "./components/storageMiwaspace.vue";
   import zkpMiwaspace from "./components/zkpMiwaspace.vue";
+  import nodeService from "./components/nodeService.vue";
 
   const router = useRouter()
   const theme = useThemeStore();
@@ -67,6 +71,9 @@
         break;
       case '6':
         activeKey.value = 'Others';
+        break;
+      case '7':
+        activeKey.value = 'Node';
         break;
       default: break;
     }
