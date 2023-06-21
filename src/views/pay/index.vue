@@ -88,11 +88,12 @@ import web3 from 'web3';
 import { apiOrderDetail, apiCloseOrder } from '@/apis/chainlink'
 import io from "socket.io-client";
 import { message } from 'ant-design-vue';
+import dayjs from 'dayjs'
 
 const status = ref(1);
 const qrcodeUrl = ref('')
 const orderInfo = ref<any>({})
-const time = ref('60:00')
+const time = ref('')
 const timeId = ref()
 const route = useRoute()
 const id:any = route.query.id
@@ -151,11 +152,11 @@ const createQRcode = () => {
 }
 // 倒计时
 const countTime = () => {
-  let duration:any = 3600
+  const reduceTime = dayjs().unix() - dayjs(orderInfo.value.orderTime.Time).unix()
+  let duration = 3600 - reduceTime
   timeId.value = setInterval(() => {
     --duration
     time.value = formatTimeCallback(duration)
-    // console.log('倒计时',duration,time.value)
     if(duration<1){
       clearInterval(timeId.value)
       status.value = 3
