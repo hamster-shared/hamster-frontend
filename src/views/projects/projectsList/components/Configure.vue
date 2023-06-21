@@ -21,7 +21,9 @@
                     </p>
                 </div>
             </div>
-            <a-button @click="handleDone">Done</a-button>
+            <div class="text-center">
+              <a-button @click="handleDone">Done</a-button>
+            </div>
         </div>
     </a-modal>
 </template>
@@ -197,12 +199,12 @@ button{
     width: 100px;
     height: 40px;
     color: #fff;
-    left: 80%;
+    // left: 80%;
     background-color: #E2B578;
     border: none;
     border-radius: 8px;
-    left: 50%;
-    right: 50%;
+    // left: 50%;
+    // right: 50%;
 }
 .tool-tab{
     float:left;
