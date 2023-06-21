@@ -3,7 +3,7 @@
         <div class="flex items-center">
             <svg-icon name="node-Service" size="108"/>
             <div class="inline-block ml-[30px]">
-                <div class="text-[18px]">
+                <div class="text-[18px] font-bold">
                     Hamster Node Service
                 </div>
                 <div class="text-[16px]">

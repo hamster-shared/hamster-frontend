@@ -4,7 +4,7 @@
       <span class="text-[#151210] dark:text-[#FFFFFF] text-2xl font-bold">Congratulations！</span>
       <div>
         <a-button @click="goToGithub" class="!h-[43px] w-[150px]">View your project</a-button>
-<!--        <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-4">Open with ChainIDE</a-button>-->
+        <a-button @click="openInChainIDE" class="!h-[43px] w-[150px] ml-4">Open with ChainIDE</a-button>
       </div>
     </div>
     <div class="flex justify-between">
@@ -50,9 +50,10 @@ const goToGithub = ()=>{
 }
 
 const openInChainIDE = ()=> {
-  const gistId = projectData.value.gistId
-  const fileName = projectData.value.defaultFile
-  var url = `https://chainide.com/s/createGistProject?gist=${gistId}&open=${fileName}`
+  const repoUrl = projectData.value.repositoryUrl
+  const fileName = "contracts/" + projectData.value.defaultFile
+  const projectId = projectData.value.id
+  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
   window.open(url)
 }
 

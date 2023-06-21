@@ -3,9 +3,11 @@
   <Header :orderInfo="orderInfo"/>
   <div class="bg-[#FFFFFF] dark:bg-[#1D1C1A] mt-[25px] rounded-[12px] p-[32px]">
     <div v-if="status === 1">
-      <div class="text-[24px] font-bold">Send USDT on the Ethereum network</div>
       <div class="flex justify-between items-center">
-        <div class="text-[#73706E] dark:text-[#E0DBD2]">Open your crypto wallet, scan the QR code or copy the USDT address below to pay</div>
+        <div>
+          <div class="text-[24px] font-bold">Send USDT on the Ethereum network</div>
+          <div class="text-[#73706E] dark:text-[#E0DBD2]">Open your crypto wallet, scan the QR code or copy the USDT address below to pay</div>
+        </div>
         <div class="text-[32px] font-bold flex items-center">
           <svg-icon name="pay-time" size="24" class="mr-2 mt-[5px]" />
           {{time}}
