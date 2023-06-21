@@ -87,7 +87,7 @@
       </div>
     </div>
   </div>
-  <a-modal v-model:visible="showPayFailedModal" :footer="null">
+  <a-modal centered v-model:visible="showPayFailedModal" :footer="null">
       <template #closeIcon>
           <img class="" src="@/assets/icons/closeIcon.svg" @click="closePayModal"/>
       </template>
@@ -100,12 +100,12 @@
           <a-button @click="closePayModal">Confirm</a-button>
       </div>
   </a-modal>
-  <a-modal v-model:visible="showPayProgressModal" :footer="null"  :maskClosable="false">
+  <a-modal centered v-model:visible="showPayProgressModal" :footer="null"  :maskClosable="false">
     <template #closeIcon></template>
     <div style="text-align:center">
       <a-spin :indicator="indicator"/>
       <div class="text-[24px] font-bold text-[#151210] mt-[20px]">Payment In Progress</div>
-      <div class="text-[16px] mb-[30px]">This may take a few moment, please wait.</div>
+      <div class="text-[16px] mb-[30px] text-[#73706E]">This may take a few moment, please wait.</div>
     </div>
   </a-modal>
 </template>
