@@ -66,7 +66,7 @@
               <div>{{ showViewInfoRepositoryUrl }}</div>
             </a>
           </div>
-          <div v-if="projectType === '1' && viewInfo.defaultFile != ''">
+          <div v-if="projectType === '1'">
             <div>
               <div class="open-link-css cursor-pointer inline-block"
                    @click="openInChainIDE(viewInfo)"
@@ -650,9 +650,14 @@ const getImageUrl = (status: any) => {
 
 const openInChainIDE = (data: any) => {
   const repoUrl = data.repositoryUrl
-  const fileName = "contracts/" + data.defaultFile
+  var url = ''
   const projectId = data.id
-  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
+  if (data.defaultFile === '') {
+     url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs`
+  } else {
+    const fileName = "contracts/" + data.defaultFile
+    url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
+  }
   window.open(url)
 }
 </script>
