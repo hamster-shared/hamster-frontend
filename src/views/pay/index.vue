@@ -137,7 +137,8 @@ const getOrderDetailInfo = async() => {
 const cancelOrder = async() => {
   try{
     await apiCloseOrder(id)
-    window.close()
+    status.value = 4
+    // window.close()
   }catch(err:any){
     console.log('取消订单',err)
     message.error(err.response.data.message)
