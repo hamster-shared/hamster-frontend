@@ -40,7 +40,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, onUnmounted } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { copyToClipboard } from '@/utils/tool'
 import { OrderStatusEnum ,OrderTypeEnum } from "@/enums/statusEnum";
@@ -189,6 +189,9 @@ const orderCancelContent = async () => {
 }
 onMounted(() => {
   getTableData();
+})
+onUnmounted(()=>{
+  socket.close()
 })
 </script>
 <style lang="less">
