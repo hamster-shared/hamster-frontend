@@ -12,7 +12,7 @@
             <label>{{record.orderId}} <svg-icon name="copy" size="18" @click="copyToClipboard(record.orderId)" /></label>
           </template>
           <template v-if="column.dataIndex === 'resourceType'">
-            <label>{{record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))}}<br/>
+            <label>{{record.nodeName}} | {{record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))}}<br/>
               {{record.resourceType.substring(record.resourceType.lastIndexOf("|")+1)}} | {{record.buyTime}} Month</label>
           </template>
           <template v-if="column.dataIndex === 'amount'">
@@ -47,6 +47,7 @@ import { OrderStatusEnum ,OrderTypeEnum } from "@/enums/statusEnum";
 import { apiGetOrderList } from "@/apis/node";
 import { apiCloseOrder } from "@/apis/chainlink";
 import { message } from 'ant-design-vue';
+import io from "socket.io-client";
 
 const cancelModal = ref(false);
 const loading = ref(false);
@@ -58,6 +59,21 @@ const searchData = ref({
   'X-Start': '',
   'X-End': '',
 })
+const socket = io('/list');
+socket.on("connect", () => {
+  console.log('connect success');
+});
+socket.on("connect_error", (err:any) => {
+  console.log('pay connect failed ',err);
+});
+socket.on('order_result', (data:any)=>{
+    console.log(data);
+    // 无论成功失败都需要刷新订单列表
+    if(data==2 || data==3){
+      // 支付成功
+      getTableData()
+    }
+});
 const orderColumns = reactive([
   {
     title: 'Order Time',
@@ -152,6 +168,7 @@ const handleSearchDate = (value: any, dateString: any[]) => {
   getTableData()
 }
 const orderPay = (id: number) => {
+  socket.emit('order_status_list',id)
   window.open('/middleware/pay?id='+ id)
 }
 const orderCancel = (id: number) => {
