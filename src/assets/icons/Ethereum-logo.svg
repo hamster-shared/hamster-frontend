@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="23px" viewBox="0 0 14 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Ethereum (ETH)Logo</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Ethereum-(ETH)Logo" fill-rule="nonzero">
+            <polygon id="路径" fill="#343434" points="6.9979474 0 6.84498387 0.51957622 6.84498387 15.59514 6.9979474 15.7477466 13.9957163 11.6113059"></polygon>
+            <polygon id="路径" fill="#8C8C8C" points="6.9979474 0 0 11.6113059 6.9979474 15.7477466 6.9979474 8.43048561"></polygon>
+            <polygon id="路径" fill="#3C3C3B" points="6.9979474 17.072657 6.91173808 17.177786 6.91173808 22.5479302 6.9979474 22.7995971 14 12.9383582"></polygon>
+            <polygon id="路径" fill="#8C8C8C" points="6.9979474 22.7995971 6.9979474 17.072657 0 12.9383582"></polygon>
+            <polygon id="路径" fill="#141414" points="6.9979474 15.7477466 13.9957163 11.6113059 6.9979474 8.43048561"></polygon>
+            <polygon id="路径" fill="#393939" points="0 11.6113059 6.9979474 15.7477466 6.9979474 8.43048561"></polygon>
+        </g>
+    </g>
+</svg>

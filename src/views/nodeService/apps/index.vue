@@ -37,7 +37,7 @@
   <CreateApp :isApps="true" :showCreate="showCreate" @setShowCreate="showCreate=false" @getApps="getApps" @setPage="setPage" />
   <a-modal v-model:visible="visibleView" :footer="null" :closable="false" width="600px">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Connent to Hamster</div>
-    <a-form :model="appInfo" layout="vertical">
+    <a-form class="modal-form" :model="appInfo" layout="vertical">
       <a-form-item label="API KEY" name="api_key" >
         <a-input class="modal-input" disabled="true" v-model:value="appInfo.api_key">
           <template #suffix>

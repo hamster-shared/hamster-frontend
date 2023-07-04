@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import chainlinkRoute from './chainlink'
 import projectsRoute from './projects'
+import orderRoute from './order'
+import payRoute from './pay'
 let router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -40,7 +42,9 @@ let router = createRouter({
       }
     },
     ...chainlinkRoute,
-    ...projectsRoute
+    ...projectsRoute,
+    ...orderRoute,
+    ...payRoute
   ],
 });
 

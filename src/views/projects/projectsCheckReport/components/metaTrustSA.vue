@@ -36,9 +36,9 @@
             </div>
             <div class="bg-color mt-[20px]"><!--  p-[20px]-->
               <div class="flex justify-end">
-                <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+                <div class="text-[#E2B578] text-[14px] cursor-pointer mr-4" @click="openChainIDE(item,val.filepath)">
                   <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-                </div> -->
+                </div>
               </div>
               <div class="mt-4" v-for="subItem in item.fileContent" :key="index">
                 <PrismEditor :code="subItem.lineText" :lineTotal="subItem.lineNum"></PrismEditor>
@@ -92,6 +92,14 @@ interface ReportFileData {
   mwe: MweData[],
   fileKey: string
 }
+interface WorkflowsDetailsData {
+  repositoryUrl: string,
+  status: number,
+  startTime: string,
+  errorNumber: number,
+  duration: string,
+  id: string,
+}
 interface MetaScanOverviewData {
   CRITICAL: number,
   HIGH: number,
@@ -107,6 +115,7 @@ interface MetaTrustData {
 const props = defineProps<{
   metaTrustData: MetaTrustData,
   gistId: string,
+  workflowsDetailsData: WorkflowsDetailsData,
 }>()
 const { metaTrustData, gistId } = toRefs(props)
 
@@ -204,9 +213,14 @@ const getMetascanFile = async () => {
     }
   }
 }
-const openChainIDE = (name: any) => {
-  const openVal = name.substring(name.lastIndexOf("/")+1)
-  window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
+const openChainIDE = (item: any,val: string) => {
+  const repoUrl = props.workflowsDetailsData.repositoryUrl
+  const fileName = val
+  const projectId = props.workflowsDetailsData.id
+  const lineStart = "L" + item.lineStart
+  const lineEnd = "L" + item.lineEnd
+  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${lineStart}-${lineEnd}`
+  window.open(url)
 }
 </script>
 <style lang='less' scoped>

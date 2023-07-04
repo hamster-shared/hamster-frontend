@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Decentralized iCON</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="(B)Miwaspace-Node" transform="translate(-1201.000000, -706.000000)">
+            <g id="编组-3备份" transform="translate(1171.000000, 524.000000)">
+                <g id="Decentralized-iCON" transform="translate(30.000000, 182.000000)">
+                    <polygon id="路径" points="0 0 24 0 24 24 0 24"></polygon>
+                    <path d="M21,12 C21,7.15525304 17.164708,3.17992691 12.3230837,3.00600925 C7.48145944,2.83209159 3.37093416,6.52199731 3.0232112,11.3542496 C2.67548823,16.1865018 6.21535705,20.4269205 11.032,20.948" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <line x1="3.6" y1="9" x2="20.4" y2="9" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <line x1="3.6" y1="15" x2="10" y2="15" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <path d="M11.5,3 C8.92882746,7.12010629 8.24244668,12.1431326 9.614,16.802" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M12.5,3 C14.0074848,5.41420405 14.8840022,8.16858005 15.049,11.01" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M17.8,20.817 L15.628,21.955 C15.4965471,22.0234172 15.337749,22.0118571 15.2175907,21.9251231 C15.0974325,21.8383892 15.0364565,21.6913096 15.06,21.545 L15.475,19.134 L13.718,17.427 C13.6109978,17.3235586 13.5723938,17.1681319 13.6185626,17.0266468 C13.6647315,16.8851616 13.78758,16.7824194 13.935,16.762 L16.363,16.41 L17.449,14.217 C17.5152478,14.083773 17.6512109,13.9995365 17.8,13.9995365 C17.9487891,13.9995365 18.0847522,14.083773 18.151,14.217 L19.237,16.41 L21.665,16.762 C21.8119603,16.783141 21.9341688,16.8858931 21.9802278,17.0270415 C22.0262867,17.1681898 21.9882055,17.323247 21.882,17.427 L20.125,19.134 L20.539,21.544 C20.564349,21.6906178 20.5040632,21.8388837 20.3835913,21.9262099 C20.2631194,22.0135361 20.1034559,22.0247043 19.972,21.955 L17.8,20.817 L17.8,20.817 Z" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

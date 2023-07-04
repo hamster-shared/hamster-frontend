@@ -72,7 +72,7 @@
   </div>
   <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
-    <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+    <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Project Name" name="name">
         <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
       </a-form-item>

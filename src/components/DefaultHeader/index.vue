@@ -5,7 +5,7 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" :class="{ 'header-menu-line': isProject }"
+      <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }"
         class="header-text-css ml-12 mr-8" id="pro">Projects</div>
       <a-dropdown v-if="!isShowMiddleware">
         <div class="header-text-css" :class="{ 'header-menu-line': !isProject }"
@@ -52,8 +52,8 @@
           <template #overlay>
             <a-menu>
               <a-menu-item @click="visibleDisconnect = true">
-                <a href="javascript:;" style="color:black">
-                  <img src="@/assets/icons/disconnect.svg" class="h-[24px]" />
+                <a href="javascript:;" style="color:black;" class="flex items-center">
+                  <img src="@/assets/icons/disconnect.svg" class="h-[16px] mr-2" />
                   Disconnect
                 </a>
               </a-menu-item>
@@ -66,13 +66,24 @@
           <img :src="githubAvatarUrl" class="h-[40px] rounded-full" />
           <template #overlay>
             <a-menu>
-              <div class="text-center px-[16px] py-[8px] h-[40px]">
+              <div class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
+                <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                 <span>Signed in as </span>
-                <span class="text-[#000000] font-bold">{{ username }}</span>
+                <span class="font-bold">{{ username }}</span>
               </div>
               <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
-              <a-menu-item class="text-center ">
-                <div class="open-link-css py-[4px]" @click="signOut">Sign out</div>
+              <a-menu-item class="">
+                <div class="py-[4px]" @click="handleOrder">
+                  <img src="@/assets/icons/order.svg" class="h-[16px] mr-2" />
+                  Your Orders
+                </div>
+              </a-menu-item>
+              <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
+              <a-menu-item class="">
+                <div class="py-[4px]" @click="signOut">
+                  <img src="@/assets/icons/Sign-Out.svg" class="h-[16px] mr-2" />
+                  Sign out
+                </div>
               </a-menu-item>
             </a-menu>
           </template>
@@ -122,6 +133,7 @@ const visibleDisconnect = ref(false);
 const isConnectedWallet = ref(false);
 const walletAccount = ref("");
 const isProject = ref(true)
+const isOrder = ref(false)
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
@@ -206,6 +218,8 @@ onMounted(() => {
     isProject.value = false
   }else if(window.location.href.indexOf('projects') != -1){
     isProject.value = true
+  }else if(window.location.href.indexOf('orders') != -1){
+    isOrder.value = true
   }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
@@ -253,6 +267,9 @@ const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
   // const account = window.localStorage.getItem("walletAccount");
   // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
+}
+const handleOrder = () => {
+  router.push('/orders')
 }
 </script>
 

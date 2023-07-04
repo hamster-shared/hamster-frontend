@@ -8,7 +8,7 @@
       <br />
       you can query the status in StackNet through the following transaction hash.
     </div>
-    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" name="userForm" :label-col="{ span: 0 }"
+    <a-form ref="modalFormRef" class="modal-form modalFormRef col-span-3 mb-[16px]" name="userForm" :label-col="{ span: 0 }"
       :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item>
         <div class="text-[#151210] mb-[12px]">Transaction Hash</div>

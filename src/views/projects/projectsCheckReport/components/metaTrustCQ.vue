@@ -37,9 +37,9 @@
                 <label class="mr-2" :class="[item.Severity === 'CRITICAL'?'text-[#FF0003]':item.Severity === 'LOW'?'text-[#BC5EDE]':item.Severity === 'HIGH'?'text-[#FF4D4F]':item.Severity === 'MEDIUM'?'text-[#FAAD14]':'text-[#1890FF]']">[{{ item.Severity }}]</label>
                 <label>File(s) Affected</label>
               </div>
-              <!-- <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(key)">
+              <div class="text-[#E2B578] text-[14px] cursor-pointer" @click="openChainIDE(item,val.FilePath)">
                 <svg-icon name="external-link" size="18" class="mr-2" />Open with ChainIDE
-              </div> -->
+              </div>
             </div>
             <div class="file-bg mt-[20px] rounded-xl">
               <PrismEditor :code="item.file" :isShowlineNumbers="false"></PrismEditor>
@@ -101,9 +101,18 @@
     metaScanOverviewData: MetaScanOverviewData,
     reportFileData: ReportFileData[],
   }
+  interface WorkflowsDetailsData {
+    repositoryUrl: string,
+    status: number,
+    startTime: string,
+    errorNumber: number,
+    duration: string,
+    id: string,
+  }
   const props = defineProps<{
     metaTrustData: MetaTrustData,
     gistId: string,
+    workflowsDetailsData: WorkflowsDetailsData,
   }>()
   const { metaTrustData, gistId } = toRefs(props)
 
@@ -184,9 +193,13 @@
       }
     }
   }
-  const openChainIDE = (name: any) => {
-    const openVal = name.substring(name.lastIndexOf("/")+1)
-    window.open("https://chainide.com/s/createGistProject?gist="+gistId.value+"&open="+openVal);
+  const openChainIDE = (item: any,val: string) => {
+    const repoUrl = props.workflowsDetailsData.repositoryUrl
+    const fileName = val
+    const projectId = props.workflowsDetailsData.id
+    let line = "L" + item.AffectedFiles.Line
+    var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${line}-${line}`
+    window.open(url)
   }
 
   onMounted(() => {

@@ -3,7 +3,7 @@
         <template #closeIcon>
             <img class="" src="@/assets/icons/closeIcon.svg" @click="cancelCreateSub"/>
         </template>
-        <a-form :model="formData" ref="formRef" :rules="formRules" layout="vertical">
+        <a-form class="modal-form" :model="formData" ref="formRef" :rules="formRules" layout="vertical">
             <a-form-item label="Network" name="network" >
                 <a-select @change="setSubNetwork" dropdownClassName="modal-select-dropdown" v-model:value="formData.network" placeholder="Choose" autocomplete="off"
                 :options="subNetOptions" allow-clear class="sel"></a-select>

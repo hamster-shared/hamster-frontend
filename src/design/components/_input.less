@@ -3,12 +3,15 @@ html[data-theme='dark'] {
   .ant-input{
     color: #ffffff;
   }
-  // .anticon.ant-input-clear-icon{
-  //  color: #E0DBD2;
-  // }
   .ant-input-focused, .ant-input:focus{
     box-shadow: none;
   }
+  .ant-input, .ant-input-affix-wrapper, .ant-input-search>.ant-input-group>.ant-input-group-addon:last-child{
+    border-color: #434343;
+  }
+}
+.anticon.ant-input-clear-icon{
+  color: #E2B578;
 }
 .ant-input{
   // color: #BBBAB9;
@@ -50,4 +53,31 @@ html[data-theme='dark'] {
 }
 .ant-input[disabled]:hover{
   border-color: #E2B578;
+}
+.ant-input-search .ant-input-group .ant-input-affix-wrapper:not(:last-child){
+  border-bottom-left-radius: 8px;
+  border-top-left-radius: 8px;
+}
+.ant-input-search>.ant-input-group>.ant-input-group-addon:last-child{
+  border: 1px solid #EBEBEB;
+}
+.ant-input-group-addon{
+  background: rgba(226,181,120,0.1);
+  border-radius: 0px 8px 8px 0px;
+  width: 54px;
+}
+.ant-input-search-button,.ant-input-search-button:hover,.ant-input-search-button:active{
+  background-color: transparent;
+  border-color:  transparent;
+}
+.ant-input-search .ant-input:focus+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary), 
+.ant-input-search .ant-input:hover+.ant-input-group-addon .ant-input-search-button:not(.ant-btn-primary){
+  border-left-color: transparent;
+}
+.anticon-search{
+  color: #E2B578;
+  svg{
+    width: 20px;
+    height: 20px;
+  }
 }

@@ -1,7 +1,7 @@
 <template>
   <a-modal v-model:visible="showCreate" :footer="null" :closable="false" width="600px" @cancel="cancel">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Create App</div>
-    <a-form :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+    <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
       <a-form-item label="Name" name="name" >
         <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Name" allow-clear autocomplete="off" />
       </a-form-item>
