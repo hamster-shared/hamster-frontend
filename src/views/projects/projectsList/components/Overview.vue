@@ -331,11 +331,7 @@ const getDoneData =async (myArray:string[]) => {
       const { data } = await apiProjectsCheck(projectId.value);
       loadView();
 
-      msgParam.value.workflowsId = data.workflowId;
-      msgParam.value.workflowDetailId = data.detailId;
-      msgParam.value.operateType = 1;
-      msgType.value = 'check';
-      setMsgShow();
+      setMsgShow(data.workflowId, data.detailId, 'check', 1);
       // message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
@@ -361,11 +357,8 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
           } else {
             const { data } = await apiProjectsCheck(id);
             if (checkData.status !== 1) {
-              msgParam.value.workflowsId = data.workflowId;
-              msgParam.value.workflowDetailId = data.detailId;
-              msgParam.value.operateType = 1;
-              msgType.value = 'check';
-              setMsgShow();
+              
+              setMsgShow(data.workflowId, data.detailId, 'check', 1);
             }
             loadView();
           }
@@ -380,22 +373,13 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
           // evm 没有数据时，弹框唤起不吐丝
           if (!evmCheckVisible.value) {
 
-            msgParam.value.workflowsId = checkData.workflowId;
-            msgParam.value.workflowDetailId = checkData.id;
-            msgParam.value.operateType = 1;
-            msgType.value = 'check';
-            setMsgShow();
+            setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
             // message.info("The workflow of checking is running, view now.")
           }
         } else {
           const { data } = await apiProjectsCheck(id);
-          console.log("apiProjectsCheck data:",data);
-
-          msgParam.value.workflowsId = data.workflowId;
-          msgParam.value.workflowDetailId = data.detailId;
-          msgParam.value.operateType = 1;
-          msgType.value = 'check';
-          setMsgShow();
+          
+          setMsgShow(data.workflowId, data.detailId, 'check', 1);
           // message.success(res.message);
           loadView();
         }
@@ -416,22 +400,15 @@ const buildStatusAction = async (id: string, buildData: any) => {
       // message.info("The workflow of building is running, view now.")
       message.info(t('project.pipeline_buiding_now'));
     } else {
-      msgParam.value.workflowsId = buildData.workflowId;
-      msgParam.value.workflowDetailId = buildData.id;
-      msgParam.value.operateType = 2;
-      msgType.value = 'build';
-      setMsgShow();
+      setMsgShow(buildData.workflowId, buildData.id, 'build', 2);
     }
   } else {
     const { data } = await apiProjectsBuild(id);
     if (projectType?.value === "1" && false) {
       // message.success(res.message);
     } else {
-      msgParam.value.workflowsId = data.workflowId;
-      msgParam.value.workflowDetailId = data.detailId;
-      msgParam.value.operateType = 2;
-      msgType.value = 'build';
-      setMsgShow();
+    
+      setMsgShow(data.workflowId, data.detailId, 'build', 2);
     }
     loadView();
   }
@@ -456,11 +433,8 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
         message.info("Executing Now，please wait a moment.");
       } else {
         const { data } = await apiAptosBuild(id)
-        msgParam.value.workflowsId = data.workflowId;
-        msgParam.value.workflowDetailId = data.detailId;
-        msgParam.value.operateType = 2;
-        msgType.value = 'build';
-        setMsgShow();
+    
+        setMsgShow(data.workflowId, data.detailId, 'build', 2);
 
         loadView();
       }
@@ -586,11 +560,8 @@ const frontendDeploying = async () => {
       workflowDetailId: viewInfo?.value.recentBuild.id,
     });
     const { data } = await apiProjectsDeploy(params.value);
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgParam.value.operateType = 3;
-    msgType.value = 'deploy';
-    setMsgShow();
+    
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     loadView();
   } catch (error: any) {
@@ -605,12 +576,8 @@ const hideAptosBuildVisible = () => {
 const aptosBuild = async(id:any)=>{
   try {
     const { data } = await apiAptosBuild(id.value)
-    console.log('aptosbuild::', data)
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgParam.value.operateType = 2;
-    msgType.value = 'build';
-    setMsgShow();
+    
+    setMsgShow(data.workflowId, data.detailId, 'build', 2);
 
     loadView();
   } catch (err: any) {
@@ -627,11 +594,7 @@ const frontendContainerDeploy = async (apiContainerDeployParams?: Object) => {
     });
     const { data } = await apiProjectsContainerDeploy(params.value, apiContainerDeployParams);
 
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgParam.value.operateType = 3;
-    msgType.value = 'deploy';
-    setMsgShow();
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     loadView();
   } catch (error: any) {
@@ -654,7 +617,11 @@ const frontendContainerCheck = async () => {
   }
 }
 
-const setMsgShow = () => {
+const setMsgShow = (workflowId:any, detailId:any, msgType:any, operateType:any) => {
+  msgParam.value.workflowsId = workflowId;
+  msgParam.value.workflowDetailId = detailId;
+  msgParam.value.operateType = operateType;
+  msgType.value = msgType;
   showMsg.value = true;
   setTimeout(function () {
     showMsg.value = false;
