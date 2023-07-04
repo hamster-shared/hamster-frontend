@@ -272,7 +272,8 @@ const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
   workflowDetailId: viewInfo?.value.recentDeploy.id,
-  projectType: projectType?.value
+  projectType: projectType?.value,
+  operateType: 1,
 });
 
 const starknetVisible = ref(false);
@@ -287,9 +288,10 @@ const goDetail = (id: string, type: string) => {
   router.push("/projects/" + id + "/details/" + type);
 }
 const projectsAction = (val: any, type: string, e: Event) => {
+  console.log("projectsAction val:",val);
   switch (type) {
     case 'Check':
-      projectsCheck(val.id, val.recentCheck.status, e);
+      projectsCheck(val.id, val.recentCheck, e);
       break;
     case 'Build':
       projectsBuild(val.id, val.recentBuild, val.frameType,val.type);
@@ -326,16 +328,21 @@ const getDoneData =async (myArray:string[]) => {
       console.log(res,'done按钮接口数据');
       evmCheckVisible.value = false
 
-      await apiProjectsCheck(projectId.value);
+      const { data } = await apiProjectsCheck(projectId.value);
       loadView();
 
-      message.info("The workflow of checking is running, view now.")
+      msgParam.value.workflowsId = data.workflowId;
+      msgParam.value.workflowDetailId = data.detailId;
+      msgParam.value.operateType = 1;
+      msgType.value = 'check';
+      setMsgShow();
+      // message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
     }
 }
 // check
-const projectsCheck = async (id: string, status: number, e: Event) => {
+const projectsCheck = async (id: string, checkData: any, e: Event) => {
   // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
   //   e.stopPropagation()
   // } else {
@@ -352,12 +359,19 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
           if(JSON.stringify(res.data) === "{}"){
             evmCheckVisible.value=true
           } else {
-            await apiProjectsCheck(id);
+            const { data } = await apiProjectsCheck(id);
+            if (checkData.status !== 1) {
+              msgParam.value.workflowsId = data.workflowId;
+              msgParam.value.workflowDetailId = data.detailId;
+              msgParam.value.operateType = 1;
+              msgType.value = 'check';
+              setMsgShow();
+            }
             loadView();
           }
         }
       }
-      if (status === 1) {
+      if (checkData.status === 1) {
         // 点击check按钮，提示
         message.info(t('project.pipeline_executing_now'));
       } else {
@@ -365,11 +379,24 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         if (props.viewInfo.frameType === 1 && projectType.value === '1') {
           // evm 没有数据时，弹框唤起不吐丝
           if (!evmCheckVisible.value) {
-            message.info("The workflow of checking is running, view now.")
+
+            msgParam.value.workflowsId = checkData.workflowId;
+            msgParam.value.workflowDetailId = checkData.id;
+            msgParam.value.operateType = 1;
+            msgType.value = 'check';
+            setMsgShow();
+            // message.info("The workflow of checking is running, view now.")
           }
         } else {
-          const res = await apiProjectsCheck(id);
-          message.success(res.message);
+          const { data } = await apiProjectsCheck(id);
+          console.log("apiProjectsCheck data:",data);
+
+          msgParam.value.workflowsId = data.workflowId;
+          msgParam.value.workflowDetailId = data.detailId;
+          msgParam.value.operateType = 1;
+          msgType.value = 'check';
+          setMsgShow();
+          // message.success(res.message);
           loadView();
         }
       }
@@ -391,16 +418,18 @@ const buildStatusAction = async (id: string, buildData: any) => {
     } else {
       msgParam.value.workflowsId = buildData.workflowId;
       msgParam.value.workflowDetailId = buildData.id;
+      msgParam.value.operateType = 2;
       msgType.value = 'build';
       setMsgShow();
     }
   } else {
-    const res = await apiProjectsBuild(id);
-    if (projectType?.value === "1") {
+    const { data } = await apiProjectsBuild(id);
+    if (projectType?.value === "1" && false) {
       // message.success(res.message);
     } else {
-      msgParam.value.workflowsId = res.workflowId;
-      msgParam.value.workflowDetailId = res.detailId;
+      msgParam.value.workflowsId = data.workflowId;
+      msgParam.value.workflowDetailId = data.detailId;
+      msgParam.value.operateType = 2;
       msgType.value = 'build';
       setMsgShow();
     }
@@ -428,7 +457,8 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
       } else {
         const { data } = await apiAptosBuild(id)
         msgParam.value.workflowsId = data.workflowId;
-        msgParam.value.workflowDetailId = data.id;
+        msgParam.value.workflowDetailId = data.detailId;
+        msgParam.value.operateType = 2;
         msgType.value = 'build';
         setMsgShow();
 
@@ -558,6 +588,7 @@ const frontendDeploying = async () => {
     const { data } = await apiProjectsDeploy(params.value);
     msgParam.value.workflowsId = data.workflowId;
     msgParam.value.workflowDetailId = data.detailId;
+    msgParam.value.operateType = 3;
     msgType.value = 'deploy';
     setMsgShow();
 
@@ -577,6 +608,7 @@ const aptosBuild = async(id:any)=>{
     console.log('aptosbuild::', data)
     msgParam.value.workflowsId = data.workflowId;
     msgParam.value.workflowDetailId = data.detailId;
+    msgParam.value.operateType = 2;
     msgType.value = 'build';
     setMsgShow();
 
@@ -597,6 +629,7 @@ const frontendContainerDeploy = async (apiContainerDeployParams?: Object) => {
 
     msgParam.value.workflowsId = data.workflowId;
     msgParam.value.workflowDetailId = data.detailId;
+    msgParam.value.operateType = 3;
     msgType.value = 'deploy';
     setMsgShow();
 
