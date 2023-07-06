@@ -28,6 +28,7 @@
       </Deployment>
     </div>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
+    <MetaScan v-if="workflowsDetailsData.frameType === 1"></MetaScan>
   </div>
 </template>
 <script lang='ts' setup>
@@ -48,6 +49,7 @@ import Deployment from './components/Deployment.vue';
 import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
+import MetaScan from './components/MetaScan.vue'
 
 const { t } = useI18n()
 const { params,query } = useRoute();

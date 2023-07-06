@@ -1,31 +1,50 @@
 <template>
-    <a-modal v-model:visible="props.visible" width="800px" :footer="null" @cancel="closeEVMToolsModal">
-       <div>
-            <div>
-                <h1 style="font-size:24px;">Configure Check Tools</h1>
-                <p class="prop">Please select the appropriate tool to check the contract</p>
-            </div>
-            <div class="center">
-                <p>If you need to modify this configuration later, you can modify it by setting button on the project details page</p>
-            </div>
-
-            <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">
-                <p style="font-weight:500;font-size:14px;margin-top:10px;">{{item.title}}</p>
-                <div class="box" v-for="(items,index) in item.children" :key="index" style="white-space:nowrap;">
-                    <p
-                        class="tool-tab"
-                        :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
-                        @click="handleClick(items)"
-                        >
-                        {{items.title }}
-                    </p>
-                </div>
-            </div>
-            <div class="text-center">
-              <a-button @click="handleDone">Done</a-button>
-            </div>
+  <a-modal v-model:visible="props.visible" width="1300px" :footer="null" @cancel="closeEVMToolsModal">
+    <div class="flex m-[-24px]">
+      <div class="p-[32px] w-3/5">
+        <div>
+          <h1 style="font-size:24px;">Configure Check Tools</h1>
+          <p class="prop">Please select the appropriate tool to check the contract</p>
         </div>
-    </a-modal>
+        <div class="center">
+          If you need to modify this configuration later, you can modify it by setting button on the project details page
+        </div>
+        <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">
+          <p style="font-weight:500;font-size:14px;margin-top:10px;">{{item.title}}</p>
+          <div class="flex">
+            <div class="box" v-for="(items,index) in item.children" :key="index">
+              <p
+                  class="tool-tab"
+                  :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
+                  @click="handleClick(items)"
+                  >
+                  {{items.title }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-[16px]">
+          <a-button @click="handleDone">Done</a-button>
+        </div>
+      </div>
+      <div class="right-card p-[32px]">
+        <div class="right-bg relative">
+          <img src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
+          <div class="text-[24px] font-bold mb-[40px]">What is MetaScan Security Analyzer？</div>
+          <div class="text-[18px] text-[#73706E]">Security analyzer is an automatic static analysis tool for detecting smart contract vulnerabilities. In this tool, we adopted the context-sensitive, flow-sensitive, money-sensitive technologies to conduct static analysis.</div>
+          <div class="mt-[20px] text-[#73706E] flex">
+            <div class="text-[#F97315] text-[80px] leading-[5px] mr-1">·</div>
+            <div >Collected the almost-known vulnerable smart contracts,and analyzed how these vulnerabilities happened</div>
+          </div>
+          <div class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
+        </div>
+        <div class="font-medium text-right mt-[30px]">
+          Powered by
+          <img src="@/assets/icons/Metatrust-logo.svg" class="h-[42px] ml-2" />
+        </div>
+      </div>
+    </div>
+  </a-modal>
 </template>
 <script lang="ts" setup>
 import { toRefs,ref,onMounted } from 'vue'
@@ -172,7 +191,7 @@ onMounted(()=>{
     color: #73706E;
 }
 .box{
-    background-color: #000;
+    // background-color: #000;
 }
 .tag{
     cursor: pointer;
@@ -184,15 +203,15 @@ onMounted(()=>{
     color: #E2B578;
 }
 .center{
-    width: 750px;
-    height: 78px;
-    line-height: 78px;
+    // width: 750px;
+    // height: 78px;
+    // line-height: 78px;
     background-color: #FFF9F2;
-    padding-left: 15px;
-    border-radius: 8px;
+    padding: 15px 20px;
+    border-radius: 5px;
     font-size: 14px;
-    // border: 1px solid #E2B578;
-    font-weight: 500;
+    border: 1px solid #E2B578;
+    font-weight: 400;
     flex-wrap: wrap;
 }
 button{
@@ -207,10 +226,12 @@ button{
     // right: 50%;
 }
 .tool-tab{
-    float:left;
-    width:220px;
-    height:50px;
-    line-height:50px;
+    // float:left;
+    width:200px;
+    height:60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-right:10px;
     vertical-align:middle;
     text-align:center;
@@ -226,5 +247,15 @@ button{
     &:active{
       border-color: #CE9C58 !important;
     }
+}
+.right-card{
+  border-left: 2px solid #F4F4F4
+}
+.right-bg{
+  background: linear-gradient(135deg, #FFFBF7 0%, #FFF0E4 100%);
+  border-radius: 8px;
+  padding: 50px 37px;
+  margin-top: 82px;
+  height: 665px;
 }
 </style>
