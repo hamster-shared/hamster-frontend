@@ -3,7 +3,7 @@
     <img src="@/assets/images/metatrust-bg-logo.png" class="w-[260px] max-w-fit absolute right-0 bottom-0" />
     <div class="flex justify-between">
       <div class="font-bold text-[24px] mb-[45px]">MetaScan - Security Analyzer</div>
-      <div class="text-[16px] text-[#E2B578]">View More</div>
+      <a-button type="link" class="view-detail-btn" style="font-size: 16px;" @click="goMetaScan">View More</a-button>
     </div>
     <div class="text-[18px]">Security analyzer is an automatic static analysis tool for detecting smart contract vulnerabilities. In this tool, we adopted the context-sensitive, flow-sensitive, money-sensitive technologies to conduct static analysis.</div>
     <div class="mt-[20px] text-[#73706E] dark:text-[#B4AFAD] flex">
@@ -17,6 +17,9 @@
   </div>
 </template>
 <script setup lang="ts">
+const goMetaScan = ()=>{
+  window.open('https://metatrust.io/')
+}
 </script>
 <style scoped lang="less">
 .bg-css{

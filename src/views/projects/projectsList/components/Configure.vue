@@ -20,6 +20,7 @@
                   class="tool-tab"
                   :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
                   @click="handleClick(items)"
+                  @mouseover="hoverFn(items)"
                   >
                   {{items.title }}
               </p>
@@ -132,10 +133,6 @@ const newArray=ref<any>([
 }
 ])
 
-const getTagClass=(item:any)=>{
-    return myArray.value.includes(item.title)? "tags":"tag"
-}
-
 const getSelectTools=()=>{
     if(props.selectData.length){
         myArray.value = props.selectData
@@ -151,6 +148,7 @@ const getSelectTools=()=>{
 
 //点击每一项
 function handleClick(items:any){
+    console.log('点击每一项',items)
     items.border=!items.border
     //去重
     if(!myArray.value.includes(items.title)){
@@ -166,6 +164,10 @@ function handleClick(items:any){
         const index=myArray.value.indexOf(items.title)
         myArray.value.splice(index,1)
     }
+}
+// 移动鼠标
+const hoverFn = (items:any)=>{
+    console.log('移动鼠标',items)
 }
 //Done按钮
 function handleDone(){
