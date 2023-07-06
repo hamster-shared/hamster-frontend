@@ -1,5 +1,8 @@
 <template>
   <a-modal v-model:visible="props.visible" width="1300px" :footer="null" @cancel="closeEVMToolsModal">
+    <template #closeIcon>
+        <img class="" src="@/assets/icons/closeIcon.svg" @click="closeEVMToolsModal"/>
+    </template>
     <div class="flex m-[-24px]">
       <div class="p-[32px] w-3/5">
         <div>
