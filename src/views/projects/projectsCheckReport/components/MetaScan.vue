@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-css rounded-[12px] relative">
+  <div class="bg-css rounded-[12px] relative mt-[24px]">
     <img src="@/assets/images/metatrust-bg-logo.png" class="w-[260px] max-w-fit absolute right-0 bottom-0" />
     <div class="flex justify-between">
       <div class="font-bold text-[24px] mb-[45px]">MetaScan - Security Analyzer</div>
