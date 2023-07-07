@@ -232,9 +232,6 @@ const closeEVMToolsModal = ()=>{
 }
 onMounted(()=>{
     getSelectTools()
-    isDefault.value = false
-    toolInfo.value = getMetatrustInfoByToolname('MetaTrust Open Source Analyzer')
-    console.log('getMetatrustInfoByToolname',toolInfo.value)
 })
 
 </script>
