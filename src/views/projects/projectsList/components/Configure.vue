@@ -68,8 +68,8 @@
             </div>
             <div v-else>
               <div class="text-[24px] font-bold mb-[40px]">{{toolInfo.title}}</div>
-              <div class="text-[18px] text-[#73706E]" style="text-align: justify; text-justify: inter-word;">{{toolInfo.description}}</div>
-              <div v-if="toolInfo.content.length" class="mt-[20px] text-[18px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
+              <div class="text-[14px] text-[#73706E]" style="text-align: justify; text-justify: inter-word;">{{toolInfo.description}}</div>
+              <div v-if="toolInfo.content.length" class="mt-[20px] text-[14px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
                 <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
                 <div>{{item}}</div>
               </div>
@@ -206,9 +206,7 @@ function handleClick(items:any){
 // 移动鼠标
 const hoverFn = (items:any)=>{
     isDefault.value = false
-    console.log(isDefault.value,'移动鼠标',items)
     toolInfo.value = getMetatrustInfoByToolname(items.title)
-    console.log('getMetatrustInfoByToolname',toolInfo.value)
 }
 // 鼠标移出
 const leaveFn = ()=>{
