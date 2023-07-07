@@ -35,42 +35,44 @@
       <div class="right-card p-[32px]">
         <div class="right-bg relative w-full">
           <img src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
-          <div v-if="isDefault">
-            <div class="text-[24px] font-bold mb-[40px]">How to check Contract</div>
-            <div class="text-[18px] leading-[24px] text-[#73706E] flex">
-              <div>
-                <div class="rounded-num">1</div>
+          <div class="px-[37px] pt-[50px] overflow-auto h-[600px]">
+            <div v-if="isDefault">
+              <div class="text-[24px] font-bold mb-[40px]">How to check Contract</div>
+              <div class="text-[18px] leading-[24px] text-[#73706E] flex">
+                <div>
+                  <div class="rounded-num">1</div>
+                </div>
+                <div>
+                  <div class="font-medium text-[#000000]">Configure Check Tools(first time)</div>
+                  <div class="mt-[10px]">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
+                </div>
               </div>
-              <div>
-                <div class="font-medium text-[#000000]">Configure Check Tools(first time)</div>
-                <div class="mt-[10px]">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
+              <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
+                <div>
+                  <div class="rounded-num">2</div>
+                </div>
+                <div>
+                  <div class="font-medium text-[#000000]">Click ”Check” Button</div>
+                  <div class="mt-[10px]">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
+                </div>
+              </div>
+              <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
+                <div>
+                  <div class="rounded-num">3</div>
+                </div>
+                <div>
+                  <div class="font-medium text-[#000000]">View Check Report</div>
+                  <div class="mt-[10px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
+                </div>
               </div>
             </div>
-            <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
-              <div>
-                <div class="rounded-num">2</div>
+            <div v-else>
+              <div class="text-[24px] font-bold mb-[40px]">{{toolInfo.title}}</div>
+              <div class="text-[18px] text-[#73706E]" style="text-align: justify; text-justify: inter-word;">{{toolInfo.description}}</div>
+              <div v-if="toolInfo.content.length" class="mt-[20px] text-[18px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
+                <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
+                <div>{{item}}</div>
               </div>
-              <div>
-                <div class="font-medium text-[#000000]">Click ”Check” Button</div>
-                <div class="mt-[10px]">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
-              </div>
-            </div>
-            <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
-              <div>
-                <div class="rounded-num">3</div>
-              </div>
-              <div>
-                <div class="font-medium text-[#000000]">View Check Report</div>
-                <div class="mt-[10px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
-              </div>
-            </div>
-          </div>
-          <div v-else>
-            <div class="text-[24px] font-bold mb-[40px]">{{toolInfo.title}}</div>
-            <div class="text-[18px] text-[#73706E]">{{toolInfo.description}}</div>
-            <div v-if="toolInfo.content.length" class="mt-[20px] text-[18px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
-              <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
-              <div>{{item}}</div>
             </div>
           </div>
           <div class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
@@ -230,6 +232,9 @@ const closeEVMToolsModal = ()=>{
 }
 onMounted(()=>{
     getSelectTools()
+    isDefault.value = false
+    toolInfo.value = getMetatrustInfoByToolname('MetaTrust Open Source Analyzer')
+    console.log('getMetatrustInfoByToolname',toolInfo.value)
 })
 
 </script>
@@ -302,7 +307,7 @@ button{
 .right-bg{
   background: linear-gradient(135deg, #FFFBF7 0%, #FFF0E4 100%);
   border-radius: 8px;
-  padding: 50px 37px;
+  // padding: 50px 0;
   margin-top: 82px;
   height: 665px;
 }
