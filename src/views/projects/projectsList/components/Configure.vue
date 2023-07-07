@@ -41,7 +41,7 @@
                 <div class="rounded-num">1</div>
               </div>
               <div>
-                <div class="font-medium">Configure Check Tools(first time)</div>
+                <div class="font-medium text-[#000000]">Configure Check Tools(first time)</div>
                 <div class="mt-[10px]">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
               </div>
             </div>
@@ -50,7 +50,7 @@
                 <div class="rounded-num">2</div>
               </div>
               <div>
-                <div class="font-medium">Click ”Check” Button</div>
+                <div class="font-medium text-[#000000]">Click ”Check” Button</div>
                 <div class="mt-[10px]">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
               </div>
             </div>
@@ -59,7 +59,7 @@
                 <div class="rounded-num">3</div>
               </div>
               <div>
-                <div class="font-medium">View Check Report</div>
+                <div class="font-medium text-[#000000]">View Check Report</div>
                 <div class="mt-[10px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
               </div>
             </div>
