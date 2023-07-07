@@ -32,13 +32,53 @@
         </div>
       </div>
       <div class="right-card p-[32px]">
-        <div class="right-bg relative">
+        <div class="right-bg relative w-full">
           <img src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
-          <div class="text-[24px] font-bold mb-[40px]">What is MetaScan Security Analyzer？</div>
-          <div class="text-[18px] text-[#73706E]">Security analyzer is an automatic static analysis tool for detecting smart contract vulnerabilities. In this tool, we adopted the context-sensitive, flow-sensitive, money-sensitive technologies to conduct static analysis.</div>
-          <div class="mt-[20px] text-[#73706E] flex">
-            <div class="text-[#F97315] text-[80px] leading-[5px] mr-1">·</div>
-            <div >Collected the almost-known vulnerable smart contracts,and analyzed how these vulnerabilities happened</div>
+          <div v-if="true">
+            <div class="text-[24px] font-bold mb-[40px]">How to check Contract</div>
+            <div class="text-[18px] leading-[24px] text-[#73706E] flex">
+              <div>
+                <div class="rounded-num">1</div>
+              </div>
+              <div>
+                <div class="font-medium">Configure Check Tools(first time)</div>
+                <div class="mt-[10px]">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
+              </div>
+            </div>
+            <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
+              <div>
+                <div class="rounded-num">2</div>
+              </div>
+              <div>
+                <div class="font-medium">Click ”Check” Button</div>
+                <div class="mt-[10px]">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
+              </div>
+            </div>
+            <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
+              <div>
+                <div class="rounded-num">3</div>
+              </div>
+              <div>
+                <div class="font-medium">View Check Report</div>
+                <div class="mt-[10px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
+              </div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="text-[24px] font-bold mb-[40px]">What is MetaScan Security Analyzer？</div>
+            <div class="text-[18px] text-[#73706E]">Security analyzer is an automatic static analysis tool for detecting smart contract vulnerabilities. In this tool, we adopted the context-sensitive, flow-sensitive, money-sensitive technologies to conduct static analysis.</div>
+            <div class="mt-[20px] text-[18px] text-[#73706E] flex">
+              <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
+              <div >Collected the almost-known vulnerable smart contracts,and analyzed how these vulnerabilities happened</div>
+            </div>
+            <div class="mt-[20px] text-[18px] text-[#73706E] flex">
+              <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
+              <div>Designed threat analysis model to accurately abstract the pattern of these vulnerabilities</div>
+            </div>
+            <div class="mt-[20px] text-[18px] text-[#73706E] flex">
+              <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
+              <div>Developed more than 100 rules to automatically detect these vulnerabilities</div>
+            </div>
           </div>
           <div class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
         </div>
@@ -55,7 +95,7 @@ import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 const destroyOnClose=ref()
 const route = useRoute()
-const emit = defineEmits(["getDoneData","handleCancel"])
+const emit = defineEmits(["getDoneData", "handleCancel"])
 const myArray=ref<any>([])
 const props = defineProps({
     visible:{
@@ -262,5 +302,15 @@ button{
   padding: 50px 37px;
   margin-top: 82px;
   height: 665px;
+}
+.rounded-num{
+  background-color: #F97315;
+  color: #FFFFFF;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  margin-right: 10px;
 }
 </style>
