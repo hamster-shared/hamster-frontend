@@ -21,6 +21,7 @@
                   :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
                   @click="handleClick(items)"
                   @mouseover="hoverFn(items)"
+                  @mouseleave="leaveFn"
                   >
                   {{items.title }}
               </p>
@@ -34,7 +35,7 @@
       <div class="right-card p-[32px]">
         <div class="right-bg relative w-full">
           <img src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
-          <div v-if="true">
+          <div v-if="isDefault">
             <div class="text-[24px] font-bold mb-[40px]">How to check Contract</div>
             <div class="text-[18px] leading-[24px] text-[#73706E] flex">
               <div>
@@ -65,19 +66,11 @@
             </div>
           </div>
           <div v-else>
-            <div class="text-[24px] font-bold mb-[40px]">What is MetaScan Security Analyzer？</div>
-            <div class="text-[18px] text-[#73706E]">Security analyzer is an automatic static analysis tool for detecting smart contract vulnerabilities. In this tool, we adopted the context-sensitive, flow-sensitive, money-sensitive technologies to conduct static analysis.</div>
-            <div class="mt-[20px] text-[18px] text-[#73706E] flex">
+            <div class="text-[24px] font-bold mb-[40px]">{{toolInfo.title}}</div>
+            <div class="text-[18px] text-[#73706E]">{{toolInfo.description}}</div>
+            <div v-if="toolInfo.content.length" class="mt-[20px] text-[18px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
               <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
-              <div >Collected the almost-known vulnerable smart contracts,and analyzed how these vulnerabilities happened</div>
-            </div>
-            <div class="mt-[20px] text-[18px] text-[#73706E] flex">
-              <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
-              <div>Designed threat analysis model to accurately abstract the pattern of these vulnerabilities</div>
-            </div>
-            <div class="mt-[20px] text-[18px] text-[#73706E] flex">
-              <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
-              <div>Developed more than 100 rules to automatically detect these vulnerabilities</div>
+              <div>{{item}}</div>
             </div>
           </div>
           <div class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
@@ -93,6 +86,9 @@
 <script lang="ts" setup>
 import { toRefs,ref,onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { getMetatrustInfoByToolname } from '@/utils/metatrust'
+const isDefault = ref(true)
+const toolInfo = ref<any>([])
 const destroyOnClose=ref()
 const route = useRoute()
 const emit = defineEmits(["getDoneData", "handleCancel"])
@@ -207,7 +203,14 @@ function handleClick(items:any){
 }
 // 移动鼠标
 const hoverFn = (items:any)=>{
-    console.log('移动鼠标',items)
+    isDefault.value = false
+    console.log(isDefault.value,'移动鼠标',items)
+    toolInfo.value = getMetatrustInfoByToolname(items.title)
+    console.log('getMetatrustInfoByToolname',toolInfo.value)
+}
+// 鼠标移出
+const leaveFn = ()=>{
+    isDefault.value = true
 }
 //Done按钮
 function handleDone(){
