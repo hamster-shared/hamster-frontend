@@ -367,7 +367,7 @@
       border-radius: 0px 8px 8px 0px;
     }
     :deep(.ant-btn-icon-only){
-      height: 42px;
+      height: 38px;
       width: 50px;
       background: rgba(226,181,120,0.1);
       color: #E2B578 !important;
