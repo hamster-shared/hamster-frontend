@@ -1,10 +1,10 @@
 <template>
   <div class="bg-css rounded-[12px] relative mt-[24px]">
     <img v-if="metatrustInfo.isMetatrust" src="@/assets/images/metatrust-bg-logo.png" class="w-[260px] max-w-fit absolute right-0 bottom-0" />
-    <img v-else src="@/assets/images/no-metatrust-bg-logo.png" class="w-[260px] max-w-fit absolute right-0 bottom-0" />
+    <img v-else src="@/assets/images/no-metatrust-bg-logo.png" class="w-[160px] max-w-fit absolute right-0 bottom-10" />
     <div class="flex justify-between">
       <div class="font-bold text-[24px] mb-[45px]">{{metatrustInfo.title}}</div>
-      <a-button type="link" class="view-detail-btn" style="font-size: 16px;" @click="goMetaScan">View More</a-button>
+      <a-button v-if="metatrustInfo.isMetatrust" type="link" class="view-detail-btn" style="font-size: 16px;" @click="goMetaScan">View More</a-button>
     </div>
     <div class="text-[18px]">{{metatrustInfo.description}}</div>
     <div v-if="metatrustInfo.content?.length" class="mt-[20px] text-[#73706E] dark:text-[#B4AFAD] flex" v-for="(item,key) in metatrustInfo.content" :key="key">
