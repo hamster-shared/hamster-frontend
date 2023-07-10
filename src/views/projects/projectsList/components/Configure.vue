@@ -34,7 +34,9 @@
       </div>
       <div class="right-card p-[32px]">
         <div class="right-bg relative w-full">
-          <img src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
+          <img v-if="isDefault" src="@/assets/images/default-metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
+          <img v-else-if="!toolInfo.isMetatrust" src="@/assets/images/no-metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
+          <img v-else-if="toolInfo.isMetatrust" src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
           <div class="px-[37px] pt-[50px] overflow-auto h-[600px]">
             <div v-if="isDefault">
               <div class="text-[24px] font-bold mb-[40px]">How to check Contract</div>
@@ -70,14 +72,14 @@
               <div class="text-[24px] font-bold mb-[40px]">{{toolInfo.title}}</div>
               <div class="text-[14px] text-[#73706E]" style="text-align: justify; text-justify: inter-word;">{{toolInfo.description}}</div>
               <div v-if="toolInfo.content.length" class="mt-[20px] text-[14px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
-                <div class="text-[#F97315] text-[100px] leading-[8px] mr-1">·</div>
+                <div :class="toolInfo.isMetatrust ? 'text-[#F97315]':'text-[#E2B578]'" class="text-[100px] leading-[8px] mr-1">·</div>
                 <div>{{item}}</div>
               </div>
             </div>
           </div>
-          <div class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
+          <div v-if="toolInfo.isMetatrust && !isDefault" class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
         </div>
-        <div class="font-medium text-right mt-[30px]">
+        <div v-if="toolInfo.isMetatrust && !isDefault" class="font-medium text-right mt-[30px]">
           Powered by
           <img src="@/assets/icons/Metatrust-logo.svg" class="h-[42px] ml-2" />
         </div>
@@ -307,7 +309,7 @@ button{
   height: 665px;
 }
 .rounded-num{
-  background-color: #F97315;
+  background-color: #E2B578;
   color: #FFFFFF;
   width: 26px;
   height: 26px;
