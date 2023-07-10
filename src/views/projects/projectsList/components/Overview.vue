@@ -395,7 +395,7 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
 
 const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
-    if (projectType?.value === "1") {
+    if (projectType?.value === "1" && false) {
       // message.info("Executing Now，please wait a moment.");
       // message.info("The workflow of building is running, view now.")
       message.info(t('project.pipeline_buiding_now'));
@@ -617,11 +617,11 @@ const frontendContainerCheck = async () => {
   }
 }
 
-const setMsgShow = (workflowId:any, detailId:any, msgType:any, operateType:any) => {
+const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateTypeVal: any) => {
   msgParam.value.workflowsId = workflowId;
   msgParam.value.workflowDetailId = detailId;
-  msgParam.value.operateType = operateType;
-  msgType.value = msgType;
+  msgParam.value.operateType = operateTypeVal;
+  msgType.value = msgTypeVal;
   showMsg.value = true;
   setTimeout(function () {
     showMsg.value = false;

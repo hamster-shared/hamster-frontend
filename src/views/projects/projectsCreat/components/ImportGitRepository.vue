@@ -402,6 +402,7 @@
       :deep(.ant-btn-icon-only){
         background: rgba(226, 181, 120, 0.1);
         border-left: 0px;
+        border-color: #434343;
       }
     }
 
