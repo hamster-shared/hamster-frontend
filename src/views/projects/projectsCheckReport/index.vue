@@ -8,7 +8,7 @@
   <Solhint :gistId="gistId" :workflowsDetailsData="workflowsDetailsData" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
   <MyThril :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
   <GasUsageReport :gasUsageReportData="gasUsageReportData" v-if="params.checktype == 'gasInfoDetail' "></GasUsageReport>
-  <MetaScan></MetaScan>
+  <MetaScan :checkType="params.checktype"></MetaScan>
 </template>
 
 <script lang="ts" setup>

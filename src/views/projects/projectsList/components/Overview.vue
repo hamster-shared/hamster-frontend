@@ -386,7 +386,7 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
       }
     } catch (error: any) {
       console.log("erro:", error)
-      message.error(error.response.data.message);
+      message.error('Failed ',error);
     } finally {
       // loading.value = false;
     }

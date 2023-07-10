@@ -12,7 +12,7 @@ export const getMetatrustInfoByToolname = (name:string)=>{
             MetatrustInfo.content = [];
             break;
         case 'MetaTrust Security Analyzer':
-            MetatrustInfo.title = 'What is MetaScan Security Analyzer';
+            MetatrustInfo.title = 'MetaScan Security Analyzer';
             MetatrustInfo.description = "Security analyzer is an automatic static analysis tool for detecting smart contract vulnerabilities. In this tool, we adopted the context-sensitive, flow-sensitive, money-sensitive technologies to conduct static analysis.";
             MetatrustInfo.content = ["Collected the almost-known vulnerable smart contracts, and analyzed how these vulnerabilities happened","Designed threat analysis model to accurately abstract the pattern of these vulnerabilities","Developed more than 100 rules to automatically detect these vulnerabilities"];
             break;
