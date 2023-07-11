@@ -13,6 +13,7 @@
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
+            <label v-else-if="viewInfo.frameType == 1">Polkadot</label>
           </div>
           <!-- 这里 -->
           <div v-if="viewInfo.labelDisplay"
@@ -46,7 +47,7 @@
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -108,6 +109,7 @@
 
           <div class="open-link-css cursor-pointer inline-block"
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
+            :style="{cursor: viewInfo.type == '3' ? 'default' : 'cursor'}"
             v-if="viewInfo.recentCheck.status === 0">
             <span>Check Now</span>
           </div>
@@ -288,6 +290,10 @@ const goDetail = (id: string, type: string) => {
   router.push("/projects/" + id + "/details/" + type);
 }
 const projectsAction = (val: any, type: string, e: Event) => {
+  // Polkadot 的 check禁掉
+  if(val.type=='3' && type=='Check'){
+    return
+  }
   console.log("projectsAction val:",val);
   switch (type) {
     case 'Check':
@@ -339,6 +345,11 @@ const getDoneData =async (myArray:string[]) => {
 }
 // check
 const projectsCheck = async (id: string, checkData: any, e: Event) => {
+  // Polkadot 的 check禁掉
+  if(props.viewInfo.type=='3'){
+    return
+  }
+  console.log('projectsCheck~~~~')
   // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
   //   e.stopPropagation()
   // } else {

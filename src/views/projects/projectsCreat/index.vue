@@ -21,14 +21,14 @@
                 <div class="radio-sub">Set up a workflow to automatic build, check, and deploy your Front-End code.
                 </div>
               </a-radio>
-              <a-radio :style="radioStyle" value="3" disabled="true">Blockchain Node（coming soon）
-                <div>Please pay attention to Hamster</div>
+              <a-radio :style="radioStyle" value="3">Blockchain Node (Polkadot Only)
+                <div>Set up a workflow to automatic build and deploy your Node code</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item class="new-label" label="Code Repositiory">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
-              <a-radio :style="radioStyle" value="1">Create a new repository by template
+              <a-radio :style="radioStyle" value="1" :disabled="formData.type==3">Create a new repository by template
                 <div class="radio-sub">Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
@@ -252,6 +252,9 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
+  if(formData.type=='3'){
+    formData.contractCode = '2'
+  }
   getInitTemplates()
 }
 
