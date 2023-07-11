@@ -219,6 +219,7 @@
                   v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
                   View Process
                 </div>
+                <!-- polkdot -->
                 <div class="open-link-css cursor-pointer inline-block"
                   @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" 
                   v-else>
@@ -342,7 +343,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
       break;
     case 'Ops':
-      projectsOps(val.id, val.recentDeploy);
+      projectsOps(val.id, val.recentDeploy, val.type);
       break;
     default: break;
   }
@@ -520,7 +521,7 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
   //   message.info("Smart contract not available.")
   // }
 };
-const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
+const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
       // message.info("Smart contract not avaliable.");
@@ -530,7 +531,7 @@ const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1'
+    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
     router.push(path);
   }
 };
@@ -678,7 +679,7 @@ const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateT
 
 const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
   if (recentDeploy.status === 3) { //success
-    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
+    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}?type=${viewInfo.value.type}`);
   } else {
     router.push(`/projects/${id}/${recentDeploy.workflowId}/workflows/${recentDeploy.id}/3/${projectType?.value}`);
   }

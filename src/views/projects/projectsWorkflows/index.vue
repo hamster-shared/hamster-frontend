@@ -24,7 +24,7 @@
         :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
         :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="nodeType">
       </Deployment>
     </div>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
@@ -58,6 +58,7 @@ const queryJson = reactive({
   type: params.type,
   projectType: params.projectType,
 })
+const nodeType = query.type
 const detailTimer = ref();
 const title = ref('');
 const currentName = ref('');
