@@ -36,7 +36,7 @@
             <div v-if="props.nodeType!='3'" class="title-text title-m">Package</div>
             <div v-if="props.nodeType!='3'" class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
             <div v-if="props.nodeType=='3'" class="title-text title-m">Image</div>
-            <div v-if="props.nodeType=='3'" class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.image }}</div>
+            <div v-if="props.nodeType=='3'" class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
             <div class="title-text title-m">Branch</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex items-center">
               <img src="@/assets/icons/master-white.svg" class="h-[20px] mr-1 dark:hidden" />

@@ -24,7 +24,7 @@
         :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
         :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="nodeType">
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
       </Deployment>
     </div>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
@@ -224,7 +224,6 @@ const getWorkflowPackage = async () => {
       const { data } = await apiGetDeployInfo(params);
       Object.assign(packageInfo, data)
     }
-    console.log(111111111,artifactListData)
   } catch (error: any) {
     console.log("erro:", error)
   }
@@ -270,7 +269,7 @@ const setCurrentName = () => {
       title.value = 'Deploy'
     }
     // 区分node和前端项目
-    const name = nodeType == '3' ? 'Node' : 'Frontend'
+    const name = queryJson.projectType === '3' ? 'Node' : 'Frontend'
     currentName.value = `${name} ${title.value}_#${workflowsDetailsData.execNumber}`
   }
 }

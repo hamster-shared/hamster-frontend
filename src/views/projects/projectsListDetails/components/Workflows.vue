@@ -74,7 +74,6 @@ import {
   apiProjectsWorkflowsStop,
   apiDeleteWorkflows,
 } from "@/apis/projects";
-import { number } from "joi";
 const theme = useThemeStore()
 const router = useRouter();
 
@@ -223,12 +222,14 @@ const getProjectsWorkflows = async () => {
   }
 };
 const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
+  // type 1check 2build 3deploy
   if (type == '1') {
     router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
   } else if(type == '2'){
     router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
   } else if(type == '3'){
-    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=3');
+    // 区分前端和node
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=' + projectType.value);
   }
 }
 const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
