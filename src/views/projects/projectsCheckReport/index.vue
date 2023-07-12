@@ -146,7 +146,7 @@ const judgeOrigin = ()=>{
     },
     {
       breadcrumbName:query?.currentName?.replace('[','#'),
-      path:localStorage.getItem('evmCheckWorkflow')
+      path:`/projects/${queryJson.id}/${queryJson.workflowsId}/workflows/${queryJson.workflowDetailId}/${queryJson.projectType}/${queryJson.type}`
     },
     {
       breadcrumbName:'Check Report',

@@ -540,13 +540,11 @@ const loadView = async () => {
   emit("loadProjects");
 };
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
-  localStorage.removeItem('evmCheckWorkflow')
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("frameType", viewInfo.value.frameType)
   localStorage.setItem("projectId", id)
   const path = "/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value
   router.push(path);
-  localStorage.setItem('evmCheckWorkflow',path)
 };
 
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
