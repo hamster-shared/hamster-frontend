@@ -254,6 +254,8 @@ const goDetail = async (val: any) => {
 const getTemplatesShow = async (val: any) => {
   if(formData.type=='3'){
     formData.contractCode = '2'
+    // polkdot没有模板
+    return
   }
   getInitTemplates()
 }
