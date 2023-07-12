@@ -17,10 +17,15 @@
             <label v-if="record.type === 2">Contract Build_#{{ record.execNumber }}</label>
             <label v-if="record.type === 3">Contract Deploy_#{{ record.execNumber }}</label>
           </div>
-          <div v-else>
+          <div v-else-if="projectType === '2'">
             <label v-if="record.type === 1">FrontEnd Check_#{{ record.execNumber }}</label>
             <label v-if="record.type === 2">FrontEnd Build_#{{ record.execNumber }}</label>
             <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.execNumber }}</label>
+          </div>
+          <div v-else-if="projectType === '3'">
+            <label v-if="record.type === 1">Node Check_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 2">Node Build_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 3">Node Deploy_#{{ record.execNumber }}</label>
           </div>
         </template>
         <template v-if="column.dataIndex === 'triggerMode'">
@@ -222,6 +227,8 @@ const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: S
     router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
   } else if(type == '2'){
     router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
+  } else if(type == '3'){
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=3');
   }
 }
 const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {

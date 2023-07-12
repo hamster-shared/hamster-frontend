@@ -118,7 +118,8 @@ const getWorkflowsDetails = async () => {
 }
 
 const loadInfo = () => {
-  if (queryJson.projectType === '2') {
+  // 前端和Polkdot都走package接口
+  if (queryJson.projectType === '2' || queryJson.projectType === '3') {
     queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
   } else {
     queryJson.type === '1' ? getCheckReport() : getContractList();
@@ -214,14 +215,16 @@ const getWorkflowPackage = async () => {
       workflowsId: queryJson.workflowsId,
       workflowDetailId: queryJson.workflowDetailId,
     }
-    if (queryJson.type === '2') {
+    // debugger
+    // 前端和Polkdot都走package接口
+    if ( query.type!='3' && (queryJson.type === '2' || queryJson.projectType === '3')) {
       const { data } = await apiGetPackagesList(params);
       Object.assign(artifactListData, data)
     } else {
       const { data } = await apiGetDeployInfo(params);
       Object.assign(packageInfo, data)
     }
-
+    console.log(111111111,artifactListData)
   } catch (error: any) {
     console.log("erro:", error)
   }
@@ -266,7 +269,9 @@ const setCurrentName = () => {
     } else {
       title.value = 'Deploy'
     }
-    currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
+    // 区分node和前端项目
+    const name = nodeType == '3' ? 'Node' : 'Frontend'
+    currentName.value = `${name} ${title.value}_#${workflowsDetailsData.execNumber}`
   }
 }
 // 判断跳转来源
