@@ -22,14 +22,14 @@
                 </div>
               </a-radio>
               <a-radio :style="radioStyle" value="3">Blockchain Node (Polkadot Only)
-                <div>Set up a workflow to automatic build and deploy your Node code</div>
+                <div class="radio-sub">Set up a workflow to automatic build and deploy your Node code</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item class="new-label" label="Code Repositiory">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
               <a-radio :style="radioStyle" value="1" :disabled="formData.type==3">Create a new repository by template
-                <div class="radio-sub">Implement core standards with our contract template for easily build your app.
+                <div>Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">Use an existing repository
@@ -68,7 +68,7 @@
                 <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">Container
-                <div>Package the front-end code into a Docker image and upload it to container service</div>
+                <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
