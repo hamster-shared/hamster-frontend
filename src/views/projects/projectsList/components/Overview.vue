@@ -42,7 +42,7 @@
           </label> -->
           <label class="action-button-item">
             <label class="action-icon mx-[8px]">
-              <svg-icon :name="item.url" size="15" />
+              <svg-icon :name="item.url" size="15" :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}"/>
             </label>
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
@@ -141,11 +141,11 @@
           <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
-          <div class="open-link-css cursor-pointer inline-block"
+          <!-- <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 2">
             View Now
-            </div>
+            </div> -->
           <div v-else>
             <div v-if="projectType === '1'">
               <div class="open-link-css cursor-pointer inline-block"
