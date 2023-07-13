@@ -17,7 +17,7 @@
       <div class="ml-[64px] w-3/5">
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex">
-          <div class="text-ellipsis mr-[12px] cursor-pointer" :class="props.nodeType=='3'?'':'open-link-css'" @click="openDomain">
+          <div class="text-ellipsis mr-[12px] " :class="props.nodeType=='3'?'':'open-link-css cursor-pointer'" @click="openDomain">
             {{ packageInfo.domain }}
           </div>
           <div v-if="props.nodeType!='3'" class="w-[20px] flex items-center">
