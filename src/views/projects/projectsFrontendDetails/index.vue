@@ -143,7 +143,7 @@ const copyUrl = () => {
 
 const visitBtn = () => {
   // https://polkadot.js.org/apps/?rpc=wss://jian-guo-s-0711.hamster.newtouch.com
-  if(nodeType=='3'){
+  if(nodeType.value=='3'){
     const url = `https://polkadot.js.org/apps/?rpc=${packageInfo?.domain}`
     window.open(url)
   }else{
