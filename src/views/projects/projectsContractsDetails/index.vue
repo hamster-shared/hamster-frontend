@@ -90,7 +90,7 @@
 
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onBeforeMount, type HtmlHTMLAttributes,onMounted } from "vue";
+import { ref, reactive, onBeforeMount } from "vue";
 import { message } from 'ant-design-vue'
 import { useRouter,useRoute } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";

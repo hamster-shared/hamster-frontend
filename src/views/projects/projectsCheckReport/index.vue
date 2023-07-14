@@ -8,6 +8,7 @@
   <Solhint :gistId="gistId" :workflowsDetailsData="workflowsDetailsData" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Solhint' && params.checktype == 'Solhint' "></Solhint>
   <MyThril :gistId="gistId" :metaTrustData="metaTrustData" v-if="metaTrustData.checkTool === 'Mythril' && params.checktype == 'Mythril' "></MyThril>
   <GasUsageReport :gasUsageReportData="gasUsageReportData" v-if="params.checktype == 'gasInfoDetail' "></GasUsageReport>
+  <MetaScan :checkType="params.checktype"></MetaScan>
 </template>
 
 <script lang="ts" setup>
@@ -19,6 +20,7 @@
   import MetaTrustSA from './components/metaTrustSA.vue';
   import MetaTrustCQ from './components/metaTrustCQ.vue';
   import Solhint from './components/solhint.vue';
+  import MetaScan from './components/MetaScan.vue'
   import WorkflowsInfo from '../projectsWorkflows/components/WorkflowsInfo.vue';
   import GasUsageReport from '../projectsWorkflows/components/GasUsageReport.vue'
   import { apiGetProjectsDetail } from "@/apis/projects";
@@ -144,7 +146,7 @@ const judgeOrigin = ()=>{
     },
     {
       breadcrumbName:query?.currentName?.replace('[','#'),
-      path:localStorage.getItem('evmCheckWorkflow')
+      path:`/projects/${queryJson.id}/${queryJson.workflowsId}/workflows/${queryJson.workflowDetailId}/${queryJson.projectType}/${queryJson.type}`
     },
     {
       breadcrumbName:'Check Report',

@@ -13,6 +13,7 @@
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
+            <label v-else-if="viewInfo.frameType == 1">Polkadot</label>
           </div>
           <!-- 这里 -->
           <div v-if="viewInfo.labelDisplay"
@@ -41,12 +42,12 @@
           </label> -->
           <label class="action-button-item">
             <label class="action-icon mx-[8px]">
-              <svg-icon :name="item.url" size="15" />
+              <svg-icon :name="item.url" size="15" :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}"/>
             </label>
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -105,18 +106,22 @@
             @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)">
             Check Now
           </div> -->
-
-          <div class="open-link-css cursor-pointer inline-block"
-            @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
-            v-if="viewInfo.recentCheck.status === 0">
-            <span>Check Now</span>
+          <div v-if="projectType === '3'">Check Now</div>
+          <div v-else>
+            <div class="open-link-css cursor-pointer inline-block"
+              @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
+              :style="{cursor: viewInfo.type == '3' ? 'default' : 'cursor'}"
+              v-if="viewInfo.recentCheck.status === 0">
+              <span>Check Now</span>
+            </div>
+            <div class="open-link-css cursor-pointer inline-block"
+              @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
+              v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
+            <div class="open-link-css cursor-pointer inline-block"
+              @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>
+              View Now
+            </div>
           </div>
-          <div class="open-link-css cursor-pointer inline-block"
-            @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)"
-            v-else-if="viewInfo.recentCheck.status === 1 || viewInfo.recentCheck.status === 4">View Process</div>
-          <div class="open-link-css cursor-pointer inline-block"
-            @click="goContractCheck(viewInfo.id, viewInfo.recentCheck.workflowId, viewInfo.recentCheck.id)" v-else>View
-            Now</div>
         </div>
 
         <div>
@@ -136,11 +141,11 @@
           <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 1 || viewInfo.recentBuild.status === 4">View Process</div>
-          <div class="open-link-css cursor-pointer inline-block"
+          <!-- <div class="open-link-css cursor-pointer inline-block"
             @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)"
             v-else-if="viewInfo.recentBuild.status === 2">
             View Now
-            </div>
+            </div> -->
           <div v-else>
             <div v-if="projectType === '1'">
               <div class="open-link-css cursor-pointer inline-block"
@@ -148,8 +153,22 @@
                 View Now
               </div>
             </div>
-            <div class="open-link-css cursor-pointer inline-block"
-              @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)" v-else>Deploy Now</div>
+            <div v-else-if="projectType === '2'">
+              <div v-if="viewInfo.recentBuild.status === 3" class="open-link-css cursor-pointer inline-block"
+                @click="goContractDeploy(viewInfo.id, viewInfo.recentBuild.status)">
+                Deploy Now
+              </div>
+              <div v-else-if="viewInfo.recentBuild.status === 2" class="open-link-css cursor-pointer inline-block"
+                @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" >
+                View Now
+              </div>
+            </div>
+            <div v-else-if="projectType === '3'">
+              <div class="open-link-css cursor-pointer inline-block"
+                @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" >
+                View Result
+              </div>
+            </div>
           </div>
         </div>
 
@@ -168,6 +187,7 @@
                 {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
               </div>
             </div>
+
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
             <div v-else class="open-link-css cursor-pointer inline-block">
               <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
@@ -184,10 +204,29 @@
                   fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
               </div>
             </div>
+            
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
-            <div v-else class="open-link-css cursor-pointer inline-block"
-              @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
-              View FrontEnd</div>
+            <div v-else>
+              <div v-if="projectType === '2'">
+                <div class="open-link-css cursor-pointer inline-block"
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
+                  View FrontEnd
+                </div>
+              </div>
+              <div v-else-if="projectType === '3'">
+                <div class="open-link-css cursor-pointer inline-block"
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" 
+                  v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
+                  View Process
+                </div>
+                <!-- polkdot -->
+                <div class="open-link-css cursor-pointer inline-block"
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" 
+                  v-else>
+                  View Result
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -272,7 +311,8 @@ const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
   workflowDetailId: viewInfo?.value.recentDeploy.id,
-  projectType: projectType?.value
+  projectType: projectType?.value,
+  operateType: 1,
 });
 
 const starknetVisible = ref(false);
@@ -287,9 +327,14 @@ const goDetail = (id: string, type: string) => {
   router.push("/projects/" + id + "/details/" + type);
 }
 const projectsAction = (val: any, type: string, e: Event) => {
+  // Polkadot 的 check禁掉
+  if(val.type=='3' && type=='Check'){
+    return
+  }
+  console.log("projectsAction val:",val);
   switch (type) {
     case 'Check':
-      projectsCheck(val.id, val.recentCheck.status, e);
+      projectsCheck(val.id, val.recentCheck, e);
       break;
     case 'Build':
       projectsBuild(val.id, val.recentBuild, val.frameType,val.type);
@@ -298,7 +343,7 @@ const projectsAction = (val: any, type: string, e: Event) => {
       projectsDeploy(val.id, val.recentBuild.version, val.recentBuild.status);
       break;
     case 'Ops':
-      projectsOps(val.id, val.recentDeploy);
+      projectsOps(val.id, val.recentDeploy, val.type);
       break;
     default: break;
   }
@@ -326,16 +371,22 @@ const getDoneData =async (myArray:string[]) => {
       console.log(res,'done按钮接口数据');
       evmCheckVisible.value = false
 
-      await apiProjectsCheck(projectId.value);
+      const { data } = await apiProjectsCheck(projectId.value);
       loadView();
 
-      message.info("The workflow of checking is running, view now.")
+      setMsgShow(data.workflowId, data.detailId, 'check', 1);
+      // message.info("The workflow of checking is running, view now.")
     } else {
       message.warning('Please choose tools');
     }
 }
 // check
-const projectsCheck = async (id: string, status: number, e: Event) => {
+const projectsCheck = async (id: string, checkData: any, e: Event) => {
+  // Polkadot 的 check禁掉
+  if(props.viewInfo.type=='3'){
+    return
+  }
+  console.log('projectsCheck~~~~')
   // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
   //   e.stopPropagation()
   // } else {
@@ -352,12 +403,16 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
           if(JSON.stringify(res.data) === "{}"){
             evmCheckVisible.value=true
           } else {
-            await apiProjectsCheck(id);
+            const { data } = await apiProjectsCheck(id);
+            if (checkData.status !== 1) {
+              
+              setMsgShow(data.workflowId, data.detailId, 'check', 1);
+            }
             loadView();
           }
         }
       }
-      if (status === 1) {
+      if (checkData.status === 1) {
         // 点击check按钮，提示
         message.info(t('project.pipeline_executing_now'));
       } else {
@@ -365,17 +420,21 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
         if (props.viewInfo.frameType === 1 && projectType.value === '1') {
           // evm 没有数据时，弹框唤起不吐丝
           if (!evmCheckVisible.value) {
-            message.info("The workflow of checking is running, view now.")
+
+            setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
+            // message.info("The workflow of checking is running, view now.")
           }
         } else {
-          const res = await apiProjectsCheck(id);
-          message.success(res.message);
+          const { data } = await apiProjectsCheck(id);
+          
+          setMsgShow(data.workflowId, data.detailId, 'check', 1);
+          // message.success(res.message);
           loadView();
         }
       }
     } catch (error: any) {
       console.log("erro:", error)
-      message.error(error.response.data.message);
+      message.error('Failed ',error);
     } finally {
       // loading.value = false;
     }
@@ -384,25 +443,20 @@ const projectsCheck = async (id: string, status: number, e: Event) => {
 
 const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
-    if (projectType?.value === "1") {
+    if (projectType?.value === "1" && false) {
       // message.info("Executing Now，please wait a moment.");
       // message.info("The workflow of building is running, view now.")
       message.info(t('project.pipeline_buiding_now'));
     } else {
-      msgParam.value.workflowsId = buildData.workflowId;
-      msgParam.value.workflowDetailId = buildData.id;
-      msgType.value = 'build';
-      setMsgShow();
+      setMsgShow(buildData.workflowId, buildData.id, 'build', 2);
     }
   } else {
-    const res = await apiProjectsBuild(id);
-    if (projectType?.value === "1") {
+    const { data } = await apiProjectsBuild(id);
+    if (projectType?.value === "1" && false) {
       // message.success(res.message);
     } else {
-      msgParam.value.workflowsId = res.workflowId;
-      msgParam.value.workflowDetailId = res.detailId;
-      msgType.value = 'build';
-      setMsgShow();
+    
+      setMsgShow(data.workflowId, data.detailId, 'build', 2);
     }
     loadView();
   }
@@ -427,10 +481,8 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
         message.info("Executing Now，please wait a moment.");
       } else {
         const { data } = await apiAptosBuild(id)
-        msgParam.value.workflowsId = data.workflowId;
-        msgParam.value.workflowDetailId = data.id;
-        msgType.value = 'build';
-        setMsgShow();
+    
+        setMsgShow(data.workflowId, data.detailId, 'build', 2);
 
         loadView();
       }
@@ -469,7 +521,7 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
   //   message.info("Smart contract not available.")
   // }
 };
-const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
+const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
       // message.info("Smart contract not avaliable.");
@@ -479,7 +531,7 @@ const projectsOps = async (id: string, recentDeploy: RecentDeployItem) => {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1'
+    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
     router.push(path);
   }
 };
@@ -488,13 +540,11 @@ const loadView = async () => {
   emit("loadProjects");
 };
 const goContractCheck = async (id: string, workflowId: string, detailId: string) => {
-  localStorage.removeItem('evmCheckWorkflow')
   localStorage.setItem("projectName", viewInfo.value.name)
   localStorage.setItem("frameType", viewInfo.value.frameType)
   localStorage.setItem("projectId", id)
   const path = "/projects/" + id + "/" + workflowId + "/workflows/" + detailId + "/1/" + projectType?.value
   router.push(path);
-  localStorage.setItem('evmCheckWorkflow',path)
 };
 
 const goContractBuild = async (id: string, workflowId: string, detailId: string) => {
@@ -556,10 +606,8 @@ const frontendDeploying = async () => {
       workflowDetailId: viewInfo?.value.recentBuild.id,
     });
     const { data } = await apiProjectsDeploy(params.value);
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgType.value = 'deploy';
-    setMsgShow();
+    
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     loadView();
   } catch (error: any) {
@@ -574,11 +622,8 @@ const hideAptosBuildVisible = () => {
 const aptosBuild = async(id:any)=>{
   try {
     const { data } = await apiAptosBuild(id.value)
-    console.log('aptosbuild::', data)
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgType.value = 'build';
-    setMsgShow();
+    
+    setMsgShow(data.workflowId, data.detailId, 'build', 2);
 
     loadView();
   } catch (err: any) {
@@ -595,10 +640,7 @@ const frontendContainerDeploy = async (apiContainerDeployParams?: Object) => {
     });
     const { data } = await apiProjectsContainerDeploy(params.value, apiContainerDeployParams);
 
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgType.value = 'deploy';
-    setMsgShow();
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     loadView();
   } catch (error: any) {
@@ -621,7 +663,11 @@ const frontendContainerCheck = async () => {
   }
 }
 
-const setMsgShow = () => {
+const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateTypeVal: any) => {
+  msgParam.value.workflowsId = workflowId;
+  msgParam.value.workflowDetailId = detailId;
+  msgParam.value.operateType = operateTypeVal;
+  msgType.value = msgTypeVal;
   showMsg.value = true;
   setTimeout(function () {
     showMsg.value = false;
@@ -631,7 +677,7 @@ const setMsgShow = () => {
 
 const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
   if (recentDeploy.status === 3) { //success
-    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}`);
+    router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}?type=${viewInfo.value.type}`);
   } else {
     router.push(`/projects/${id}/${recentDeploy.workflowId}/workflows/${recentDeploy.id}/3/${projectType?.value}`);
   }

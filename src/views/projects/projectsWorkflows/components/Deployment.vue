@@ -17,10 +17,10 @@
       <div class="ml-[64px] w-3/5">
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex">
-          <div class="text-ellipsis mr-[12px] cursor-pointer open-link-css" @click="openDomain">
+          <div class="text-ellipsis mr-[12px] " :class="props.nodeType=='3'?'':'open-link-css cursor-pointer'" @click="openDomain">
             {{ packageInfo.domain }}
           </div>
-          <div class="w-[20px] flex items-center">
+          <div v-if="props.nodeType!='3'" class="w-[20px] flex items-center">
             <img src="@/assets/icons/link-white.svg" class="h-[18px] cursor-pointer dark:hidden" @click="copyDomain" />
             <img src="@/assets/icons/link-dark.svg" class="h-[18px] cursor-pointer hidden dark:inline-block"
               @click="copyDomain" />
@@ -32,8 +32,11 @@
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">
               {{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}
             </div>
-            <div class="title-text title-m">Package</div>
-            <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
+            <!-- 为了快速区分前端和node，先写成这样后期时间充裕了再改 -->
+            <div v-if="props.nodeType!='3'" class="title-text title-m">Package</div>
+            <div v-if="props.nodeType!='3'" class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
+            <div v-if="props.nodeType=='3'" class="title-text title-m">Image</div>
+            <div v-if="props.nodeType=='3'" class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{ packageInfo.name }}</div>
             <div class="title-text title-m">Branch</div>
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex items-center">
               <img src="@/assets/icons/master-white.svg" class="h-[20px] mr-1 dark:hidden" />
@@ -86,6 +89,10 @@ const props = defineProps<{
     type: Boolean,
     default: true,
   },
+  nodeType:{
+    type:String,
+    default:undefined
+  }
 }>()
 
 // const props = defineProps({
@@ -105,11 +112,15 @@ const props = defineProps<{
 // }
 
 const toDetail = () => {
-  router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}/${props.workflowsDetailsData?.packageId}`)
+  router.push(`/projects/${props.workflowsDetailsData?.workflowsId}/frontend-details/${props.workflowsDetailsData?.workflowDetailId}/${props.workflowsDetailsData?.packageId}?type=${props.nodeType}`)
 }
 
 const openDomain = () => {
-  window.open(props.packageInfo?.domain)
+  if(props.nodeType=='3'){
+    return
+  }else{
+    window.open(props.packageInfo?.domain)
+  }
 }
 
 const copyDomain = async () => {

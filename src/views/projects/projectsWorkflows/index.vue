@@ -24,7 +24,7 @@
         :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
         :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true">
+      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
       </Deployment>
     </div>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
@@ -58,6 +58,7 @@ const queryJson = reactive({
   type: params.type,
   projectType: params.projectType,
 })
+const nodeType = query.type
 const detailTimer = ref();
 const title = ref('');
 const currentName = ref('');
@@ -117,7 +118,8 @@ const getWorkflowsDetails = async () => {
 }
 
 const loadInfo = () => {
-  if (queryJson.projectType === '2') {
+  // 前端和Polkdot都走package接口
+  if (queryJson.projectType === '2' || queryJson.projectType === '3') {
     queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
   } else {
     queryJson.type === '1' ? getCheckReport() : getContractList();
@@ -213,14 +215,15 @@ const getWorkflowPackage = async () => {
       workflowsId: queryJson.workflowsId,
       workflowDetailId: queryJson.workflowDetailId,
     }
-    if (queryJson.type === '2') {
+    // debugger
+    // 前端和Polkdot都走package接口
+    if ( query.type!='3' && (queryJson.type === '2' || queryJson.projectType === '3')) {
       const { data } = await apiGetPackagesList(params);
       Object.assign(artifactListData, data)
     } else {
       const { data } = await apiGetDeployInfo(params);
       Object.assign(packageInfo, data)
     }
-
   } catch (error: any) {
     console.log("erro:", error)
   }
@@ -265,7 +268,9 @@ const setCurrentName = () => {
     } else {
       title.value = 'Deploy'
     }
-    currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
+    // 区分node和前端项目
+    const name = queryJson.projectType === '3' ? 'Node' : 'Frontend'
+    currentName.value = `${name} ${title.value}_#${workflowsDetailsData.execNumber}`
   }
 }
 // 判断跳转来源

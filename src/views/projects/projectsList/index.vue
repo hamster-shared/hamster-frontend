@@ -37,6 +37,18 @@
             <NoData></NoData>
           </div>
         </a-tab-pane>
+        <a-tab-pane key="3" tab="Node">
+          <div v-if="totalNode > 0">
+            <div v-for="(item, index) in nodeList" :key="index">
+              <Overview :viewType="viewType" :projectType="activeKey" :viewInfo="item" @loadProjects="getProjects" />
+            </div>
+            <a-pagination :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" @change="onChange"
+              @showSizeChange="onShowSizeChange" :current="currentNode" :total="totalNode" size="small" />
+          </div>
+          <div v-else>
+            <NoData></NoData>
+          </div>
+        </a-tab-pane>
       </a-tabs>
     </div>
   </div>
@@ -65,21 +77,35 @@ const viewType = ref("list");
 const activeKey = ref("1");
 const currentContract = ref(1);
 const currentFrontend = ref(1);
+const currentNode = ref(1)
 const totalContract = ref(0);
 const totalFrontend = ref(0);
+const totalNode = ref(0);
 const pageSize = ref(10);
 const contractList = ref([]);
 const frontentList = ref([]);
+const nodeList = ref([])
 
 const onChange = (pageNumber: number) => {
-  activeKey.value === "1" ? currentContract.value = pageNumber : currentFrontend.value = pageNumber;
-  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+  if(activeKey.value === "1"){
+    currentContract.value = pageNumber
+  }else if(activeKey.value === "2"){
+    currentFrontend.value = pageNumber;
+  }else{
+    currentNode.value = pageNumber;
+  }
+  getList(activeKey.value)
 }
 const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
   pageSize.value = pageSizeVal;
-  activeKey.value === "1" ? currentContract.value = currentVal : currentFrontend.value = currentVal;
-  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
-
+  if(activeKey.value === "1"){
+    currentContract.value = currentVal
+  }else if(activeKey.value === "2"){
+    currentFrontend.value = currentVal;
+  }else{
+    currentNode.value = currentVal;
+  }
+  getList(activeKey.value)
 }
 
 const goCreateProject = () => {
@@ -98,9 +124,20 @@ onMounted(() => {
   if (window.localStorage.getItem("projectActiveKey") != undefined && window.localStorage.getItem("projectActiveKey") != "") {
     activeKey.value = window.localStorage.getItem("projectActiveKey");
   }
-  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+  getList(activeKey.value)
   tokenFrom()
 })
+
+// 获取不同的项目列表
+const getList = (activeKey:string)=>{
+  if(activeKey==='1'){
+    getProjectsContract(activeKey)
+  }else if(activeKey==='2'){
+    getProjectsFrontend(activeKey)
+  }else{
+    getProjectsNode(activeKey)
+  }
+}
 
 // 判断token是钱包的还是真实
 const tokenFrom = ()=>{
@@ -123,19 +160,16 @@ const closeGuide = () => {
 const goSearch = async () => {
   currentContract.value = 1;
   currentFrontend.value = 1;
-  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+  getList(activeKey.value)
 }
 
 const getProjects = () => {
-  activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+  getList(activeKey.value)
 }
 
 const handleTabClick = (tab: any) => {
-  if (tab === "1") {
-    getProjectsContract('1')
-  } else {
-    getProjectsFrontend('2')
-  }
+  console.log('handleTabClick',tab)
+  getList(tab)
   window.localStorage.setItem("projectActiveKey", tab);
 }
 
@@ -175,7 +209,7 @@ const projectRunning = (projectList: any) => {
   if (isRunning.value === true) {
     timer.value = setTimeout(() => {
       // 其他定时执行的方法
-      activeKey.value === "1" ? getProjectsContract('1') : getProjectsFrontend('2');
+      getList(activeKey.value)
     }, 5000)
   } else {
     clearTimeout(timer.value);
@@ -207,6 +241,34 @@ const getProjectsFrontend = async (type: string | undefined) => {
     // loading.value = false;
   }
 };
+// 获取node列表
+const getProjectsNode = async (type: string | undefined) => {
+  console.log('获取node列表')
+  try {
+    const params = {
+      query: keyword.value,
+      size: pageSize.value,
+      type: type,
+      page: currentFrontend.value,
+    }
+    const { data } = await apiGetProjects(params);
+    if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
+      if (activeKey.value === "1") {
+        goCreateProject();
+      } else {
+        getProjectsContract('1');
+      }
+    } else {
+      nodeList.value = data.data;
+      totalNode.value = data.total;
+    }
+    projectRunning(nodeList.value);
+  } catch (error: any) {
+    console.log("erro:", error)
+  } finally {
+    // loading.value = false;
+  }
+}
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;

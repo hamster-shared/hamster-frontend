@@ -10,6 +10,7 @@
             <div v-if="projectsDetail.frameType === 4">StarkWare</div> -->
           </label>
           <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[projectsDetail.deployType] }}</label>
+          <label v-else-if="projectsDetail.type == '3'">Polkadot</label>
         </div>
          <!-- 在这里 -->
          <div
@@ -64,7 +65,11 @@
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '2'" key="2" tab="Image">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
-        <a-tab-pane key="3" tab="Report">
+        <!-- polkdot  -->
+        <a-tab-pane v-if="params.type === '3'" key="2" tab="Image">
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" :nodeType="projectsDetail.type"/>
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="Report" v-if="params.type != '3'">
           <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
         </a-tab-pane>
       </a-tabs>
@@ -134,7 +139,7 @@ const router = useRouter();
 const { params } = useRoute();
 const timer = ref();
 const projectType = ref(params.type);
-const activeKey = ref(params.type);
+const activeKey = ref();
 const loading = ref(false)
 const detailId = ref(params.id);
 const viewType = ref("detail");
@@ -267,6 +272,13 @@ const formRules = computed(() => {
 
 onMounted(async() => {
   await getProjectsDetail();
+  // 处理 polkdot
+  if(params.type=='3'){
+    activeKey.value = '2'
+  }else{
+    activeKey.value = params.type
+  }
+  // 导航栏
   breadCrumbInfo.value = [
     {
       breadcrumbName:'Projects',

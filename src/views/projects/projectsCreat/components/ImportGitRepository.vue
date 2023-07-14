@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
-      <span class="text-sm open-link-css cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
+      <span v-if="props.projectType != '3'" class="text-sm open-link-css cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
     </div>
     <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue" placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
 
@@ -131,6 +131,15 @@
     importRepositoryFrontEndProjectUrl?: string
   }>({});
 
+  // 导入polkdot参数
+  const polkdotNodeParams = reactive<any>({
+    name:'',
+    ecosystem:1,
+    cloneUrl:'',
+    type:3,
+    deployType:2
+  })
+
   let reg = /^((git|ssh|http(s)?)|(git@[\w.]+))(:(\/\/)?)([\w.@:/\-~]+)(\.git)(\/)?$/
   const contractRules = { 
     importRepositoryContractProjectUrl:[{ 
@@ -242,7 +251,7 @@
       frontEndRepositoryVisible.value = true
     }
   }
-  const handleImport = (item:any)=>{
+  const handleImport = async(item:any)=>{
     console.log('handleImport:',item)
     //选择project type为1时（contract), 点击Import按钮展示contractImportVisible的modal弹框
     if (props.projectType == '1'){
@@ -250,11 +259,22 @@
       contractRepositoryVisible.value = false
       contractFormData.value.projectName = item.name
       contractFormData.value.importRepositoryContractProjectUrl = item.githubUrl
-    } else {
+    } else if(props.projectType == '2'){
       frontEndImportVisible.value = true
       frontEndRepositoryVisible.value = false
       frontEndFormData.value.frontEndProjectName = item.name
       frontEndFormData.value.importRepositoryFrontEndProjectUrl = item.githubUrl
+    } else if (props.projectType == '3'){
+      polkdotNodeParams.name = item.name;
+      polkdotNodeParams.cloneUrl = item.githubUrl
+      try {
+        const { data } = await apiPostRepository(polkdotNodeParams)
+        console.log('contractRepositoryVisible-data:', data)
+        router.push(`/projects/integrated/${data}?type=repository`)
+      } catch (err:any) {
+        console.log('contractRepositoryVisible-err:',err)
+        nameDupErrInfo.value = err.response.data.message
+      }
     }
   }
 
@@ -367,7 +387,7 @@
       border-radius: 0px 8px 8px 0px;
     }
     :deep(.ant-btn-icon-only){
-      height: 42px;
+      height: 38px;
       width: 50px;
       background: rgba(226,181,120,0.1);
       color: #E2B578 !important;
@@ -402,6 +422,7 @@
       :deep(.ant-btn-icon-only){
         background: rgba(226, 181, 120, 0.1);
         border-left: 0px;
+        border-color: #434343;
       }
     }
 

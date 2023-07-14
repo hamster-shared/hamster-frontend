@@ -27,9 +27,13 @@ const props = defineProps({
   detailId: String,
   pageType: String,
   packageListData: Array,
-  deployType:String
+  deployType:String,
+  nodeType:{
+    type:String,
+    default:undefined
+  }
 });
-const { pageType, detailId, packageListData } = toRefs(props);
+const { pageType, detailId, packageListData,nodeType } = toRefs(props);
 
 const router = useRouter();
 const containerVisible = ref(false);
@@ -211,7 +215,7 @@ const setMsgShow = (data:any) => {
 }
 
 const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
-  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId);
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId + '?type=' + nodeType.value);
 }
 
 // const downloadAbi = (val: any) => {

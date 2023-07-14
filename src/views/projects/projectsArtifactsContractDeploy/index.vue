@@ -431,11 +431,11 @@ const addToChain = (chainId: string) => {
         chainId: `0x${chainId}`,
         chainName: chainName.value,
         rpcUrls: [rpcUrl.value],
-        // nativeCurrency: {
-        //   name: 'Hm',
-        //   symbol: 'M',
-        //   decimals: 18,
-        // },
+        nativeCurrency: {
+          // name: 'Hm',
+          symbol: 'ETH',
+          decimals: 18,
+        },
       },
     ],
   }).then((res: any) => {
@@ -720,6 +720,10 @@ const changeChain = (val: string) => {
       url: 'https://api.node.glif.io/rpc/v1',
       networkName: 'Filecoin/Mainnet'
     }]
+  }else if(val === 'Scroll'){
+    networkData.value = [
+      {name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"}
+    ]
   }
 }
 
@@ -735,7 +739,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin'])
+        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Scroll'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
