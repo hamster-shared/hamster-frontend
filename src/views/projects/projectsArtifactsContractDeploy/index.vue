@@ -431,11 +431,11 @@ const addToChain = (chainId: string) => {
         chainId: `0x${chainId}`,
         chainName: chainName.value,
         rpcUrls: [rpcUrl.value],
-        // nativeCurrency: {
-        //   name: 'Hm',
-        //   symbol: 'M',
-        //   decimals: 18,
-        // },
+        nativeCurrency: {
+          // name: 'Hm',
+          symbol: 'ETH',
+          decimals: 18,
+        },
       },
     ],
   }).then((res: any) => {
@@ -675,7 +675,7 @@ const changeChain = (val: string) => {
   formState.network = undefined;
   if (val === 'Ethereum') {
     // ETH
-    networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }, {name: 'Ethereum/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
+    networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }, {name: 'Ethereum/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'},{name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"}]
   } else if (val === 'Polygon') {
     // 货币符号 currencySymbol = MATIC
     networkData.value = [{ name: 'Polygon/Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Polygon/Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
