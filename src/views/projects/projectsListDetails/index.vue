@@ -417,10 +417,10 @@ const aptosBuild = async (id: any) => {
   try {
     const { data } = await apiAptosBuild(id.value)
     console.log('aptosbuild::', data)
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgType.value = 'build';
-    setMsgShow();
+    // msgParam.value.workflowsId = data.workflowId;
+    // msgParam.value.workflowDetailId = data.detailId;
+    // msgType.value = 'build';
+    // setMsgShow();
   } catch (err: any) {
     console.log('err:', err)
   }
