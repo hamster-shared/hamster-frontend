@@ -396,7 +396,6 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
       if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
         projectId.value = id
         const res= await apiIsCheck(id)
-        console.log(id,'打印一下这个id',res?.data?.length);
         // message.destroy()
         if(res.code===200){
           // 如果没有数据就弹，有数据不弹
@@ -405,7 +404,6 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
           } else {
             const { data } = await apiProjectsCheck(id);
             if (checkData.status !== 1) {
-              
               setMsgShow(data.workflowId, data.detailId, 'check', 1);
             }
             loadView();
@@ -419,11 +417,10 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
         //判断是否为EVM 显示弹框
         if (props.viewInfo.frameType === 1 && projectType.value === '1') {
           // evm 没有数据时，弹框唤起不吐丝
-          if (!evmCheckVisible.value) {
-
-            setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
-            // message.info("The workflow of checking is running, view now.")
-          }
+          // if (!evmCheckVisible.value) {
+          //   setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
+          //   // message.info("The workflow of checking is running, view now.")
+          // }
         } else {
           const { data } = await apiProjectsCheck(id);
           

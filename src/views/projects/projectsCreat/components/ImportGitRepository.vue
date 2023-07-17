@@ -387,11 +387,12 @@
       border-radius: 0px 8px 8px 0px;
     }
     :deep(.ant-btn-icon-only){
-      height: 38px;
-      width: 50px;
+      height: 40px;
+      width: 52px;
       background: rgba(226,181,120,0.1);
       color: #E2B578 !important;
-      border: 1px solid #EBEBEB;
+      border: 0px;
+      // border: 1px solid #EBEBEB;
       border-radius: 0px 8px 8px 0px !important;
     }
   }
@@ -421,7 +422,7 @@
       }
       :deep(.ant-btn-icon-only){
         background: rgba(226, 181, 120, 0.1);
-        border-left: 0px;
+        border: 0px;
         border-color: #434343;
       }
     }
