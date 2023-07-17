@@ -48,25 +48,25 @@
                 </div>
                 <div>
                   <div class="font-medium text-[#000000]">Configure Check Tools(first time)</div>
-                  <div class="mt-[10px] text-[14px] ">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
+                  <div class="mt-[6px] text-[14px] ">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
                 </div>
               </div>
-              <div class="mt-[15px] text-[18px] leading-[24px] text-[#73706E] flex">
+              <div class="mt-[6px] text-[18px] leading-[24px] text-[#73706E] flex">
                 <div>
                   <div class="rounded-num">2</div>
                 </div>
                 <div>
                   <div class="font-medium text-[#000000]">Click ”Check” Button</div>
-                  <div class="mt-[10px] text-[14px] ">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
+                  <div class="mt-[6px] text-[14px] ">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
                 </div>
               </div>
-              <div class="mt-[15px] text-[18px] leading-[24px] text-[#73706E] flex">
+              <div class="mt-[6px] text-[18px] leading-[24px] text-[#73706E] flex">
                 <div>
                   <div class="rounded-num">3</div>
                 </div>
                 <div>
                   <div class="font-medium text-[#000000]">View Check Report</div>
-                  <div class="mt-[10px] text-[14px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
+                  <div class="mt-[6px] text-[14px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
                 </div>
               </div>
             </div>
