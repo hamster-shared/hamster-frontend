@@ -314,7 +314,7 @@
       const params = {
         name: contractFormData.value.projectName,
         ecosystem: +contractFormData.value.contractSelectChain,
-        cloneUrl: !contractRepositoryVisible.value? contractFormData.value.importRepositoryContractProjectUrl : importUrl.value.githubUrl,
+        cloneUrl: contractRepositoryVisible.value? contractFormData.value.importRepositoryContractProjectUrl : importUrl.value.githubUrl,
         type: 1,
       }
       try {
@@ -344,7 +344,7 @@
       const params = {
         name: frontEndFormData.value.frontEndProjectName,
         ecosystem: +frontEndFormData.value.frontEndSelectFramework,
-        cloneUrl: !frontEndRepositoryVisible.value? frontEndFormData.value.importRepositoryFrontEndProjectUrl : importUrl.value.githubUrl,
+        cloneUrl: frontEndRepositoryVisible.value? frontEndFormData.value.importRepositoryFrontEndProjectUrl : importUrl.value.githubUrl,
         type: 2,
         deployType: +frontEndFormData.value.frontEndMethod
       }

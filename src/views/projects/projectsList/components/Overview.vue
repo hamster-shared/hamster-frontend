@@ -443,21 +443,10 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
 
 const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
-    if (projectType?.value === "1" && false) {
-      // message.info("Executing Now，please wait a moment.");
-      // message.info("The workflow of building is running, view now.")
-      message.info(t('project.pipeline_buiding_now'));
-    } else {
-      setMsgShow(buildData.workflowId, buildData.id, 'build', 2);
-    }
+    setMsgShow(buildData.workflowId, buildData.id, 'build', 2);
   } else {
     const { data } = await apiProjectsBuild(id);
-    if (projectType?.value === "1" && false) {
-      // message.success(res.message);
-    } else {
-    
-      setMsgShow(data.workflowId, data.detailId, 'build', 2);
-    }
+    setMsgShow(data.workflowId, data.detailId, 'build', 2);
     loadView();
   }
 }
