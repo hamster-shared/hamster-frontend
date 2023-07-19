@@ -28,7 +28,8 @@ export const getMetatrustInfoByToolname = (name:string)=>{
         case 'MetaTrust Open Source Analyzer':
             MetatrustInfo.title = 'MetaScan Open Source Analyzer';
             MetatrustInfo.description = "Open Source Analyzer is used to identify, monitor and manage the various components of software and their dependencies. It provides developers and security experts with a way to gain a deeper understanding of how software is composed, enabling them to more effectively manage risks and ensure system security.";
-            MetatrustInfo.content = ["Automatically detect the open source components and version information used in the software, which helps track and manage open source dependencies.","Review the licenses of software components to ensure the enterprise complies with relevant regulations and compliance requirements.","Identify known security vulnerabilities and risks to help developers fix vulnerabilities and reduce system security risks in a timely manner.","Analyze the dependency structure between components to help developers understand the interaction between components and potential risk points."];
+            // "Automatically detect the open source components and version information used in the software, which helps track and manage open source dependencies.","Review the licenses of software components to ensure the enterprise complies with relevant regulations and compliance requirements.","Identify known security vulnerabilities and risks to help developers fix vulnerabilities and reduce system security risks in a timely manner.","Analyze the dependency structure between components to help developers understand the interaction between components and potential risk points."
+            MetatrustInfo.content = [];
             MetatrustInfo.isMetatrust = true;
             break;
         case 'Solhint':
