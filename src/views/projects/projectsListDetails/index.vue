@@ -70,7 +70,7 @@
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" :nodeType="projectsDetail.type"/>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report" v-if="params.type != '3'">
-          <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
+          <Report ref="reportRef" :detailId="detailId" :projectType="projectType" :frameType="frameType"/>
         </a-tab-pane>
       </a-tabs>
     </div>
