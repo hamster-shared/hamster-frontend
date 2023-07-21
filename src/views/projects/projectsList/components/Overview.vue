@@ -500,7 +500,12 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
       goFrontendDeploy();
     }
     else {
-      message.info("Project image not avaliable");
+      // 前端并且是ipfs的时候
+      if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+        message.info("Package not avaliable");
+      }else{
+        message.info("Project image not avaliable");
+      }
     }
   }
   // if(viewInfo.labelDisplay===""){
@@ -516,7 +521,7 @@ const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:num
     }
   } else {
     if (recentDeploy.version === "") {
-      message.info(t('Smart project not avaliable.'));
+      message.info(t('Project not avaliable.'));
     }else{
       const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
       router.push(path);
