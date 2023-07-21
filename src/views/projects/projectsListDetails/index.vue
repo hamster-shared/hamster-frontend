@@ -67,7 +67,7 @@
         </a-tab-pane>
         <!-- polkdot  -->
         <a-tab-pane v-if="params.type === '3'" key="2" tab="Image">
-          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" :nodeType="projectsDetail.type"/>
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="Report" v-if="params.type != '3'">
           <Report ref="reportRef" :detailId="detailId" :projectType="projectType" :frameType="frameType"/>

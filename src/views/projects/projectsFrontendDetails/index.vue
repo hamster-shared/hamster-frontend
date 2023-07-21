@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
+      <bread-crumb :routes="breadCrumbInfo"/>
       <div class="flex">
         <a-button class="btn" @click="visitBtn">Visit</a-button>
         <a-dropdown class="w-[43px] border border-solid border-[#E2B578] rounded-[8px] ml-[20px] text-center">
@@ -47,7 +47,7 @@ import { useI18n } from 'vue-i18n';
 import { message } from "ant-design-vue";
 import { apiGetPackageDetail, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
 import { apiDeleteDeployInfo } from "@/apis/projects.ts";
-import Breadcrumb from '../components/Breadcrumb.vue';
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 import { useWebSocket } from '@vueuse/core'
 import "xterm/css/xterm.css";
@@ -57,7 +57,7 @@ import { FitAddon } from 'xterm-addon-fit'
 const { t } = useI18n();
 const router = useRouter();
 const { params,query } = useRoute();
-const currentName = ref('Deployment Detail');
+const breadCrumbInfo = ref<any>([])
 const packageInfo = reactive<any>({});
 const workflowsDetailsData = reactive({
   packageId: params.packageId,
@@ -160,9 +160,28 @@ const deleteBtn = async () => {
   }
 }
 
-onMounted(() => {
-  getPackageDetail();
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:packageInfo.name,
+      path:`/projects/${packageInfo.projectId}/details/${nodeType.value}`
+    },
+    {
+      breadcrumbName:'Deployment Detail',
+      path:''
+    },
+  ]
+}
+
+onMounted(async() => {
   getWorkflowsDetail();
+  await getPackageDetail();
+  judgeOrigin()
 })
 
 onBeforeUnmount(()=>{

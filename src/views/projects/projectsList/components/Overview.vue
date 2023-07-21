@@ -500,7 +500,7 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
       goFrontendDeploy();
     }
     else {
-      message.info("FrontEnd image not avaliable");
+      message.info("Project image not avaliable");
     }
   }
   // if(viewInfo.labelDisplay===""){
@@ -510,15 +510,17 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
-      // message.info("Smart contract not avaliable.");
-      // message.info(t('Smart contract not avaliable.'));
       message.info(t('Smart contract not avaliable.'));
     } else {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
-    router.push(path);
+    if (recentDeploy.version === "") {
+      message.info(t('Smart project not avaliable.'));
+    }else{
+      const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
+      router.push(path);
+    }
   }
 };
 const loadView = async () => {
