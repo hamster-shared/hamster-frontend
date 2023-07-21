@@ -183,17 +183,17 @@
   // }>({});
 
   // 导入polkdot参数
-  const polkdotNodeParams = reactive<any>({
-    name:'',
-    ecosystem:1,
-    cloneUrl:'',
-    type:3,
-    deployType:2
-  })
+  // const polkdotNodeParams = reactive<any>({
+  //   name:'',
+  //   ecosystem:1,
+  //   cloneUrl:'',
+  //   type:3,
+  //   deployType:2
+  // })
   const importVisible = ref(false);
   const repositoryVisible = ref(false);
   const importFormRef = ref();
-  const importFormData = ref({
+  const importFormData = ref<any>({
     name: '',
     ecosystem: '',
     cloneUrl: '',
@@ -340,11 +340,14 @@
   const handleImport = async(item:any)=>{
     console.log('handleImport:',item)
     //选择project type为1时（contract), 点击Import按钮展示contractImportVisible的modal弹框
+    importFormData.value.name = item.name;
+    importFormData.value.cloneUrl = item.githubUrl;
     if (props.projectType === '3') {
-      polkdotNodeParams.name = item.name;
-      polkdotNodeParams.cloneUrl = item.githubUrl
+      importFormData.value.ecosystem = 1;
+      importFormData.value.type = 3;
+      importFormData.value.deployType = 2;
       try {
-        const { data } = await apiPostRepository(polkdotNodeParams)
+        const { data } = await apiPostRepository(importFormData.value)
         console.log('contractRepositoryVisible-data:', data)
         router.push(`/projects/integrated/${data}?type=repository`)
       } catch (err:any) {
@@ -354,8 +357,6 @@
     } else {
       importVisible.value = true;
       repositoryVisible.value = false;
-      importFormData.value.name = item.name;
-      importFormData.value.cloneUrl = item.githubUrl;
     }
 
     // if (props.projectType == '1'){
@@ -431,6 +432,8 @@
     } else {
       importFormData.value.type = 2;
     }
+    importFormData.value.ecosystem = importFormData.value.ecosystem - 0;
+    importFormData.value.deployType = importFormData.value.deployType - 0;
     try {
       const { data } = await apiPostRepository(importFormData.value)
       router.push(`/projects/integrated/${data}?type=repository`)
