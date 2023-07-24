@@ -13,7 +13,8 @@
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
-            <label v-else-if="viewInfo.frameType == 1">Polkadot</label>
+            <!-- <label v-else-if="projectType === '2'">IC</label> -->
+            <label v-else-if="projectType === '3' && viewInfo.frameType == 1">Polkadot</label>
           </div>
           <!-- 这里 -->
           <div v-if="viewInfo.labelDisplay"
@@ -82,10 +83,6 @@
               main
             </div>
           </div>
-<!--          <div>-->
-<!--            <svg-icon name="white-link" size="16" />-->
-<!--            main-->
-<!--          </div>-->
         </div>
 
 

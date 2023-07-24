@@ -28,5 +28,6 @@ export enum FrontEndDeployTypeEnum {
   'IPFS' = 1,
   'Container' = 2,
   'Chainlink' = 3,
+  'IC' = 4
 }
 
