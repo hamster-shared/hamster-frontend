@@ -175,6 +175,8 @@
 
   const repositoryData = ref()
   const searchInputValue = ref('')
+  let importUrl = ref([])
+  let nameDupErrInfo = ref('')
 
   // const contractFormRef = ref();
   // const frontEndFormRef = ref();
@@ -424,8 +426,6 @@
   //   frontEndFormData.value.frontEndMethod = '2'
   // }
 
-  let importUrl = ref([])
-  let nameDupErrInfo = ref('')
   const handleDone = async () => {
     await importFormRef.value.validate()
     doneLoading.value = true
