@@ -242,6 +242,7 @@
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
+  <DeployIC :visible="showDeployIC" :type="deployICType" @CancelDeployIC="CancelDeployIC" />
 </template>
 
 <script lang='ts' setup>
@@ -252,6 +253,7 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
 //弹出层页面
 import Configure from './Configure.vue'
+import DeployIC from './DeployIC.vue';
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -267,6 +269,9 @@ import  { apiPostPopover } from "@/apis/workFlows";
 const { t } = useI18n()
 const theme = useThemeStore()
 const projectId = ref('')
+
+const showDeployIC = ref(false);
+const deployICType = ref('download');
 //点击关闭按钮
 const handleCancel=()=>{
     evmCheckVisible.value=false
@@ -698,6 +703,10 @@ const openInChainIDE = (data: any) => {
     url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
   }
   window.open(url)
+}
+
+const CancelDeployIC = () => {
+  showDeployIC.value = false;
 }
 </script>
 <style lang='less' scoped>
