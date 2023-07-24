@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { apiGetProjectsPackages, apiProjectsDeploy, apiProjectsContainerDeploy, apiContainerCheck } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../../projectsList/components/ContainerParam.vue';
@@ -28,14 +28,11 @@ const props = defineProps({
   pageType: String,
   packageListData: Array,
   deployType:String,
-  nodeType:{
-    type:String,
-    default:undefined
-  }
 });
-const { pageType, detailId, packageListData,nodeType } = toRefs(props);
+const { pageType, detailId, packageListData } = toRefs(props);
 
 const router = useRouter();
+const { params } = useRoute()
 const containerVisible = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -215,7 +212,7 @@ const setMsgShow = (data:any) => {
 }
 
 const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
-  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId + '?type=' + nodeType.value);
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId + '?type=' + params.type);
 }
 
 // const downloadAbi = (val: any) => {
