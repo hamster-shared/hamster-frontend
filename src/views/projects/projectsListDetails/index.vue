@@ -74,6 +74,7 @@
         </a-tab-pane>
       </a-tabs>
     </div>
+    <Canisters :detailId="detailId" ></Canisters>
   </div>
   <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
@@ -110,6 +111,7 @@ import Workflows from "./components/Workflows.vue";
 import Contract from "./components/Contract.vue";
 import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
+import Canisters from "./components/Canisters.vue";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../projectsList/components/ContainerParam.vue';
 import AptosBuildParams from "../projectsList/components/AptosBuildParams.vue";
