@@ -242,7 +242,8 @@
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
-  <DeployIC :visible="showDeployIC" :type="deployICType" @CancelDeployIC="CancelDeployIC" />
+  <DeployICDownload :visible="showDeployICDownload" @CancelDeployIC="CancelDeployICDownload" />
+  <DeployICTopUp :visible="showDeployICTopUp" @CancelDeployIC="CancelDeployICTopUp" />
 </template>
 
 <script lang='ts' setup>
@@ -253,7 +254,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
 //弹出层页面
 import Configure from './Configure.vue'
-import DeployIC from './DeployIC.vue';
+import DeployICDownload from './DeployICDownload.vue';
+import DeployICTopUp from './DeployICTopUp.vue';
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -270,8 +272,8 @@ const { t } = useI18n()
 const theme = useThemeStore()
 const projectId = ref('')
 
-const showDeployIC = ref(false);
-const deployICType = ref('download');
+const showDeployICDownload = ref(false);
+const showDeployICTopUp = ref(false);
 //点击关闭按钮
 const handleCancel=()=>{
     evmCheckVisible.value=false
@@ -705,8 +707,11 @@ const openInChainIDE = (data: any) => {
   window.open(url)
 }
 
-const CancelDeployIC = () => {
-  showDeployIC.value = false;
+const CancelDeployICDownload = () => {
+  showDeployICDownload.value = false;
+}
+const CancelDeployICTopUp = () => {
+  showDeployICTopUp.value = false;
 }
 </script>
 <style lang='less' scoped>
