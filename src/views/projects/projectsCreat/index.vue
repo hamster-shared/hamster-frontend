@@ -70,6 +70,9 @@
               <a-radio :style="radioStyle" value="2">Container
                 <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
               </a-radio>
+              <a-radio :style="radioStyle" value="3">Internet Computer
+                <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
+              </a-radio>
             </a-radio-group>
           </a-form-item>
         </a-form>

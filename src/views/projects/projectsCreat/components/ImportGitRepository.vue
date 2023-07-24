@@ -73,7 +73,15 @@
               <a-radio value="2">Container
                 <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
               </a-radio>
+              <a-radio value="3">Internet Computer
+                <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
+              </a-radio>
             </a-radio-group>
+          </a-form-item>
+          <a-form-item v-if="importFormData.deployType === '3'">
+            <div class="font-bold text-[18px]">dfx.json</div>
+            <div>The dfx.json file is the configuration manifest for Internet Computer projects, used to define basic project information and deployment settings.</div>
+            <div><a>Click here</a> to download the dfx.json file template, and place it in the root directory of your project, so that Hamster can locate and read the configuration.</div>
           </a-form-item>
         </div>
         <a-form-item class="text-center">
