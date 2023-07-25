@@ -390,3 +390,11 @@ export function apiPostRepository(params: apiPostRepositoryParams) {
     data: params,
   });
 }
+
+// 获取polkadot模板详情
+export function apiNodeTemplateDetail(id:string) {
+  return httpRequest({
+    url: `/api/chain-templates/${id}`,
+    method: "get",
+  });
+}
