@@ -85,5 +85,15 @@ const layoutClass = computed(() => {
   }
 }
 
+.dfx-css{
+  background: rgba(226,181,120,0.1);
+  border-radius: 0px 8px 0px 8px;
+  color: #E2B578;
+  font-size: 12px;
+  line-height: 24px;
+  width: 66px;
+  height: 24px;
+  text-align: center;
+}
 
 </style>

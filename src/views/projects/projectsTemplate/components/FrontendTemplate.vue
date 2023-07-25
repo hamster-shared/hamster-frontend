@@ -13,9 +13,12 @@
             class="dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid cursor-pointer">
             <img :src="val.image" class="w-full rounded-t-[12px]" />
             <div class="border-box dark:border-[#434343] border-[#EBEBEB]">
-              <div class="text-[16px] font-bold mb-[12px]">
-                <img :src="val.logo" class="w-[24px]" />
-                <span class="align-middle ml-[4px]">{{ val.name }}</span>
+              <div class="flex justify-between">
+                <div class="text-[16px] font-bold mb-[12px]">
+                  <img :src="val.logo" class="w-[24px]" />
+                  <span class="align-middle ml-[4px]">{{ val.name }}</span>
+                </div>
+                <div v-if="deployType === '3'" class="dfx-css">dfx</div>
               </div>
               <div class="text-[14px] dark:text-[#E0DBD2] text-[#BBBAB9]">{{ val.description }}</div>
               <div class="text-[16px] mt-[24px]">
@@ -48,6 +51,8 @@ const props = defineProps({
 });
 
 const { templatesCategory } = toRefs(props);
+const createFormData: any = JSON.parse(localStorage.getItem('createFormData')) || {};
+const deployType = createFormData.deployType;
 
 const toDetail = (val: any) => {
   localStorage.setItem('frontendTemplateDetail', JSON.stringify(val));
