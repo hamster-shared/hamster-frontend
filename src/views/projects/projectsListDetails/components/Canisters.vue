@@ -4,20 +4,31 @@
     <a-table class="my-4" :columns="tableColumns" :dataSource="tableList" :pagination="pagination">
       <template #bodyCell="{ column, record, index }">
         <template v-if="column.dataIndex === 'action'">
-          <label class="open-link-css cursor-pointer">Add Cycles</label>
+          <label class="open-link-css cursor-pointer" @click="handleAddCycles">Add Cycles</label>
         </template>
       </template>
     </a-table>
   </div>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
+  <AddCycles :visible="showAddCycle" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true"></AddCycles>
+  <BuyCycles :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
+import CustomMsg from '@/components/CustomMsg.vue';
+import AddCycles from "./AddCycles.vue"
+import BuyCycles from "./BuyCycles.vue"
 
 const props = defineProps({
   detailId: String
 });
 const { detailId } = toRefs(props);
+const showAddCycle = ref(false);
+const showBuyCycle = ref(false);
+const showMsg = ref(false);
+const msgType = ref('byCycles');
+const msgParam = ref({});
 
 const tableList = ref([{'name':'name'}]);
 
@@ -109,5 +120,15 @@ const getProjectsCanisters = async () => {
   // } finally {
   //   // loading.value = false;
   // }
+}
+
+const handleAddCycles = () => {
+  // showMsg.value = true; //显示提示信息
+  showAddCycle.value = true; //显示弹框
+
+  // showBuyCycle.value = true; //显示弹框
+}
+const cancelAddCycle = () => {
+  showAddCycle.value = false;
 }
 </script>
