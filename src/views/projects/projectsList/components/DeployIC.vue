@@ -82,7 +82,7 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import{ copyToClipboard } from "@/utils/tool";
+import { copyToClipboard } from "@/utils/tool";
 
 
 const props = defineProps({
