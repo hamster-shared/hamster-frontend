@@ -43,6 +43,10 @@
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
+              <!-- 展示dfx生成弹框 -->
+              <a-menu-item v-if="projectsDetail.deployType == 3" @click="showDfxModal">
+                <a href="javascript:;" style="color:#151210">Configure dfx.json</a>
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -410,6 +414,10 @@ const getAptosBuild = async () => {
   aptosBuildVisible.value = true
   getAptosBuildParams()
 };
+
+const showDfxModal = () => {
+
+}
 
 const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
