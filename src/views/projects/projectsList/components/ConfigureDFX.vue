@@ -89,7 +89,7 @@ const changeSource = () => {
   dfxContent.value = generateDFX(formData.name,formData.type,formData.source)
 }
 const handleDone = async () => {
-
+  await formRef.value.validate()
 }
 const handleCancel = ()=>{
   emit('CancelDFX')

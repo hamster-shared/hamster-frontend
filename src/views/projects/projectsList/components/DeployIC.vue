@@ -144,6 +144,6 @@ const handleCancel = ()=>{
   color: #151210;
 }
 :deep(.ant-radio-wrapper){
-  color: #73706E;
+  color: #73706E !important;
 }
 </style>
