@@ -240,6 +240,7 @@
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
   <DeployIC :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" />
+  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" />
 </template>
 
 <script lang='ts' setup>
@@ -251,6 +252,7 @@ import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerChec
 //弹出层页面
 import Configure from './Configure.vue'
 import DeployIC from './DeployIC.vue';
+import ConfigureDFX from './ConfigureDFX.vue'
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -268,6 +270,7 @@ const theme = useThemeStore()
 const projectId = ref('')
 
 const showDeployIC = ref(false);
+const showDFX = ref(false);
 //点击关闭按钮
 const handleCancel=()=>{
     evmCheckVisible.value=false
@@ -707,6 +710,9 @@ const openInChainIDE = (data: any) => {
 
 const CancelDeployIC = () => {
   showDeployIC.value = false;
+}
+const CancelDeployDFX = () => {
+  showDFX.value = false;
 }
 </script>
 <style lang='less' scoped>
