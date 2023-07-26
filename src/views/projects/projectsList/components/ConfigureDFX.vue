@@ -23,7 +23,7 @@
                <a-input @change="changeName" class="modal-input" v-model:value="formData.name" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
             </a-form-item>
             <a-form-item name="type" label="Type">
-              <a-select class="modal-input" v-model:value="formData.type" placeholder="Please select type" @change="changeType">
+              <a-select dropdownClassName="modal-select-dropdown" class="modal-input" v-model:value="formData.type" placeholder="Please select type" @change="changeType">
                 <a-select-option value="Assets">Assets</a-select-option>
               </a-select>
             </a-form-item>
