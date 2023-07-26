@@ -1,5 +1,5 @@
 // 生成dfx.json文件
-export const generateDFX = (name:any,type:string,source:string)=>{
+export const generateDFX = (name:any,type:any,source:string)=>{
     return {
         "canisters":{
             [name]:{

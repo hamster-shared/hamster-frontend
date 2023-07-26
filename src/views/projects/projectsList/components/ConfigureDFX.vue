@@ -20,15 +20,15 @@
           <div class="text-[18px] text-[#151210] font-bold mb-[20px]">Canister info</div>
           <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
             <a-form-item name="name" label="Canister Name">
-               <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+               <a-input @change="changeName" class="modal-input" v-model:value="formData.name" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
             </a-form-item>
             <a-form-item name="type" label="Type">
-              <a-select class="modal-input" v-model:value="formData.type">
+              <a-select class="modal-input" v-model:value="formData.type" placeholder="Please select type" @change="changeType">
                 <a-select-option value="Assets">Assets</a-select-option>
               </a-select>
             </a-form-item>
             <a-form-item name="source" label="Source">
-               <a-input class="modal-input" v-model:value="formData.source" placeholder="Please enter Source" allow-clear autocomplete="off" />
+               <a-input @change="changeSource" class="modal-input" v-model:value="formData.source" placeholder="Please enter Source" allow-clear autocomplete="off" />
             </a-form-item>
           </a-form>
         </div>
@@ -36,21 +36,8 @@
           
           <div class="h-full bg-[#3B3B3B] rounded-[8px]">
             <div class="bg-[#191919] px-[20px] py-[7px] text-[#FFFFFF] text-[16px] rounded-tl-[8px] rounded-tr-[8px]">dfx.json Preview</div>
-            <pre class="text-[#E2B578] pt-[10px] pl-[10px]">
-{
-  "canisters":{
-    "frontend":{
-      "type": "assets",
-      "source":[
-        "dist/",
-      ],
-      "frontend":{}
-    }
-  },
-}
-            </pre>
+            <pre class="text-[#E2B578] pt-[10px] pl-[10px]">{{dfxContent}}</pre>
           </div>
-          <!-- <CodeEditor :readOnly="true" :value="dfxContent"></CodeEditor> -->
         </div>
       </div>
       <div class="text-center mt-[32px]">
@@ -60,8 +47,8 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import CodeEditor from "@/components/CodeEditor.vue"
 import { computed, reactive, ref } from "vue";
+import { generateDFX } from '@/utils/generateDFX'
   
 const props = defineProps({
   visible:{
@@ -72,11 +59,11 @@ const props = defineProps({
 const emit = defineEmits(["CancelDFX"])
 const formRef = ref();
 const formData = reactive({
-  name: 'Frontend',
-  type: 'Assets',
-  source: 'dist/',
+  name: '',
+  type: undefined,
+  source: '',
 });
-const dfxContent = JSON.stringify(formData);
+const dfxContent = ref({});
 
 const formRules = computed(() => {
 
@@ -88,8 +75,21 @@ const formRules = computed(() => {
     source: [requiredRule('Please enter Source')],
   };
 });
-
+// 输入名称
+const changeName = (e:any) => {
+  console.log('输入名称',e.target.value)
+  dfxContent.value = generateDFX(formData.name,formData.type,formData.source)
+}
+// 选择类型
+const changeType = () => {
+  dfxContent.value = generateDFX(formData.name,formData.type,formData.source)
+}
+// 输入源路径
+const changeSource = () => {
+  dfxContent.value = generateDFX(formData.name,formData.type,formData.source)
+}
 const handleDone = async () => {
+
 }
 const handleCancel = ()=>{
   emit('CancelDFX')
