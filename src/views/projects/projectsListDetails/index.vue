@@ -106,6 +106,7 @@
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
   <!-- 弹框组件 -->
   <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
+  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" />
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -138,6 +139,7 @@ import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
 import BreadCrumb from "@/components/BreadCrumb.vue";
+import ConfigureDFX from '@/views/projects/projectsList/components/ConfigureDFX.vue'
 const theme = useThemeStore()
 const projectId = ref('')
 
@@ -176,6 +178,7 @@ const aptosBuildParams = ref([]);
 const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
 const breadCrumbInfo = ref<any>([])
+const showDFX = ref(false);
 
 // 弹框
 let visible=ref(false)
@@ -415,8 +418,12 @@ const getAptosBuild = async () => {
   getAptosBuildParams()
 };
 
-const showDfxModal = () => {
+const CancelDeployDFX = () => {
+  showDFX.value = false;
+}
 
+const showDfxModal = () => {
+  showDFX.value = true;
 }
 
 const hideAptosBuildVisible = () => {
