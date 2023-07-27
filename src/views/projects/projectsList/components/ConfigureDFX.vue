@@ -24,7 +24,7 @@
             </a-form-item>
             <a-form-item name="type" label="Type">
               <a-select dropdownClassName="modal-select-dropdown" class="modal-input" v-model:value="formData.type" placeholder="Please select type" @change="changeType">
-                <a-select-option value="Assets">Assets</a-select-option>
+                <a-select-option value="assets">assets</a-select-option>
               </a-select>
             </a-form-item>
             <a-form-item name="source" label="Source">
@@ -47,7 +47,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, onMounted } from "vue";
 import { generateDFX } from '@/utils/generateDFX'
   
 const props = defineProps({
@@ -59,9 +59,9 @@ const props = defineProps({
 const emit = defineEmits(["CancelDFX"])
 const formRef = ref();
 const formData = reactive({
-  name: '',
-  type: undefined,
-  source: '',
+  name: 'frontend',
+  type: 'assets',
+  source: 'dist/',
 });
 const dfxContent = ref({});
 
@@ -94,6 +94,9 @@ const handleDone = async () => {
 const handleCancel = ()=>{
   emit('CancelDFX')
 }
+onMounted(()=>{
+  dfxContent.value = generateDFX(formData.name,formData.type,formData.source)
+})
 </script>
 <style scoped lang="less">
 :deep(.ant-form-item-label > label){
