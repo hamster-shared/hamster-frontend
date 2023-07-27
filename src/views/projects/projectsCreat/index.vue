@@ -289,6 +289,7 @@ const getInitTemplates = async () => {
 }
 
 const changRadio = async (val: any) => {
+  showList.value = [];
   getInitTemplates()
 }
 
