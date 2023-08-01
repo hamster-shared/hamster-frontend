@@ -56,7 +56,7 @@ const props = defineProps({
       default:false
   }
 });
-const emit = defineEmits(["CancelDFX"])
+const emit = defineEmits(["CancelDFX","SaveDFXCon"])
 const formRef = ref();
 const formData = reactive({
   name: 'frontend',
@@ -90,6 +90,7 @@ const changeSource = () => {
 }
 const handleDone = async () => {
   await formRef.value.validate()
+  emit('SaveDFXCon',JSON.stringify(dfxContent.value))
 }
 const handleCancel = ()=>{
   emit('CancelDFX')

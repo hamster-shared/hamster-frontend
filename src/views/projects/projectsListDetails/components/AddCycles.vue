@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="props.visible" width="760px" :footer="null" @cancel="handleCancel">
+  <a-modal v-model:visible="visible" width="760px" :footer="null" @cancel="handleCancel">
     <template #closeIcon>
         <!-- <img class="w-[24px] h-[24px]" src="@/assets/icons/closeIcon.svg" @click="handleCancel"/> -->
     </template>
@@ -29,8 +29,8 @@
               <div class="mt-[10px]">Current Balance: </div>
             </div>
             <div class="ml-[10px] text-[#000000]">
-              <div>r3dpl-2yaaa-aaaam-abpsa-cai</div>
-              <div class="mt-[10px]">0.00 T Cycles</div>
+              <div>{{canisterId}}</div>
+              <div class="mt-[10px]">{{cycles}} T Cycles</div>
             </div>
           </div>
         </div>
@@ -44,14 +44,23 @@
 </template>
 <script setup lang="ts">
 import { message } from "ant-design-vue";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, toRefs } from "vue";
   
 const props = defineProps({
   visible:{
-      type:Boolean,
-      default:false
+    type:Boolean,
+    default:false
+  },
+  canisterId:{
+    type:String,
+    default:''
+  },
+  cycles:{
+    type:String,
+    default:''
   }
 });
+const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles'])
 const formRef = ref();
 const formData = reactive({

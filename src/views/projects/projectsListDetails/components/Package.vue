@@ -159,7 +159,10 @@ const getProjectsPackage = async () => {
 }
 
 const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: string) => {
-
+  // 如果是前端的 ic deploy有前置判断条件
+  // if(true){
+  //   const res = await apiIcpAccount('')
+  // }
   try {
     deployParams.value.id = projectId;
     deployParams.value.workflowsId = workflowId;

@@ -43,12 +43,12 @@
           </label> -->
           <label class="action-button-item">
             <label class="action-icon mx-[8px]">
-              <svg-icon :name="item.url" size="15" :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}"/>
+              <svg-icon :name="item.url" size="15" :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}"/>
             </label>
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -107,7 +107,7 @@
           <div v-else>
             <div class="open-link-css cursor-pointer inline-block"
               @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
-              :style="{cursor: viewInfo.type == '3' ? 'default' : 'cursor'}"
+              :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) ? 'default' : 'cursor'}"
               v-if="viewInfo.recentCheck.status === 0">
               <span>Check Now</span>
             </div>
@@ -239,8 +239,8 @@
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
-  <DeployIC :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" />
-  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" />
+  <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
+  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 
 <script lang='ts' setup>
@@ -264,6 +264,7 @@ import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components
 import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
 import  { apiPostPopover } from "@/apis/workFlows";
+import { apiIcpAccount, apiCheckDfx, apiSaveDfx } from '@/apis/canister'
 
 const { t } = useI18n()
 const theme = useThemeStore()
@@ -271,6 +272,8 @@ const projectId = ref('')
 
 const showDeployIC = ref(false);
 const showDFX = ref(false);
+const accountIdFlag = ref()
+const walletIdFlag = ref()
 //点击关闭按钮
 const handleCancel=()=>{
     evmCheckVisible.value=false
@@ -335,6 +338,10 @@ const projectsAction = (val: any, type: string, e: Event) => {
   if(val.type=='3' && type=='Check'){
     return
   }
+  // ic 的 check 和 ops 禁掉
+  if(val.type=='2' && val.deployType == 3 && (type=='Check' || type=='Ops')){
+    return
+  }
   console.log("projectsAction val:",val);
   switch (type) {
     case 'Check':
@@ -388,6 +395,10 @@ const getDoneData =async (myArray:string[]) => {
 const projectsCheck = async (id: string, checkData: any, e: Event) => {
   // Polkadot 的 check禁掉
   if(props.viewInfo.type=='3'){
+    return
+  }
+  // ic 的 check 和 ops 禁掉
+  if(props.viewInfo.type=='2' && props.viewInfo.deployType == 3){
     return
   }
   console.log('projectsCheck~~~~')
@@ -489,6 +500,30 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
 };
 
 const projectsDeploy = async (id: string, version: string, status: Number) => {
+  if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
+    const res = await apiIcpAccount(viewInfo.value.id)
+    accountIdFlag.value = res.data.accountIdFlag
+    walletIdFlag.value = res.data.walletIdFlag
+    console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+    if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+      showDeployIC.value = true
+    }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+      // 是否弹dfx.json配置文件
+      const dfxConResult = await apiCheckDfx(viewInfo.value.id)
+      if(!dfxConResult.data){
+        showDFX.value = true
+      }
+    }
+    return
+    if(accountIdFlag){
+      // 身份弹框第一步
+      // const res = await apiCreateICPIdentity()
+    }else if(!accountIdFlag || !walletIdFlag){
+      // 身份弹框第二步
+    }else{
+      // 直接执行部署
+    }
+  }
   // message.info("The workflow of deploying is running, view now.")
   if (projectType?.value === '1') {
     if (status === 0 || status === 1 || version === "") {
@@ -711,8 +746,16 @@ const openInChainIDE = (data: any) => {
 const CancelDeployIC = () => {
   showDeployIC.value = false;
 }
+// 展示配置dfx.json
+const showDfxFn = () => {
+  showDFX.value = true;
+}
 const CancelDeployDFX = () => {
   showDFX.value = false;
+}
+// 保存dfx.json
+const SaveDFXCon = async(params:string) => {
+  const res = await apiSaveDfx('',params)
 }
 </script>
 <style lang='less' scoped>

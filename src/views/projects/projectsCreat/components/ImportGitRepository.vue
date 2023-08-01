@@ -77,7 +77,8 @@
                 <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
               </a-radio>
             </a-radio-group>
-            <div v-if="importFormData.deployType === '3'" class="bg-[#FFF9F2] p-[20px] border border-solid border-[#E2B578] rounded-[5px]">
+            <!-- 又不要了，真烦人 -->
+            <div v-if="false" class="bg-[#FFF9F2] p-[20px] border border-solid border-[#E2B578] rounded-[5px]">
               <div>dfx.json</div>
               <div class="text-[#73706E] mt-[10px]">The dfx.json file is the configuration manifest for Internet Computer projects, user to define basic project information and deployment settings.<br>
 Please download the dfx.json file template, and place it in the root directory of your project, so that Hamster can locate and read the configuration.</div>

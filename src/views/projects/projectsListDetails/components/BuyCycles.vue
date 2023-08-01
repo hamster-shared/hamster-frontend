@@ -28,6 +28,10 @@
               </div>
               <img @click="copyToClipboard('')" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
             </div>
+            <div class="p-[20px] mt-[20px] bg-[#FFEEE8] rounded-[5px] flex">
+              <img src="@/assets/images/Fail-2.png" class="h-[24px] mr-[20px]"/>
+              <div>All ICP tokens deposited will be used to purchase cycle products. Please plan your capital allocation prudently.</div>
+            </div>
           </div>
           <div v-else-if="currStep === 1">
             <div class="text-[#A4A5A8]">Check your account balance.Then, click ”Next” button to convert those ICP tokens to cycles and move them into a cycles wallet.</div>
