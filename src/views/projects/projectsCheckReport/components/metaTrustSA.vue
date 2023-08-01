@@ -219,7 +219,7 @@ const openChainIDE = (item: any,val: string) => {
   const projectId = props.workflowsDetailsData.id
   const lineStart = "L" + item.lineStart
   const lineEnd = "L" + item.lineEnd
-  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${lineStart}-${lineEnd}`
+  var url = `https://staging-9589904a8a.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${lineStart}-${lineEnd}`
   window.open(url)
 }
 </script>

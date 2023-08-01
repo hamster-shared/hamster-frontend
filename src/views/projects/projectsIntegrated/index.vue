@@ -53,7 +53,7 @@ const openInChainIDE = ()=> {
   const repoUrl = projectData.value.repositoryUrl
   const fileName = "contracts/" + projectData.value.defaultFile
   const projectId = projectData.value.id
-  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
+  var url = `https://staging-9589904a8a.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
   window.open(url)
 }
 
