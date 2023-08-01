@@ -43,6 +43,10 @@
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
+              <!-- 展示dfx生成弹框 -->
+              <a-menu-item v-if="projectsDetail.deployType == 3" @click="showDfxModal">
+                <a href="javascript:;" style="color:#151210">Configure dfx.json</a>
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -74,6 +78,7 @@
         </a-tab-pane>
       </a-tabs>
     </div>
+    <Canisters :detailId="detailId" ></Canisters>
   </div>
   <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
@@ -101,6 +106,7 @@
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
   <!-- 弹框组件 -->
   <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
+  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" />
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -110,6 +116,7 @@ import Workflows from "./components/Workflows.vue";
 import Contract from "./components/Contract.vue";
 import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
+import Canisters from "./components/Canisters.vue";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../projectsList/components/ContainerParam.vue';
 import AptosBuildParams from "../projectsList/components/AptosBuildParams.vue";
@@ -132,6 +139,7 @@ import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
 import BreadCrumb from "@/components/BreadCrumb.vue";
+import ConfigureDFX from '@/views/projects/projectsList/components/ConfigureDFX.vue'
 const theme = useThemeStore()
 const projectId = ref('')
 
@@ -170,6 +178,7 @@ const aptosBuildParams = ref([]);
 const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
 const breadCrumbInfo = ref<any>([])
+const showDFX = ref(false);
 
 // 弹框
 let visible=ref(false)
@@ -408,6 +417,14 @@ const getAptosBuild = async () => {
   aptosBuildVisible.value = true
   getAptosBuildParams()
 };
+
+const CancelDeployDFX = () => {
+  showDFX.value = false;
+}
+
+const showDfxModal = () => {
+  showDFX.value = true;
+}
 
 const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false

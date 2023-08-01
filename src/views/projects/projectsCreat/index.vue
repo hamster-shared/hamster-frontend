@@ -28,7 +28,7 @@
           </a-form-item>
           <a-form-item class="new-label" label="Code Repositiory">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
-              <a-radio :style="radioStyle" value="1" :disabled="formData.type==3">Create a new repository by template
+              <a-radio :style="radioStyle" value="1">Create a new repository by template
                 <div>Implement core standards with our contract template for easily build your app.
                 </div>
               </a-radio>
@@ -37,25 +37,30 @@
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type == '1' && formData.contractCode == '1'">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type != '2'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
-              <a-radio :style="radioStyle" value="1">EVM
-                <div class="radio-sub">Build application based on EVM and Solidity language</div>
-              </a-radio>
-              <a-radio :style="radioStyle" value="2">Aptos
-                <div class="radio-sub">Build application based on Aptos and Move language</div>
-              </a-radio>
-              <a-radio :style="radioStyle" value="3" disabled="true">TON
-                <div>Build application based on TON and FunC language</div>
-              </a-radio>
-              <a-radio :style="radioStyle" value="4">Starknet
-                <div class="radio-sub">Build application based on Starknet and Cairo language</div>
-              </a-radio>
-              <a-radio :style="radioStyle" value="5">Sui
-                <div class="radio-sub">Build application based on Sui  and Move language</div>
-              </a-radio>
-              <a-radio :style="radioStyle" value="6">Filecoin
-                <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
+              <div v-if="formData.type==1">
+                <a-radio :style="radioStyle" value="1">EVM
+                  <div class="radio-sub">Build application based on EVM and Solidity language</div>
+                </a-radio>
+                <a-radio :style="radioStyle" value="2">Aptos
+                  <div class="radio-sub">Build application based on Aptos and Move language</div>
+                </a-radio>
+                <a-radio :style="radioStyle" value="3" disabled="true">TON
+                  <div>Build application based on TON and FunC language</div>
+                </a-radio>
+                <a-radio :style="radioStyle" value="4">Starknet
+                  <div class="radio-sub">Build application based on Starknet and Cairo language</div>
+                </a-radio>
+                <a-radio :style="radioStyle" value="5">Sui
+                  <div class="radio-sub">Build application based on Sui  and Move language</div>
+                </a-radio>
+                <a-radio :style="radioStyle" value="6">Filecoin
+                  <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
+                </a-radio>
+              </div>
+              <a-radio :style="radioStyle" value="1" v-if="formData.type==3">Polkadot
+                <div class="radio-sub">Build application based on Substrate and Rust language</div>
               </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
               <a-radio value="3">Move（coming soon）</a-radio>
@@ -69,6 +74,9 @@
               </a-radio>
               <a-radio :style="radioStyle" value="2">Container
                 <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
+              </a-radio>
+              <a-radio :style="radioStyle" value="3">Internet Computer
+                <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
@@ -86,9 +94,9 @@
             deployed contracts.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
-          <div v-if="formData.type === '1'" class="grid grid-cols-2 gap-4 template-height">
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '3'">A collection of our most deployed substrate templates.</div>
+          <div v-if="formData.type === '1' || formData.type === '3'" class="grid grid-cols-2 gap-4 template-height">
             <div v-if="formData.frameType != '6'" v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
-              :class="{'h-1/2':showList.length < 3}"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
                 <div class="relative flex-1">
@@ -130,13 +138,19 @@
                     <img :src="item.logo" class="w-[24px]" />
                     <span class="align-middle ml-[4px]">{{ item.name }}</span>
                   </div>
-                  <div class="text-[16px]">
+                  <div class="text-[16px]" v-if="formData.deployType !== '3'">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
                     <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
                   </div>
+                  <div v-else class="dfx-css">dfx</div>
                 </div>
                 <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E]">{{ item.description }}</div>
+                <div class="text-[16px]" v-if="formData.deployType === '3'">
+                  <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
+                  <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                  <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -252,11 +266,6 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
-  if(formData.type=='3'){
-    formData.contractCode = '2'
-    // polkdot没有模板
-    return
-  }
   getInitTemplates()
 }
 
@@ -268,6 +277,8 @@ const getInitTemplates = async () => {
       languageType = formData.frameType
     } else if (formData.type === '2') {
       languageType = null;
+    } else {
+      languageType = '1';
     }
     const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
     showList.value = data;
@@ -278,6 +289,7 @@ const getInitTemplates = async () => {
 }
 
 const changRadio = async (val: any) => {
+  showList.value = [];
   getInitTemplates()
 }
 
