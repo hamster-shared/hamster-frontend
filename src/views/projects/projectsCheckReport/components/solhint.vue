@@ -129,7 +129,7 @@ const openChainIDE = (item: any,name: string) => {
   if (item.line != "") {
     line = "L" + item.line
   }
-  var url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${line}-${line}`
+  var url = `https://staging-9589904a8a.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=${line}-${line}`
   window.open(url)
 }
 </script>
