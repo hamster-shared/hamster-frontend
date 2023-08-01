@@ -594,6 +594,8 @@ const deployClick = async () => {
       }
     }
   }
+
+  localStorage.setItem("lastDeployChain",JSON.stringify({"frameType": frameType.value,"chain": formState.chain, "network": formState.network}))
 }
 
 
@@ -792,6 +794,18 @@ onMounted(async () => {
   await getProjectsDetail();
   await getProjectsContract()
   await judgeOrigin()
+  let lastDeployChain = localStorage.getItem("lastDeployChain")
+  if(lastDeployChain) {
+      try {
+          let json = JSON.parse(lastDeployChain)
+          if (frameType.value === json.frameType) {
+              formState.chain = json.chain
+              formState.network = json.network
+          }
+      } catch (e) {
+          console.error(e)
+      }
+  }
 })
 
 </script>
