@@ -107,7 +107,7 @@
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
   <!-- 弹框组件 -->
   <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
-  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
+  <ConfigureDFX v-if="showDFX" :visible="showDFX" :pDfxContent="pDfxContent" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -142,7 +142,7 @@ import type { ViewInfoItem } from "@/views/projects/components/data";
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import ConfigureDFX from '@/views/projects/projectsList/components/ConfigureDFX.vue'
 // dfx 查询，保存，更新
-import { apiDfxInfo, apiSaveDfx, apiUpdateDfx } from '@/apis/canister'
+import { apiDfxInfo, apiSaveDfx, apiUpdateDfx, apiCheckDfx } from '@/apis/canister'
 const theme = useThemeStore()
 const projectId = ref('')
 
@@ -183,6 +183,7 @@ console.log(projectsDetail.value)
 const breadCrumbInfo = ref<any>([])
 const showDFX = ref(false);
 const dfxId = ref()
+const pDfxContent = ref()
 
 // 弹框
 let visible=ref(false)
@@ -424,9 +425,14 @@ const getAptosBuild = async () => {
 
 // 保存/更新 dfx.json
 const SaveDFXCon = async(params:string) => {
-  const res = dfxId.value ? await apiSaveDfx(detailId.value.toString(),params) : await apiUpdateDfx(detailId.value.toString(),dfxId.value,params)
+  console.log(dfxId.value,'保存/更新 dfx.json',params)
+  const data = {
+    jsonData: params
+  }
+  const res = !dfxId.value ? await apiSaveDfx(detailId.value.toString(),data) : await apiUpdateDfx(detailId.value.toString(),dfxId.value,data)
   if(res.code==200){
     message.success(res.message)
+    showDFX.value = false
   }else{
     message.error(res.message)
   }
@@ -437,9 +443,18 @@ const CancelDeployDFX = () => {
 }
 
 const showDfxModal = async() => {
+  // 先判断是否存在dfx
+  const result = await apiCheckDfx(detailId.value.toString())
+  if(result.data){
+    // 存在，获取 id 和 content
+    const res = await apiDfxInfo(detailId.value.toString())
+    dfxId.value = res?.data?.id
+    pDfxContent.value = res?.data.dfxData
+  }else{
+    dfxId.value = ''
+    pDfxContent.value = ''
+  }
   showDFX.value = true;
-  const res = await apiDfxInfo(detailId.value.toString())
-  dfxId.value = res?.data?.id
 }
 
 const hideAptosBuildVisible = () => {

@@ -146,10 +146,16 @@ const handleNext = async () => {
     }
   }else if(currStep.value == 1){
     await formRef.value.validate();
+    const params:any = {
+      coupon: formData.couponCode
+    }
     // 通过优惠卷生成钱包罐
-    const res = await apiRedeemCoupon(detailId.value,formData.couponCode)
-    canisterId.value = res.data.canisterId
-    cyclesBalance.value = res.data.cyclesBalance
+    const res = await apiRedeemCoupon(detailId.value,params)
+    if(res.code==200){
+      canisterId.value = res.data.canisterId
+      cyclesBalance.value = res.data.cyclesBalance
+      currStep.value = 2
+    }
   }else if(currStep.value == 2){
     // 查询钱包罐信息
     const res = await apiWalletInfo(detailId.value)

@@ -60,7 +60,7 @@ export function apiDfxInfo(id:string) {
 }
 
 // 更新dfx json data
-export function apiUpdateDfx(id:string,dfxId:number,jsonData:string) {
+export function apiUpdateDfx(id:string,dfxId:number,jsonData:any) {
     return httpRequest({
         url: `/api/projects/${id}/dfx-json/${dfxId}`,
         method: "put",
@@ -86,7 +86,7 @@ export function apiAccountInfo(id:string) {
 }
 
 // 通过优惠卷生成钱包罐
-export function apiRedeemCoupon(id:string,params:string) {
+export function apiRedeemCoupon(id:string,params:any) {
     return httpRequest({
         url: `/api/projects/${id}/redeem/coupon`,
         method: "post",
@@ -103,7 +103,7 @@ export function apiCheckDfx(id:string) {
 }
 
 // 保存json data
-export function apiSaveDfx(id:string,params:string) {
+export function apiSaveDfx(id:string,params:any) {
     return httpRequest({
         url: `/api/projects/${id}/dfx-json`,
         method: "post",

@@ -15,7 +15,7 @@
       <div class="mt-[30px]">
         <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
           <a-form-item name="canisterID" label="Canister ID">
-              <a-input disabled="true" class="modal-input" v-model:value="formData.canisterID" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+              <a-input disabled="true" class="modal-input" v-model:value="formData.canisterId" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
           </a-form-item>
           <a-form-item name="amount" label="Amount">
               <a-input class="modal-input" v-model:value="formData.amount" suffix="T Cycles" placeholder="Please enter amount" allow-clear autocomplete="off" />
@@ -29,8 +29,8 @@
               <div class="mt-[10px]">Current Balance: </div>
             </div>
             <div class="ml-[10px] text-[#000000]">
-              <div>{{canisterId}}</div>
-              <div class="mt-[10px]">{{cycles}} T Cycles</div>
+              <div>{{walletCanisterId}}</div>
+              <div class="mt-[10px]">{{walletCyclesBalance}} T Cycles</div>
             </div>
           </div>
         </div>
@@ -44,7 +44,9 @@
 </template>
 <script setup lang="ts">
 import { message } from "ant-design-vue";
-import { computed, reactive, ref, toRefs } from "vue";
+import { computed, reactive, ref, toRefs, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
   
 const props = defineProps({
   visible:{
@@ -60,13 +62,17 @@ const props = defineProps({
     default:''
   }
 });
+const route = useRoute()
+const id:any = route.params.id
 const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles'])
 const formRef = ref();
 const formData = reactive({
-  canisterID: 'r3dpl-2yaaa-aaaam-abpsa-cai',
-  amount: '0.1',
+  canisterId: 'r3dpl-2yaaa-aaaam-abpsa-cai',
+  amount: 0.1,
 });
+const walletCanisterId = ref()
+const walletCyclesBalance = ref()
 
 const formRules = computed(() => {
 
@@ -77,8 +83,13 @@ const formRules = computed(() => {
   };
 });
 
-const handleTopUp = () => {
-  emit('handleCancel')
+const handleTopUp = async() => {
+  const res = await apiRechargeCanister(id,formData)
+  if(res.code==200){
+    message.success(res.message)
+  }else{
+    message.error(res.message)
+  }
 }
 const showBuyCycles = () => {
   emit('handleCancel')
@@ -88,6 +99,18 @@ const showBuyCycles = () => {
 const handleCancel = ()=>{
   emit('handleCancel')
 }
+
+const getWalletInfo = async()=>{
+  const res = await apiWalletInfo(id)
+  walletCanisterId.value = res.data.canisterId
+  walletCyclesBalance.value = res.data.walletCyclesBalance
+}
+
+onMounted(()=>{
+  formData.canisterId = canisterId.value
+  // formData.amount = cycles.value
+  getWalletInfo()
+})
 </script>
 <style scoped lang="less">
 :deep(.ant-form-item-label > label){

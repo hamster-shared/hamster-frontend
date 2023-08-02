@@ -24,7 +24,7 @@
             <div class="p-[20px] mt-[20px] bg-[#FFF9F2] rounded-[5px] flex justify-between">
               <div>
                 <span class="text-[#73706E] font-medium">Account-ID:</span>
-                <span class="ml-[10px]">e213184a548871a47fb526f3cba24e2ee2fbbc8129c4ab497ef2ce535130a0a4</span>
+                <span class="ml-[10px]">{{accountId}}</span>
               </div>
               <img @click="copyToClipboard('')" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
             </div>
@@ -41,8 +41,8 @@
                 <div class="mt-[10px]">Balance(ic):</div>
               </div>
               <div class="ml-[10px]">
-                <div>e213184a548871a47fb526f3cba24e2ee2fbbc8129c4ab497ef2ce535130a0a4</div>
-                <div class="mt-[10px]">10.0000000 ICP</div>
+                <div>{{accountId}}</div>
+                <div class="mt-[10px]">{{icpBalance}}</div>
               </div>
             </div>
           </div>
@@ -54,8 +54,8 @@
                 <div class="mt-[10px]">Balance:</div>
               </div>
               <div class="ml-[10px]">
-                <div>r3dpl-2yaaa-aaaam-abpsa-cai</div>
-                <div class="mt-[10px]">100.00 T Cycles</div>
+                <div>{{walletCanisterId}}</div>
+                <div class="mt-[10px]">{{walletCyclesBalance}} T Cycles</div>
               </div>
             </div>
           </div>
@@ -70,10 +70,13 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { copyToClipboard } from "@/utils/tool";
+import { apiAccountInfo, apiWalletInfo } from '@/apis/canister'
 
-
+const route = useRoute()
+const id:any = route.params.id
 const props = defineProps({
   visible:{
       type:Boolean,
@@ -82,11 +85,26 @@ const props = defineProps({
 });
 const emit = defineEmits(["handleCancel"])
 const currStep = ref(0);
+const accountId = ref()
+const icpBalance = ref()
+const walletCanisterId = ref()
+const walletCyclesBalance = ref()
 const handleLast = () => {
   currStep.value--;
+  if(currStep.value==1 || currStep.value==0){
+    getAccountInfo()
+  }else if(currStep.value==2){
+    getWalletInfo()
+  }
 }
 const handleNext = () => {
-  currStep.value++;
+  if(currStep.value==1){
+    getAccountInfo()
+    currStep.value++;
+  }else if(currStep.value==2){
+    getWalletInfo()
+    currStep.value++;
+  }
 }
 const handleDone = () => {
   currStep.value = 0;
@@ -96,6 +114,24 @@ const handleCancel = () => {
   currStep.value = 0;
   emit('handleCancel')
 }
+
+// 查询钱包罐信息
+const getWalletInfo = async()=>{
+  const res = await apiWalletInfo(id)
+  walletCanisterId.value = res.data.canisterId
+  walletCyclesBalance.value = res.data.cyclesBalance
+}
+
+// 查询账号信息
+const getAccountInfo = async()=>{
+  const res = await apiAccountInfo(id)
+  accountId.value = res.data.accountId
+  icpBalance.value = res.data.icpBalance
+}
+
+onMounted(()=>{
+  getAccountInfo()
+})
 </script>
 <style scoped lang="less">
 :deep(.ant-form-item-label>label){

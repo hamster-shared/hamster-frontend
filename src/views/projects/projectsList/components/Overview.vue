@@ -296,6 +296,7 @@ const actionButtonList = ref([
   { name: 'Ops', url: 'ops' }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
+console.log('viewInfo~~~~~~~~',viewInfo.value)
 
 const showViewInfoRepositoryUrl = computed(() => {
   // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
@@ -500,6 +501,7 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
 };
 
 const projectsDeploy = async (id: string, version: string, status: Number) => {
+  // icp
   if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
     const res = await apiIcpAccount(viewInfo.value.id)
     accountIdFlag.value = res.data.accountIdFlag
@@ -513,15 +515,6 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
       if(!dfxConResult.data){
         showDFX.value = true
       }
-    }
-    return
-    if(accountIdFlag){
-      // 身份弹框第一步
-      // const res = await apiCreateICPIdentity()
-    }else if(!accountIdFlag || !walletIdFlag){
-      // 身份弹框第二步
-    }else{
-      // 直接执行部署
     }
   }
   // message.info("The workflow of deploying is running, view now.")
@@ -755,7 +748,17 @@ const CancelDeployDFX = () => {
 }
 // 保存dfx.json
 const SaveDFXCon = async(params:string) => {
-  const res = await apiSaveDfx('',params)
+  console.log('保存dfx.json',params)
+  const data = {
+    jsonData: params
+  }
+  const res = await apiSaveDfx(viewInfo.value.id,data)
+  if(res.code==200){
+    showDFX.value = false
+    message.success(res.message)
+  }else{
+    message.error(res.message)
+  }
 }
 </script>
 <style lang='less' scoped>
