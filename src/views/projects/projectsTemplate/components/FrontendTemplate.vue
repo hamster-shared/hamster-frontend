@@ -18,7 +18,7 @@
                   <img :src="val.logo" class="w-[24px]" />
                   <span class="align-middle ml-[4px]">{{ val.name }}</span>
                 </div>
-                <div v-if="deployType === '3'" class="dfx-css">dfx</div>
+                <div v-if="false" class="dfx-css">dfx</div>
               </div>
               <div class="text-[14px] dark:text-[#E0DBD2] text-[#BBBAB9]">{{ val.description }}</div>
               <div class="text-[16px] mt-[24px]">

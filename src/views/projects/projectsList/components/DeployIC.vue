@@ -184,11 +184,12 @@ const handleNext = async () => {
   }else if(currStep.value == 1){
     if(formData.cyclesType === '1'){
       await formRef.value.validate();
-      getRedeemCoupon()
+      await getRedeemCoupon()
+      currStep.value = 2
     }else if(formData.cyclesType === '2'){
       getRechargeWallet()
+      currStep.value = 2
     }
-    currStep.value = 2
   }else if(currStep.value == 2){
     // 查询钱包罐信息
     const res = await apiWalletInfo(detailId.value)
