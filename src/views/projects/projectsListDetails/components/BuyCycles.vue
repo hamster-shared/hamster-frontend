@@ -26,7 +26,7 @@
                 <span class="text-[#73706E] font-medium">Account-ID:</span>
                 <span class="ml-[10px]">{{accountId}}</span>
               </div>
-              <img @click="copyToClipboard('')" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
+              <img @click="copyToClipboard(accountId)" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
             </div>
             <div class="p-[20px] mt-[20px] bg-[#FFEEE8] rounded-[5px] flex">
               <img src="@/assets/images/Fail-2.png" class="h-[24px] mr-[20px]"/>
