@@ -515,23 +515,41 @@ const deploy = () => {
         const petraClient = new AptosClient(NODE_URL);
         const getaAbiRes: any = await petraClient.getTransactionByHash(tx.hash)
         console.log('getaAbiRes', getaAbiRes)
-        abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
+        // abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
+        abiFn.value = getaAbiRes
       })
-      const queryJson: any = {
-        id: queryParams.id,
-        contractId: aptosContractId.value[0],
-        projectId: queryParams.id,
-        version: formState.version,
-        network: formState.network,
-        address: petraAddress.value,
+      for (const payloadKey in aptosContractId.value) {
+        const queryJson: any = {
+          id: queryParams.id,
+          contractId: aptosContractId.value[payloadKey],
+          projectId: queryParams.id,
+          version: formState.version,
+          network: formState.network,
+          address: petraAddress.value,
+        }
+        const abi = abiFn.value?.changes && abiFn.value?.changes[payloadKey]?.data?.abi
+        if (abi) {
+          queryJson.abiInfo = JSON.stringify(abi) //aptos 独有的参数
+        }
+        const result = await apiProjectsContractDeploy(queryJson)
+        if (parseInt(payloadKey) == aptosContractId.value.length -1 ) {
+          if (result.code === 200 && frameType.value === 2) {
+            router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+          }
+        }
       }
-      if (abiFn.value) {
-        queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
-      }
-      const result = await apiProjectsContractDeploy(queryJson)
-      if (result.code === 200 && frameType.value === 2) {
-        router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
-      }
+      // const queryJson: any = {
+      //   id: queryParams.id,
+      //   contractId: aptosContractId.value[0],
+      //   projectId: queryParams.id,
+      //   version: formState.version,
+      //   network: formState.network,
+      //   address: petraAddress.value,
+      // }
+      // if (abiFn.value) {
+      //   queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
+      // }
+      // const result = await apiProjectsContractDeploy(queryJson)
     }
 
   }).catch((error: any) => {
