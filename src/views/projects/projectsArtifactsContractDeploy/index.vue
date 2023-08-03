@@ -477,7 +477,6 @@ const handleAptosNetwork = () => {
 
 // aptos petra
 const deploy = () => {
-  console.log('bsc mv', petraBsc.value[0], petraMv.value[0])
   aptosWallet.connect("Petra").then(async () => {
     // debugger
     petraAddress.value = aptosWallet.account.address
@@ -488,14 +487,18 @@ const deploy = () => {
       aptosNetworkVisible.value = true
     } else {
       const codeSerializer = new BCS.Serializer()
-      const modules = [
-        new TxnBuilderTypes.Module(
-            new HexString(
-                // eslint-disable-next-line max-len
-                petraMv.value[0],
-            ).toUint8Array(),
-        ),
-      ]
+      let modules = []
+      if (petraMv.value.length > 0) {
+        for (const valueKey in petraMv.value) {
+          let data = new TxnBuilderTypes.Module(
+              new HexString(
+                  // eslint-disable-next-line max-len
+                  petraMv.value[valueKey],
+              ).toUint8Array(),
+          )
+          modules.push(data)
+        }
+      }
       BCS.serializeVector(modules, codeSerializer)
       const payload: any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
           TxnBuilderTypes.EntryFunction.natural(
