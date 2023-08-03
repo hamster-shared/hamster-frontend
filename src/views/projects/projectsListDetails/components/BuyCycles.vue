@@ -55,7 +55,7 @@
               </div>
               <div class="ml-[10px]">
                 <div>{{walletCanisterId}}</div>
-                <div class="mt-[10px]">{{walletCyclesBalance}} T Cycles</div>
+                <div class="mt-[10px]">{{walletCyclesBalance}}</div>
               </div>
             </div>
           </div>
