@@ -563,8 +563,8 @@ const getAptosAbi = (name:string) => {
   let abi = ''
   if (abiFn.value?.changes.length> 0) {
     for (const changesKey in abiFn.value?.changes) {
-      if (name == abiFn.value?.changes[payloadKey]?.data?.abi?.name) {
-        abi = abiFn.value?.changes[payloadKey]?.data?.abi
+      if (name == abiFn.value?.changes[changesKey]?.data?.abi?.name) {
+        abi = abiFn.value?.changes[changesKey]?.data?.abi
         break
       }
     }
