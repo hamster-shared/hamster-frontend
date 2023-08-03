@@ -37,7 +37,7 @@
       </div>
       <div class="text-center mt-[32px]">
         <a-button class="!w-[240px] !h-[43px]" ghost @click="showBuyCycles">Buy Cycles</a-button>
-        <a-button class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Top Up</a-button>
+        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Top Up</a-button>
       </div>
     </div>
   </a-modal>
@@ -73,6 +73,7 @@ const formData = reactive({
 });
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
+const topLoading = ref(false)
 
 const formRules = computed(() => {
 
@@ -86,7 +87,9 @@ const formRules = computed(() => {
 const handleTopUp = async() => {
   console.log('handleTopUp',formData)
   try {
+    topLoading.value = true
     const res = await apiRechargeCanister(id,formData)
+    topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
   } catch (error:any) {
@@ -96,6 +99,7 @@ const handleTopUp = async() => {
     }else{
       message.error(error.response.data.message) 
     }
+    topLoading.value = false
   }
 }
 
