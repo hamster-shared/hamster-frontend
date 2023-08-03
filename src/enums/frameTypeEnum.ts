@@ -30,3 +30,8 @@ export enum FrontEndDeployTypeEnum {
   'IC' = 3
 }
 
+export enum CanisterStatusEnum {
+  'Processing' = 1,
+  'Running' = 2,
+  'Stopped' = 3
+}

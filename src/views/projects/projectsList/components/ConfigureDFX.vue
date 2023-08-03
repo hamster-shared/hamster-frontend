@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="props.visible" width="760px" :footer="null" @cancel="handleCancel">
+  <a-modal v-model:visible="visible" width="760px" :footer="null" @cancel="handleCancel">
     <template #closeIcon>
         <!-- <img class="w-[24px] h-[24px]" src="@/assets/icons/closeIcon.svg" @click="handleCancel"/> -->
     </template>
@@ -32,9 +32,9 @@
             </a-form-item>
           </a-form>
         </div>
-        <div class="h-[310px] w-1/2 pl-[18px]">
+        <div class="h-[310px] w-1/2 pl-[18px] overflow-y-auto">
           
-          <div class="h-full bg-[#3B3B3B] rounded-[8px]">
+          <div class="h-full bg-[#3B3B3B] rounded-[8px] overflow-y-auto">
             <div class="bg-[#191919] px-[20px] py-[7px] text-[#FFFFFF] text-[16px] rounded-tl-[8px] rounded-tr-[8px]">dfx.json Preview</div>
             <pre class="text-[#E2B578] pt-[10px] pl-[10px]">{{dfxContent}}</pre>
           </div>
@@ -47,16 +47,21 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, reactive, ref, onMounted } from "vue";
-import { generateDFX } from '@/utils/generateDFX'
+import { computed, reactive, ref, onMounted, toRefs } from "vue";
+import { generateDFX, parseDFX } from '@/utils/generateDFX'
   
 const props = defineProps({
   visible:{
-      type:Boolean,
-      default:false
+    type:Boolean,
+    default:false
+  },
+  pDfxContent:{
+    type:String,
+    default:''
   }
 });
-const emit = defineEmits(["CancelDFX"])
+const { visible, pDfxContent } = toRefs(props)
+const emit = defineEmits(["CancelDFX","SaveDFXCon"])
 const formRef = ref();
 const formData = reactive({
   name: 'frontend',
@@ -90,12 +95,22 @@ const changeSource = () => {
 }
 const handleDone = async () => {
   await formRef.value.validate()
+  emit('SaveDFXCon',JSON.stringify(dfxContent.value))
 }
 const handleCancel = ()=>{
   emit('CancelDFX')
 }
-onMounted(()=>{
-  dfxContent.value = generateDFX(formData.name,formData.type,formData.source)
+onMounted(async()=>{
+  console.log('pDfxContent:',pDfxContent.value)
+  if(pDfxContent.value){
+    dfxContent.value =  JSON.parse(pDfxContent.value)
+    const getResultDfx = await parseDFX(pDfxContent.value)
+    formData.name = getResultDfx.name
+    formData.source = getResultDfx.source
+    formData.type = getResultDfx.type
+  }else{
+    dfxContent.value =  generateDFX(formData.name,formData.type,formData.source)
+  }
 })
 </script>
 <style scoped lang="less">

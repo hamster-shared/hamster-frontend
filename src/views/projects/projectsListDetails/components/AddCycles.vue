@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:visible="props.visible" width="760px" :footer="null" @cancel="handleCancel">
+  <a-modal v-model:visible="visible" width="760px" :footer="null" @cancel="handleCancel">
     <template #closeIcon>
         <!-- <img class="w-[24px] h-[24px]" src="@/assets/icons/closeIcon.svg" @click="handleCancel"/> -->
     </template>
@@ -15,7 +15,7 @@
       <div class="mt-[30px]">
         <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
           <a-form-item name="canisterID" label="Canister ID">
-              <a-input disabled="true" class="modal-input" v-model:value="formData.canisterID" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+              <a-input disabled="true" class="modal-input" v-model:value="formData.canisterId" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
           </a-form-item>
           <a-form-item name="amount" label="Amount">
               <a-input class="modal-input" v-model:value="formData.amount" suffix="T Cycles" placeholder="Please enter amount" allow-clear autocomplete="off" />
@@ -29,8 +29,8 @@
               <div class="mt-[10px]">Current Balance: </div>
             </div>
             <div class="ml-[10px] text-[#000000]">
-              <div>r3dpl-2yaaa-aaaam-abpsa-cai</div>
-              <div class="mt-[10px]">0.00 T Cycles</div>
+              <div>{{walletCanisterId}}</div>
+              <div class="mt-[10px]">{{walletCyclesBalance}}</div>
             </div>
           </div>
         </div>
@@ -44,20 +44,35 @@
 </template>
 <script setup lang="ts">
 import { message } from "ant-design-vue";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, toRefs, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
   
 const props = defineProps({
   visible:{
-      type:Boolean,
-      default:false
+    type:Boolean,
+    default:false
+  },
+  canisterId:{
+    type:String,
+    default:''
+  },
+  cycles:{
+    type:String,
+    default:''
   }
 });
-const emit = defineEmits(["handleCancel", 'showBuyCycles'])
+const route = useRoute()
+const id:any = route.params.id
+const { visible, canisterId, cycles } = toRefs(props)
+const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg'])
 const formRef = ref();
 const formData = reactive({
-  canisterID: 'r3dpl-2yaaa-aaaam-abpsa-cai',
-  amount: '0.1',
+  canisterId: '',
+  amount: 0.1,
 });
+const walletCanisterId = ref()
+const walletCyclesBalance = ref()
 
 const formRules = computed(() => {
 
@@ -68,17 +83,42 @@ const formRules = computed(() => {
   };
 });
 
-const handleTopUp = () => {
-  emit('handleCancel')
+const handleTopUp = async() => {
+  console.log('handleTopUp',formData)
+  try {
+    const res = await apiRechargeCanister(id,formData)
+    message.success(res.message)
+    emit('handleCancel')
+  } catch (error:any) {
+    console.log('error:',error)
+    if(error.response.data.message.indexOf('out of cycles')!=-1){
+      emit('showBuyCycleMsg')
+    }else{
+      message.error(error.response.data.message) 
+    }
+  }
 }
+
 const showBuyCycles = () => {
   emit('handleCancel')
   emit('showBuyCycles')
-
 }
+
 const handleCancel = ()=>{
   emit('handleCancel')
 }
+
+const getWalletInfo = async()=>{
+  const res = await apiWalletInfo(id)
+  walletCanisterId.value = res.data.canisterId
+  walletCyclesBalance.value = res.data.cyclesBalance
+}
+
+onMounted(async()=>{
+  formData.canisterId = canisterId.value
+  // formData.amount = cycles.value
+  await getWalletInfo()
+})
 </script>
 <style scoped lang="less">
 :deep(.ant-form-item-label > label){

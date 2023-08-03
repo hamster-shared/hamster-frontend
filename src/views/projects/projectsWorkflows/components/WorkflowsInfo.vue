@@ -20,6 +20,9 @@
             <div v-if="props.checkType != ''">{{ props.checkType }}</div>
             <div v-else>{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
           </div>
+          <div v-if="workflowsDetailsData.status == 2 && type == '2' && deployType == '3'" class="process-detail-info">
+            Insufficient cycle, <a href="javascript:;" @click="openBuyCycles">buy cycles</a>
+          </div>
           <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
             {{ workflowsDetailsData.errorNumber + ' issues found' }}
           </div>
@@ -37,10 +40,20 @@
       </a-col>
     </a-row>
   </div>
+  <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
 </template>
 <script lang='ts' setup>
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { WorkflowStatusEnum } from "@/enums/statusEnum";
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import BuyCycles from "@/views/projects/projectsListDetails/components/BuyCycles.vue"
+
+const route = useRoute()
+// icp
+const type = route.params.projectType
+const deployType = route.params.type
+const showBuyCycle = ref(false)
 
 interface WorkflowsDetailsData {
   repositoryUrl: string,
@@ -63,6 +76,9 @@ const props = defineProps<{
 //   workflowsDetailsData: { type: Object }
 // });
 
+const openBuyCycles = ()=>{
+  showBuyCycle.value = true
+}
 
 </script>
 <style lang='less' scoped>
