@@ -26,7 +26,12 @@
                 <a-form-item name="cyclesType">
                   <a-radio-group class="!pl-[1px]" v-model:value="formData.cyclesType">
                     <a-radio :style="radioStyle" value="1">Claim your Free Cycles</a-radio>
-                    <a-radio :style="radioStyle" value="2">Send some ICP token to get Cycles </a-radio>
+                    <a-radio :style="radioStyle" value="2">
+                      <div class="w-[100%] flex justify-between">
+                        <span>Send some ICP token to get Cycles</span>
+                        <a class="text-[16px] font-bold" href="javascript:;" @click="getIcp">How to get ICP?</a>
+                      </div>
+                    </a-radio>
                   </a-radio-group>
                 </a-form-item>
                 <div class="h-[19px] w-full"></div>
@@ -90,7 +95,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, toRefs, onMounted } from 'vue';
 import { copyToClipboard } from "@/utils/tool";
-import { apiCreateICPIdentity, apiAccountInfo, apiRedeemCoupon, apiWalletInfo } from '@/apis/canister'
+import { apiCreateICPIdentity, apiAccountInfo, apiRedeemCoupon, apiWalletInfo, apiRechargeWallet } from '@/apis/canister'
+import { message } from 'ant-design-vue'
 
 const props = defineProps({
   visible:{
@@ -133,9 +139,40 @@ const formRules = computed(() => {
 const reloadBalance = () => {
   getAccountInfo()
 }
+
+const getIcp = ()=>{
+//  window.open()
+}
+
 const getCouponCode = ()=>{
 //  window.open()
 }
+
+// 向钱包充钱
+const getRechargeWallet = async()=>{
+  try {
+    const res = await apiRechargeWallet(detailId.value)
+    message.success(res.message)
+  } catch (error:any) {
+    message.error(error.response.data.message)
+  }
+}
+
+// 通过优惠卷生成钱包罐
+const getRedeemCoupon = async()=>{
+  try {
+    const params:any = {
+      coupon: formData.couponCode
+    }
+    const res = await apiRedeemCoupon(detailId.value,params)
+    canisterId.value = res.data.canisterId
+    cyclesBalance.value = res.data.cyclesBalance
+    message.success(res.message)
+  } catch (error:any) {
+    message.error(error.response.data.message)
+  }
+}
+
 const handleNext = async () => {
   if(currStep.value == 0){
     const res = await apiCreateICPIdentity(detailId.value)
@@ -145,17 +182,13 @@ const handleNext = async () => {
       currStep.value = 1
     }
   }else if(currStep.value == 1){
-    await formRef.value.validate();
-    const params:any = {
-      coupon: formData.couponCode
+    if(formData.cyclesType === '1'){
+      await formRef.value.validate();
+      getRedeemCoupon()
+    }else if(formData.cyclesType === '2'){
+      getRechargeWallet()
     }
-    // 通过优惠卷生成钱包罐
-    const res = await apiRedeemCoupon(detailId.value,params)
-    if(res.code==200){
-      canisterId.value = res.data.canisterId
-      cyclesBalance.value = res.data.cyclesBalance
-      currStep.value = 2
-    }
+    currStep.value = 2
   }else if(currStep.value == 2){
     // 查询钱包罐信息
     const res = await apiWalletInfo(detailId.value)
@@ -199,5 +232,13 @@ onMounted(async()=>{
 }
 :deep(.ant-radio-wrapper){
   color: #73706E !important;
+  margin-right: 0;
+}
+:deep(#form_item_cyclesType){
+  width: 100%;
+}
+:deep(span.ant-radio+*){
+  padding-right: 0;
+  width: 100%;
 }
 </style>

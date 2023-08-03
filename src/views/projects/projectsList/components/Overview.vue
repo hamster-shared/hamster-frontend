@@ -705,6 +705,7 @@ const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateT
 }
 
 const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
+  console.log('recentDeploy:',recentDeploy)
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}?type=${viewInfo.value.type}`);
   } else {

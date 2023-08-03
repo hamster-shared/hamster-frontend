@@ -30,7 +30,7 @@
             </div>
             <div class="ml-[10px] text-[#000000]">
               <div>{{walletCanisterId}}</div>
-              <div class="mt-[10px]">{{walletCyclesBalance}} T Cycles</div>
+              <div class="mt-[10px]">{{walletCyclesBalance}}</div>
             </div>
           </div>
         </div>
@@ -65,10 +65,10 @@ const props = defineProps({
 const route = useRoute()
 const id:any = route.params.id
 const { visible, canisterId, cycles } = toRefs(props)
-const emit = defineEmits(["handleCancel", 'showBuyCycles'])
+const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg'])
 const formRef = ref();
 const formData = reactive({
-  canisterId: 'r3dpl-2yaaa-aaaam-abpsa-cai',
+  canisterId: '',
   amount: 0.1,
 });
 const walletCanisterId = ref()
@@ -84,18 +84,26 @@ const formRules = computed(() => {
 });
 
 const handleTopUp = async() => {
-  const res = await apiRechargeCanister(id,formData)
-  if(res.code==200){
+  console.log('handleTopUp',formData)
+  try {
+    const res = await apiRechargeCanister(id,formData)
     message.success(res.message)
-  }else{
-    message.error(res.message)
+    emit('handleCancel')
+  } catch (error:any) {
+    console.log('error:',error)
+    if(error.response.data.message.indexOf('out of cycles')!=-1){
+      emit('showBuyCycleMsg')
+    }else{
+      message.error(error.response.data.message) 
+    }
   }
 }
+
 const showBuyCycles = () => {
   emit('handleCancel')
   emit('showBuyCycles')
-
 }
+
 const handleCancel = ()=>{
   emit('handleCancel')
 }
@@ -103,13 +111,13 @@ const handleCancel = ()=>{
 const getWalletInfo = async()=>{
   const res = await apiWalletInfo(id)
   walletCanisterId.value = res.data.canisterId
-  walletCyclesBalance.value = res.data.walletCyclesBalance
+  walletCyclesBalance.value = res.data.cyclesBalance
 }
 
-onMounted(()=>{
+onMounted(async()=>{
   formData.canisterId = canisterId.value
   // formData.amount = cycles.value
-  getWalletInfo()
+  await getWalletInfo()
 })
 </script>
 <style scoped lang="less">

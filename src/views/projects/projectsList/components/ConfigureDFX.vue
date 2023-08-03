@@ -32,9 +32,9 @@
             </a-form-item>
           </a-form>
         </div>
-        <div class="h-[310px] w-1/2 pl-[18px]">
+        <div class="h-[310px] w-1/2 pl-[18px] overflow-y-auto">
           
-          <div class="h-full bg-[#3B3B3B] rounded-[8px]">
+          <div class="h-full bg-[#3B3B3B] rounded-[8px] overflow-y-auto">
             <div class="bg-[#191919] px-[20px] py-[7px] text-[#FFFFFF] text-[16px] rounded-tl-[8px] rounded-tr-[8px]">dfx.json Preview</div>
             <pre class="text-[#E2B578] pt-[10px] pl-[10px]">{{dfxContent}}</pre>
           </div>

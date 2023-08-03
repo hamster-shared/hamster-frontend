@@ -110,3 +110,11 @@ export function apiSaveDfx(id:string,params:any) {
         data:params
     })
 }
+
+// 查询canister id
+export function apiGetCanisterId(id:string) {
+    return httpRequest({
+        url: `/api/projects/${id}/canister`,
+        method: "get",
+    })
+}

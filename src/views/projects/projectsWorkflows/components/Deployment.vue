@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <div class="ml-[64px]">
+      <div class="ml-[64px] w-[500px]">
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex">
           <div class="text-ellipsis mr-[12px] " :class="props.nodeType=='3'?'':'open-link-css cursor-pointer'" @click="openDomain">
@@ -26,9 +26,9 @@
               @click="copyDomain" />
           </div>
         </div>
-        <div v-if="false">
+        <div v-if="canisterId">
           <div class="title-text title-m">Canister ID</div>
-          <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">r3dpl-2yaaa-aaaam-abpsa-cai</div>
+          <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{canisterId}}</div>
         </div>
         <div class="flex w-full">
           <div class="w-1/2">
@@ -68,6 +68,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import { WorkflowStatusEnum } from "@/enums/statusEnum";
+import { ref, onMounted } from 'vue'
+import { apiGetCanisterId } from '@/apis/canister'
 const router = useRouter();
 
 interface PackageInfo {
@@ -96,8 +98,15 @@ const props = defineProps<{
   nodeType:{
     type:String,
     default:undefined
+  },
+  id:{
+    type:String,
+    default:''
   }
 }>()
+
+const canisterId = ref('')
+const id = props.id
 
 // const props = defineProps({
 //   packageInfo: Object,
@@ -150,6 +159,17 @@ const copyDomain = async () => {
     message.error("copy failed");
   }
 }
+
+const getCanisterId = async()=>{
+  const res = await apiGetCanisterId(id)
+  if(res.message=='success'){
+    canisterId.value = res.data
+  }
+}
+
+onMounted(()=>{
+  getCanisterId()
+})
 
 </script>
 <style lang="less" scoped>

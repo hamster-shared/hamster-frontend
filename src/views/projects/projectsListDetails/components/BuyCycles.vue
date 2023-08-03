@@ -73,7 +73,8 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { copyToClipboard } from "@/utils/tool";
-import { apiAccountInfo, apiWalletInfo } from '@/apis/canister'
+import { apiAccountInfo, apiWalletInfo, apiRechargeWallet } from '@/apis/canister'
+import { message } from 'ant-design-vue';
 
 const route = useRoute()
 const id:any = route.params.id
@@ -98,12 +99,13 @@ const handleLast = () => {
   }
 }
 const handleNext = () => {
-  if(currStep.value==1){
+  if(currStep.value==0){
     getAccountInfo()
-    currStep.value++;
-  }else if(currStep.value==2){
-    getWalletInfo()
-    currStep.value++;
+    currStep.value = 1;
+  }else if(currStep.value==1){
+    // getWalletInfo()
+    getRechargeWallet()
+    currStep.value = 2;
   }
 }
 const handleDone = () => {
@@ -113,6 +115,18 @@ const handleDone = () => {
 const handleCancel = () => {
   currStep.value = 0;
   emit('handleCancel')
+}
+
+// 向钱包充钱
+const getRechargeWallet = async()=>{
+  try {
+    const res = await apiRechargeWallet(id)
+    walletCanisterId.value = res.data.canisterId
+    walletCyclesBalance.value = res.data.cyclesBalance
+    message.success(res.message)
+  } catch (error:any) {
+    message.error(error.response.data.message)
+  }
 }
 
 // 查询钱包罐信息
