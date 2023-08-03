@@ -143,7 +143,7 @@
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
                     <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
                   </div>
-                  <div v-else class="dfx-css">dfx</div>
+                  <!-- <div v-else class="dfx-css">dfx</div> -->
                 </div>
                 <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E]">{{ item.description }}</div>
                 <div class="text-[16px]" v-if="formData.deployType === '3'">
