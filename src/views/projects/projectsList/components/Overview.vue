@@ -264,7 +264,7 @@ import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components
 import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
 import  { apiPostPopover } from "@/apis/workFlows";
-import { apiIcpAccount, apiCheckDfx, apiSaveDfx } from '@/apis/canister'
+import { apiIcpAccount, apiCheckDfx, apiSaveDfx, apiCreateICPIdentity } from '@/apis/canister'
 
 const { t } = useI18n()
 const theme = useThemeStore()
@@ -508,15 +508,32 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
     walletIdFlag.value = res.data.walletIdFlag
     console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
     if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+      if(!res.data.accountIdFlag){
+        const res = await apiCreateICPIdentity(viewInfo.value.id)
+      }
       showDeployIC.value = true
     }else if(res.data.accountIdFlag && res.data.walletIdFlag){
       // 是否弹dfx.json配置文件
       const dfxConResult = await apiCheckDfx(viewInfo.value.id)
       if(!dfxConResult.data){
         showDFX.value = true
+      }else {
+        if (status === 3) {
+          goFrontendDeploy();
+        }
+        else {
+          // 前端并且是ipfs的时候
+          if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+            message.info("Package not avaliable");
+          } else {
+            if (viewInfo.value.deployType === 3) {
+              showDeployIC.value = true;
+            } else {
+              message.info("Project image not avaliable");
+            }
+          }
+        }
       }
-    }else{
-      goFrontendDeploy()
     }
   }else{
     if (projectType?.value === '1') {

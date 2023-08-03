@@ -118,7 +118,7 @@ const props = defineProps({
 });
 const { visible, accountIdFlag, walletIdFlag, detailId } = toRefs(props)
 const emit = defineEmits(["CancelDeployIC","showDfxFn"])
-const currStep = ref(0);
+const currStep = ref(1);
 const formRef = ref();
 const formData = reactive({
   cyclesType: '1',
@@ -174,14 +174,15 @@ const getRedeemCoupon = async()=>{
 }
 
 const handleNext = async () => {
-  if(currStep.value == 0){
-    const res = await apiCreateICPIdentity(detailId.value)
-    accountId.value = res.data.accountId
-    icpBalance.value = res.data.icpBalance
-    if(res.code==200){
-      currStep.value = 1
-    }
-  }else if(currStep.value == 1){
+  // if(currStep.value == 0){
+  //   const res = await apiCreateICPIdentity(detailId.value)
+  //   accountId.value = res.data.accountId
+  //   icpBalance.value = res.data.icpBalance
+  //   if(res.code==200){
+  //     currStep.value = 1
+  //   }
+  // }else 
+  if(currStep.value == 1){
     if(formData.cyclesType === '1'){
       await formRef.value.validate();
       await getRedeemCoupon()
@@ -213,12 +214,13 @@ const getAccountInfo = async()=>{
 }
 onMounted(async()=>{
   // 如果没有icp身份，先创建
-  if(!accountIdFlag.value){
-    currStep.value = 0
-  }else{
-    currStep.value = 1
-    getAccountInfo()
-  }
+  // if(!accountIdFlag.value){
+  //   currStep.value = 0
+  // }else{
+  //   currStep.value = 1
+  //   getAccountInfo()
+  // }
+  getAccountInfo()
 })
 </script>
 <style scoped lang="less">
