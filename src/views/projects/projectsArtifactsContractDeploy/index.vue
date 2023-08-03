@@ -520,8 +520,6 @@ const deploy = () => {
         abiFn.value = getaAbiRes
       })
       for (const payloadKey in aptosContractId.value) {
-        console.log(projectsContractData[payloadKey]);
-        console.log(aptosContractId.value[payloadKey]);
         const queryJson: any = {
           id: queryParams.id,
           contractId: aptosContractId.value[payloadKey],
