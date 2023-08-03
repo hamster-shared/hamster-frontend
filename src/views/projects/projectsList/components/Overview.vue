@@ -239,7 +239,7 @@
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
-  <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
+  <DeployIC v-if="showDeployIC" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
   <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 
@@ -515,38 +515,38 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
       if(!dfxConResult.data){
         showDFX.value = true
       }
+    }else{
+      goFrontendDeploy()
     }
-  }
-  // message.info("The workflow of deploying is running, view now.")
-  if (projectType?.value === '1') {
-    if (status === 0 || status === 1 || version === "") {
-      // message.info("Smart contract not avaliable.");
-      message.info(t('Smart contract not avaliable.'));
-    }
-    else {
-      goContractDeploy(id, version);
-    }
-  }
-  else {
-    if (status === 3) {
-      goFrontendDeploy();
+  }else{
+    if (projectType?.value === '1') {
+      if (status === 0 || status === 1 || version === "") {
+        // message.info("Smart contract not avaliable.");
+        message.info(t('Smart contract not avaliable.'));
+      }
+      else {
+        goContractDeploy(id, version);
+      }
     }
     else {
-      // 前端并且是ipfs的时候
-      if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
-        message.info("Package not avaliable");
-      } else {
-        if (viewInfo.value.deployType === 3) {
-          showDeployIC.value = true;
+      if (status === 3) {
+        goFrontendDeploy();
+      }
+      else {
+        // 前端并且是ipfs的时候
+        if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+          message.info("Package not avaliable");
         } else {
-          message.info("Project image not avaliable");
+          if (viewInfo.value.deployType === 3) {
+            showDeployIC.value = true;
+          } else {
+            message.info("Project image not avaliable");
+          }
         }
       }
     }
   }
-  // if(viewInfo.labelDisplay===""){
-  //   message.info("Smart contract not available.")
-  // }
+  
 };
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
