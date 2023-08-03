@@ -515,6 +515,8 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
       if(!dfxConResult.data){
         showDFX.value = true
       }
+    }else{
+      goFrontendDeploy()
     }
   }else{
     if (projectType?.value === '1') {
