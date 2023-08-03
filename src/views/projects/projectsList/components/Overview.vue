@@ -264,7 +264,7 @@ import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components
 import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
 import  { apiPostPopover } from "@/apis/workFlows";
-import { apiIcpAccount, apiCheckDfx, apiSaveDfx } from '@/apis/canister'
+import { apiIcpAccount, apiCheckDfx, apiSaveDfx, apiCreateICPIdentity } from '@/apis/canister'
 
 const { t } = useI18n()
 const theme = useThemeStore()
@@ -508,6 +508,9 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
     walletIdFlag.value = res.data.walletIdFlag
     console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
     if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+      if(!res.data.accountIdFlag){
+        const res = await apiCreateICPIdentity(viewInfo.value.id)
+      }
       showDeployIC.value = true
     }else if(res.data.accountIdFlag && res.data.walletIdFlag){
       // 是否弹dfx.json配置文件
