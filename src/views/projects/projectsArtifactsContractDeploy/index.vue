@@ -357,6 +357,7 @@ const getVersion = async () => {
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
+    console.log(item);
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
@@ -519,6 +520,8 @@ const deploy = () => {
         abiFn.value = getaAbiRes
       })
       for (const payloadKey in aptosContractId.value) {
+        console.log(projectsContractData[payloadKey]);
+        console.log(aptosContractId.value[payloadKey]);
         const queryJson: any = {
           id: queryParams.id,
           contractId: aptosContractId.value[payloadKey],
@@ -527,7 +530,7 @@ const deploy = () => {
           network: formState.network,
           address: petraAddress.value,
         }
-        const abi = abiFn.value?.changes && abiFn.value?.changes[payloadKey]?.data?.abi
+        const abi = getAptosAbi(projectsContractData[payloadKey].name)
         if (abi) {
           queryJson.abiInfo = JSON.stringify(abi) //aptos 独有的参数
         }
@@ -556,7 +559,18 @@ const deploy = () => {
     console.log('petra failed', error)
   })
 }
-
+const getAptosAbi = (name:string) => {
+  let abi = ''
+  if (abiFn.value?.changes.length> 0) {
+    for (const changesKey in abiFn.value?.changes) {
+      if (name == abiFn.value?.changes[payloadKey]?.data?.abi?.name) {
+        abi = abiFn.value?.changes[payloadKey]?.data?.abi
+        break
+      }
+    }
+  }
+  return abi
+}
 const deployClick = async () => {
   // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
