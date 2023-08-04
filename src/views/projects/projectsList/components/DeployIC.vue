@@ -153,6 +153,7 @@ const getRechargeWallet = async()=>{
   try {
     const res = await apiRechargeWallet(detailId.value)
     message.success(res.message)
+    currStep.value = 2
   } catch (error:any) {
     message.error(error.response.data.message)
   }
@@ -168,6 +169,7 @@ const getRedeemCoupon = async()=>{
     canisterId.value = res.data.canisterId
     cyclesBalance.value = res.data.cyclesBalance
     message.success(res.message)
+    currStep.value = 2
   } catch (error:any) {
     message.error(error.response.data.message)
   }
@@ -186,10 +188,8 @@ const handleNext = async () => {
     if(formData.cyclesType === '1'){
       await formRef.value.validate();
       await getRedeemCoupon()
-      currStep.value = 2
     }else if(formData.cyclesType === '2'){
-      getRechargeWallet()
-      currStep.value = 2
+      await getRechargeWallet()
     }
   }else if(currStep.value == 2){
     // 查询钱包罐信息
