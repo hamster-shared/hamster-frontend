@@ -86,7 +86,7 @@
         </a-steps>
       </div>
       <div class="text-center mt-[32px]">
-        <a-button v-if="currStep<3" class="!w-[240px] !h-[43px]" @click="handleNext">Next</a-button>
+        <a-button :loading="loading" v-if="currStep<3" class="!w-[240px] !h-[43px]" @click="handleNext">Next</a-button>
         <a-button v-else class="!w-[240px] !h-[43px]" @click="showDfxFn">Configure dfx.json</a-button>
       </div>
     </div>
@@ -129,6 +129,7 @@ const icpBalance = ref()
 const canisterId = ref()
 const cyclesBalance = ref()
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
+const loading = ref(false)
 
 const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message});
@@ -162,6 +163,7 @@ const getRechargeWallet = async()=>{
 // 通过优惠卷生成钱包罐
 const getRedeemCoupon = async()=>{
   try {
+    loading.value = true
     const params:any = {
       coupon: formData.couponCode
     }
@@ -169,9 +171,11 @@ const getRedeemCoupon = async()=>{
     canisterId.value = res.data.canisterId
     cyclesBalance.value = res.data.cyclesBalance
     message.success(res.message)
+    loading.value = false
     currStep.value = 2
   } catch (error:any) {
     message.error(error.response.data.message)
+    loading.value = false
   }
 }
 
