@@ -60,6 +60,9 @@ const deployParams = ref({
 });
 const tableList = ref([]);
 const pagination = ref();
+const ProjectId = ref()
+const WorkflowId = ref()
+const WorkflowDetailId = ref()
 
 const firstTitle = ref('')
 const checkImageOrPackage = () => {
@@ -190,12 +193,16 @@ const SaveDFXCon = async(params:string) => {
   if(res.code==200){
     showDFX.value = false
     message.success(res.message)
+    commonFn(ProjectId.value,WorkflowId.value,WorkflowDetailId.value)
   }else{
     message.error(res.message)
   }
 }
 
 const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: string) => {
+  ProjectId.value = projectId
+  WorkflowId.value = workflowId
+  WorkflowDetailId.value = workflowDetailId
   // 如果是前端的 ic deploy有前置判断条件
   if(deployType?.value=='3'){
     const res = await apiIcpAccount(id)
@@ -211,7 +218,11 @@ const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: 
         showDFX.value = true
       }
     }
+  }else{
+    commonFn(projectId,workflowId,workflowDetailId)
   }
+}
+const commonFn = async(projectId:string, workflowId: string, workflowDetailId: string)=>{
   try {
     deployParams.value.id = projectId;
     deployParams.value.workflowsId = workflowId;
