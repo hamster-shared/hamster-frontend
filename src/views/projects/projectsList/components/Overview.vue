@@ -774,6 +774,7 @@ const SaveDFXCon = async(params:string) => {
   if(res.code==200){
     showDFX.value = false
     message.success(res.message)
+    goFrontendDeploy();
   }else{
     message.error(res.message)
   }
