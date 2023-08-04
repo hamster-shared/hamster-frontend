@@ -200,11 +200,11 @@ const handleNext = async () => {
     const res = await apiWalletInfo(detailId.value)
     canisterId.value = res.data.canisterId
     cyclesBalance.value = res.data.cyclesBalance
-  }else if(currStep.value == 2){
-
+    currStep.value = 3
   }
 }
 const showDfxFn = ()=>{
+  emit('CancelDeployIC')
   emit('showDfxFn')
 }
 const handleCancel = ()=>{
