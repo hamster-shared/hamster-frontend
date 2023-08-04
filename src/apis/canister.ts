@@ -2,7 +2,7 @@ import httpRequest from "@/request";
 
 interface rechargeParmams {
     canisterId: string,
-    amount: number,
+    amount: string,
 }
 
 export interface canisterListParams {

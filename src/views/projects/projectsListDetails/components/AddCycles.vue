@@ -88,7 +88,11 @@ const handleTopUp = async() => {
   console.log('handleTopUp',formData)
   try {
     topLoading.value = true
-    const res = await apiRechargeCanister(id,formData)
+    const params = {
+      canisterId: formData.canisterId,
+      amount: formData.amount + ''
+    }
+    const res = await apiRechargeCanister(id,params)
     topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
