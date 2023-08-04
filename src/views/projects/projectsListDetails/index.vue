@@ -431,7 +431,7 @@ const SaveDFXCon = async(params:string) => {
   }
   const res = !dfxId.value ? await apiSaveDfx(detailId.value.toString(),data) : await apiUpdateDfx(detailId.value.toString(),dfxId.value,data)
   if(res.code==200){
-    // message.success(res.message)
+    message.success(res.message)
     showDFX.value = false
   }else{
     message.error(res.message)

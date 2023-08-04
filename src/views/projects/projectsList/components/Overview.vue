@@ -773,7 +773,7 @@ const SaveDFXCon = async(params:string) => {
   const res = await apiSaveDfx(viewInfo.value.id,data)
   if(res.code==200){
     showDFX.value = false
-    message.success(res.message)
+    // message.success(res.message)
     goFrontendDeploy();
   }else{
     message.error(res.message)
