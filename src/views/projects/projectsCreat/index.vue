@@ -109,7 +109,7 @@
                 </div>
                 <!-- 按钮 -->
                 <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
-                <div class="flex">
+                <div class="flex text-[16px]">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
@@ -139,18 +139,30 @@
                     <img :src="item.logo" class="w-[24px]" />
                     <span class="align-middle ml-[4px]">{{ item.name }}</span>
                   </div>
-                  <div class="text-[16px]" v-if="formData.deployType !== '3'">
+                  <!-- <div class="text-[16px]" v-if="formData.deployType !== '3'">
+                    <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
+                    <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                    <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                  </div> -->
+                  <div v-if="item.labelDisplay" class="dfx-css">{{ item.labelDisplay }}</div>
+                </div>
+                <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E]">{{ item.description }}</div>
+                <!-- <div class="text-[16px]">
+                  <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
+                  <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                  <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                </div> -->
+                <div class="flex text-[16px] mt-[12px]">
+                  <div>
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
                     <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
                   </div>
-                  <!-- <div v-else class="dfx-css">dfx</div> -->
-                </div>
-                <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E]">{{ item.description }}</div>
-                <div class="text-[16px]" v-if="formData.deployType === '3'">
-                  <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
-                  <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
-                  <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                  <div class="flex items-center ml-4" v-if="item.audited === true">
+                    <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
+                    <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                    Audited
+                  </div>
                 </div>
               </div>
             </div>

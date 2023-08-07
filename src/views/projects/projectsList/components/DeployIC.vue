@@ -38,7 +38,7 @@
                 <div class="p-[20px] flex bg-[#FFF9F2] rounded-[5px]" v-if="formData.cyclesType === '2'">
                   <div class="font-medium text-[#73706E]">
                     <div>Account-ID:</div>
-                    <div class="mt-[10px]">Balance(ic): </div>
+                    <div class="mt-[10px] leading-[24px]">Balance(ic): </div>
                   </div>
                   <div class="ml-[10px] text-[#000000]">
                     <div> 
@@ -46,7 +46,7 @@
                       <img @click="copyToClipboard(accountId)" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
                     </div>
                     <div class="mt-[10px] flex items-center">{{icpBalance}}
-                      <a-button type="link" :loading="reloadLoading" @click="reloadBalance">
+                      <a-button type="link" class="!h-[24px] !p-0" :loading="reloadLoading" @click="reloadBalance">
                         <template #icon>
                           <img src="@/assets/icons/reload.svg" class="h-[19px]" />
                         </template>
