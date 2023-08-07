@@ -22,14 +22,14 @@
             <template v-slot:description>
               <div class="mb-[20px]">On the Internet Computer, a cycle is the unit of measurement for resources consumed in the form of processing, memory, storage, and network bandwidth.The Internet Computer’s utility token (ICP) can be converted to cycles.</div>
               
-              <a-form class="modal-form]" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+              <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
                 <a-form-item name="cyclesType">
-                  <a-radio-group class="!pl-[1px]" v-model:value="formData.cyclesType">
+                  <a-radio-group class="!pl-[1px] modal-radio" v-model:value="formData.cyclesType">
                     <a-radio :style="radioStyle" value="1">Claim your Free Cycles</a-radio>
                     <a-radio :style="radioStyle" value="2">
                       <div class="w-[100%] flex justify-between">
                         <span>Send some ICP token to get Cycles</span>
-                        <a class="text-[16px] font-bold" href="javascript:;" @click="getIcp">How to get ICP?</a>
+                        <a class="text-[14px] font-medium" href="javascript:;" @click="getIcp">How to get ICP?</a>
                       </div>
                     </a-radio>
                   </a-radio-group>
@@ -41,11 +41,17 @@
                     <div class="mt-[10px]">Balance(ic): </div>
                   </div>
                   <div class="ml-[10px] text-[#000000]">
-                    <div>{{accountId}}
+                    <div> 
+                      {{ accountId.substring(0,10)+ "..." +accountId.substring(accountId.length-10) }}
                       <img @click="copyToClipboard(accountId)" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
                     </div>
                     <div class="mt-[10px] flex items-center">{{icpBalance}}
-                      <img @click="reloadBalance" src="@/assets/icons/reload.svg" class="h-[19px] ml-[10px] cursor-pointer" />
+                      <a-button type="link" :loading="reloadLoading" @click="reloadBalance">
+                        <template #icon>
+                          <img src="@/assets/icons/reload.svg" class="h-[19px]" />
+                        </template>
+                      </a-button>
+                      <!-- <img @click="reloadBalance" src="@/assets/icons/reload.svg" class="h-[19px] ml-[10px] cursor-pointer" /> -->
                       <label v-if="icpBalance?.slice(0,-3)==0" class="text-[12px] text-[#FF4A4A] ml-[10px]">Please send some ICP token to get Cycles</label>
                     </div>
                   </div>
@@ -60,10 +66,11 @@
                   <template v-slot:label>
                     <div class="!w-full flex justify-between">
                       <div class="text-[#151210]">Coupon code</div>
-                      <a href="javascript:;" @click="getCouponCode">How to get Coupon code?</a>
+                      <a href="javascript:;" class="text-[14px] font-medium" @click="getCouponCode">How to get Coupon code?</a>
                     </div>
                   </template>
-                  <a-input class="modal-input" v-model:value="formData.couponCode" placeholder="Please enter coupon code" allow-clear autocomplete="off" />
+                  <a-input @change="handleCouponCode" :class="{'!border-[#F52222]' : couponCodeError}" class="modal-input" v-model:value="formData.couponCode" placeholder="Please enter coupon code" allow-clear autocomplete="off" />
+                  <div :class="{'text-[#FF4A4A]' : couponCodeError}">{{ couponCodeError }}</div>
                 </a-form-item>
               </a-form>
             </template>
@@ -130,6 +137,8 @@ const canisterId = ref()
 const cyclesBalance = ref()
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 const loading = ref(false)
+const reloadLoading = ref(false);
+const couponCodeError = ref();
 
 const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message});
@@ -138,6 +147,7 @@ const formRules = computed(() => {
   };
 });
 const reloadBalance = () => {
+  reloadLoading.value = true;
   getAccountInfo()
 }
 
@@ -160,8 +170,15 @@ const getRechargeWallet = async()=>{
   }
 }
 
+const handleCouponCode = () => {
+  if (formData.couponCode === '' || formData.couponCode === null) {
+    couponCodeError.value = '';
+  }
+}
+
 // 通过优惠卷生成钱包罐
-const getRedeemCoupon = async()=>{
+const getRedeemCoupon = async () => {
+  couponCodeError.value = '';
   try {
     loading.value = true
     const params:any = {
@@ -174,7 +191,8 @@ const getRedeemCoupon = async()=>{
     loading.value = false
     currStep.value = 2
   } catch (error:any) {
-    message.error(error.response.data.message)
+    // message.error(error.response.data.message)
+    couponCodeError.value = error.response.data.message;
     loading.value = false
   }
 }
@@ -214,7 +232,8 @@ const handleCancel = ()=>{
 const getAccountInfo = async()=>{
   const res = await apiAccountInfo(detailId.value)
   accountId.value = res.data.accountId
-  icpBalance.value = res.data.icpBalance
+  icpBalance.value = res.data.icpBalance;
+  reloadLoading.value = false;
 }
 onMounted(async()=>{
   // 如果没有icp身份，先创建
