@@ -1,9 +1,9 @@
 <template>
     <div class="text-[24px] font-bold mb-2 w-[100%]">Contract Wizard</div>
-    <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E] w-[500px]">
+    <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E] w-[100%]">
         Choose one of the programming languages supported by Filecoin to quickly develop your Filecoin smart contract.
     </div>
-    <div class="mt-[32px] mb-[18px] font-bold w-[500px]">
+    <div class="mt-[32px] mb-[18px] font-bold w-[100%]">
         Plaase choose one of the programming languages :
     </div>
     <div class="template cursor-pointer" @click="goFilecoinDetail" style="border: 1px solid #E2B578;">
@@ -38,7 +38,7 @@ const goFilecoinDetail = () => {
 .template{
     text-align: center;
     padding:20px;
-    width: 500px;
+    width: 100%;
     // height: 300px;
     margin-bottom: 16px;
     border-radius: 12px;
