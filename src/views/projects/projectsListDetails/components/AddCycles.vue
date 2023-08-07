@@ -18,13 +18,13 @@
               <a-input disabled="true" class="modal-input" v-model:value="formData.canisterId" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
           </a-form-item>
           <a-form-item name="amount" label="Amount">
-              <a-input class="modal-input" v-model:value="formData.amount" suffix="T Cycles" placeholder="Please enter amount" allow-clear autocomplete="off" />
+              <a-input class="modal-input modal-input-suffix" v-model:value="formData.amount" suffix="T Cycles" placeholder="Please enter amount" allow-clear autocomplete="off" />
           </a-form-item>
         </a-form>
         <div class="bg-[#FFF9F2] rounded-[5px] p-[20px]">
           <div>Cycles Wallet Info</div>
           <div class="flex mt-[10px]">
-            <div class="font-medium text-[#73706E]">
+            <div class="text-[#73706E]">
               <div>Wallet Canister:</div>
               <div class="mt-[10px]">Current Balance: </div>
             </div>
@@ -132,5 +132,11 @@ onMounted(async()=>{
 :deep(.ant-form-item-label > label){
   font-size: 14px;
   font-weight: 400;
+}
+:deep(.modal-input-suffix .ant-input-suffix){
+  display: flex;
+}
+:deep(.modal-input-suffix .ant-input-suffix .anticon-close-circle){
+  order: 2;
 }
 </style>

@@ -58,7 +58,7 @@
         </a-form-item>
         <div v-else>
           <a-form-item class="select-type" label="Framework Preset" name="ecosystem" :rules="[{ required: true, message: 'Please select your framework!' }]">
-            <a-select dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="importFormData.ecosystem" placeholder="Please select...">
+            <a-select class="modal-select" dropdownClassName="modal-select-dropdown" autocomplete="off" v-model:value="importFormData.ecosystem" placeholder="Please select...">
               <a-select-option value="1">Vue.js</a-select-option>
               <a-select-option value="2">React.js</a-select-option>
               <a-select-option value="3" v-if="importFormData.deployType == '2'">Nuxt.js</a-select-option>
@@ -66,7 +66,7 @@
             </a-select>
           </a-form-item>
           <a-form-item label="Deployment Method" name="deployType" :rules="[{ required: true, message: 'Please select your method!' }]">
-            <a-radio-group autocomplete="off" v-model:value="importFormData.deployType">
+            <a-radio-group class="modal-radio" autocomplete="off" v-model:value="importFormData.deployType">
               <a-radio value="1">IPFS
                 <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
               </a-radio>
