@@ -279,6 +279,7 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
+  showList.value = [];
   getInitTemplates()
 }
 
@@ -292,6 +293,7 @@ const getInitTemplates = async () => {
       languageType = null;
     } else {
       languageType = '1';
+      formData.frameType = languageType;
     }
     const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
     showList.value = data;
