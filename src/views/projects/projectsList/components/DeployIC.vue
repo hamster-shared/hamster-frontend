@@ -46,7 +46,7 @@
                     </div>
                     <div class="mt-[10px] flex items-center">{{icpBalance}}
                       <img @click="reloadBalance" src="@/assets/icons/reload.svg" class="h-[19px] ml-[10px] cursor-pointer" />
-                      <label v-if="icpBalance.slice(0,-3)==0" class="text-[12px] text-[#FF4A4A] ml-[10px]">Please send some ICP token to get Cycles</label>
+                      <label v-if="icpBalance?.slice(0,-3)==0" class="text-[12px] text-[#FF4A4A] ml-[10px]">Please send some ICP token to get Cycles</label>
                     </div>
                   </div>
                 </div>
