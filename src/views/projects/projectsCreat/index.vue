@@ -37,7 +37,7 @@
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type != '2'">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type != '2' && formData.type != '3'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <div v-if="formData.type==1">
                 <a-radio :style="radioStyle" value="1">EVM
@@ -103,7 +103,7 @@
                 <div class="relative flex-1">
                   <img :src="item.logo" class="h-[40px] w-[40px]" />
                   <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
-                  <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
+                  <div class="text-[#151210] dark:text-[#BBBAB9] max-h-[150px] text-ellipsis-line mb-4">{{ item.description }}</div>
                   <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]" />
                   <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]" />
                 </div>
@@ -371,6 +371,14 @@ onMounted(() => {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+.text-ellipsis-line {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
 }
 .btn{
   width: 70px;
