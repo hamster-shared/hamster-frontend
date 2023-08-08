@@ -42,7 +42,7 @@
                   </div>
                   <div class="ml-[10px] text-[#000000]">
                     <div> 
-                      {{ accountId.substring(0,10)+ "..." +accountId.substring(accountId.length-10) }}
+                      {{ accountId?.substring(0,10)+ "..." +accountId?.substring(accountId.length-10) }}
                       <img @click="copyToClipboard(accountId)" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
                     </div>
                     <div class="mt-[10px] flex items-center">{{icpBalance}}
@@ -207,12 +207,14 @@ const handleNext = async () => {
   //   }
   // }else 
   if(currStep.value == 1){
+    loading.value = true
     if(formData.cyclesType === '1'){
       await formRef.value.validate();
       await getRedeemCoupon()
     }else if(formData.cyclesType === '2'){
       await getRechargeWallet()
     }
+    loading.value = false
   }else if(currStep.value == 2){
     // 查询钱包罐信息
     const res = await apiWalletInfo(detailId.value)

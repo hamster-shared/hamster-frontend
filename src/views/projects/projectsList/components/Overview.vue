@@ -612,7 +612,27 @@ const goContractDeploy = async (id: string, status: string | Number) => {
     localStorage.getItem('projectActiveKey') == '2')
     {
       if (status === 3) {
-      goFrontendDeploy();
+      // goFrontendDeploy();
+      if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
+        const res = await apiIcpAccount(viewInfo.value.id)
+        accountIdFlag.value = res.data.accountIdFlag
+        walletIdFlag.value = res.data.walletIdFlag
+        console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+        if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+          if(!res.data.accountIdFlag){
+            const res = await apiCreateICPIdentity(viewInfo.value.id)
+          }
+          showDeployIC.value = true
+        }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+          // 是否弹dfx.json配置文件
+          const dfxConResult = await apiCheckDfx(viewInfo.value.id)
+          if(!dfxConResult.data){
+            showDFX.value = true
+          }else {
+            goFrontendDeploy();
+          }
+        }
+      }
     }
   }
 };

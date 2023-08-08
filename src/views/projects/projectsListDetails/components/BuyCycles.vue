@@ -63,7 +63,7 @@
       </div>
       <div class="mt-[32px]" :class="[currStep === 2 ? 'text-center' : currStep > 0 ? 'flex justify-between' : 'text-right']">
         <a-button v-if="currStep === 1" class="!w-[240px] !h-[43px]" ghost @click="handleLast">Previous</a-button>
-        <a-button v-if="currStep < 2" class="!w-[240px] !h-[43px]" @click="handleNext">Next</a-button>
+        <a-button :loading="loading" v-if="currStep < 2" class="!w-[240px] !h-[43px]" @click="handleNext">Next</a-button>
         <a-button v-if="currStep == 2" class="!w-[240px] !h-[43px]" @click="handleDone">Done</a-button>
       </div>
     </div>
@@ -90,6 +90,7 @@ const accountId = ref()
 const icpBalance = ref()
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
+const loading = ref(false)
 const handleLast = () => {
   currStep.value--;
   if(currStep.value==1 || currStep.value==0){
@@ -98,14 +99,15 @@ const handleLast = () => {
     getWalletInfo()
   }
 }
-const handleNext = () => {
+const handleNext = async() => {
   if(currStep.value==0){
     getAccountInfo()
     currStep.value = 1;
   }else if(currStep.value==1){
+    loading.value = true
     // getWalletInfo()
-    getRechargeWallet()
-    currStep.value = 2;
+    await getRechargeWallet()
+    loading.value = false
   }
 }
 const handleDone = () => {
@@ -124,6 +126,7 @@ const getRechargeWallet = async()=>{
     walletCanisterId.value = res.data.canisterId
     walletCyclesBalance.value = res.data.cyclesBalance
     message.success(res.message)
+    currStep.value = 2;
   } catch (error:any) {
     message.error(error.response.data.message)
   }
