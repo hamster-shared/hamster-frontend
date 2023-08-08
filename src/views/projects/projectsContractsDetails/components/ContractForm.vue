@@ -231,7 +231,7 @@ const evmDeployFunction = () => {
       let contract = new ethers.Contract(formState.contractAddress, abi, provider.getSigner());
       if (props.buttonInfo === 'Transact') {
         // send 方法
-        console.log(...(Object.values(formData)), 'data')
+        console.log('Transact传入的参数：',...(Object.values(formData)),formState.checkValue)
         contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
           tx.wait().then((result: any) => {
             // isSend.value = false;
