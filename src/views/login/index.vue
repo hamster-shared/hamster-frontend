@@ -59,7 +59,7 @@ const loginBox = () => {
   }
 }
 const commonJump = ()=>{
-  if (localStorage.getItem('firstState') === "0") {
+  if (localStorage.getItem('firstState') === "0" && false) {
       //第一次登录
       router.push('/welcome')
     } else {
@@ -90,7 +90,7 @@ const goHome = () => {
 };
 onMounted(()=>{
   if(localStorage.getItem('token')){
-    if(localStorage.getItem('firstState')==="0"){
+    if(localStorage.getItem('firstState')==="0" && false){
       router.push('/welcome')
     }
     else{
