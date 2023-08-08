@@ -13,7 +13,7 @@
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
             :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
             v-for="(val, index) in sendAbis" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
-            {{ val.name }}</div>
+            {{ ellipsisFunction(val.name) }}</div>
         </div>
       </div>
       <div v-if="callAbis.length > 0">
@@ -27,7 +27,7 @@
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
             :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
             v-for="(val, index) in callAbis" :key="val.name" @click="checkContract(val.name, val, 'Call', index)">
-            {{ val.name }}</div>
+            {{ ellipsisFunction(val.name) }}</div>
         </div>
       </div>
 
@@ -110,6 +110,16 @@ const commonFirst = ()=>{
 }
 
 const emit = defineEmits(["checkContract"])
+
+const ellipsisFunction = (column: string ) => {
+    if(!column){
+        return ""
+    }
+    if(column.length > 26){
+      return column.slice(0,23)+'...'
+    }
+    return column
+}
 
 const checkContract = (name: string, val: any, text: string, index: number) => {
   inputs.value = []
