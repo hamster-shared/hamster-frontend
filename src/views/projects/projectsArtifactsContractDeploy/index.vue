@@ -800,6 +800,7 @@ onMounted(async () => {
           let json = JSON.parse(lastDeployChain)
           if (frameType.value === json.frameType) {
               formState.chain = json.chain
+              changeChain(json.chain)
               formState.network = json.network
           }
       } catch (e) {
