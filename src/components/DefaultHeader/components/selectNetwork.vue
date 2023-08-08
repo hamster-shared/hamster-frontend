@@ -8,7 +8,7 @@
 <script lang='ts' setup>
 import { ref, onMounted } from "vue";
 const networkValue = ref('Ethereum Mainnet');
-const networkList = ref(['Ethereum Mainnet','Ethereum Goerli','Ethereum Sepolia','Ethereum Hamster','Polygon Mainnet','Polygon Mumbai', 'BSC Mainnet', 'BSC Testnet','Arbitrum One','Arbitrum Nova','Nitro Goerli Rollup Testnet','IRIShub Mainnet','IRIShub Testnet NYANCAT']);
+const networkList = ref(['Ethereum Mainnet','Ethereum Goerli','Ethereum Sepolia','Ethereum Hamster','Scroll Alpha Testnet','Scroll Sepolia Testnet','Polygon Mainnet','Polygon Mumbai', 'BSC Mainnet', 'BSC Testnet','Arbitrum One','Arbitrum Nova','Nitro Goerli Rollup Testnet','IRIShub Mainnet','IRIShub Testnet NYANCAT']);
 
 const handleChange = (val: string) => {
   localStorage.setItem('network', val)

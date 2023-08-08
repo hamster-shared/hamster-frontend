@@ -627,6 +627,8 @@ const deployClick = async () => {
       }
     }
   }
+
+  localStorage.setItem("lastDeployChain",JSON.stringify({"frameType": frameType.value,"chain": formState.chain, "network": formState.network}))
 }
 
 
@@ -755,7 +757,8 @@ const changeChain = (val: string) => {
     }]
   }else if(val === 'Scroll'){
     networkData.value = [
-      {name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"}
+      {name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"},
+      {name : "Scroll Sepolia Testnet",  id: "8274f", url: "https://sepolia-rpc.scroll.io", networkName: "Scroll Sepolia Testnet"}
     ]
   }
 }
@@ -772,7 +775,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Scroll'])
+        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
@@ -825,6 +828,19 @@ onMounted(async () => {
   await getProjectsDetail();
   await getProjectsContract()
   await judgeOrigin()
+  let lastDeployChain = localStorage.getItem("lastDeployChain")
+  if(lastDeployChain) {
+      try {
+          let json = JSON.parse(lastDeployChain)
+          if (frameType.value === json.frameType) {
+              formState.chain = json.chain
+              changeChain(json.chain)
+              formState.network = json.network
+          }
+      } catch (e) {
+          console.error(e)
+      }
+  }
 })
 
 </script>
