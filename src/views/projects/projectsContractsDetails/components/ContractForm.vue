@@ -239,9 +239,8 @@ const evmDeployFunction = () => {
           })
         }
         console.log(newData,'---new');
-        console.log(...(Object.values(newData)),'---new');
-        console.log('Transact传入的参数：',...(Object.values(formData)),formState.checkValue)
-        contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
+        console.log('Transact传入的参数：',...(Object.values(newData)),formState.checkValue)
+        contract[formState.checkValue](...(Object.values(newData))).then((tx: any) => {
           tx.wait().then((result: any) => {
             // isSend.value = false;
             hashValue.value = tx.hash;
