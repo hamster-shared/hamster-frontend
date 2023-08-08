@@ -380,12 +380,6 @@ onMounted(() => {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 6;
 }
-.text-line-2{
-  -webkit-line-clamp: 2;
-}
-.text-line-3{
-  -webkit-line-clamp: 3;
-}
 .btn{
   width: 70px;
   height: 20px;
