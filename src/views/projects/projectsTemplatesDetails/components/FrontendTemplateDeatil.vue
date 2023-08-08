@@ -8,7 +8,7 @@
       <div class="w-1/2">
         <div class="flex justify-between">
           <div class="text-[24px] font-bold">{{ frontendTemplateDetail.name }}</div>
-          <div v-if="deployType === '3'" class="dfx-css">dfx</div>
+          <div v-if="false" class="dfx-css">dfx</div>
         </div>        
         <div class="mt-[8px] mb-[24px] dark:text-[#E0DBD2] text-[#73706E]">{{ frontendTemplateDetail.description }}
         </div>

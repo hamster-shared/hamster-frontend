@@ -37,7 +37,7 @@
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type != '2'">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type != '2' && formData.type != '3'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <div v-if="formData.type==1">
                 <a-radio :style="radioStyle" value="1">EVM
@@ -95,20 +95,21 @@
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '3'">A collection of our most deployed substrate templates.</div>
-          <div v-if="formData.type === '1' || formData.type === '3'" class="grid grid-cols-2 gap-4 template-height">
+          <!-- filecoin的是上下布局，反之是两栏布局 -->
+          <div v-if="formData.type === '1' || formData.type === '3'" :class="formData.frameType != '6' ? 'grid grid-cols-2 gap-4':''" class="template-height">
             <div v-if="formData.frameType != '6'" v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
                 <div class="relative flex-1">
                   <img :src="item.logo" class="h-[40px] w-[40px]" />
                   <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
-                  <div class="text-[#151210] dark:text-[#BBBAB9]">{{ item.description }}</div>
+                  <div class="text-[#151210] dark:text-[#BBBAB9] max-h-[150px] text-ellipsis-line mb-4">{{ item.description }}</div>
                   <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]" />
                   <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]" />
                 </div>
                 <!-- 按钮 -->
                 <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
-                <div class="flex">
+                <div class="flex text-[16px]">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
@@ -138,18 +139,30 @@
                     <img :src="item.logo" class="w-[24px]" />
                     <span class="align-middle ml-[4px]">{{ item.name }}</span>
                   </div>
-                  <div class="text-[16px]" v-if="formData.deployType !== '3'">
+                  <!-- <div class="text-[16px]" v-if="formData.deployType !== '3'">
+                    <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
+                    <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                    <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                  </div> -->
+                  <div v-if="item.labelDisplay" class="dfx-css">{{ item.labelDisplay }}</div>
+                </div>
+                <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E]">{{ item.description }}</div>
+                <!-- <div class="text-[16px]">
+                  <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
+                  <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                  <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                </div> -->
+                <div class="flex text-[16px] mt-[12px]">
+                  <div>
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
                     <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
                   </div>
-                  <div v-else class="dfx-css">dfx</div>
-                </div>
-                <div class="text-[14px] dark:text-[#E0DBD2] text-[#73706E]">{{ item.description }}</div>
-                <div class="text-[16px]" v-if="formData.deployType === '3'">
-                  <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
-                  <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
-                  <span class="align-middle ml-[4px]">{{ item.lastVersion }}</span>
+                  <div class="flex items-center ml-4" v-if="item.audited === true">
+                    <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
+                    <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
+                    Audited
+                  </div>
                 </div>
               </div>
             </div>
@@ -266,6 +279,7 @@ const goDetail = async (val: any) => {
 }
 
 const getTemplatesShow = async (val: any) => {
+  showList.value = [];
   getInitTemplates()
 }
 
@@ -279,6 +293,7 @@ const getInitTemplates = async () => {
       languageType = null;
     } else {
       languageType = '1';
+      formData.frameType = languageType;
     }
     const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
     showList.value = data;
@@ -356,6 +371,14 @@ onMounted(() => {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+.text-ellipsis-line {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
 }
 .btn{
   width: 70px;

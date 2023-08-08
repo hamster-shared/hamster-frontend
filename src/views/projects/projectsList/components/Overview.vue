@@ -239,7 +239,7 @@
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
-  <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
+  <DeployIC v-if="showDeployIC" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
   <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 
@@ -264,7 +264,7 @@ import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components
 import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
 import  { apiPostPopover } from "@/apis/workFlows";
-import { apiIcpAccount, apiCheckDfx, apiSaveDfx } from '@/apis/canister'
+import { apiIcpAccount, apiCheckDfx, apiSaveDfx, apiCreateICPIdentity } from '@/apis/canister'
 
 const { t } = useI18n()
 const theme = useThemeStore()
@@ -296,6 +296,7 @@ const actionButtonList = ref([
   { name: 'Ops', url: 'ops' }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
+console.log('viewInfo~~~~~~~~',viewInfo.value)
 
 const showViewInfoRepositoryUrl = computed(() => {
   // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
@@ -500,60 +501,69 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
 };
 
 const projectsDeploy = async (id: string, version: string, status: Number) => {
+  // icp
   if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
     const res = await apiIcpAccount(viewInfo.value.id)
     accountIdFlag.value = res.data.accountIdFlag
     walletIdFlag.value = res.data.walletIdFlag
     console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
     if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+      if(!res.data.accountIdFlag){
+        const res = await apiCreateICPIdentity(viewInfo.value.id)
+      }
       showDeployIC.value = true
     }else if(res.data.accountIdFlag && res.data.walletIdFlag){
       // 是否弹dfx.json配置文件
       const dfxConResult = await apiCheckDfx(viewInfo.value.id)
       if(!dfxConResult.data){
         showDFX.value = true
+      }else {
+        if (status === 3) {
+          goFrontendDeploy();
+        }
+        else {
+          // 前端并且是ipfs的时候
+          if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+            message.info("Package not avaliable");
+          } else {
+            if (viewInfo.value.deployType === 3) {
+              showDeployIC.value = true;
+            } else {
+              message.info("Project image not avaliable");
+            }
+          }
+        }
       }
     }
-    return
-    if(accountIdFlag){
-      // 身份弹框第一步
-      // const res = await apiCreateICPIdentity()
-    }else if(!accountIdFlag || !walletIdFlag){
-      // 身份弹框第二步
-    }else{
-      // 直接执行部署
-    }
-  }
-  // message.info("The workflow of deploying is running, view now.")
-  if (projectType?.value === '1') {
-    if (status === 0 || status === 1 || version === "") {
-      // message.info("Smart contract not avaliable.");
-      message.info(t('Smart contract not avaliable.'));
+  }else{
+    if (projectType?.value === '1') {
+      if (status === 0 || status === 1 || version === "") {
+        // message.info("Smart contract not avaliable.");
+        message.info(t('Smart contract not avaliable.'));
+      }
+      else {
+        goContractDeploy(id, version);
+      }
     }
     else {
-      goContractDeploy(id, version);
-    }
-  }
-  else {
-    if (status === 3) {
-      goFrontendDeploy();
-    }
-    else {
-      // 前端并且是ipfs的时候
-      if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
-        message.info("Package not avaliable");
-      } else {
-        if (viewInfo.value.deployType === 3) {
-          showDeployIC.value = true;
+      if (status === 3) {
+        goFrontendDeploy();
+      }
+      else {
+        // 前端并且是ipfs的时候
+        if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+          message.info("Package not avaliable");
         } else {
-          message.info("Project image not avaliable");
+          if (viewInfo.value.deployType === 3) {
+            showDeployIC.value = true;
+          } else {
+            message.info("Project image not avaliable");
+          }
         }
       }
     }
   }
-  // if(viewInfo.labelDisplay===""){
-  //   message.info("Smart contract not available.")
-  // }
+  
 };
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
@@ -712,6 +722,7 @@ const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateT
 }
 
 const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
+  console.log('recentDeploy:',recentDeploy)
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}?type=${viewInfo.value.type}`);
   } else {
@@ -755,7 +766,18 @@ const CancelDeployDFX = () => {
 }
 // 保存dfx.json
 const SaveDFXCon = async(params:string) => {
-  const res = await apiSaveDfx('',params)
+  console.log('保存dfx.json',params)
+  const data = {
+    jsonData: params
+  }
+  const res = await apiSaveDfx(viewInfo.value.id,data)
+  if(res.code==200){
+    showDFX.value = false
+    // message.success(res.message)
+    goFrontendDeploy();
+  }else{
+    message.error(res.message)
+  }
 }
 </script>
 <style lang='less' scoped>

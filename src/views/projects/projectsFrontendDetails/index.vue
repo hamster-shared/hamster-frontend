@@ -25,7 +25,7 @@
       </div>
     </div>
     <div>
-      <Deployment :showBth="false" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :nodeType="nodeType"></Deployment>
+      <Deployment v-if="id" :showBth="false" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :nodeType="nodeType"></Deployment>
     </div>
     <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[12px] mt-[24px]">
       <div class="flex justify-between mb-[32px]">
@@ -63,6 +63,8 @@ const workflowsDetailsData = reactive({
   packageId: params.packageId,
 });
 const nodeType = ref(query.type)
+// 项目id
+const id = ref()
 
 const viewLogs = () => {
   // 回到workFlows详情页
@@ -110,6 +112,7 @@ const writeRealtimeLogs =(event: any) => {
 const getPackageDetail = async () => {
   try {
     const { data } = await apiGetPackageDetail(params.packageId)
+    id.value = data.projectId
     Object.assign(packageInfo, data)
     useWebSocketURL.value = `${baseUrl.value}/projects/${packageInfo.projectId}/${userInfo.username}/frontend/logs`
     buildTerm()

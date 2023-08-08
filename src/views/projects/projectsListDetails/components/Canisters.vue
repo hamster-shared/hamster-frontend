@@ -12,9 +12,9 @@
       </template>
     </a-table>
   </div>
-  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
-  <AddCycles :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true"></AddCycles>
-  <BuyCycles :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
+  <CustomMsg v-if="showMsg" :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
+  <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" ></AddCycles>
+  <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
@@ -137,5 +137,10 @@ const handleAddCycles = (record:any) => {
 }
 const cancelAddCycle = () => {
   showAddCycle.value = false;
+}
+
+const showBuyCycleMsg = ()=>{
+  showAddCycle.value = false
+  showMsg.value = true
 }
 </script>

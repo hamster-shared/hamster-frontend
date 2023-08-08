@@ -22,26 +22,37 @@
             <template v-slot:description>
               <div class="mb-[20px]">On the Internet Computer, a cycle is the unit of measurement for resources consumed in the form of processing, memory, storage, and network bandwidth.The Internet Computer’s utility token (ICP) can be converted to cycles.</div>
               
-              <a-form class="modal-form]" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+              <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
                 <a-form-item name="cyclesType">
-                  <a-radio-group class="!pl-[1px]" v-model:value="formData.cyclesType">
+                  <a-radio-group class="!pl-[1px] modal-radio" v-model:value="formData.cyclesType">
                     <a-radio :style="radioStyle" value="1">Claim your Free Cycles</a-radio>
-                    <a-radio :style="radioStyle" value="2">Send some ICP token to get Cycles </a-radio>
+                    <a-radio :style="radioStyle" value="2">
+                      <div class="w-[100%] flex justify-between">
+                        <span>Send some ICP token to get Cycles</span>
+                        <a class="text-[14px] font-medium" href="javascript:;" @click="getIcp">How to get ICP?</a>
+                      </div>
+                    </a-radio>
                   </a-radio-group>
                 </a-form-item>
                 <div class="h-[19px] w-full"></div>
                 <div class="p-[20px] flex bg-[#FFF9F2] rounded-[5px]" v-if="formData.cyclesType === '2'">
                   <div class="font-medium text-[#73706E]">
                     <div>Account-ID:</div>
-                    <div class="mt-[10px]">Balance(ic): </div>
+                    <div class="mt-[10px] leading-[24px]">Balance(ic): </div>
                   </div>
                   <div class="ml-[10px] text-[#000000]">
-                    <div>{{accountId}}
+                    <div> 
+                      {{ accountId.substring(0,10)+ "..." +accountId.substring(accountId.length-10) }}
                       <img @click="copyToClipboard(accountId)" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
                     </div>
                     <div class="mt-[10px] flex items-center">{{icpBalance}}
-                      <img @click="reloadBalance" src="@/assets/icons/reload.svg" class="h-[19px] ml-[10px] cursor-pointer" />
-                      <label v-if="icpBalance.slice(0,-3)==0" class="text-[12px] text-[#FF4A4A] ml-[10px]">Please send some ICP token to get Cycles</label>
+                      <a-button type="link" class="!h-[24px] !p-0" :loading="reloadLoading" @click="reloadBalance">
+                        <template #icon>
+                          <img src="@/assets/icons/reload.svg" class="h-[19px]" />
+                        </template>
+                      </a-button>
+                      <!-- <img @click="reloadBalance" src="@/assets/icons/reload.svg" class="h-[19px] ml-[10px] cursor-pointer" /> -->
+                      <label v-if="icpBalance?.slice(0,-3)==0" class="text-[12px] text-[#FF4A4A] ml-[10px]">Please send some ICP token to get Cycles</label>
                     </div>
                   </div>
                 </div>
@@ -55,10 +66,11 @@
                   <template v-slot:label>
                     <div class="!w-full flex justify-between">
                       <div class="text-[#151210]">Coupon code</div>
-                      <a href="javascript:;" @click="getCouponCode">How to get Coupon code?</a>
+                      <a href="javascript:;" class="text-[14px] font-medium" @click="getCouponCode">How to get Coupon code?</a>
                     </div>
                   </template>
-                  <a-input class="modal-input" v-model:value="formData.couponCode" placeholder="Please enter coupon code" allow-clear autocomplete="off" />
+                  <a-input @change="handleCouponCode" :class="{'!border-[#F52222]' : couponCodeError}" class="modal-input" v-model:value="formData.couponCode" placeholder="Please enter coupon code" allow-clear autocomplete="off" />
+                  <div :class="{'text-[#FF4A4A]' : couponCodeError}">{{ couponCodeError }}</div>
                 </a-form-item>
               </a-form>
             </template>
@@ -81,7 +93,7 @@
         </a-steps>
       </div>
       <div class="text-center mt-[32px]">
-        <a-button v-if="currStep<3" class="!w-[240px] !h-[43px]" @click="handleNext">Next</a-button>
+        <a-button :loading="loading" v-if="currStep<3" class="!w-[240px] !h-[43px]" @click="handleNext">Next</a-button>
         <a-button v-else class="!w-[240px] !h-[43px]" @click="showDfxFn">Configure dfx.json</a-button>
       </div>
     </div>
@@ -90,7 +102,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, toRefs, onMounted } from 'vue';
 import { copyToClipboard } from "@/utils/tool";
-import { apiCreateICPIdentity, apiAccountInfo, apiRedeemCoupon, apiWalletInfo } from '@/apis/canister'
+import { apiCreateICPIdentity, apiAccountInfo, apiRedeemCoupon, apiWalletInfo, apiRechargeWallet } from '@/apis/canister'
+import { message } from 'ant-design-vue'
 
 const props = defineProps({
   visible:{
@@ -112,7 +125,7 @@ const props = defineProps({
 });
 const { visible, accountIdFlag, walletIdFlag, detailId } = toRefs(props)
 const emit = defineEmits(["CancelDeployIC","showDfxFn"])
-const currStep = ref(0);
+const currStep = ref(1);
 const formRef = ref();
 const formData = reactive({
   cyclesType: '1',
@@ -123,6 +136,9 @@ const icpBalance = ref()
 const canisterId = ref()
 const cyclesBalance = ref()
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
+const loading = ref(false)
+const reloadLoading = ref(false);
+const couponCodeError = ref();
 
 const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message});
@@ -131,35 +147,82 @@ const formRules = computed(() => {
   };
 });
 const reloadBalance = () => {
+  reloadLoading.value = true;
   getAccountInfo()
 }
+
+const getIcp = ()=>{
+//  window.open()
+}
+
 const getCouponCode = ()=>{
 //  window.open()
 }
-const handleNext = async () => {
-  if(currStep.value == 0){
-    const res = await apiCreateICPIdentity(detailId.value)
-    accountId.value = res.data.accountId
-    icpBalance.value = res.data.icpBalance
-    if(res.code==200){
-      currStep.value = 1
+
+// 向钱包充钱
+const getRechargeWallet = async()=>{
+  try {
+    const res = await apiRechargeWallet(detailId.value)
+    message.success(res.message)
+    currStep.value = 2
+  } catch (error:any) {
+    message.error(error.response.data.message)
+  }
+}
+
+const handleCouponCode = () => {
+  if (formData.couponCode === '' || formData.couponCode === null) {
+    couponCodeError.value = '';
+  }
+}
+
+// 通过优惠卷生成钱包罐
+const getRedeemCoupon = async () => {
+  couponCodeError.value = '';
+  try {
+    loading.value = true
+    const params:any = {
+      coupon: formData.couponCode
     }
-  }else if(currStep.value == 1){
-    await formRef.value.validate();
-    // 通过优惠卷生成钱包罐
-    const res = await apiRedeemCoupon(detailId.value,formData.couponCode)
+    const res = await apiRedeemCoupon(detailId.value,params)
     canisterId.value = res.data.canisterId
     cyclesBalance.value = res.data.cyclesBalance
+    message.success(res.message)
+    loading.value = false
+    currStep.value = 2
+  } catch (error:any) {
+    // message.error(error.response.data.message)
+    couponCodeError.value = error.response.data.message;
+    loading.value = false
+  }
+}
+
+const handleNext = async () => {
+  // if(currStep.value == 0){
+  //   const res = await apiCreateICPIdentity(detailId.value)
+  //   accountId.value = res.data.accountId
+  //   icpBalance.value = res.data.icpBalance
+  //   if(res.code==200){
+  //     currStep.value = 1
+  //   }
+  // }else 
+  if(currStep.value == 1){
+    if(formData.cyclesType === '1'){
+      await formRef.value.validate();
+      await getRedeemCoupon()
+    }else if(formData.cyclesType === '2'){
+      await getRechargeWallet()
+    }
   }else if(currStep.value == 2){
     // 查询钱包罐信息
     const res = await apiWalletInfo(detailId.value)
     canisterId.value = res.data.canisterId
     cyclesBalance.value = res.data.cyclesBalance
-  }else if(currStep.value == 2){
-
+    currStep.value = 3
   }
 }
 const showDfxFn = ()=>{
+  emit('CancelDeployIC')
   emit('showDfxFn')
 }
 const handleCancel = ()=>{
@@ -169,16 +232,18 @@ const handleCancel = ()=>{
 const getAccountInfo = async()=>{
   const res = await apiAccountInfo(detailId.value)
   accountId.value = res.data.accountId
-  icpBalance.value = res.data.icpBalance
+  icpBalance.value = res.data.icpBalance;
+  reloadLoading.value = false;
 }
 onMounted(async()=>{
   // 如果没有icp身份，先创建
-  if(!accountIdFlag.value){
-    currStep.value = 0
-  }else{
-    currStep.value = 1
-    getAccountInfo()
-  }
+  // if(!accountIdFlag.value){
+  //   currStep.value = 0
+  // }else{
+  //   currStep.value = 1
+  //   getAccountInfo()
+  // }
+  getAccountInfo()
 })
 </script>
 <style scoped lang="less">
@@ -193,5 +258,13 @@ onMounted(async()=>{
 }
 :deep(.ant-radio-wrapper){
   color: #73706E !important;
+  margin-right: 0;
+}
+:deep(#form_item_cyclesType){
+  width: 100%;
+}
+:deep(span.ant-radio+*){
+  padding-right: 0;
+  width: 100%;
 }
 </style>
