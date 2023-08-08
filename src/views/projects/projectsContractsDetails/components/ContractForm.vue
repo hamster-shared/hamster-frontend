@@ -232,6 +232,15 @@ const evmDeployFunction = () => {
       if (props.buttonInfo === 'Transact') {
         // send 方法
         console.log(...(Object.values(formData)), 'data')
+        let newData:any = {};
+        if (inputs?.value.length > 0) {
+          inputs?.value.forEach((item: any) => {
+            newData[item.name] = formData[item.name];
+          })
+        }
+        console.log(newData,'---new');
+        console.log(...(Object.values(newData)),'---new');
+        //@todo
         contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
           tx.wait().then((result: any) => {
             // isSend.value = false;
