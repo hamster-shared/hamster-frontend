@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="projectType=='1' && frameType=='1'">
     <!-- OptionsList -->
     <a-select @change="changeReport" v-model:value="OptionsList" :options="RightData" style="margin-right:10px;width:250px"></a-select>
     <!-- checkReportsList -->
@@ -30,20 +30,15 @@ import { formatDateToLocale } from '@/utils/dateUtil';
 import {
   apiGetProjectsReports,
   apiProjectsCheckTools,
-  //report
-  apiAddReport,
 } from "@/apis/projects";
 
 const router = useRouter();
 const props = defineProps({
   detailId: String,
   projectType: String,
-  //report
-  type:String,
-  reportType:String,
-
+  frameType:String,
 });
-const { detailId, projectType,type,reportType } = toRefs(props);
+const { detailId, projectType,frameType } = toRefs(props);
 const Options=ref("All Check Tools")
 const OptionsList=ref('All Reports')
 
@@ -182,35 +177,24 @@ const reportPagination = reactive({
     reportPagination.current = current;
     reportPagination.pageSize = pagesize;
     getProjectsReports();
-    //report
-    getReportAps()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     reportPagination.current = current;
     getProjectsReports();
-    //report
-    getReportAps()
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
 onMounted(() => {
   getProjectsReports();
   getProjectsCheckTools();
-  //report
-  getReport()
-  getReportAps()
 })
 
 //左侧change事件
 const changeReport = async (type:string) => {
   reportPagination.current = 1;
   getProjectsReports();
-  // console.log(type)
   OptionsList.value = type
-  //report
-  // getReport()
-  
 }
 //右侧change事件
 const changePort=async(reportType:string)=>{
@@ -239,44 +223,13 @@ const getProjectsReports = async () => {
   }
 };
 
-//report
-const getReportAps = async () => {
-  try {
-    const params = {
-      type: checkReports.value === 'All Report' ? "" : checkReports.value,
-      page: reportPagination.current,
-      size: reportPagination.pageSize,
-      reportType:checkReportsList.value
-    }
-    
-    const { data } = await apiAddReport(detailId.value.toString(),params,reportType);
-    reportTableList.value = data.data;
-    reportPagination.total = data.total
-  } catch (error: any) {
-    console.log("Error:", error)
-  } finally {
-  }
-};
-
 const getProjectsCheckTools = async () => {
   try {
     const { data } = await apiProjectsCheckTools(detailId.value.toString());
-    OptionsList.value.length = 1;
-    OptionsList.value = OptionsList.value.concat(data);
+    console.log('getProjectsCheckTools',data)
   } catch (error: any) {
     console.log("Error:", error)
   } finally {
-  }
-}
-// report
-const getReport=async()=>{
-  try{
-    const { data } = await apiProjectsCheckTools(detailId.value.toString());
-    checkReportsList.value.length = 1;
-    checkReportsList.value = checkReportsList.value.concat(data);
-  }catch(error:any){
-    console.log('Error:',Error)
-  }finally{
   }
 }
 
@@ -285,7 +238,6 @@ const goContractWorkflows = (type: String, workflowId: String, workflowDetailId:
 }
 
 defineExpose({
-  getProjectsReports,
-  getReportAps
+  getProjectsReports
 })
 </script>

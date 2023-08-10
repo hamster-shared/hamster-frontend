@@ -53,7 +53,7 @@ const installGitHub = async () => {
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
-    if (localStorage.getItem('firstState') === "0") {
+    if (localStorage.getItem('firstState') === "0" && false) {
       //第一次登录
       router.push('/welcome')
     } else {

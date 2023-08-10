@@ -24,7 +24,7 @@
       </div>
     </a-modal>
 
-    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" :showUrl="showUrl" v-if="params.type === '2'">
+    <FrontendTemplateDeatilVue :text="frontendTemplatesDetail" :showUrl="showUrl" v-if="params.type === '2' || params.type == '3'" :projectType="projectType">
     </FrontendTemplateDeatilVue>
     <div v-if="params.type === '1'">
       <div class="mt-[32px] rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF]">
@@ -184,7 +184,7 @@ import { computed, onMounted, ref, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
 import NoData from "@/components/NoData.vue"
-import { apiAddProjects, apiDupProjectName } from "@/apis/projects";
+import { apiAddProjects, apiDupProjectName, apiNodeTemplateDetail } from "@/apis/projects";
 import { apiTemplatesDetail, apiFrontendTemplatesDetail,apiDownloadTemplate } from "@/apis/templates";
 import { message } from 'ant-design-vue';
 import { useThemeStore } from "@/stores/useTheme";
@@ -301,11 +301,22 @@ const setEventList = (element: { inputs: never[]; name: any; }) => {
 const getTemplatesDetail = async () => {
   if (projectType.value == '1') {
     await getContractTemplatesDetail()
-  } else {
+  } else if(projectType.value == '3'){
+    // node的polkadot
+    await getNodeTemplateDetail()
+  }else{
     await getFrontendTemplatesDetail()
   }
 
 };
+
+const getNodeTemplateDetail = async () => {
+  const { data } = await apiNodeTemplateDetail(templateId.value.toString())
+  frontendTemplatesDetail.value = data.description;
+  showUrl.value = data.showUrl;
+  templatesDetail.value = data;
+  console.log('getNodeTemplateDetail:',data)
+}
 
 const setFunctionsList = (element: any) => {
   functionsList.value = element.functions;

@@ -43,6 +43,10 @@
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
+              <!-- 展示dfx生成弹框 -->
+              <a-menu-item v-if="projectsDetail.deployType == 3" @click="showDfxModal">
+                <a href="javascript:;" style="color:#151210">Configure dfx.json</a>
+              </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
@@ -59,7 +63,7 @@
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
           <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" :name="projectsDetail.name"/>
         </a-tab-pane>
-        <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '1'" key="2" tab="Package">
+        <a-tab-pane v-if="params.type === '2' && (projectsDetail.deployType == '1' || projectsDetail.deployType == '3')" key="2" tab="Package">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && projectsDetail.deployType == '2'" key="2" tab="Image">
@@ -67,13 +71,15 @@
         </a-tab-pane>
         <!-- polkdot  -->
         <a-tab-pane v-if="params.type === '3'" key="2" tab="Image">
-          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" :nodeType="projectsDetail.type"/>
+          <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
-        <a-tab-pane key="3" tab="Report" v-if="params.type != '3'">
-          <Report ref="reportRef" :detailId="detailId" :projectType="projectType" />
+        <a-tab-pane key="3" tab="Report" v-if="params.type != '3' && projectsDetail.deployType != '3'">
+          <Report ref="reportRef" :detailId="detailId" :projectType="projectType" :frameType="frameType"/>
         </a-tab-pane>
       </a-tabs>
     </div>
+    <!-- 只有前端项目的ic有 -->
+    <Canisters v-if="params.type === '2' && projectsDetail.deployType == '3'" :detailId="detailId" ></Canisters>
   </div>
   <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
@@ -101,6 +107,7 @@
     @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"></AptosBuildParams>
   <!-- 弹框组件 -->
   <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
+  <ConfigureDFX v-if="showDFX" :visible="showDFX" :pDfxContent="pDfxContent" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -110,6 +117,7 @@ import Workflows from "./components/Workflows.vue";
 import Contract from "./components/Contract.vue";
 import Report from "./components/Report.vue";
 import Package from "./components/Package.vue";
+import Canisters from "./components/Canisters.vue";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../projectsList/components/ContainerParam.vue';
 import AptosBuildParams from "../projectsList/components/AptosBuildParams.vue";
@@ -132,6 +140,9 @@ import { message } from "ant-design-vue";
 import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
 import BreadCrumb from "@/components/BreadCrumb.vue";
+import ConfigureDFX from '@/views/projects/projectsList/components/ConfigureDFX.vue'
+// dfx 查询，保存，更新
+import { apiDfxInfo, apiSaveDfx, apiUpdateDfx, apiCheckDfx } from '@/apis/canister'
 const theme = useThemeStore()
 const projectId = ref('')
 
@@ -170,6 +181,9 @@ const aptosBuildParams = ref([]);
 const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
 const breadCrumbInfo = ref<any>([])
+const showDFX = ref(false);
+const dfxId = ref()
+const pDfxContent = ref()
 
 // 弹框
 let visible=ref(false)
@@ -409,6 +423,40 @@ const getAptosBuild = async () => {
   getAptosBuildParams()
 };
 
+// 保存/更新 dfx.json
+const SaveDFXCon = async(params:string) => {
+  console.log(dfxId.value,'保存/更新 dfx.json',params)
+  const data = {
+    jsonData: params
+  }
+  const res = !dfxId.value ? await apiSaveDfx(detailId.value.toString(),data) : await apiUpdateDfx(detailId.value.toString(),dfxId.value,data)
+  if(res.code==200){
+    message.success(res.message)
+    showDFX.value = false
+  }else{
+    message.error(res.message)
+  }
+}
+
+const CancelDeployDFX = () => {
+  showDFX.value = false;
+}
+
+const showDfxModal = async() => {
+  // 先判断是否存在dfx
+  const result = await apiCheckDfx(detailId.value.toString())
+  if(result.data){
+    // 存在，获取 id 和 content
+    const res = await apiDfxInfo(detailId.value.toString())
+    dfxId.value = res?.data?.id
+    pDfxContent.value = res?.data.dfxData
+  }else{
+    dfxId.value = ''
+    pDfxContent.value = ''
+  }
+  showDFX.value = true;
+}
+
 const hideAptosBuildVisible = () => {
   aptosBuildVisible.value = false
 };
@@ -417,10 +465,10 @@ const aptosBuild = async (id: any) => {
   try {
     const { data } = await apiAptosBuild(id.value)
     console.log('aptosbuild::', data)
-    msgParam.value.workflowsId = data.workflowId;
-    msgParam.value.workflowDetailId = data.detailId;
-    msgType.value = 'build';
-    setMsgShow();
+    // msgParam.value.workflowsId = data.workflowId;
+    // msgParam.value.workflowDetailId = data.detailId;
+    // msgType.value = 'build';
+    // setMsgShow();
   } catch (err: any) {
     console.log('err:', err)
   }

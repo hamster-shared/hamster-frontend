@@ -13,7 +13,8 @@
               <div>{{ ContractFrameTypeEnum[viewInfo.frameType] }}</div>
             </label>
             <label v-else-if="projectType === '2'">{{ FrontEndDeployTypeEnum[viewInfo.deployType] }}</label>
-            <label v-else-if="viewInfo.frameType == 1">Polkadot</label>
+            <!-- <label v-else-if="projectType === '2'">IC</label> -->
+            <label v-else-if="projectType === '3' && viewInfo.frameType == 1">Polkadot</label>
           </div>
           <!-- 这里 -->
           <div v-if="viewInfo.labelDisplay"
@@ -42,12 +43,12 @@
           </label> -->
           <label class="action-button-item">
             <label class="action-icon mx-[8px]">
-              <svg-icon :name="item.url" size="15" :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}"/>
+              <svg-icon :name="item.url" size="15" :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}"/>
             </label>
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label :style="{cursor: viewInfo.type == '3' && item.name == 'Check' ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -82,10 +83,6 @@
               main
             </div>
           </div>
-<!--          <div>-->
-<!--            <svg-icon name="white-link" size="16" />-->
-<!--            main-->
-<!--          </div>-->
         </div>
 
 
@@ -110,7 +107,7 @@
           <div v-else>
             <div class="open-link-css cursor-pointer inline-block"
               @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
-              :style="{cursor: viewInfo.type == '3' ? 'default' : 'cursor'}"
+              :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) ? 'default' : 'cursor'}"
               v-if="viewInfo.recentCheck.status === 0">
               <span>Check Now</span>
             </div>
@@ -242,6 +239,8 @@
   <AptosBuildParams :aptosBuildVisible="aptosBuildVisible" :detailId="viewInfo?.id" :aptosBuildParams="aptosBuildParams" @hideAptosBuildVisible="hideAptosBuildVisible" @aptosBuild="aptosBuild"/>
 
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
+  <DeployIC v-if="showDeployIC" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
+  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 
 <script lang='ts' setup>
@@ -252,6 +251,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
 //弹出层页面
 import Configure from './Configure.vue'
+import DeployIC from './DeployIC.vue';
+import ConfigureDFX from './ConfigureDFX.vue'
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -263,10 +264,16 @@ import type { ViewInfoItem, RecentDeployItem } from "@/views/projects/components
 import { apiIsCheck } from "@/apis/workFlows"
 import {useI18n} from "vue-i18n";
 import  { apiPostPopover } from "@/apis/workFlows";
+import { apiIcpAccount, apiCheckDfx, apiSaveDfx, apiCreateICPIdentity } from '@/apis/canister'
 
 const { t } = useI18n()
 const theme = useThemeStore()
 const projectId = ref('')
+
+const showDeployIC = ref(false);
+const showDFX = ref(false);
+const accountIdFlag = ref()
+const walletIdFlag = ref()
 //点击关闭按钮
 const handleCancel=()=>{
     evmCheckVisible.value=false
@@ -289,6 +296,7 @@ const actionButtonList = ref([
   { name: 'Ops', url: 'ops' }]);
 
 const { viewType, viewInfo, projectType } = toRefs(props);
+console.log('viewInfo~~~~~~~~',viewInfo.value)
 
 const showViewInfoRepositoryUrl = computed(() => {
   // return viewInfo.value?.repositoryUrl.slice(0, 18) + '...' + viewInfo.value?.repositoryUrl.slice(-3, -1) + viewInfo.value?.repositoryUrl.slice(-1)
@@ -329,6 +337,10 @@ const goDetail = (id: string, type: string) => {
 const projectsAction = (val: any, type: string, e: Event) => {
   // Polkadot 的 check禁掉
   if(val.type=='3' && type=='Check'){
+    return
+  }
+  // ic 的 check 和 ops 禁掉
+  if(val.type=='2' && val.deployType == 3 && (type=='Check' || type=='Ops')){
     return
   }
   console.log("projectsAction val:",val);
@@ -386,6 +398,10 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
   if(props.viewInfo.type=='3'){
     return
   }
+  // ic 的 check 和 ops 禁掉
+  if(props.viewInfo.type=='2' && props.viewInfo.deployType == 3){
+    return
+  }
   console.log('projectsCheck~~~~')
   // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
   //   e.stopPropagation()
@@ -396,7 +412,6 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
       if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
         projectId.value = id
         const res= await apiIsCheck(id)
-        console.log(id,'打印一下这个id',res?.data?.length);
         // message.destroy()
         if(res.code===200){
           // 如果没有数据就弹，有数据不弹
@@ -405,7 +420,6 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
           } else {
             const { data } = await apiProjectsCheck(id);
             if (checkData.status !== 1) {
-              
               setMsgShow(data.workflowId, data.detailId, 'check', 1);
             }
             loadView();
@@ -419,11 +433,10 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
         //判断是否为EVM 显示弹框
         if (props.viewInfo.frameType === 1 && projectType.value === '1') {
           // evm 没有数据时，弹框唤起不吐丝
-          if (!evmCheckVisible.value) {
-
-            setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
-            // message.info("The workflow of checking is running, view now.")
-          }
+          // if (!evmCheckVisible.value) {
+          //   setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
+          //   // message.info("The workflow of checking is running, view now.")
+          // }
         } else {
           const { data } = await apiProjectsCheck(id);
           
@@ -443,21 +456,10 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
 
 const buildStatusAction = async (id: string, buildData: any) => {
   if (buildData.status === 1) {
-    if (projectType?.value === "1" && false) {
-      // message.info("Executing Now，please wait a moment.");
-      // message.info("The workflow of building is running, view now.")
-      message.info(t('project.pipeline_buiding_now'));
-    } else {
-      setMsgShow(buildData.workflowId, buildData.id, 'build', 2);
-    }
+    setMsgShow(buildData.workflowId, buildData.id, 'build', 2);
   } else {
     const { data } = await apiProjectsBuild(id);
-    if (projectType?.value === "1" && false) {
-      // message.success(res.message);
-    } else {
-    
-      setMsgShow(data.workflowId, data.detailId, 'build', 2);
-    }
+    setMsgShow(data.workflowId, data.detailId, 'build', 2);
     loadView();
   }
 }
@@ -499,40 +501,84 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
 };
 
 const projectsDeploy = async (id: string, version: string, status: Number) => {
-  // message.info("The workflow of deploying is running, view now.")
-  if (projectType?.value === '1') {
-    if (status === 0 || status === 1 || version === "") {
-      // message.info("Smart contract not avaliable.");
-      message.info(t('Smart contract not avaliable.'));
+  // icp
+  if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
+    const res = await apiIcpAccount(viewInfo.value.id)
+    accountIdFlag.value = res.data.accountIdFlag
+    walletIdFlag.value = res.data.walletIdFlag
+    console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+    if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+      if(!res.data.accountIdFlag){
+        const res = await apiCreateICPIdentity(viewInfo.value.id)
+      }
+      showDeployIC.value = true
+    }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+      // 是否弹dfx.json配置文件
+      const dfxConResult = await apiCheckDfx(viewInfo.value.id)
+      if(!dfxConResult.data){
+        showDFX.value = true
+      }else {
+        if (status === 3) {
+          goFrontendDeploy();
+        }
+        else {
+          // 前端并且是ipfs的时候
+          if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+            message.info("Package not avaliable");
+          } else {
+            if (viewInfo.value.deployType === 3) {
+              showDeployIC.value = true;
+            } else {
+              message.info("Project image not avaliable");
+            }
+          }
+        }
+      }
+    }
+  }else{
+    if (projectType?.value === '1') {
+      if (status === 0 || status === 1 || version === "") {
+        // message.info("Smart contract not avaliable.");
+        message.info(t('Smart contract not avaliable.'));
+      }
+      else {
+        goContractDeploy(id, version);
+      }
     }
     else {
-      goContractDeploy(id, version);
+      if (status === 3) {
+        goFrontendDeploy();
+      }
+      else {
+        // 前端并且是ipfs的时候
+        if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+          message.info("Package not avaliable");
+        } else {
+          if (viewInfo.value.deployType === 3) {
+            showDeployIC.value = true;
+          } else {
+            message.info("Project image not avaliable");
+          }
+        }
+      }
     }
   }
-  else {
-    if (status === 3) {
-      goFrontendDeploy();
-    }
-    else {
-      message.info("FrontEnd image not avaliable");
-    }
-  }
-  // if(viewInfo.labelDisplay===""){
-  //   message.info("Smart contract not available.")
-  // }
+  
 };
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
     if (recentDeploy.version === "") {
-      // message.info("Smart contract not avaliable.");
-      // message.info(t('Smart contract not avaliable.'));
       message.info(t('Smart contract not avaliable.'));
     } else {
       goContractDetail(id, recentDeploy.version);
     }
   } else {
-    const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
-    router.push(path);
+    if (recentDeploy.version === "") {
+      message.info(t('Project not avaliable.'));
+    }else{
+      const path = "/projects/" + recentDeploy.workflowId + "/frontend-details/" + recentDeploy.id + "/" + recentDeploy.packageId + '?fromList=1&type='+type
+      router.push(path);
+    }
   }
 };
 const loadView = async () => {
@@ -566,7 +612,27 @@ const goContractDeploy = async (id: string, status: string | Number) => {
     localStorage.getItem('projectActiveKey') == '2')
     {
       if (status === 3) {
-      goFrontendDeploy();
+      // goFrontendDeploy();
+      if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
+        const res = await apiIcpAccount(viewInfo.value.id)
+        accountIdFlag.value = res.data.accountIdFlag
+        walletIdFlag.value = res.data.walletIdFlag
+        console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+        if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+          if(!res.data.accountIdFlag){
+            const res = await apiCreateICPIdentity(viewInfo.value.id)
+          }
+          showDeployIC.value = true
+        }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+          // 是否弹dfx.json配置文件
+          const dfxConResult = await apiCheckDfx(viewInfo.value.id)
+          if(!dfxConResult.data){
+            showDFX.value = true
+          }else {
+            goFrontendDeploy();
+          }
+        }
+      }
     }
   }
 };
@@ -676,6 +742,7 @@ const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateT
 }
 
 const goFrontEndDetail = (id: string, recentDeploy: RecentDeployItem) => {
+  console.log('recentDeploy:',recentDeploy)
   if (recentDeploy.status === 3) { //success
     router.push(`/projects/${recentDeploy.workflowId}/frontend-details/${recentDeploy.id}/${recentDeploy.packageId}?type=${viewInfo.value.type}`);
   } else {
@@ -699,12 +766,38 @@ const openInChainIDE = (data: any) => {
   var url = ''
   const projectId = data.id
   if (data.defaultFile === '') {
-     url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs`
+     url = `https://staging-9589904a8a.chainide.com/s/createGithubProject?url=${repoUrl}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs`
   } else {
     const fileName = "contracts/" + data.defaultFile
-    url = `https://develop-2egludalf0.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
+    url = `https://staging-9589904a8a.chainide.com/s/createGithubProject?url=${repoUrl}&open=${fileName}&type=file&source=hamster&projectId=${projectId}&version=soljson-v0.8.17+commit.8df45f5fjs&line=L1`
   }
   window.open(url)
+}
+
+const CancelDeployIC = () => {
+  showDeployIC.value = false;
+}
+// 展示配置dfx.json
+const showDfxFn = () => {
+  showDFX.value = true;
+}
+const CancelDeployDFX = () => {
+  showDFX.value = false;
+}
+// 保存dfx.json
+const SaveDFXCon = async(params:string) => {
+  console.log('保存dfx.json',params)
+  const data = {
+    jsonData: params
+  }
+  const res = await apiSaveDfx(viewInfo.value.id,data)
+  if(res.code==200){
+    showDFX.value = false
+    // message.success(res.message)
+    goFrontendDeploy();
+  }else{
+    message.error(res.message)
+  }
 }
 </script>
 <style lang='less' scoped>

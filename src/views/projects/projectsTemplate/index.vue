@@ -2,7 +2,7 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <bread-crumb :routes="breadCrumbInfo"/>
 
-    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2'">
+    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2' || params.type === '3'">
     </FrontendTemplate>
     <div v-if="params.type === '1'">
       <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
@@ -103,7 +103,11 @@ const getTemplatesCategory = async () => {
     templatesCategory.value = data;
     const createFormData: any = JSON.parse(localStorage.getItem('createFormData')) || {};
     const frameType = createFormData.type === '2' ? 0 : createFormData.frameType;
-    const deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
+    let deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
+    // 特殊处理node的模板
+    if(params.type==='3'){
+      deployType = '2'
+    }
     frameTypeInfo.value = frameType
     templatesCategory.value.forEach(async (element, index) => {
       const { data } = await apiTemplatesCategoryById(element.id, frameType, deployType);

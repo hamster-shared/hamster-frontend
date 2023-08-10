@@ -36,9 +36,28 @@ html[data-theme='dark'] {
       color: #000000;
     }
   }
-  .modal-input, .modal-input .ant-input{
+  .modal-radio{
+    .ant-radio-inner{
+      border-color: #EBEBEB !important;
+    }
+    .ant-radio-checked .ant-radio-inner{
+      border-color: #E2B578 !important;
+    }
+    
+  }
+  .modal-input, .modal-input .ant-input, .modal-input .ant-select-selection-item,.modal-select .ant-select-selection-item{
     color: #000000 !important;
   }
+  .modal-select .ant-select-selector{
+    border-color: #EBEBEB !important;
+  }
+  .modal-input{
+    border-color: #EBEBEB ;
+    &:focus{
+      border-color: #E2B578 ;
+    }
+  }
+  
   .modal-select-dropdown {
     background-color: #FFFFFF;
     .ant-select-item {

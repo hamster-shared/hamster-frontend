@@ -1,7 +1,7 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
+      <bread-crumb :routes="breadCrumbInfo"/>
       <div class="flex">
         <a-button class="btn" @click="visitBtn">Visit</a-button>
         <a-dropdown class="w-[43px] border border-solid border-[#E2B578] rounded-[8px] ml-[20px] text-center">
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div>
-      <Deployment :showBth="false" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :nodeType="nodeType"></Deployment>
+      <Deployment v-if="id" :showBth="false" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :nodeType="nodeType"></Deployment>
     </div>
     <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[12px] mt-[24px]">
       <div class="flex justify-between mb-[32px]">
@@ -47,7 +47,7 @@ import { useI18n } from 'vue-i18n';
 import { message } from "ant-design-vue";
 import { apiGetPackageDetail, apiGetWorkflowsDetail } from "@/apis/workFlows.ts";
 import { apiDeleteDeployInfo } from "@/apis/projects.ts";
-import Breadcrumb from '../components/Breadcrumb.vue';
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import Deployment from '../../projects/projectsWorkflows/components/Deployment.vue';
 import { useWebSocket } from '@vueuse/core'
 import "xterm/css/xterm.css";
@@ -57,12 +57,14 @@ import { FitAddon } from 'xterm-addon-fit'
 const { t } = useI18n();
 const router = useRouter();
 const { params,query } = useRoute();
-const currentName = ref('Deployment Detail');
+const breadCrumbInfo = ref<any>([])
 const packageInfo = reactive<any>({});
 const workflowsDetailsData = reactive({
   packageId: params.packageId,
 });
 const nodeType = ref(query.type)
+// 项目id
+const id = ref()
 
 const viewLogs = () => {
   // 回到workFlows详情页
@@ -110,6 +112,7 @@ const writeRealtimeLogs =(event: any) => {
 const getPackageDetail = async () => {
   try {
     const { data } = await apiGetPackageDetail(params.packageId)
+    id.value = data.projectId
     Object.assign(packageInfo, data)
     useWebSocketURL.value = `${baseUrl.value}/projects/${packageInfo.projectId}/${userInfo.username}/frontend/logs`
     buildTerm()
@@ -160,9 +163,28 @@ const deleteBtn = async () => {
   }
 }
 
-onMounted(() => {
-  getPackageDetail();
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:packageInfo.name,
+      path:`/projects/${packageInfo.projectId}/details/${nodeType.value}`
+    },
+    {
+      breadcrumbName:'Deployment Detail',
+      path:''
+    },
+  ]
+}
+
+onMounted(async() => {
   getWorkflowsDetail();
+  await getPackageDetail();
+  judgeOrigin()
 })
 
 onBeforeUnmount(()=>{

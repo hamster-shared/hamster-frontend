@@ -111,15 +111,6 @@ interface apiPostRepositoryParams{
   deployType?: string | number
 }
 
-//获取Report列表
-export function apiAddReport(id:string,params:apiReportsParams){
-  return httpRequest({
-    url:`/api/projects/${id}/reports`,
-    method:'get',
-    params:params
-  })
-}
-
 //创建项目
 export function apiAddProjects(params: AddProjectsParams) {
   return httpRequest({
@@ -397,5 +388,13 @@ export function apiPostRepository(params: apiPostRepositoryParams) {
     url: '/api/projects/import',
     method: "post",
     data: params,
+  });
+}
+
+// 获取polkadot模板详情
+export function apiNodeTemplateDetail(id:string) {
+  return httpRequest({
+    url: `/api/chain-templates/${id}`,
+    method: "get",
   });
 }

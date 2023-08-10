@@ -152,6 +152,7 @@ const checkProcessStep = async (stagename: string, val: any, e: Event) => {
   if (val.status === 0) {
     e.stopPropagation();
   } else {
+    stagesData.content = []
     const queryJson = {
       name: queryParams.workflowsId,
       id: queryParams.workflowDetailId,

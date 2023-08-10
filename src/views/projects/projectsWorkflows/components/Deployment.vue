@@ -6,15 +6,15 @@
       <a-button v-if="showBth" @click="toDetail">Ops</a-button>
     </div>
     <div class="flex">
-      <div class="w-2/5 border border-solid border-[#EBEBEB] rounded-[12px]">
+      <div class="border border-solid border-[#EBEBEB] rounded-[12px]">
         <div class="w-full h-full overflow-hidden">
           <!-- <iframe :src="packageInfo.domain" frameborder="0" width="105%" height="100%" scrolling="auto"></iframe> -->
           <!-- <iframe :src="packageInfo.image" frameborder="0" width="100%" height="100%" scrolling="auto"></iframe> -->
-          <img :src="packageInfo.image" class="h-[325px] w-[100%] object-cover rounded-xl" />
+          <img :src="packageInfo.image" class="w-[366px] h-[100%] object-cover rounded-xl" />
         </div>
       </div>
 
-      <div class="ml-[64px] w-3/5">
+      <div class="ml-[64px] w-[500px]">
         <div class="title-text">Domains</div>
         <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex">
           <div class="text-ellipsis mr-[12px] " :class="props.nodeType=='3'?'':'open-link-css cursor-pointer'" @click="openDomain">
@@ -25,6 +25,10 @@
             <img src="@/assets/icons/link-dark.svg" class="h-[18px] cursor-pointer hidden dark:inline-block"
               @click="copyDomain" />
           </div>
+        </div>
+        <div v-if="canisterId">
+          <div class="title-text title-m">Canister ID</div>
+          <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{canisterId}}</div>
         </div>
         <div class="flex w-full">
           <div class="w-1/2">
@@ -64,6 +68,8 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
 import { WorkflowStatusEnum } from "@/enums/statusEnum";
+import { ref, onMounted } from 'vue'
+import { apiGetCanisterId } from '@/apis/canister'
 const router = useRouter();
 
 interface PackageInfo {
@@ -92,8 +98,15 @@ const props = defineProps<{
   nodeType:{
     type:String,
     default:undefined
+  },
+  id:{
+    type:String,
+    default:''
   }
 }>()
+
+const canisterId = ref('')
+const id = props.id
 
 // const props = defineProps({
 //   packageInfo: Object,
@@ -146,6 +159,17 @@ const copyDomain = async () => {
     message.error("copy failed");
   }
 }
+
+const getCanisterId = async()=>{
+  const res = await apiGetCanisterId(id)
+  if(res.message=='success'){
+    canisterId.value = res.data
+  }
+}
+
+onMounted(()=>{
+  getCanisterId()
+})
 
 </script>
 <style lang="less" scoped>

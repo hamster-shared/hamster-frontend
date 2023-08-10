@@ -13,29 +13,37 @@
   <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
   <ContainerParam :containerVisible="containerVisible" :detailId="detailId" @hideContainerParam="containerVisible=false"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
+  <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
+  <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { apiGetProjectsPackages, apiProjectsDeploy, apiProjectsContainerDeploy, apiContainerCheck } from "@/apis/projects";
 import CustomMsg from '@/components/CustomMsg.vue';
 import ContainerParam from '../../projectsList/components/ContainerParam.vue';
 import { message } from 'ant-design-vue';
+import DeployIC from '@/views/projects/projectsList/components/DeployIC.vue';
+import ConfigureDFX from '@/views/projects/projectsList/components/ConfigureDFX.vue';
+import { apiIcpAccount, apiCheckDfx, apiSaveDfx } from '@/apis/canister'
 
 const props = defineProps({
   detailId: String,
   pageType: String,
   packageListData: Array,
   deployType:String,
-  nodeType:{
-    type:String,
-    default:undefined
-  }
 });
-const { pageType, detailId, packageListData,nodeType } = toRefs(props);
+const { pageType, detailId, packageListData, deployType } = toRefs(props);
+
+const showDeployIC = ref(false);
+const showDFX = ref(false);
+const accountIdFlag = ref()
+const walletIdFlag = ref()
 
 const router = useRouter();
+const { params } = useRoute()
+const id:any = params.id
 const containerVisible = ref(false);
 const showMsg = ref(false);
 const msgType = ref("");
@@ -52,6 +60,9 @@ const deployParams = ref({
 });
 const tableList = ref([]);
 const pagination = ref();
+const ProjectId = ref()
+const WorkflowId = ref()
+const WorkflowDetailId = ref()
 
 const firstTitle = ref('')
 const checkImageOrPackage = () => {
@@ -161,8 +172,59 @@ const getProjectsPackage = async () => {
   }
 }
 
-const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: string) => {
+const CancelDeployIC = () => {
+  showDeployIC.value = false;
+}
+// 展示配置dfx.json
+const showDfxFn = () => {
+  showDFX.value = true;
+}
 
+const CancelDeployDFX = () => {
+  showDFX.value = false;
+}
+// 保存dfx.json
+const SaveDFXCon = async(params:string) => {
+  console.log('保存dfx.json',params)
+  const data = {
+    jsonData: params
+  }
+  const res = await apiSaveDfx(id,data)
+  if(res.code==200){
+    showDFX.value = false
+    message.success(res.message)
+    commonFn(ProjectId.value,WorkflowId.value,WorkflowDetailId.value)
+  }else{
+    message.error(res.message)
+  }
+}
+
+const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: string) => {
+  ProjectId.value = projectId
+  WorkflowId.value = workflowId
+  WorkflowDetailId.value = workflowDetailId
+  // 如果是前端的 ic deploy有前置判断条件
+  if(deployType?.value=='3'){
+    const res = await apiIcpAccount(id)
+    accountIdFlag.value = res.data.accountIdFlag
+    walletIdFlag.value = res.data.walletIdFlag
+    console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+    if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+      showDeployIC.value = true
+    }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+      // 是否弹dfx.json配置文件
+      const dfxConResult = await apiCheckDfx(id)
+      if(!dfxConResult.data){
+        showDFX.value = true
+      }else{
+        commonFn(projectId,workflowId,workflowDetailId)
+      }
+    }
+  }else{
+    commonFn(projectId,workflowId,workflowDetailId)
+  }
+}
+const commonFn = async(projectId:string, workflowId: string, workflowDetailId: string)=>{
   try {
     deployParams.value.id = projectId;
     deployParams.value.workflowsId = workflowId;
@@ -215,7 +277,7 @@ const setMsgShow = (data:any) => {
 }
 
 const goView = (workflowId: number, workflowDetailId: number, packageId:number) => {
-  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId + '?type=' + nodeType.value);
+  router.push("/projects/" + workflowId + "/frontend-details/" + workflowDetailId + "/" + packageId + '?type=' + params.type);
 }
 
 // const downloadAbi = (val: any) => {

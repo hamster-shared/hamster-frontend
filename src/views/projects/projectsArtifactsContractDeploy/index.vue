@@ -357,6 +357,7 @@ const getVersion = async () => {
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
+    console.log(item);
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
@@ -477,7 +478,6 @@ const handleAptosNetwork = () => {
 
 // aptos petra
 const deploy = () => {
-  console.log('bsc mv', petraBsc.value[0], petraMv.value[0])
   aptosWallet.connect("Petra").then(async () => {
     // debugger
     petraAddress.value = aptosWallet.account.address
@@ -488,14 +488,18 @@ const deploy = () => {
       aptosNetworkVisible.value = true
     } else {
       const codeSerializer = new BCS.Serializer()
-      const modules = [
-        new TxnBuilderTypes.Module(
-            new HexString(
-                // eslint-disable-next-line max-len
-                petraMv.value[0],
-            ).toUint8Array(),
-        ),
-      ]
+      let modules = []
+      if (petraMv.value.length > 0) {
+        for (const valueKey in petraMv.value) {
+          let data = new TxnBuilderTypes.Module(
+              new HexString(
+                  // eslint-disable-next-line max-len
+                  petraMv.value[valueKey],
+              ).toUint8Array(),
+          )
+          modules.push(data)
+        }
+      }
       BCS.serializeVector(modules, codeSerializer)
       const payload: any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
           TxnBuilderTypes.EntryFunction.natural(
@@ -512,22 +516,30 @@ const deploy = () => {
         const petraClient = new AptosClient(NODE_URL);
         const getaAbiRes: any = await petraClient.getTransactionByHash(tx.hash)
         console.log('getaAbiRes', getaAbiRes)
-        abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
+        // abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
+        abiFn.value = getaAbiRes
       })
-      const queryJson: any = {
-        id: queryParams.id,
-        contractId: aptosContractId.value[0],
-        projectId: queryParams.id,
-        version: formState.version,
-        network: formState.network,
-        address: petraAddress.value,
-      }
-      if (abiFn.value) {
-        queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
-      }
-      const result = await apiProjectsContractDeploy(queryJson)
-      if (result.code === 200 && frameType.value === 2) {
-        router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+      for (const payloadKey in aptosContractId.value) {
+        console.log(projectsContractData[payloadKey]);
+        console.log(aptosContractId.value[payloadKey]);
+        const queryJson: any = {
+          id: queryParams.id,
+          contractId: aptosContractId.value[payloadKey],
+          projectId: queryParams.id,
+          version: formState.version,
+          network: formState.network,
+          address: petraAddress.value,
+        }
+        const abi = getAptosAbi(projectsContractData[payloadKey].name)
+        if (abi) {
+          queryJson.abiInfo = JSON.stringify(abi) //aptos 独有的参数
+        }
+        const result = await apiProjectsContractDeploy(queryJson)
+        if (parseInt(payloadKey) == aptosContractId.value.length -1 ) {
+          if (result.code === 200 && frameType.value === 2) {
+            router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+          }
+        }
       }
     }
 
@@ -535,7 +547,18 @@ const deploy = () => {
     console.log('petra failed', error)
   })
 }
-
+const getAptosAbi = (name:string) => {
+  let abi = ''
+  if (abiFn.value?.changes.length> 0) {
+    for (const changesKey in abiFn.value?.changes) {
+      if (name == abiFn.value?.changes[changesKey]?.data?.abi?.name) {
+        abi = abiFn.value?.changes[changesKey]?.data?.abi
+        break
+      }
+    }
+  }
+  return abi
+}
 const deployClick = async () => {
   // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
@@ -724,7 +747,8 @@ const changeChain = (val: string) => {
     }]
   }else if(val === 'Scroll'){
     networkData.value = [
-      {name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"}
+      {name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"},
+      {name : "Scroll Sepolia Testnet",  id: "8274f", url: "https://sepolia-rpc.scroll.io", networkName: "Scroll Sepolia Testnet"}
     ]
   }
 }
@@ -741,7 +765,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Scroll'])
+        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
@@ -800,6 +824,7 @@ onMounted(async () => {
           let json = JSON.parse(lastDeployChain)
           if (frameType.value === json.frameType) {
               formState.chain = json.chain
+              changeChain(json.chain)
               formState.network = json.network
           }
       } catch (e) {

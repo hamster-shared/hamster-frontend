@@ -1,10 +1,10 @@
 <template>
-  <a-modal v-model:visible="props.visible" width="1300px" :footer="null" @cancel="closeEVMToolsModal">
+  <a-modal height="650px" v-model:visible="props.visible" width="1300px" :footer="null" @cancel="closeEVMToolsModal">
     <template #closeIcon>
         <img class="" src="@/assets/icons/closeIcon.svg" @click="closeEVMToolsModal"/>
     </template>
     <div class="flex m-[-24px]">
-      <div class="p-[32px] w-3/5">
+      <div class="p-[32px] w-[55%]">
         <div>
           <h1 style="font-size:24px;">Configure Check Tools</h1>
           <p class="prop">Please select the appropriate tool to check the contract</p>
@@ -12,19 +12,21 @@
         <div class="center">
           If you need to modify this configuration later, you can modify it by setting button on the project details page
         </div>
-        <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">
-          <p style="font-weight:500;font-size:14px;margin-top:10px;">{{item.title}}</p>
-          <div class="flex">
-            <div class="box" v-for="(items,index) in item.children" :key="index">
-              <p
-                  class="tool-tab"
-                  :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
-                  @click="handleClick(items)"
-                  @mouseover="hoverFn(items)"
-                  @mouseleave="leaveFn"
-                  >
-                  {{items.title }}
-              </p>
+        <div class="!overflow-x-hidden overflow-y-auto h-[353px] mt-[16px]">
+          <div v-for="item in newArray" :key="item.id" style="display:inline-block;width:100%;">
+            <p style="font-weight:500;font-size:14px;margin-top:10px;">{{item.title}}</p>
+            <div class="flex">
+              <div class="box" v-for="(items,index) in item.children" :key="index">
+                <p
+                    class="tool-tab"
+                    :style="{color:items.border?'#E2B578' : '',border:items.border? '2px solid #E2B578':'' }"
+                    @click="handleClick(items)"
+                    @mouseover="hoverFn(items)"
+                    @mouseleave="leaveFn"
+                    >
+                    {{items.title }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -32,46 +34,46 @@
           <a-button @click="handleDone">Done</a-button>
         </div>
       </div>
-      <div class="right-card p-[32px]">
+      <div class="right-card p-[32px] w-[45%]">
         <div class="right-bg relative w-full">
-          <img v-if="isDefault" src="@/assets/images/default-metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
-          <img v-else-if="!toolInfo.isMetatrust" src="@/assets/images/no-metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
-          <img v-else-if="toolInfo.isMetatrust" src="@/assets/images/metatrust-bg-logo.png" class="h-[420px] absolute right-0 bottom-[99px]" />
-          <div class="px-[37px] pt-[50px] overflow-auto h-[600px]">
+          <img v-if="isDefault" src="@/assets/images/default-metatrust-bg-logo.png" class="h-[300px] absolute right-0 bottom-[99px]" />
+          <img v-else-if="!toolInfo.isMetatrust" src="@/assets/images/no-metatrust-bg-logo.png" class="h-[300px] absolute right-0 bottom-[99px]" />
+          <img v-else-if="toolInfo.isMetatrust" src="@/assets/images/metatrust-bg-logo.png" class="h-[300px] absolute right-0 bottom-[99px]" />
+          <div class="px-[20px] pt-[20px] overflow-hidden"><!--overflow-auto h-[369px]-->
             <div v-if="isDefault">
-              <div class="text-[24px] font-bold mb-[40px]">How to check Contract</div>
+              <div class="text-[24px] font-bold mb-[10px]">How to check Contract</div>
               <div class="text-[18px] leading-[24px] text-[#73706E] flex">
                 <div>
                   <div class="rounded-num">1</div>
                 </div>
                 <div>
                   <div class="font-medium text-[#000000]">Configure Check Tools(first time)</div>
-                  <div class="mt-[10px]">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
+                  <div class="mt-[6px] text-[14px] ">Hamster provides a plug-and-play workflow, leveraging auditing and inspection tools to comprehensively secure smart contracts. Please configure the necessary tools as required.</div>
                 </div>
               </div>
-              <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
+              <div class="mt-[6px] text-[18px] leading-[24px] text-[#73706E] flex">
                 <div>
                   <div class="rounded-num">2</div>
                 </div>
                 <div>
                   <div class="font-medium text-[#000000]">Click ”Check” Button</div>
-                  <div class="mt-[10px]">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
+                  <div class="mt-[6px] text-[14px] ">After completing the configuration, click "check" to start the automatic check workflow. For subsequent executions, no configuration change is required; you can start directly from this step.</div>
                 </div>
               </div>
-              <div class="mt-[30px] text-[18px] leading-[24px] text-[#73706E] flex">
+              <div class="mt-[6px] text-[18px] leading-[24px] text-[#73706E] flex">
                 <div>
                   <div class="rounded-num">3</div>
                 </div>
                 <div>
                   <div class="font-medium text-[#000000]">View Check Report</div>
-                  <div class="mt-[10px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
+                  <div class="mt-[6px] text-[14px]">Once the check has been executed, the output from all check tools will be aggregated into a single check report. You can review and improve the security and stability of the contract based on this report.</div>
                 </div>
               </div>
             </div>
             <div v-else>
-              <div class="text-[24px] font-bold mb-[40px]">{{toolInfo.title}}</div>
+              <div class="text-[24px] font-bold mb-[10px]">{{toolInfo.title}}</div>
               <div class="text-[14px] text-[#73706E]" style="text-align: justify; text-justify: inter-word;">{{toolInfo.description}}</div>
-              <div v-if="toolInfo.content.length" class="mt-[20px] text-[14px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
+              <div v-if="toolInfo.content.length" class="mt-[6px] text-[14px] text-[#73706E] flex" v-for="(item,index) in toolInfo.content">
                 <div :class="toolInfo.isMetatrust ? 'text-[#F97315]':'text-[#E2B578]'" class="text-[100px] leading-[8px] mr-1">·</div>
                 <div>{{item}}</div>
               </div>
@@ -79,7 +81,7 @@
           </div>
           <div v-if="toolInfo.isMetatrust && !isDefault" class="text-[#E63E1E] font-medium text-[14px] absolute right-[37px] bottom-[31px]">metatrust.io</div>
         </div>
-        <div v-if="toolInfo.isMetatrust && !isDefault" class="font-medium text-right mt-[30px]">
+        <div v-if="toolInfo.isMetatrust && !isDefault" class="font-medium text-right mt-[15px]">
           Powered by
           <img src="@/assets/icons/Metatrust-logo.svg" class="h-[42px] ml-2" />
         </div>
@@ -306,7 +308,7 @@ button{
   border-radius: 8px;
   // padding: 50px 0;
   margin-top: 82px;
-  height: 665px;
+  height: 444px;
 }
 .rounded-num{
   background-color: #E2B578;
