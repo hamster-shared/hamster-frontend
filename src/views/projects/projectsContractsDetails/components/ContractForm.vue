@@ -2,11 +2,9 @@
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
     :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
     <a-form-item>
-      <div class="flex justify-between mb-[32px]">
-        <span class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</span>
-        <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
-          isSend ? buttonInfo + 'ing' : buttonInfo
-        }}</a-button>
+      <div class="mb-[32px]">
+        <div class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</div>
+        <div class="dark:text-white text-[#121211] text-[12px] leading-[43px]">{{ subTitle }}</div>
       </div>
     </a-form-item>
     <div v-if="inputs?.length" v-for="item in inputs">
@@ -19,7 +17,10 @@
           v-model:value="formData[item.name]"></a-input>
       </a-form-item>
     </div>
-    <div class="mb-[24px]">
+    <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
+        isSend ? buttonInfo + 'ing' : buttonInfo
+      }}</a-button>
+    <div class="mb-[24px] mt-[24px]">
       <div class="flex justify-between  mb-[12px]">
         <span class="dark:text-[#FFFFFF] text-[#151210]  text-[16px] font-bold">outputs</span>
         <span class="open-link-css text-[16px] cursor-pointer" @click="copy">
@@ -57,7 +58,11 @@ const props = defineProps({
   inputs: { type: Array as any, default: () => { return [] } },
   outputs: { type: Array as any, default: () => { return [] } },
   aptosName: String,
-  aptosAddress: String
+  aptosAddress: String,
+  subTitle:{
+    type:String,
+    default:''
+  }
 })
 const isSend = ref(false);
 const hashValue = ref('')
@@ -78,7 +83,7 @@ const aptosNetwork = ref('')
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress } = toRefs(props)
+const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
