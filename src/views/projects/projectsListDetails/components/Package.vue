@@ -216,6 +216,8 @@ const goDeploy = async (projectId:string, workflowId: string, workflowDetailId: 
       const dfxConResult = await apiCheckDfx(id)
       if(!dfxConResult.data){
         showDFX.value = true
+      }else{
+        commonFn(projectId,workflowId,workflowDetailId)
       }
     }
   }else{

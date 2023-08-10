@@ -14,7 +14,7 @@
       </div>
       <div class="login-btn mb-[24px] bg-[#ffffff] text-[#000000] cursor-pointer" @click="awakeWallet">
         <svg-icon name="metamaskLogo" size="18" class="mr-[4px]" />
-        <span class="align-middle ml-[6px]">Continue with MeteMask</span>
+        <span class="align-middle ml-[6px]">Continue with MetaMask</span>
       </div>
       <div class="login-btn btn-dis mb-[24px] bg-[#333230] text-[#FFFFFF]">
         <img src="@/assets/icons/icon-gitLab.svg" />
@@ -59,7 +59,7 @@ const loginBox = () => {
   }
 }
 const commonJump = ()=>{
-  if (localStorage.getItem('firstState') === "0") {
+  if (localStorage.getItem('firstState') === "0" && false) {
       //第一次登录
       router.push('/welcome')
     } else {
@@ -90,7 +90,7 @@ const goHome = () => {
 };
 onMounted(()=>{
   if(localStorage.getItem('token')){
-    if(localStorage.getItem('firstState')==="0"){
+    if(localStorage.getItem('firstState')==="0" && false){
       router.push('/welcome')
     }
     else{

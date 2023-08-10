@@ -11,6 +11,18 @@ export const generateDFX = (name:any,type:any,source:string)=>{
     }
 }
 
+// 生成contract 的 dfx.json文件
+export const generateContractDFX = (name:any,type:any,mian?:string)=>{
+    return {
+        "canisters":{
+            [name]:{
+                "type":type,
+                "main":mian,
+            }
+        }
+    }
+}
+
 interface CanisterJson {
     canisters: CanisterMap
 }
