@@ -488,14 +488,13 @@ const deploy = () => {
       aptosNetworkVisible.value = true
     } else {
       const codeSerializer = new BCS.Serializer()
-      const mvData = petraMv.value[0].split(",")
       let modules = []
-      if (mvData.length > 0) {
-        for (const valueKey in mvData) {
+      if (petraMv.value.length > 0) {
+        for (const valueKey in petraMv.value) {
           let data = new TxnBuilderTypes.Module(
               new HexString(
                   // eslint-disable-next-line max-len
-                  mvData[valueKey],
+                  petraMv.value[valueKey],
               ).toUint8Array(),
           )
           modules.push(data)
@@ -517,23 +516,30 @@ const deploy = () => {
         const petraClient = new AptosClient(NODE_URL);
         const getaAbiRes: any = await petraClient.getTransactionByHash(tx.hash)
         console.log('getaAbiRes', getaAbiRes)
-        abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
-        // abiFn.value = getaAbiRes
+        // abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
+        abiFn.value = getaAbiRes
       })
-      const queryJson: any = {
-        id: queryParams.id,
-        contractId: aptosContractId.value[0],
-        projectId: queryParams.id,
-        version: formState.version,
-        network: formState.network,
-        address: petraAddress.value,
-      }
-      if (abiFn.value) {
-        queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
-      }
-      const result = await apiProjectsContractDeploy(queryJson)
-      if (result.code === 200 && frameType.value === 2) {
-        router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+      for (const payloadKey in aptosContractId.value) {
+        console.log(projectsContractData[payloadKey]);
+        console.log(aptosContractId.value[payloadKey]);
+        const queryJson: any = {
+          id: queryParams.id,
+          contractId: aptosContractId.value[payloadKey],
+          projectId: queryParams.id,
+          version: formState.version,
+          network: formState.network,
+          address: petraAddress.value,
+        }
+        const abi = getAptosAbi(projectsContractData[payloadKey].name)
+        if (abi) {
+          queryJson.abiInfo = JSON.stringify(abi) //aptos 独有的参数
+        }
+        const result = await apiProjectsContractDeploy(queryJson)
+        if (parseInt(payloadKey) == aptosContractId.value.length -1 ) {
+          if (result.code === 200 && frameType.value === 2) {
+            router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+          }
+        }
       }
     }
 
