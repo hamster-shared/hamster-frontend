@@ -18,15 +18,17 @@
       </a-form-item>
     </div>
 
-      <div v-if="payable">
+      <div v-if="true">
           <div class="mb-[12px]">
               <a-form-item class="" name="value" :rules="[{ required: false, message: `Please input your value` }]">
                 <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold"> value </span>
-                <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
+                <div class="flex justify-between w-[100%]">
+                  <a-input class="dark:text-white text-[121211] !w-[60%]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
                          :placeholder= "'value to send '" allowClear v-model:value="payableValue"></a-input>
-                  <a-select>
+                  <a-select class="!w-[20%]">
                       <a-select-option value="wei" >Wei</a-select-option>
                   </a-select>
+                </div>
               </a-form-item>
           </div>
       </div>
