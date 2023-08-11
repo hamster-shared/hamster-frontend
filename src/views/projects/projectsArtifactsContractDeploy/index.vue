@@ -520,6 +520,8 @@ const deploy = () => {
         abiFn.value = getaAbiRes
       })
       for (const payloadKey in aptosContractId.value) {
+        console.log(projectsContractData[payloadKey]);
+        console.log(aptosContractId.value[payloadKey]);
         const queryJson: any = {
           id: queryParams.id,
           contractId: aptosContractId.value[payloadKey],
@@ -539,18 +541,6 @@ const deploy = () => {
           }
         }
       }
-      // const queryJson: any = {
-      //   id: queryParams.id,
-      //   contractId: aptosContractId.value[0],
-      //   projectId: queryParams.id,
-      //   version: formState.version,
-      //   network: formState.network,
-      //   address: petraAddress.value,
-      // }
-      // if (abiFn.value) {
-      //   queryJson.abiInfo = JSON.stringify(abiFn.value) //aptos 独有的参数
-      // }
-      // const result = await apiProjectsContractDeploy(queryJson)
     }
 
   }).catch((error: any) => {
