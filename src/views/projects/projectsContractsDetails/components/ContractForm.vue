@@ -10,11 +10,11 @@
     <div v-if="inputs?.length" v-for="(item,index) in inputs">
       <a-form-item class="" :name="item.name" :rules="[{ required: true, message: `Please input your ${item.name}` }]">
         <div class="mb-[12px]">
-          <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `params${index+1}` }}</span>
+          <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `param${index+1}` }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
-          v-model:value="formData[item.name || `params${index+1}`]"></a-input>
+          v-model:value="formData[item.name || `param${index+1}`]"></a-input>
       </a-form-item>
     </div>
 
