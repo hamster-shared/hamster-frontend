@@ -25,7 +25,7 @@
                 <div class="flex justify-between w-[100%]">
                   <a-input class="dark:text-white text-[121211] !w-[60%]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
                          :placeholder= "'value to send '" allowClear v-model:value="payableValue"></a-input>
-                  <a-select v-model="payUnit" class="!w-[20%]">
+                  <a-select v-model:value="payUnit" class="!w-[20%]">
                       <a-select-option value="ether">ether</a-select-option>
                       <a-select-option value="finney">finney</a-select-option>
                       <a-select-option value="szabo">szabo</a-select-option>
