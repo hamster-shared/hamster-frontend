@@ -7,7 +7,7 @@
         <div class="dark:text-white text-[#121211] text-[12px] leading-[43px]">{{ subTitle }}</div>
       </div>
     </a-form-item>
-    <div v-if="inputs?.length" v-for="item in inputs">
+    <div v-if="inputs?.length" v-for="(item,index) in inputs">
       <a-form-item class="" :name="item.name" :rules="[{ required: true, message: `Please input your ${item.name}` }]">
         <div class="mb-[12px]">
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
@@ -15,6 +15,8 @@
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
           v-model:value="formData[item.name]"></a-input>
+          {{item}} {{index}}
+          {{item.name?item.name:index}}
       </a-form-item>
     </div>
 
@@ -290,6 +292,7 @@ const evmDeployFunction = () => {
           isSend.value = false;
         })
       } else {
+          debugger
         contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
           if (tx._isBigNumber) {
             hashValue.value = ethers.utils.formatEther(tx._hex);
