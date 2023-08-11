@@ -290,7 +290,6 @@ const evmDeployFunction = () => {
           isSend.value = false;
         })
       } else {
-          debugger
         contract[formState.checkValue](...(Object.values(formData))).then((tx: any) => {
           if (tx._isBigNumber) {
             hashValue.value = ethers.utils.formatEther(tx._hex);
