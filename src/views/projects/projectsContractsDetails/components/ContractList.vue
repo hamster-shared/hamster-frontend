@@ -35,7 +35,7 @@
     <div class="col-span-2 p-[32px]">
       <div>
         <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :outputs="outputs" :abiInfo="abiInfo"
-          :frameType="frameType" :buttonInfo="buttonInfo" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress">
+          :frameType="frameType" :buttonInfo="buttonInfo" :payable="payable" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress">
         </ContractForm>
       </div>
       <!-- <div v-if="!checkValue">noData</div> -->
@@ -69,6 +69,7 @@ const contractForm = ref();
 const abiInfoData = reactive([]);
 const aptosName = ref('')
 const aptosAddress = ref('')
+const payable = ref(false)
 
 const data = YAML.parse(abiInfo.value);
 if (data.abi) {
@@ -92,6 +93,7 @@ const commonFirst = ()=>{
     }else{
       inputs.value = sendAbis[0]?.inputs;
       outputs.value = sendAbis[0]?.outputs
+      payable.value = sendAbis[0]?.stateMutability === 'payable'
     }
     buttonInfo.value = 'Transact'
   } else if (sendAbis.length <= 0 && callAbis.length > 0) {
@@ -102,6 +104,7 @@ const commonFirst = ()=>{
     }else{
       inputs.value = callAbis[0]?.inputs;
       outputs.value = callAbis[0]?.outputs;
+      payable.value = callAbis[0]?.stateMutability === 'payable'
     }
     buttonInfo.value = 'Call'
   } else {
@@ -152,8 +155,10 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
   }else{
     inputs.value = val.inputs
     outputs.value = val.outputs
+    payable.value = val.stateMutability === 'payable'
   }
   buttonInfo.value = text
+  console.log("payable: ", payable.value)
 
   emit("checkContract", inputs, name);
   emit("checkContract", outputs, name);

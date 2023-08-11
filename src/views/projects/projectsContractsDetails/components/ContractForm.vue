@@ -7,16 +7,38 @@
         <div class="dark:text-white text-[#121211] text-[12px] leading-[43px]">{{ subTitle }}</div>
       </div>
     </a-form-item>
-    <div v-if="inputs?.length" v-for="item in inputs">
+    <div v-if="inputs?.length" v-for="(item,index) in inputs">
       <a-form-item class="" :name="item.name" :rules="[{ required: true, message: `Please input your ${item.name}` }]">
         <div class="mb-[12px]">
-          <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
+          <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `param${index+1}` }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
-          v-model:value="formData[item.name]"></a-input>
+          v-model:value="formData[item.name || `param${index+1}`]"></a-input>
       </a-form-item>
     </div>
+
+      <div v-if="payable">
+          <div class="mb-[12px]">
+              <a-form-item class="" name="value" :rules="[{ required: false, message: `Please input your value` }]">
+                <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold"> value </span>
+                <div class="flex justify-between w-[100%]">
+                  <a-input class="dark:text-white text-[121211] !w-[60%]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
+                         :placeholder= "'value to send '" allowClear v-model:value="payableValue"></a-input>
+                  <a-select v-model:value="payUnit" class="!w-[20%]">
+                      <a-select-option value="ether">ether</a-select-option>
+                      <a-select-option value="finney">finney</a-select-option>
+                      <a-select-option value="szabo">szabo</a-select-option>
+                      <a-select-option value="gwei">gwei</a-select-option>
+                      <a-select-option value="mwei">mwei</a-select-option>
+                      <a-select-option value="kwei">kwei</a-select-option>
+                      <a-select-option value="wei">wei</a-select-option>
+                  </a-select>
+                </div>
+              </a-form-item>
+          </div>
+      </div>
+
     <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
         isSend ? buttonInfo + 'ing' : buttonInfo
       }}</a-button>
@@ -55,6 +77,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  payable: Boolean,
   inputs: { type: Array as any, default: () => { return [] } },
   outputs: { type: Array as any, default: () => { return [] } },
   aptosName: String,
@@ -74,6 +97,9 @@ const formState = reactive({
   abiInfo: '',
   frameType: Number,
 });
+
+const payableValue = ref(0)
+const payUnit = ref("ether")
 
 // aptos
 const arr = [new PetraWallet()]
@@ -243,9 +269,12 @@ const evmDeployFunction = () => {
             newData[item.name] = formData[item.name];
           })
         }
+
+        const value = ethers.utils.parseUnits(payableValue.value+"",payUnit.value)
+
         console.log(newData,'---new');
         console.log('Transact传入的参数：',...(Object.values(newData)),formState.checkValue)
-        contract[formState.checkValue](...(Object.values(newData))).then((tx: any) => {
+        contract[formState.checkValue](...(Object.values(newData)),{value: props.payable?value:0}).then((tx: any) => {
           tx.wait().then((result: any) => {
             // isSend.value = false;
             hashValue.value = tx.hash;

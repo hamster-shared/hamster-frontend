@@ -58,7 +58,7 @@
                 <a-radio :style="radioStyle" value="6">Filecoin
                   <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
                 </a-radio>
-                <a-radio :style="radioStyle" value="7">Internet Computer
+                <a-radio :style="radioStyle" value="7" v-if="false">Internet Computer
                   <div class="radio-sub">Build application based on IC and Motoko language</div>
                 </a-radio>
               </div>
@@ -78,7 +78,7 @@
               <a-radio :style="radioStyle" value="2">Container
                 <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
               </a-radio>
-              <a-radio :style="radioStyle" value="3">Internet Computer
+              <a-radio v-if="false" :style="radioStyle" value="3">Internet Computer
                 <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
               </a-radio>
             </a-radio-group>

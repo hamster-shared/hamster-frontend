@@ -48,7 +48,7 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, onMounted, toRefs } from "vue";
-import { generateContractDFX, parseDFX } from '@/utils/generateDFX'
+import { generateContractDFX, parseContractDFX } from '@/utils/generateDFX'
   
 const props = defineProps({
   visible:{
@@ -103,11 +103,11 @@ const handleCancel = ()=>{
 onMounted(async()=>{
   console.log('pDfxContent:',pDfxContent.value)
   if(pDfxContent.value){
-    // dfxContent.value =  JSON.parse(pDfxContent.value)
-    // const getResultDfx = await parseDFX(pDfxContent.value)
-    // formData.name = getResultDfx.name
-    // formData.main = getResultDfx.source
-    // formData.type = getResultDfx.type
+    dfxContent.value =  JSON.parse(pDfxContent.value)
+    const getResultDfx = await parseContractDFX(pDfxContent.value)
+    formData.name = getResultDfx.name
+    formData.main = getResultDfx.main
+    formData.type = getResultDfx.type
   }else{
     dfxContent.value =  generateContractDFX(formData.name,formData.type,formData.main)
   }
