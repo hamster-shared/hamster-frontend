@@ -25,8 +25,14 @@
                 <div class="flex justify-between w-[100%]">
                   <a-input class="dark:text-white text-[121211] !w-[60%]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
                          :placeholder= "'value to send '" allowClear v-model:value="payableValue"></a-input>
-                  <a-select class="!w-[20%]">
-                      <a-select-option value="wei" >Wei</a-select-option>
+                  <a-select v-model="payUnit" class="!w-[20%]">
+                      <a-select-option value="ether">ether</a-select-option>
+                      <a-select-option value="finney">finney</a-select-option>
+                      <a-select-option value="szabo">szabo</a-select-option>
+                      <a-select-option value="gwei">gwei</a-select-option>
+                      <a-select-option value="mwei">mwei</a-select-option>
+                      <a-select-option value="kwei">kwei</a-select-option>
+                      <a-select-option value="wei">wei</a-select-option>
                   </a-select>
                 </div>
               </a-form-item>
@@ -93,6 +99,7 @@ const formState = reactive({
 });
 
 const payableValue = ref(0)
+const payUnit = ref("ether")
 
 // aptos
 const arr = [new PetraWallet()]
@@ -262,9 +269,12 @@ const evmDeployFunction = () => {
             newData[item.name] = formData[item.name];
           })
         }
+
+        const value = ethers.utils.parseUnits(payableValue.value+"",payUnit.value)
+
         console.log(newData,'---new');
         console.log('Transact传入的参数：',...(Object.values(newData)),formState.checkValue)
-        contract[formState.checkValue](...(Object.values(newData)),{value: props.payable?payableValue.value:0}).then((tx: any) => {
+        contract[formState.checkValue](...(Object.values(newData)),{value: props.payable?value:0}).then((tx: any) => {
           tx.wait().then((result: any) => {
             // isSend.value = false;
             hashValue.value = tx.hash;
