@@ -27,6 +27,7 @@
       <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
       </Deployment>
     </div>
+    <Canisters v-if="queryJson.type === '3'" :detailId="id" ></Canisters>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
@@ -48,6 +49,7 @@ import Deployment from './components/Deployment.vue';
 import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
+import Canisters from '../projectsListDetails/components/Canisters.vue'
 
 const { t } = useI18n()
 const { params,query } = useRoute();
