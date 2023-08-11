@@ -30,7 +30,7 @@
         </a-table>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="item.deployInfo[0].address" :frameType="frameType"
+          <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
             @checkContract="checkContract">
           </ContractList>
         </div>
@@ -410,6 +410,12 @@ const changeVersion = (val: any) => {
 }
 
 const changeActiveKey = (activeKey: any) => {
+  for (let contractInfoKey in contractInfo) {
+    if (activeKey == contractInfo[contractInfoKey]?.id) {
+      contractAddress.value = contractInfo[contractInfoKey]?.deployInfo[0]?.address
+      selectedRow.value = 0;
+    }
+  }
   console.log(activeKey, 'activeKey')
 }
 
