@@ -65,7 +65,7 @@ const props = defineProps({
 const route = useRoute()
 const id:any = route.params.id
 const { visible, canisterId, cycles } = toRefs(props)
-const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg'])
+const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
 const formData = reactive({
   canisterId: '',
@@ -96,6 +96,7 @@ const handleTopUp = async() => {
     topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
+    emit('refreshCanister')
   } catch (error:any) {
     console.log('error:',error)
     if(error.response.data.message.indexOf('out of cycles')!=-1){
