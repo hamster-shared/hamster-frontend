@@ -15,8 +15,6 @@
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
           :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
           v-model:value="formData[item.name]"></a-input>
-          {{item}} {{index}}
-          {{item.name?item.name:index}}
       </a-form-item>
     </div>
 
