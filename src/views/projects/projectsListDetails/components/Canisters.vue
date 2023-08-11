@@ -13,7 +13,7 @@
     </a-table>
   </div>
   <CustomMsg v-if="showMsg" :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
-  <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" ></AddCycles>
+  <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister"></AddCycles>
   <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
 </template>
 <script setup lang="ts">
@@ -142,5 +142,10 @@ const cancelAddCycle = () => {
 const showBuyCycleMsg = ()=>{
   showAddCycle.value = false
   showMsg.value = true
+}
+
+// 充值完成后需要刷新罐列表
+const refreshCanister = ()=>{
+  getProjectsCanisters()
 }
 </script>
