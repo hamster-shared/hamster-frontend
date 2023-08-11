@@ -54,7 +54,7 @@
             <!-- <a-select-option value="3">TON</a-select-option> -->
             <a-select-option value="4">Starknet</a-select-option>
             <a-select-option value="5">Sui</a-select-option>
-            <a-select-option value="6">Internet Computer</a-select-option>
+            <a-select-option value="6" v-if="false">Internet Computer</a-select-option>
           </a-select>
         </a-form-item>
         <div v-else>
