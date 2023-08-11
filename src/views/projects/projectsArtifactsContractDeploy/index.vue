@@ -755,6 +755,11 @@ const changeChain = (val: string) => {
           {name : "Linea",  id: "e708", url: "https://rpc.linea.build", networkName: "Linea"},
           {name : "Linea Testnet",  id: "e704", url: "https://rpc.goerli.linea.build", networkName: "Linea Testnet"}
       ]
+  }else if(val === 'Base'){
+      networkData.value = [
+          {name : "Base Mainnet",  id: "2105", url: "https://mainnet.base.org", networkName: "Base Mainnet"},
+          {name : "Base Goerli Testnet",  id: "14a33", url: "https://goerli.base.org", networkName: "Base Goerli Testnet"}
+      ]
   }
 }
 
@@ -770,7 +775,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Linea'])
+        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Linea','Base'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
