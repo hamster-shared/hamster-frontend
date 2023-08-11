@@ -37,7 +37,7 @@
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.type != '2' && formData.type != '3'">
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.contractCode == '1' && formData.type != '2' && formData.type != '3'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
               <div v-if="formData.type==1">
                 <a-radio :style="radioStyle" value="1">EVM
