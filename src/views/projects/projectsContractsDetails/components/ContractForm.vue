@@ -18,7 +18,7 @@
       </a-form-item>
     </div>
 
-      <div v-if="true">
+      <div v-if="payable">
           <div class="mb-[12px]">
               <a-form-item class="" name="value" :rules="[{ required: false, message: `Please input your value` }]">
                 <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold"> value </span>
