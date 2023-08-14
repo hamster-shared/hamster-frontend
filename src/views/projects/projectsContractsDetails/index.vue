@@ -28,6 +28,7 @@
             </template>
           </template>
         </a-table>
+        <Overview></Overview>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
           <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="item.deployInfo[0].address" :frameType="frameType"
@@ -96,6 +97,7 @@ import { useRouter,useRoute } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 import Breadcrumb from "@/components/BreadCrumb.vue";
 import ContractList from "./components/ContractList.vue";
+import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
