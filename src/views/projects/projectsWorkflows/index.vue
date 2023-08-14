@@ -27,7 +27,7 @@
       <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
       </Deployment>
     </div>
-    <Canisters v-if="queryJson.type === '3'" :detailId="id" ></Canisters>
+    <Canisters v-if="queryJson.type === '3' && false" :detailId="id" ></Canisters>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>

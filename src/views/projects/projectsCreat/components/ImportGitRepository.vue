@@ -54,7 +54,7 @@
             <!-- <a-select-option value="3">TON</a-select-option> -->
             <a-select-option value="4">Starknet</a-select-option>
             <a-select-option value="5">Sui</a-select-option>
-            <a-select-option value="6">Internet Computer</a-select-option>
+            <a-select-option value="6" v-if="false">Internet Computer</a-select-option>
           </a-select>
         </a-form-item>
         <div v-else>
@@ -74,7 +74,7 @@
               <a-radio value="2">Container
                 <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
               </a-radio>
-              <a-radio value="3">Internet Computer
+              <a-radio value="3" v-if="false">Internet Computer
                 <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
               </a-radio>
             </a-radio-group>
