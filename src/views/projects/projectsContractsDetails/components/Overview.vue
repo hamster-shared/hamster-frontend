@@ -1,7 +1,7 @@
 <template>
   <div class="my-[32px]">
     <div class="text-[24px] font-bold mb-[32px]">Overview</div>
-    <div class="box-css grid grid-cols-4 gap-4 p-[32px]">
+    <div class="box-css grid grid-cols-4 gap-4 p-[32px]" :class="theme.themeValue === 'dark' ? '' : 'box-shadow-css'">
       <div class="border-r">
         <div class="box-title">Canister ID</div>
         <div class="box-sub">r3dpl-2yaaa-aaaam-abpsa-cai
@@ -29,10 +29,11 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useThemeStore } from "@/stores/useTheme";
 import { copyToClipboard } from "@/utils/tool";
 import { RecentStatusEnums, SvgStatusEnums } from "../../projectsList/enums/RecentEnums";
 
-
+const theme = useThemeStore()
 
 const getImageUrl = (status: any) => {
   let iconName = `${SvgStatusEnums[status]}`;
@@ -41,9 +42,11 @@ const getImageUrl = (status: any) => {
 };
 </script>
 <style scoped >
+.box-shadow-css{
+  box-shadow: 6px 6px 15px 0px rgba(242,238,234,0.1);
+}
 .box-css{
   @apply bg-[#FFFFFF] dark:bg-[#36322D] dark:border-[#434343];
-  box-shadow: 6px 6px 15px 0px rgba(242,238,234,0.1);
   border-radius: 12px;
   border: 1px solid #EBEBEB;
 }
