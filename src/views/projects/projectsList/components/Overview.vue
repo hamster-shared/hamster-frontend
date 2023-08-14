@@ -596,7 +596,7 @@ const goContractBuild = async (id: string, workflowId: string, detailId: string)
   // message.info("Executing Now，please wait a moment.")
 };
 
-const goContractDeploy = async (id: string, status: string | Number) => {
+const goContractDeploy = async (id: string, status: number) => {
   if (localStorage.getItem('projectActiveKey') == '1')
   {
     localStorage.setItem("projectName", viewInfo.value.name)
@@ -610,24 +610,7 @@ const goContractDeploy = async (id: string, status: string | Number) => {
       if (status === 3) {
       // goFrontendDeploy();
       if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
-        const res = await apiIcpAccount(viewInfo.value.id)
-        accountIdFlag.value = res.data.accountIdFlag
-        walletIdFlag.value = res.data.walletIdFlag
-        console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
-        if(!res.data.accountIdFlag || !res.data.walletIdFlag){
-          if(!res.data.accountIdFlag){
-            const res = await apiCreateICPIdentity(viewInfo.value.id)
-          }
-          showDeployIC.value = true
-        }else if(res.data.accountIdFlag && res.data.walletIdFlag){
-          // 是否弹dfx.json配置文件
-          const dfxConResult = await apiCheckDfx(viewInfo.value.id)
-          if(!dfxConResult.data){
-            showDFX.value = true
-          }else {
-            goFrontendDeploy();
-          }
-        }
+        getIcpInfo(status)
       }
     }
   }
