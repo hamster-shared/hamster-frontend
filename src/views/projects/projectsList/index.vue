@@ -267,7 +267,7 @@ const checkListEmpty = (type: any) => {
       getProjectsFrontend('2');
     } else if (type === '2') {
       getProjectsNode('3')
-    } else { //三个tab都没有输入，跳转到新增页
+    } else { //三个tab都没有数据，跳转到新增页
       goCreateProject();
     }
   } else if (activeKey.value === "2") {
@@ -275,7 +275,7 @@ const checkListEmpty = (type: any) => {
       getProjectsContract('1');
     } else if (type === '1') {
       getProjectsNode('3')
-    } else { //三个tab都没有输入，跳转到新增页
+    } else { //三个tab都没有数据，跳转到新增页
       goCreateProject();
     }
   } else if (activeKey.value === "3") {
@@ -283,7 +283,7 @@ const checkListEmpty = (type: any) => {
       getProjectsContract('1');
     } else if (type === '1') {
       getProjectsFrontend('2');
-    } else { //三个tab都没有输入，跳转到新增页
+    } else { //三个tab都没有数据，跳转到新增页
       goCreateProject();
     }
   }
