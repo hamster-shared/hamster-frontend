@@ -44,7 +44,7 @@
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
               <!-- 展示dfx生成弹框 -->
-              <a-menu-item v-if="projectsDetail.deployType == 3" @click="showDfxModal">
+              <a-menu-item v-if="projectsDetail.deployType == 3 || projectsDetail.frameType === 7" @click="showDfxModal">
                 <a href="javascript:;" style="color:#151210">Configure dfx.json</a>
               </a-menu-item>
             </a-menu>
