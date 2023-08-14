@@ -500,41 +500,51 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
   }
 };
 
-const projectsDeploy = async (id: string, version: string, status: Number) => {
-  // icp
-  if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
-    const res = await apiIcpAccount(viewInfo.value.id)
-    accountIdFlag.value = res.data.accountIdFlag
-    walletIdFlag.value = res.data.walletIdFlag
-    console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
-    if(!res.data.accountIdFlag || !res.data.walletIdFlag){
-      if(!res.data.accountIdFlag){
-        const res = await apiCreateICPIdentity(viewInfo.value.id)
-      }
-      showDeployIC.value = true
-    }else if(res.data.accountIdFlag && res.data.walletIdFlag){
-      // 是否弹dfx.json配置文件
-      const dfxConResult = await apiCheckDfx(viewInfo.value.id)
-      if(!dfxConResult.data){
-        showDFX.value = true
-      }else {
-        if (status === 3) {
-          goFrontendDeploy();
-        }
-        else {
-          // 前端并且是ipfs的时候
-          if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
-            message.info("Package not avaliable");
-          } else {
-            if (viewInfo.value.deployType === 3) {
-              showDeployIC.value = true;
-            } else {
-              message.info("Project image not avaliable");
-            }
-          }
-        }
+// 前端项目 deploy
+const frontCommonDeploy = (status:number)=>{
+  if (status === 3) {
+    goFrontendDeploy();
+  }
+  else {
+    // 前端并且是ipfs的时候
+    if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
+      message.info("Package not avaliable");
+    } else {
+      if (viewInfo.value.deployType === 3) {
+        showDeployIC.value = true;
+      } else {
+        message.info("Project image not avaliable");
       }
     }
+  }
+}
+
+const getIcpInfo = async(status:number)=>{
+  const res = await apiIcpAccount(viewInfo.value.id)
+  accountIdFlag.value = res.data.accountIdFlag
+  walletIdFlag.value = res.data.walletIdFlag
+  console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+  if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+    if(!res.data.accountIdFlag){
+      const res = await apiCreateICPIdentity(viewInfo.value.id)
+    }
+    showDeployIC.value = true
+  }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+    // 是否弹dfx.json配置文件
+    const dfxConResult = await apiCheckDfx(viewInfo.value.id)
+    // 这里还需要判断是contract 还是 前端项目，弹不同的dfx.json配置框
+    if(!dfxConResult.data){
+      showDFX.value = true
+    }else {
+      frontCommonDeploy(status)
+    }
+  }
+}
+
+const projectsDeploy = async (id: string, version: string, status: number) => {
+  // icp
+  if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
+    await getIcpInfo(status)
   }else{
     if (projectType?.value === '1') {
       if (status === 0 || status === 1 || version === "") {
@@ -546,21 +556,7 @@ const projectsDeploy = async (id: string, version: string, status: Number) => {
       }
     }
     else {
-      if (status === 3) {
-        goFrontendDeploy();
-      }
-      else {
-        // 前端并且是ipfs的时候
-        if(viewInfo.value.type == '2' && viewInfo.value.deployType==1){
-          message.info("Package not avaliable");
-        } else {
-          if (viewInfo.value.deployType === 3) {
-            showDeployIC.value = true;
-          } else {
-            message.info("Project image not avaliable");
-          }
-        }
-      }
+      frontCommonDeploy(status)
     }
   }
   
