@@ -28,7 +28,7 @@
             </template>
           </template>
         </a-table>
-        <Overview></Overview>
+        <Overview v-if="false"></Overview>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
           <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
