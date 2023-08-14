@@ -58,7 +58,7 @@
                 <a-radio :style="radioStyle" value="6">Filecoin
                   <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
                 </a-radio>
-                <a-radio :style="radioStyle" value="7" v-if="false">Internet Computer
+                <a-radio :style="radioStyle" value="7">Internet Computer
                   <div class="radio-sub">Build application based on IC and Motoko language</div>
                 </a-radio>
               </div>
