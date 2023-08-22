@@ -65,12 +65,13 @@ export const parseDFX = (json: string): Promise<ResolveResult> => {
 }
 
 // 生成contract 的 dfx.json文件
-export const generateContractDFX = (name: any, type: any, mian?: string) => {
+export const generateContractDFX = (name: any, type: any, candid?: string, packageVal?: string) => {
   return {
     "canisters": {
       [name]: {
+        "candid": candid,
+        "package": packageVal,
         "type": type,
-        "main": mian,
       }
     }
   }
@@ -86,7 +87,8 @@ interface ContractCanisterMap {
 
 interface ContractCanister {
   type: string;
-  main: string;
+  package: string;
+  candid: string;
 }
 
 export const parseContractCanisterJson = (json: string): Promise<ContractCanisterJson> => {
@@ -102,8 +104,9 @@ export const parseContractCanisterJson = (json: string): Promise<ContractCaniste
 }
 interface ResolveContractResult {
   name: string,
-  type: string,
-  main: string,
+  type: string;
+  package: string;
+  candid: string;
 }
 
 /*
@@ -122,7 +125,8 @@ export const parseContractDFX = (json: string): Promise<ResolveContractResult> =
     return {
       name: name,
       type: canister.type,
-      main: canister.main,
+      package: canister.package,
+      candid: canister.candid,
     }
   })
 }

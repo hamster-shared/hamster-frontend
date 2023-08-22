@@ -241,6 +241,7 @@
   <Configure :visible="evmCheckVisible" @getDoneData="getDoneData" @cancel="handleCancel" />
   <DeployIC v-if="showDeployIC" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="viewInfo?.id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
   <ConfigureDFX :visible="showDFX" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
+  <ConfigureContractDFX :visible="showContractDFX" @CancelDFX="CancelContractDFX" @SaveDFXCon="SaveDFXCon"></ConfigureContractDFX>
 </template>
 
 <script lang='ts' setup>
@@ -253,6 +254,7 @@ import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerChec
 import Configure from './Configure.vue'
 import DeployIC from './DeployIC.vue';
 import ConfigureDFX from './ConfigureDFX.vue'
+import ConfigureContractDFX from './ConfigureContractDFX.vue'
 import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from '../../components/starkNetModal.vue';
 import ContainerParam from './ContainerParam.vue';
@@ -272,6 +274,7 @@ const projectId = ref('')
 
 const showDeployIC = ref(false);
 const showDFX = ref(false);
+const showContractDFX = ref(false);
 const accountIdFlag = ref()
 const walletIdFlag = ref()
 //点击关闭按钮
@@ -473,20 +476,17 @@ const buildStatusAction = async (id: string, buildData: any) => {
 }
 
 const aptosBuildParams = ref([])
-const projectsBuild = async (id: string, buildData: any, frameType: string,type:any) => {
-  console.log('projectsBuild:::', id, buildData, frameType)
+const goAptosBuild = async (id: string, buildData: any, frameType: string,type:any) => {
   let needsParams = false 
-  if(frameType == '2'){
-    const res = await apiCheckSetAptosBuildParams(id)
-    needsParams = res.data.needsParams
-  }
+  const res = await apiCheckSetAptosBuildParams(id)
+  needsParams = res.data.needsParams
   try {
-    if (frameType == '2' && type == 1 && needsParams) {
+    if (needsParams) {
       aptosBuildVisible.value = true
       const { data } = await apiGetAptosBuildParams(id)
       console.log('apiGetAptosBuildParams:::', data)
       aptosBuildParams.value = data
-    }else if (frameType == '2' && type == 1 && !needsParams){
+    }else{
       if (buildData.status == 1){
         message.info("Executing Now，please wait a moment.");
       } else {
@@ -496,15 +496,44 @@ const projectsBuild = async (id: string, buildData: any, frameType: string,type:
 
         loadView();
       }
-    }else {
-      buildStatusAction(id, buildData)
     }
 
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
-  } finally {
-    // loading.value = false;
+  } 
+}
+const getIcpBuldInfo = async(id: string, buildData: any)=>{
+  const res = await apiIcpAccount(viewInfo.value.id)
+  accountIdFlag.value = res.data.accountIdFlag
+  walletIdFlag.value = res.data.walletIdFlag
+  console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+  if(!res.data.accountIdFlag || !res.data.walletIdFlag){
+    if(!res.data.accountIdFlag){
+      const res = await apiCreateICPIdentity(viewInfo.value.id)
+    }
+    showDeployIC.value = true
+  }else if(res.data.accountIdFlag && res.data.walletIdFlag){
+    // 是否弹dfx.json配置文件
+    const dfxConResult = await apiCheckDfx(viewInfo.value.id)
+    // 这里还需要判断是contract 还是 前端项目，弹不同的dfx.json配置框
+    if(!dfxConResult.data){
+      showContractDFX.value = true
+    }else {
+      buildStatusAction(id, buildData)
+    }
+  }
+}
+const projectsBuild = async (id: string, buildData: any, frameType: string,type:any) => {
+  console.log('projectsBuild:::', id, buildData, frameType)
+  if(viewInfo.value.type=='1' && frameType=='7'){
+    await getIcpBuldInfo(id, buildData)
+  } else {
+    if (frameType == '2' && type == 1) {
+      goAptosBuild(id, buildData, frameType, type);
+    } else {
+      buildStatusAction(id, buildData)
+    }
   }
 };
 
@@ -770,6 +799,9 @@ const showDfxFn = () => {
 }
 const CancelDeployDFX = () => {
   showDFX.value = false;
+}
+const CancelContractDFX = () => {
+  showContractDFX.value = false;
 }
 // 保存dfx.json
 const SaveDFXCon = async(params:string) => {
