@@ -107,7 +107,7 @@
           <div v-else>
             <div class="open-link-css cursor-pointer inline-block"
               @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
-              :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) ? 'default' : 'cursor'}"
+              :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3) || viewInfo.type == '1' && viewInfo.frameType == 7) ? 'default' : 'cursor'}"
               v-if="viewInfo.recentCheck.status === 0">
               <span>Check Now</span>
             </div>
@@ -338,7 +338,8 @@ const projectsAction = (val: any, type: string, e: Event) => {
   // Polkadot 的 check禁掉
   if(val.type=='3' && type=='Check'){
     return
-  }// contract ic 的 check禁掉
+  }
+  // contract ic 的 check禁掉
   if(val.type=='1' && val.frameType == 7 && type=='Check'){
     return
   }
@@ -399,6 +400,10 @@ const getDoneData =async (myArray:string[]) => {
 const projectsCheck = async (id: string, checkData: any, e: Event) => {
   // Polkadot 的 check禁掉
   if(props.viewInfo.type=='3'){
+    return
+  }
+  // contract ic 的 check禁掉
+  if(props.viewInfo.type=='1' && props.viewInfo.frameType == 7){
     return
   }
   // ic 的 check 和 ops 禁掉
