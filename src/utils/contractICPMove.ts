@@ -1,0 +1,1 @@
+// contract icp 合约调用
