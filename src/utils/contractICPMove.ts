@@ -1,4 +1,10 @@
+import {local, ic} from 'abing258-ic0';
+
 // contract icp 合约调用
+export interface ICPService {
+    id: string,
+    methods: ICPMethod[],
+}
 export interface ICPMethod {
     name: string,
     args: ICPMethodArg[],
@@ -13,10 +19,48 @@ interface ICPMethodArg {
     type: string
 }
 
-export function toICPMethod(input: any): ICPMethod[] {
+export class ICPMethodWrapper implements ICPMethod {
+    annotation: string;
+    args: ICPMethodArg[];
+    description: string;
+    name: string;
+    res: ICPMethodArg[];
+    type: string;
+    client: any
 
-    const list : ICPMethod[] = []
+    constructor(method: ICPMethod, client: any) {
+        this.annotation = method.annotation
+        this.args = method.args
+        this.description = method.description
+        this.name = method.name
+        this.res = method.res
+        this.type = method.type
+        this.client = client
+    }
+
+    call(args: any[]): Promise<any> {
+        return this.client.call(this.name, ...args)
+    }
+}
+
+export class ICPServiceWrapper implements ICPService {
+    id: string;
+    methods: ICPMethodWrapper[];
+    client: any
+
+    constructor(svc: ICPService, canisterId: string) {
+        this.id = svc.id
+        this.client = ic(canisterId)
+        this.methods = svc.methods.map(t => new ICPMethodWrapper(t,this.client))
+    }
+}
+
+export function toICPService(input: any): ICPService[] {
+
+    const services: ICPService[] = []
     for(let svc of input.Services){
+
+        const list : ICPMethod[] = []
         for(let method of svc.Methods){
             const data: ICPMethod = {
                 name: method.Name,
@@ -63,9 +107,14 @@ export function toICPMethod(input: any): ICPMethod[] {
             }
             list.push(data)
         }
+
+        services.push({
+            id: svc.ID === null?"":svc.ID,
+            methods: list
+        })
     }
 
-    return list
+    return services
 }
 
 export function toDisplay(method: ICPMethod): string {
