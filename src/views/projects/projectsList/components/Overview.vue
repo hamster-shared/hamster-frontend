@@ -43,12 +43,12 @@
           </label> -->
           <label class="action-button-item">
             <label class="action-icon mx-[8px]">
-              <svg-icon :name="item.url" size="15" :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}"/>
+              <svg-icon :name="item.url" size="15" :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '1' && viewInfo.frameType == 7)) && item.name == 'Check' || (viewInfo.type == '2' && viewInfo.deployType==3) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}"/>
             </label>
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3)) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '1' && viewInfo.frameType == 7)) && item.name == 'Check' || (viewInfo.type == '2' && viewInfo.deployType==3) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -337,6 +337,9 @@ const goDetail = (id: string, type: string) => {
 const projectsAction = (val: any, type: string, e: Event) => {
   // Polkadot 的 check禁掉
   if(val.type=='3' && type=='Check'){
+    return
+  }// contract ic 的 check禁掉
+  if(val.type=='1' && val.frameType == 7 && type=='Check'){
     return
   }
   // ic 的 check 和 ops 禁掉
