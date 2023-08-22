@@ -26,9 +26,10 @@ import { apiCanisterList } from '@/apis/canister'
 import { CanisterStatusEnum } from '@/enums/frameTypeEnum'
 
 const props = defineProps({
-  detailId: String
+  detailId: String,
+  frameType: Number
 });
-const { detailId } = toRefs(props);
+const { detailId, frameType } = toRefs(props);
 const showAddCycle = ref(false);
 const showBuyCycle = ref(false);
 const showMsg = ref(false);
@@ -53,6 +54,14 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'canisterName',
+  },
+  {
+    title: 'Contract',
+    dataIndex: 'contract',
+    align: 'center',
+    ellipsis: 'fixed',
+    key: 'contract',
+    className:frameType?.value===7?'tableShow':'tableHiddle'
   },
   {
     title: 'Cycles',
@@ -86,7 +95,7 @@ const tableColumns = computed<any[]>(() => [
 
 const pagination = reactive({
   // 分页配置器
-  pageSize: 3, // 一页的数据限制
+  pageSize: 10, // 一页的数据限制
   current: 1, // 当前页
   total: 10, // 总数
   size: 'small',
@@ -149,3 +158,11 @@ const refreshCanister = ()=>{
   getProjectsCanisters()
 }
 </script>
+<style scoped lang="less">
+.tableShow{
+  display: inline-block;
+}
+.tableHiddle{
+  display: none;
+}
+</style>
