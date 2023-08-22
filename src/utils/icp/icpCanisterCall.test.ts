@@ -11,6 +11,17 @@ describe('callCanisterToLocal', () => {
     });
 });
 
+describe('callCanisterToLocalForAddTodo', () => {
+    test('should return a result', async () => {
+        const canisterId = 'a4tbr-q4aaa-aaaaa-qaafq-cai';
+        const method = 'addTodo';
+        const args: any[] = ['abing'];
+
+        const result = await callCanister(true, canisterId, method, ...args);
+        console.log(result)
+    });
+});
+
 describe('callCanisterToIc', () => {
     test('should return a result', async () => {
         const canisterId = 'ryjl3-tyaaa-aaaaa-aaaba-cai';

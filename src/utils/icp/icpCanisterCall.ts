@@ -9,10 +9,20 @@ export function callCanister(localFlag: boolean, canisterId: string, method: str
     }
     return ledger.call(method, ...args)
         .then((result) => {
-            // 将结果转换为字符串，假设结果是一个对象，将其转换为 JSON 字符串
-            const resultString = JSON.stringify(result);
-            console.log(resultString)
-            return resultString;
+            console.log(result)
+            if (typeof result === 'string') {
+                return result
+            } else if (typeof result === 'object') {
+                return JSON.stringify(result)
+            } else if (Array.isArray(result)) {
+                return JSON.stringify(result)
+            } else if (typeof result === 'bigint') {
+                return result.toString();
+            } else if (typeof result === 'number' || 'boolean') {
+                return String(result);
+            } else {
+                return result.toString();
+            }
         })
         .catch((error) => {
             console.error('Error calling canister:', error);
