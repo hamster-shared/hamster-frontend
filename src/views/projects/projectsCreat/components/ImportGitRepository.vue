@@ -436,12 +436,19 @@
     } else {
       importFormData.value.type = 2;
     }
-    importFormData.value.ecosystem = importFormData.value.ecosystem - 0;
-    importFormData.value.deployType = importFormData.value.deployType - 0;
+    // importFormData.value.ecosystem = importFormData.value.ecosystem - 0;
+    // importFormData.value.deployType = importFormData.value.deployType - 0;
+    const params = {
+      name: importFormData.value.name,
+      ecosystem: importFormData.value.ecosystem - 0,
+      cloneUrl: importFormData.value.cloneUrl,
+      type: importFormData.value.type,
+      deployType: importFormData.value.deployType - 0,
+    }
     try {
-      const { data } = await apiPostRepository(importFormData.value)
+      const { data } = await apiPostRepository(params)
       router.push(`/projects/integrated/${data}?type=repository`)
-    } catch (err:any) {
+    } catch (err: any) {
       nameDupErrInfo.value = err.response.data.message
     } finally {
       doneLoading.value = false
