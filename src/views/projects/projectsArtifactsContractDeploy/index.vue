@@ -760,6 +760,11 @@ const changeChain = (val: string) => {
           {name : "Base Mainnet",  id: "2105", url: "https://mainnet.base.org", networkName: "Base Mainnet"},
           {name : "Base Goerli Testnet",  id: "14a33", url: "https://goerli.base.org", networkName: "Base Goerli Testnet"}
       ]
+  }else if(val === 'conflux'){
+      networkData.value = [
+          {name : "Conflux eSpace (Testnet)",  id: "47", url: "https://evmtestnet.confluxrpc.com", networkName: "Conflux eSpace (Testnet)"},
+          {name : "Conflux eSpace",  id: "14a33", url: "https://evm.confluxrpc.com", networkName: "Conflux eSpace"}
+      ]
   }
 }
 
@@ -775,7 +780,7 @@ const getProjectsDetail = async () => {
     frameType.value = data.frameType;
     switch (frameType.value) {
       case 1:
-        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Linea','Base'])
+        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Linea','Base','conflux'])
         // { name: 'Hamster Dev', id: '501' }
         networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
         break;
