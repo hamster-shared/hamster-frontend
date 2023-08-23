@@ -503,11 +503,11 @@ const goAptosBuild = async (id: string, buildData: any, frameType: string,type:a
     message.error(error.response.data.message);
   } 
 }
-const getIcpBuldInfo = async(id: string, buildData: any)=>{
+const getIcpBuildInfo = async(id: string, buildData: any)=>{
   const res = await apiIcpAccount(viewInfo.value.id)
   accountIdFlag.value = res.data.accountIdFlag
   walletIdFlag.value = res.data.walletIdFlag
-  console.log('accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
+  console.log('build ... accountIdFlag:',res.data.accountIdFlag,'walletIdFlag:',res.data.walletIdFlag)
   if(!res.data.accountIdFlag || !res.data.walletIdFlag){
     if(!res.data.accountIdFlag){
       const res = await apiCreateICPIdentity(viewInfo.value.id)
@@ -527,7 +527,7 @@ const getIcpBuldInfo = async(id: string, buildData: any)=>{
 const projectsBuild = async (id: string, buildData: any, frameType: string,type:any) => {
   console.log('projectsBuild:::', id, buildData, frameType)
   if(viewInfo.value.type=='1' && frameType=='7'){
-    await getIcpBuldInfo(id, buildData)
+    await getIcpBuildInfo(id, buildData)
   } else {
     if (frameType == '2' && type == 1) {
       goAptosBuild(id, buildData, frameType, type);
@@ -810,10 +810,15 @@ const SaveDFXCon = async(params:string) => {
     jsonData: params
   }
   const res = await apiSaveDfx(viewInfo.value.id,data)
-  if(res.code==200){
-    showDFX.value = false
-    // message.success(res.message)
-    goFrontendDeploy();
+  if (res.code == 200) {
+    if (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) {
+      showContractDFX.value = false;
+      buildStatusAction(viewInfo.value.id, viewInfo.value.recentBuild)
+    } else {
+      showDFX.value = false
+      // message.success(res.message)
+      goFrontendDeploy();
+    }
   }else{
     message.error(res.message)
   }
