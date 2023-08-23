@@ -24,14 +24,17 @@
             </a-form-item>
             <a-form-item name="type" label="Type">
               <a-select dropdownClassName="modal-select-dropdown" class="modal-select" v-model:value="formData.type" placeholder="Please select type" @change="changeType">
-                <!-- <a-select-option value="assets">Motoko</a-select-option> -->
+                <a-select-option value="motoko">Motoko</a-select-option>
                 <a-select-option value="rust">Rust</a-select-option>
               </a-select>
             </a-form-item>
-            <a-form-item name="candid" label="Candid">
+            <a-form-item name="main" label="Main" v-if="formData.type === 'motoko'">
+               <a-input @change="changeMain" class="modal-input" v-model:value="formData.main" placeholder="Please input..." allow-clear autocomplete="off" />
+            </a-form-item>
+            <a-form-item name="candid" label="Candid" v-if="formData.type === 'rust'">
                <a-input @change="changeMain" class="modal-input" v-model:value="formData.candid" placeholder="Please input..." allow-clear autocomplete="off" />
             </a-form-item>
-            <a-form-item name="package" label="Package">
+            <a-form-item name="package" label="Package" v-if="formData.type === 'rust'">
                <a-input @change="changeMain" class="modal-input" v-model:value="formData.package" placeholder="Please input..." allow-clear autocomplete="off" />
             </a-form-item>
           </a-form>
@@ -70,6 +73,7 @@ const formRef = ref();
 const formData = reactive({
   name: 'contract',
   type: 'rust',
+  main: 'src/Main.mo',
   candid: 'src/hello/hello.did',
   package: 'hello',
 });
@@ -83,20 +87,22 @@ const formRules = computed(() => {
     name: [requiredRule('Please enter Canister Name')],
     type: [requiredRule('Please enter Type')],
     main: [requiredRule('Please enter Main')],
+    candid: [requiredRule('Please enter Candid')],
+    package: [requiredRule('Please enter Package')],
   };
 });
 // 输入名称
 const changeName = (e:any) => {
   console.log('输入名称',e.target.value)
-  dfxContent.value = generateContractDFX(formData.name,formData.type,formData.candid,formData.package)
+  dfxContent.value = generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
 }
 // 选择类型
 const changeType = () => {
-  dfxContent.value = generateContractDFX(formData.name,formData.type,formData.candid,formData.package)
+  dfxContent.value = generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
 }
 // 输入源路径
 const changeMain = () => {
-  dfxContent.value = generateContractDFX(formData.name,formData.type,formData.candid,formData.package)
+  dfxContent.value = generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
 }
 const handleDone = async () => {
   await formRef.value.validate()
@@ -115,7 +121,7 @@ onMounted(async()=>{
     formData.type = getResultDfx.type
     formData.candid = getResultDfx.candid
   }else{
-    dfxContent.value =  generateContractDFX(formData.name,formData.type,formData.candid,formData.package)
+    dfxContent.value =  generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
   }
 })
 </script>
