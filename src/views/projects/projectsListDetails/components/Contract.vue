@@ -31,7 +31,7 @@
         <!-- <label class="cursor-pointer" v-if="record.network.String !== ''"
           @click="goContractDetail(record.version)">Details</label> -->
         <label class="dark:text-[#E0DBD2] text-[#151210] ml-2 cursor-pointer hoverColor"
-          @click="goContractDeploy(record.name, record.version)">Deploy</label>
+          @click="goContractDeploy(record)">Deploy</label>
         <a-tooltip placement="bottomRight" trigger="click" overlayClassName="contract-tooltip">
           <template #title>
             <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
@@ -53,17 +53,20 @@
 
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
 import { useRouter,useRoute } from "vue-router";
 import { message } from 'ant-design-vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
+import CustomMsg from '@/components/CustomMsg.vue';
 import {
   apiGetProjectsContract,
   apiProjectsContractName,
   apiProjectsContractNetwork,
   apiProjectsVersion,
+  apiProjectsDeploy
 } from "@/apis/projects";
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 const router = useRouter();
@@ -87,6 +90,16 @@ const starknetVisible = ref(false);
 const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) || reactive({});
 // console.log(starknetHashData, 'starknetHashData')
 const deployTxHash = starknetHashData[props.detailId]?.deployTxHash || '';
+
+const showMsg = ref(false);
+const msgType = ref("");
+const msgParam = ref({
+  id: detailId.value,
+  workflowsId: 0,
+  workflowDetailId: 0,
+  projectType: 0,
+  operateType: 1,
+});
 
 const contractTableColumns = computed<any[]>(() => [
   {
@@ -249,10 +262,43 @@ const goContractDetail = async (version: String) => {
   router.push("/projects/" + detailId.value + "/contracts-details/" + version);
 };
 
-const goContractDeploy = async (contract: String, version: String) => {
-  const path = "/projects/" + detailId.value + "/artifacts-contract/" + version + "/deploy/" + contract
-  router.push(path);
+const goContractDeploy = async (contractData: any) => {
+  if (frameType?.value === 7) { 
+    frontendDeploying(contractData)
+  } else {
+    const path = "/projects/" + detailId.value + "/artifacts-contract/" + contractData.version + "/deploy/" + contractData.name
+    router.push(path);
+  }
 };
+const frontendDeploying = async (contractData: any) => {
+  try {
+    const params = ref({
+      id: contractData.projectId,
+      workflowsId: contractData.workflowId,
+      workflowDetailId: contractData.workflowDetailId,
+    });
+    const { data } = await apiProjectsDeploy(params.value);
+    
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
+
+    // loadView();
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateTypeVal: any) => {
+  msgParam.value.workflowsId = workflowId;
+  msgParam.value.workflowDetailId = detailId;
+  msgParam.value.operateType = operateTypeVal;
+  msgType.value = msgTypeVal;
+  showMsg.value = true;
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
+}
 
 defineExpose({
   getProjectsContract
