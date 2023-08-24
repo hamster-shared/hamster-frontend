@@ -20,7 +20,7 @@
           <div class="text-[18px] text-[#151210] font-bold mb-[20px]">Canister info</div>
           <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
             <a-form-item name="name" label="Canister Name">
-               <a-input @change="changeName" class="modal-input" v-model:value="formData.name" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+               <a-input @change="changeValue" class="modal-input" v-model:value="formData.name" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
             </a-form-item>
             <a-form-item name="type" label="Type">
               <a-select dropdownClassName="modal-select-dropdown" class="modal-select" v-model:value="formData.type" placeholder="Please select type" @change="changeType">
@@ -35,7 +35,7 @@
                <a-input @change="changeMain" class="modal-input" v-model:value="formData.candid" placeholder="Please input..." allow-clear autocomplete="off" />
             </a-form-item>
             <a-form-item name="package" label="Package" v-if="formData.type === 'rust'">
-               <a-input @change="changeMain" class="modal-input" v-model:value="formData.package" placeholder="Please input..." allow-clear autocomplete="off" />
+               <a-input @change="changeValue" class="modal-input" v-model:value="formData.package" placeholder="Please input..." allow-clear autocomplete="off" />
             </a-form-item>
           </a-form>
         </div>
@@ -73,26 +73,48 @@ const formRef = ref();
 const formData = reactive({
   name: 'contract',
   type: 'rust',
-  main: 'src/Main.mo',
-  candid: 'src/hello/hello.did',
-  package: 'hello',
+  main: '',
+  candid: '',
+  package: '',
 });
 const dfxContent = ref({});
 
 const formRules = computed(() => {
+
+  const checkSuffix = () => {
+    let suffixVal = '';
+    let suffix = '';
+    if (formData.type === 'rust') {
+      console.log("formData.candid:", formData.candid);
+      if (formData.candid != '' && formData.candid != undefined) {
+        suffix = 'did'; //candid 要判断是否以 .did 结尾
+        suffixVal = formData.candid.substring(formData.candid.lastIndexOf(".") + 1, formData.candid.length);
+      }
+    } else {
+      if (formData.main != '' && formData.main != undefined) {
+        suffix = 'mo'; //main要判断是否是 .mo 结尾
+        suffixVal = formData.main.substring(formData.main.lastIndexOf(".") + 1, formData.main.length);
+      }
+    }
+    if (suffix === suffixVal) {
+      return Promise.resolve()
+    } else {
+      return Promise.reject("The suffix must be ." + suffix);
+    }
+  }
 
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
   return {
     name: [requiredRule('Please enter Canister Name')],
     type: [requiredRule('Please enter Type')],
-    main: [requiredRule('Please enter Main')],
-    candid: [requiredRule('Please enter Candid')],
+    main: [requiredRule('Please enter Main'), { validator: checkSuffix, trigger: "change" }],
+    candid: [requiredRule('Please enter Candid'), { validator: checkSuffix, trigger: "change" }],
     package: [requiredRule('Please enter Package')],
   };
 });
 // 输入名称
-const changeName = (e:any) => {
+const changeValue = (e:any) => {
   console.log('输入名称',e.target.value)
   dfxContent.value = generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
 }
@@ -100,12 +122,13 @@ const changeName = (e:any) => {
 const changeType = () => {
   dfxContent.value = generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
 }
-// 输入源路径
-const changeMain = () => {
+// 输入源路径 
+const changeMain = (suffix: string) => {
   dfxContent.value = generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
 }
 const handleDone = async () => {
-  await formRef.value.validate()
+  await formRef.value.validate();
+
   emit('SaveDFXCon',JSON.stringify(dfxContent.value))
 }
 const handleCancel = ()=>{
