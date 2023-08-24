@@ -5,13 +5,13 @@
       <div class="border-r">
         <div class="box-title">Canister ID</div>
         <div class="box-sub">{{ deployInfo.address }}
-          <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard('')"/>
+          <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard(deployInfo.address)"/>
         </div>
       </div>
       <div class="border-r">
         <div class="box-title">Canister Name</div>
         <div class="box-sub">{{ deployInfo.name }}
-          <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard('')"/>
+          <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard(deployInfo.name)"/>
         </div>
       </div>
       <div class="border-r">
