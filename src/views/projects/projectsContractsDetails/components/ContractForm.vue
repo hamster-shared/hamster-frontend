@@ -2,7 +2,7 @@
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
     :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
     <a-form-item>
-      <div class="mb-[32px]">
+      <div >
         <div class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</div>
         <div class="dark:text-white text-[#121211] text-[12px] leading-[43px]">{{ subTitle }}</div>
       </div>
@@ -13,7 +13,7 @@
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `param${index+1}` }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
+          :placeholder= "'Enter a value for ' + (frameType === 4 || frameType === 7 ? item.type : item.internalType)" allowClear
           v-model:value="formData[item.name || `param${index+1}`]"></a-input>
       </a-form-item>
     </div>

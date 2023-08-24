@@ -193,6 +193,8 @@ import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
 import axios from "axios";
 import YAML from "yaml";
 import BreadCrumb from "@/components/BreadCrumb.vue";
+import {getExample, getSimpleToDo, toICPService,toDisplay} from "@/utils/contractICPMove";
+
 const theme = useThemeStore()
 const downloadLoading = ref(false)
 const downloadLinkRef = ref(null)
@@ -287,10 +289,10 @@ const judgeOrigin = ()=>{
   ]
 }
 
-const setFunctionList = (element: { inputs: never[]; name: any; }, index: number) => {
-  functionList.value = element.inputs;
-  functionName.value = element.name;
-  slectedIndex.value = index;
+const setFunctionList = (element: { inputs: never[]; name: any; args:any}, index: number) => {
+  functionList.value = element.inputs || element.args;
+  functionName.value = element.name;
+  slectedIndex.value = index;
 }
 
 const setEventList = (element: { inputs: never[]; name: any; }) => {
@@ -416,6 +418,7 @@ const getContractTemplatesDetail = async () => {
     templatesDetail.value = data;
     extensionsList.value = data.extensions.split(',');
     checkboxList.value.push(...extensionsList.value)
+    const icpAbi = data.abiInfo
 
     const ainInfoData = ref<any>([]);
     if (frameType === '5') { //sui
@@ -456,9 +459,11 @@ const getContractTemplatesDetail = async () => {
         ainInfoData.value = YAML.parse(data.abiInfo);
       }
     }
-    if (frameType !== '5') {
+    if (frameType !== '5' && frameType!=7) {
       setAbiInfoData(ainInfoData.value);
-    }
+    }else if(frameType == '7'){
+      getContractICPMoveInfo(JSON.parse(icpAbi))
+    }
     axios
       .get(data.codeSources)
       .then(res => {
@@ -699,6 +704,30 @@ const downloadTemplate = async () => {
 const tokenFrom = ()=>{
   tokenMatemaskWallet.value = localStorage.getItem('token')?.startsWith('0x')
   console.log('bool',tokenMatemaskWallet.value)
+}
+const getContractICPMoveInfo = async(abi:any)=>{
+  console.log('abi::::',abi)
+  // 把 abi 转成可用数组
+  const temArr:any = await toICPService(abi)
+  // 取出数组中的 methods 用于遍历出 send call
+  const methodsArr = temArr.map((item:any)=>{
+    return item.methods
+  })?.flat()
+  methodsArr.map((it:any)=>{
+    if(it.type=='send'){
+      sendList.value.push(it)
+    }else if(it.type=='call'){
+      callList.value.push(it)
+    }
+  })
+  // 默认选中第一项
+  if (sendList.value.length > 0) {
+    functionList.value = sendList.value[0]?.args;
+    functionName.value = sendList.value[0]?.name;
+  } else if (callList.value.length > 0) {
+    functionList.value = callList.value[0]?.args;
+    functionName.value = callList.value[0]?.name;
+  }
 }
 </script>
 <style lang='less' scoped>
