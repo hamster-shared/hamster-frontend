@@ -13,7 +13,7 @@
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `param${index+1}` }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
+          :placeholder= "'Enter a value for ' + (frameType === 4 || frameType === 7 ? item.type : item.internalType)" allowClear
           v-model:value="formData[item.name || `param${index+1}`]"></a-input>
       </a-form-item>
     </div>
