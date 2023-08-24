@@ -260,7 +260,7 @@ const getProjectsDetailData = async () => {
 const setCurrentName = () => {
   if (queryJson.projectType === '1') {
     // projectType === '1' === contract
-    title.value = queryJson.type === '1' ? 'Check' : 'Build';
+    title.value = queryJson.type === '1' ? 'Check' : queryJson.type === '2' ? 'Build' : 'Deploy';
     currentName.value = `Contract ${title.value}_#${workflowsDetailsData.execNumber}`
   } else {
     // projectType === '2' === frontend
