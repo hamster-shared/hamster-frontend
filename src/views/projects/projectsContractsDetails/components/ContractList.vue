@@ -72,6 +72,7 @@ const aptosAddress = ref('')
 const payable = ref(false)
 
 const data = YAML.parse(abiInfo.value);
+console.log("abiInfo::::",data);
 if (data.abi) {
   Object.assign(abiInfoData, data.abi)
 } else {

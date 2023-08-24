@@ -29,17 +29,40 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref, onMounted, toRefs } from 'vue'
 import { useThemeStore } from "@/stores/useTheme";
 import { copyToClipboard } from "@/utils/tool";
-import { RecentStatusEnums, SvgStatusEnums } from "../../projectsList/enums/RecentEnums";
+import { apiGetCanisterId } from '@/apis/canister'
+import { RecentStatusEnums, SvgStatusEnums } from "@/views/projects/projectsList/enums/RecentEnums";
+import { message } from "ant-design-vue";
 
 const theme = useThemeStore()
+
+const props = defineProps({
+  projectId: String,
+});
+
+const { projectId } = toRefs(props);
 
 const getImageUrl = (status: any) => {
   let iconName = `${SvgStatusEnums[status]}`;
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };
+
+const getCanisterId = async () => {
+  try {
+    const res = await apiGetCanisterId(projectId?.value)
+    console.log("res:::",res);
+  } catch {
+    message.error("copy failed");
+  }
+  
+}
+
+onMounted(()=>{
+  getCanisterId()
+})
 </script>
 <style scoped >
 .box-shadow-css{
