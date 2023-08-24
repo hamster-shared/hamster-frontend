@@ -4,13 +4,13 @@
     <div class="box-css grid grid-cols-4 gap-4 p-[32px]" :class="theme.themeValue === 'dark' ? '' : 'box-shadow-css'">
       <div class="border-r">
         <div class="box-title">Canister ID</div>
-        <div class="box-sub">r3dpl-2yaaa-aaaam-abpsa-cai
+        <div class="box-sub">{{ deployInfo.address }}
           <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard('')"/>
         </div>
       </div>
       <div class="border-r">
         <div class="box-title">Canister Name</div>
-        <div class="box-sub">DemoContract
+        <div class="box-sub">{{ deployInfo.name }}
           <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard('')"/>
         </div>
       </div>
@@ -21,48 +21,32 @@
       <div>
         <div class="box-title">Status</div>
         <div class="box-sub">
-          <img :src="getImageUrl(1)" class="h-[16px] mr-1" /> 
-          {{ RecentStatusEnums[1] }}
+          <img :src="getImageUrl(3)" class="h-[16px] mr-1" /> 
+          {{ RecentStatusEnums[3] }}
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { useThemeStore } from "@/stores/useTheme";
 import { copyToClipboard } from "@/utils/tool";
-import { apiGetCanisterId } from '@/apis/canister'
 import { RecentStatusEnums, SvgStatusEnums } from "@/views/projects/projectsList/enums/RecentEnums";
-import { message } from "ant-design-vue";
 
 const theme = useThemeStore()
 
 const props = defineProps({
-  projectId: String,
+  deployInfo: Object,
 });
 
-const { projectId } = toRefs(props);
+const { deployInfo } = toRefs(props);
 
 const getImageUrl = (status: any) => {
   let iconName = `${SvgStatusEnums[status]}`;
   return new URL(`../../../../assets/icons/${iconName}.svg`, import.meta.url)
     .href;
 };
-
-const getCanisterId = async () => {
-  try {
-    const res = await apiGetCanisterId(projectId?.value)
-    console.log("res:::",res);
-  } catch {
-    message.error("copy failed");
-  }
-  
-}
-
-onMounted(()=>{
-  getCanisterId()
-})
 </script>
 <style scoped >
 .box-shadow-css{
