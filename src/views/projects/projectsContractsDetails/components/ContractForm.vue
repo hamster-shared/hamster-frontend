@@ -2,7 +2,7 @@
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
     :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
     <a-form-item>
-      <div class="mb-[32px]">
+      <div >
         <div class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</div>
         <div class="dark:text-white text-[#121211] text-[12px] leading-[43px]">{{ subTitle }}</div>
       </div>
