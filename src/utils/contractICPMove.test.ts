@@ -1,13 +1,22 @@
-import {getExample, getSimpleToDo, toICPService, toDisplay, ICPServiceWrapper, getCalcDID} from "./contractICPMove";
+import {
+    getExample,
+    getSimpleToDo,
+    toICPService,
+    toDisplay,
+    ICPServiceWrapper,
+    getCalcDID,
+    getBasisDaoDID
+} from "./contractICPMove";
 import {callCanister} from "./icp/icpCanisterCall";
 
 describe('toICPMethod', () => {
     it('should return a result',  () => {
-        const json = getExample()
+        const json = getBasisDaoDID()
 
         const result = toICPService(json)[0].methods;
 
         for(let method of result){
+            console.log("// " , method.description)
             console.log(method.name+": "+toDisplay(method))
         }
 

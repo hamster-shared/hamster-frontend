@@ -68,7 +68,7 @@ export function toICPService(input: any): ICPService[] {
                 res: [],
                 type: "",
                 annotation: "",
-                description: ""
+                description: method.Description
             }
 
 
@@ -410,4 +410,550 @@ export function getCalcDID(): any {
             }
         ]
     }
+}
+
+export function getBasisDaoDID(): any {
+    return {
+        "Definitions": [
+            {
+                "Id": "BasicDaoStableStorage",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "accounts",
+                        "Data": {
+                            "Data": "Account"
+                        },
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "proposals",
+                        "Data": {
+                            "Data": "Proposal"
+                        },
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "system_params",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "SystemParams"
+                    }
+                ]
+            },
+            {
+                "Id": "Tokens",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "amount_e8s",
+                        "Data": "nat64",
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "ProposalState",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Open"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Accepted"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Rejected"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Executing"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Succeeded"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "Failed",
+                        "Data": "text",
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "Proposal",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "id",
+                        "Data": "nat64",
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "timestamp",
+                        "Data": "nat64",
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "proposer",
+                        "Data": {},
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "payload",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "ProposalPayload"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "state",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "ProposalState"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "votes_yes",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "votes_no",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "voters",
+                        "Data": {
+                            "Data": {}
+                        },
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "ProposalPayload",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "canister_id",
+                        "Data": {},
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "method",
+                        "Data": "text",
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "message",
+                        "Data": {},
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "SubmitProposalResult",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "Ok",
+                        "Data": "nat64",
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "Err",
+                        "Data": "text",
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "Vote",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Yes"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "No"
+                    }
+                ]
+            },
+            {
+                "Id": "Account",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "owner",
+                        "Data": {},
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "tokens",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    }
+                ]
+            },
+            {
+                "Id": "TransferArgs",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "to",
+                        "Data": {},
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "amount",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    }
+                ]
+            },
+            {
+                "Id": "TransferResult",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": null,
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Ok"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "Err",
+                        "Data": "text",
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "VoteArgs",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "proposal_id",
+                        "Data": "nat64",
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "vote",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Vote"
+                    }
+                ]
+            },
+            {
+                "Id": "VoteResult",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "Ok",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "ProposalState"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "Err",
+                        "Data": "text",
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            },
+            {
+                "Id": "SystemParams",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "transfer_fee",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "proposal_vote_threshold",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "proposal_submission_deposit",
+                        "Data": null,
+                        "NatData": null,
+                        "NameData": "Tokens"
+                    }
+                ]
+            },
+            {
+                "Id": "UpdateSystemParamsPayload",
+                "Data": [
+                    {
+                        "Nat": null,
+                        "Name": "transfer_fee",
+                        "Data": {
+                            "Data": "Tokens"
+                        },
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "proposal_vote_threshold",
+                        "Data": {
+                            "Data": "Tokens"
+                        },
+                        "NatData": null,
+                        "NameData": null
+                    },
+                    {
+                        "Nat": null,
+                        "Name": "proposal_submission_deposit",
+                        "Data": {
+                            "Data": "Tokens"
+                        },
+                        "NatData": null,
+                        "NameData": null
+                    }
+                ]
+            }
+        ],
+        "Services": [
+            {
+                "ID": null,
+                "Methods": [
+                    {
+                        "Name": "get_system_params",
+                        "Func": {
+                            "ArgTypes": null,
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "SystemParams"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Get the current system params"
+                    },
+                    {
+                        "Name": "transfer",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "TransferArgs"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "TransferResult"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Transfer tokens from the caller's account to another account"
+                    },
+                    {
+                        "Name": "account_balance",
+                        "Func": {
+                            "ArgTypes": null,
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "Tokens"
+                                }
+                            ],
+                            "Annotation": "query"
+                        },
+                        "ID": null,
+                        "Description": "Returns the amount of Tokens the caller owns"
+                    },
+                    {
+                        "Name": "list_accounts",
+                        "Func": {
+                            "ArgTypes": null,
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": {
+                                        "Data": "Account"
+                                    }
+                                }
+                            ],
+                            "Annotation": "query"
+                        },
+                        "ID": null,
+                        "Description": "Lists all accounts"
+                    },
+                    {
+                        "Name": "submit_proposal",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "ProposalPayload"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "SubmitProposalResult"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Submit a proposalA proposal contains a canister ID, method name and method args. If enough usersvote \"yes\" on the proposal, the given method will be called with the given methodargs on the given canister."
+                    },
+                    {
+                        "Name": "get_proposal",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "nat64"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": {
+                                        "Data": "Proposal"
+                                    }
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Return the proposal with the given ID, if one exists"
+                    },
+                    {
+                        "Name": "list_proposals",
+                        "Func": {
+                            "ArgTypes": null,
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": {
+                                        "Data": "Proposal"
+                                    }
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Return the list of all proposals"
+                    },
+                    {
+                        "Name": "vote",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "VoteArgs"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "VoteResult"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Vote on an open proposal"
+                    },
+                    {
+                        "Name": "update_system_params",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "UpdateSystemParamsPayload"
+                                }
+                            ],
+                            "ResTypes": null,
+                            "Annotation": null
+                        },
+                        "ID": null,
+                        "Description": "Update system params. Only callable via proposal execution."
+                    }
+                ],
+                "MethodId": null
+            }
+        ]
+    }
+
 }
