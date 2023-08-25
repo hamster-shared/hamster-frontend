@@ -72,7 +72,7 @@ const emit = defineEmits(["CancelDFX","SaveDFXCon"])
 const formRef = ref();
 const formData = reactive({
   name: 'contract',
-  type: 'rust',
+  type: 'motoko',
   main: '',
   candid: '',
   package: '',

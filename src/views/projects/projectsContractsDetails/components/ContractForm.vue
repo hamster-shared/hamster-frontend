@@ -226,12 +226,12 @@ const executeSet = async () => {
   }
 }
 const submit = async () => {
-  // const emptyInputs = inputs?.value.filter( (item: { name: string | number;}) => !formData[item.name]);
-  // if (emptyInputs.length > 0) {
-  //   message.warning('Please enter the necessary parameters')
-  //   return
-  // }
-  // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
+  const emptyInputs = inputs?.value.filter( (item: { name: string | number;}, key: number) => !formData[item.name || `param${key+1}`]);
+  if (emptyInputs.length > 0) {
+    message.warning('Please enter the necessary parameters')
+    return
+  }
+  console.log(deployAddress.deployAddressValue, 'deployAddressValue')
   if (frameType?.value == 4) {
     // console.log(formState.frameType, 'formState.frameType')
     // console.log(formState.frameType, 'formState.frameType')
@@ -272,7 +272,14 @@ const contractIcpFn = async()=>{
   console.log('contractIcpFn', svc)
   if(method){
     // [] 是页面表单参数
-    const result = await method.call(["123"])
+    let newData:any = {};
+    if (inputs?.value.length > 0) {
+      inputs?.value.forEach((item: any, key: any) => {
+        newData[item.name || `param${key+1}`] = formData[item.name || `param${key+1}`];
+      })
+    }
+    console.log('newData：：：', newData)
+    const result = await method.call(newData)
     console.log(result)
     hashValue.value = result;
   }
