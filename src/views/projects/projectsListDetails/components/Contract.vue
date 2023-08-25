@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div class="flex" v-if="frameType != 7">
     <div>
       <a-select @change="changeContract" v-model:value="contract"
         :options="contractList.map(item => ({ value: item }))">
