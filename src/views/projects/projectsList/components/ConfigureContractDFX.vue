@@ -143,6 +143,7 @@ onMounted(async()=>{
     formData.package = getResultDfx.package
     formData.type = getResultDfx.type
     formData.candid = getResultDfx.candid
+    formData.main = getResultDfx.main
   }else{
     dfxContent.value =  generateContractDFX(formData.name,formData.type,formData.main,formData.candid,formData.package)
   }
