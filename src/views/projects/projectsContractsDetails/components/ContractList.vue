@@ -34,8 +34,8 @@
     </div>
     <div class="col-span-2 p-[32px]">
       <div>
-        <ContractForm :checkValue="checkValue" :contractAddress="contractAddress" :inputs="inputs" :outputs="outputs" :abiInfo="abiInfo"
-          :frameType="frameType" :buttonInfo="buttonInfo" :payable="payable" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress">
+        <ContractForm :checkValue="checkValue" :subTitle="subTitle" :contractAddress="contractAddress" :inputs="inputs" :outputs="outputs" :abiInfo="abiInfo"
+          :frameType="frameType" :buttonInfo="buttonInfo" :payable="payable" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress" :canisterId="canisterId">
         </ContractForm>
       </div>
       <!-- <div v-if="!checkValue">noData</div> -->
@@ -47,13 +47,14 @@ import { ref, reactive, toRefs,onMounted } from "vue";
 import YAML from "yaml";
 import ContractForm from "./ContractForm.vue";
 import { useThemeStore } from "@/stores/useTheme";
-import { nextTick } from "process";
+import { toICPService, toDisplay} from "@/utils/contractICPMove";
 const theme = useThemeStore();
 
 const props = defineProps({
   contractAddress: String,
   abiInfo: String,
   frameType: Number,
+  canisterId: String,
 });
 
 const { contractAddress, abiInfo, frameType } = toRefs(props);
@@ -62,6 +63,7 @@ const sendAbis = reactive<any>([])
 const callAbis = reactive<any>([])
 const buttonInfo = ref('');
 const checkValue = ref('');
+const subTitle = ref('');
 const checkValueIndex = ref(0);
 const inputs = ref([]);
 const outputs = ref([]);
@@ -72,6 +74,7 @@ const aptosAddress = ref('')
 const payable = ref(false)
 
 const data = YAML.parse(abiInfo.value);
+console.log("abiInfo::::",data);
 if (data.abi) {
   Object.assign(abiInfoData, data.abi)
 } else {
@@ -124,13 +127,16 @@ const ellipsisFunction = (column: string ) => {
     return column
 }
 
-const checkContract = (name: string, val: any, text: string, index: number) => {
+const checkContract = async (name: string, val: any, text: string, index: number) => {
   inputs.value = []
   outputs.value = []
   console.log('checkContract',val)
   checkValueIndex.value = index;
   // console.log(buttonInfo, 'buttonInfo')
-  checkValue.value = name
+  
+  const argString = await toDisplay(val)
+  checkValue.value = name + "：" + argString;
+  subTitle.value = val.description;
   // 如果是aptos需要单独处理
   if(frameType?.value ===2){
     if(val?.abilities){
@@ -153,7 +159,7 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
       })
     }
   }else{
-    inputs.value = val.inputs
+    inputs.value = val.inputs || val.args
     outputs.value = val.outputs
     payable.value = val.stateMutability === 'payable'
   }
@@ -164,10 +170,44 @@ const checkContract = (name: string, val: any, text: string, index: number) => {
   emit("checkContract", outputs, name);
 }
 
+const getContractICPMoveInfo = async(abi:any)=>{
+  // 把 abi 转成可用数组
+  const temArr:any = await toICPService(abi)
+  // 取出数组中的 methods 用于遍历出 send call
+  const methodsArr = temArr.map((item:any)=>{
+    return item.methods
+  })?.flat()
+
+  methodsArr.map((it:any)=>{
+    if(it.type=='send'){
+      sendAbis.push(it)
+    }else if(it.type=='call'){
+      callAbis.push(it)
+    }
+  })
+  console.log('getContractICPMoveInfo:', methodsArr)
+  console.log('sendAbis,callAbis:',sendAbis,callAbis)
+  if (sendAbis.length > 0) {
+    inputs.value = sendAbis[0].args;
+    subTitle.value = sendAbis[0].description
+    const argString = await toDisplay(sendAbis[0])
+    checkValue.value = sendAbis[0]?.name +"："+argString;
+    buttonInfo.value = 'Transact'
+  }else if (sendAbis.length <= 0 && callAbis.length > 0) {
+    inputs.value = callAbis[0].args;
+    subTitle.value = callAbis[0].description
+    const argString = await toDisplay(callAbis[0])
+    checkValue.value = callAbis[0]?.name +"："+argString;
+    buttonInfo.value = 'Call'
+  }else{
+    checkValue.value = ''
+  }
+}
+
 onMounted(()=>{
   // debugger send call
   // debugger
-  console.log(111111111111111,contractAddress?.value, abiInfo?.value, frameType?.value)
+  // console.log(111111111111111,contractAddress?.value, abiInfo?.value, frameType?.value)
   if(frameType?.value && frameType?.value==2){
     Object.assign(sendAbis, data.exposed_functions)
     Object.assign(callAbis, data.structs)
@@ -175,8 +215,10 @@ onMounted(()=>{
     aptosName.value = data.name
     aptosAddress.value = data.address
     commonFirst()
-  }else{
-    console.log('000000000000000')
+  } else if (frameType?.value == 7) {
+    getContractICPMoveInfo(JSON.parse(abiInfo?.value))
+  } else {
+    // console.log('000000000000000')
     abiInfoData.map((item: any) => {
       if (item.type === "function") {
         if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {

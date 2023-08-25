@@ -144,7 +144,7 @@
             View Now
             </div> -->
           <div v-else>
-            <div v-if="projectType === '1'">
+            <div v-if="projectType === '1' && viewInfo.frameType !== 7">
               <div class="open-link-css cursor-pointer inline-block"
                 @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)">
                 View Now
@@ -160,7 +160,7 @@
                 View Now
               </div>
             </div>
-            <div v-else-if="projectType === '3'">
+            <div v-else-if="projectType === '3' || projectType === '1' && viewInfo.frameType === 7">
               <div class="open-link-css cursor-pointer inline-block"
                 @click="goContractBuild(viewInfo.id, viewInfo.recentBuild.workflowId, viewInfo.recentBuild.id)" >
                 View Result
@@ -583,7 +583,7 @@ const projectsDeploy = async (id: string, version: string, status: number) => {
   if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
     await getIcpInfo(status)
   }else{
-    if (projectType?.value === '1') {
+    if (projectType?.value === '1' && viewInfo.value.frameType !== 7) {
       if (status === 0 || status === 1 || version === "") {
         // message.info("Smart contract not avaliable.");
         message.info(t('Smart contract not avaliable.'));
@@ -795,7 +795,11 @@ const CancelDeployIC = () => {
 }
 // 展示配置dfx.json
 const showDfxFn = () => {
-  showDFX.value = true;
+  if (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) {
+    showContractDFX.value = true;
+  } else {
+    showDFX.value = true;
+  }
 }
 const CancelDeployDFX = () => {
   showDFX.value = false;

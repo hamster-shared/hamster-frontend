@@ -19,7 +19,7 @@
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[8px]">
     <a-tabs v-model:activeKey="activeKeyId" class="dark:text-white text-[#121211]" @change="changeActiveKey">
       <a-tab-pane v-for="(item, key) in contractInfo" :key="item.id" :tab="key">
-        <Overview v-if="frameType === 7"></Overview>
+        <Overview v-if="frameType === 7" :deployInfo="item.deployInfo[0]"></Overview>
         <a-table v-else :dataSource="item.deployInfo" :columns="columns" class="mb-[32px]" :pagination="false"
           :customRow="customRowClick" :rowClassName="setRowClassName">
           <template #bodyCell="{ record, column }">
@@ -32,7 +32,7 @@
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
           <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
-            @checkContract="checkContract">
+            @checkContract="checkContract" :canisterId="item.deployInfo[0].address">
           </ContractList>
         </div>
         <div v-if="frameType ===  5">
