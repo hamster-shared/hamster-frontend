@@ -310,3 +310,104 @@ export function getExample(): any {
         ]
     }
 }
+
+export function getCalcDID(): any {
+    return {
+        "Definitions": null,
+        "Services": [
+            {
+                "ID": null,
+                "Methods": [
+                    {
+                        "Name": "add",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null
+                    },
+                    {
+                        "Name": "clearall",
+                        "Func": {
+                            "ArgTypes": null,
+                            "ResTypes": null,
+                            "Annotation": null
+                        },
+                        "ID": null
+                    },
+                    {
+                        "Name": "div",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": {
+                                        "Data": "int"
+                                    }
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null
+                    },
+                    {
+                        "Name": "mul",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null
+                    },
+                    {
+                        "Name": "sub",
+                        "Func": {
+                            "ArgTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "ResTypes": [
+                                {
+                                    "Name": null,
+                                    "Data": "int"
+                                }
+                            ],
+                            "Annotation": null
+                        },
+                        "ID": null
+                    }
+                ],
+                "MethodId": null
+            }
+        ]
+    }
+}
