@@ -66,6 +66,7 @@ import { stark, number,uint256 } from "starknet";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { WalletCore } from '@aptos-labs/wallet-adapter-core';
 import { AptosClient } from 'aptos'
+import { toICPService, toDisplay, ICPServiceWrapper } from "@/utils/contractICPMove";
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const props = defineProps({
@@ -220,11 +221,11 @@ const executeSet = async () => {
   }
 }
 const submit = async () => {
-  const emptyInputs = inputs?.value.filter( (item: { name: string | number; }) => !formData[item.name]);
-  if (emptyInputs.length > 0) {
-    message.warning('Please enter the necessary parameters')
-    return
-  }
+  // const emptyInputs = inputs?.value.filter( (item: { name: string | number;}) => !formData[item.name]);
+  // if (emptyInputs.length > 0) {
+  //   message.warning('Please enter the necessary parameters')
+  //   return
+  // }
   // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
   if (frameType?.value == 4) {
     // console.log(formState.frameType, 'formState.frameType')
@@ -253,10 +254,23 @@ const submit = async () => {
     evmDeployFunction();
   }
 }
-
 // icp move 调用
 const contractIcpFn = async()=>{
-  console.log('contractIcpFn')
+  // 把 abi 转成可用数组
+  const temArr:any = await toICPService(JSON.parse(abiInfo?.value))
+  console.log('temArr::',temArr,checkValue?.value?.indexOf('：'))
+  // 第一个参数：ICPService
+  // 第二个参数：canisterId
+  const svc = new ICPServiceWrapper(temArr,'a4gq6-oaaaa-aaaab-qaa4q-cai-raw')
+  const methods = svc.methods;
+  const method = methods.find(t => t.name === checkValue?.value?.substring(0,checkValue?.value?.indexOf('：')))
+  console.log('contractIcpFn', svc)
+  if(method){
+    // [] 是页面表单参数
+    const result = await method.call(["123"])
+    console.log(result)
+    hashValue.value = result;
+  }
 }
 
 // evm合约方法调用
