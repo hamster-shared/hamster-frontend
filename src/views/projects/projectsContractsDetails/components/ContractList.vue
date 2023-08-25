@@ -47,8 +47,7 @@ import { ref, reactive, toRefs,onMounted } from "vue";
 import YAML from "yaml";
 import ContractForm from "./ContractForm.vue";
 import { useThemeStore } from "@/stores/useTheme";
-import {getExample, getSimpleToDo, toICPService,toDisplay} from "@/utils/contractICPMove";
-import { nextTick } from "process";
+import { toICPService, toDisplay} from "@/utils/contractICPMove";
 const theme = useThemeStore();
 
 const props = defineProps({
@@ -207,7 +206,7 @@ const getContractICPMoveInfo = async(abi:any)=>{
 onMounted(()=>{
   // debugger send call
   // debugger
-  console.log(111111111111111,contractAddress?.value, abiInfo?.value, frameType?.value)
+  // console.log(111111111111111,contractAddress?.value, abiInfo?.value, frameType?.value)
   if(frameType?.value && frameType?.value==2){
     Object.assign(sendAbis, data.exposed_functions)
     Object.assign(callAbis, data.structs)
@@ -218,7 +217,7 @@ onMounted(()=>{
   } else if (frameType?.value == 7) {
     getContractICPMoveInfo(JSON.parse(abiInfo?.value))
   } else {
-    console.log('000000000000000')
+    // console.log('000000000000000')
     abiInfoData.map((item: any) => {
       if (item.type === "function") {
         if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {

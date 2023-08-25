@@ -246,10 +246,19 @@ const submit = async () => {
         executeSet()
       }
     }
+  } else if (frameType?.value == 7) {
+    // 合约的icp move 调用
+    contractIcpFn()
   } else {
     evmDeployFunction();
   }
 }
+
+// icp move 调用
+const contractIcpFn = async()=>{
+  console.log('contractIcpFn')
+}
+
 // evm合约方法调用
 const evmDeployFunction = () => {
   // debugger
