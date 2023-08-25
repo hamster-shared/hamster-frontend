@@ -266,7 +266,7 @@ const contractIcpFn = async()=>{
   console.log('temArr::',temArr,checkValue?.value?.indexOf('：'))
   // 第一个参数：ICPService
   // 第二个参数：canisterId
-  const svc = new ICPServiceWrapper(temArr, canisterId.value)
+  const svc = new ICPServiceWrapper(temArr[0], canisterId.value)
   const methods = svc.methods;
   const method = methods.find(t => t.name === checkValue?.value?.substring(0,checkValue?.value?.indexOf('：')))
   console.log('contractIcpFn', svc)
