@@ -86,8 +86,13 @@ const props = defineProps({
   subTitle:{
     type:String,
     default:''
-  }
+  },
+  canisterId:{
+    type:String,
+    default:''
+  },
 })
+
 const isSend = ref(false);
 const hashValue = ref('')
 const formRef = ref();
@@ -110,7 +115,7 @@ const aptosNetwork = ref('')
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle } = toRefs(props)
+const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle,canisterId } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
@@ -261,7 +266,7 @@ const contractIcpFn = async()=>{
   console.log('temArr::',temArr,checkValue?.value?.indexOf('：'))
   // 第一个参数：ICPService
   // 第二个参数：canisterId
-  const svc = new ICPServiceWrapper(temArr,'a4gq6-oaaaa-aaaab-qaa4q-cai-raw')
+  const svc = new ICPServiceWrapper(temArr, canisterId.value)
   const methods = svc.methods;
   const method = methods.find(t => t.name === checkValue?.value?.substring(0,checkValue?.value?.indexOf('：')))
   console.log('contractIcpFn', svc)
