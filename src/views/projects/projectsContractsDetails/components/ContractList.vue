@@ -35,7 +35,7 @@
     <div class="col-span-2 p-[32px]">
       <div>
         <ContractForm :checkValue="checkValue" :subTitle="subTitle" :contractAddress="contractAddress" :inputs="inputs" :outputs="outputs" :abiInfo="abiInfo"
-          :frameType="frameType" :buttonInfo="buttonInfo" :payable="payable" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress">
+          :frameType="frameType" :buttonInfo="buttonInfo" :payable="payable" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress" :canisterId="canisterId">
         </ContractForm>
       </div>
       <!-- <div v-if="!checkValue">noData</div> -->
@@ -54,6 +54,7 @@ const props = defineProps({
   contractAddress: String,
   abiInfo: String,
   frameType: Number,
+  canisterId: String,
 });
 
 const { contractAddress, abiInfo, frameType } = toRefs(props);
