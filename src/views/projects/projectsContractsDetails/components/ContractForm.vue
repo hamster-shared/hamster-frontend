@@ -279,7 +279,7 @@ const contractIcpFn = async()=>{
       })
     }
     console.log('newData：：：', newData)
-    const result = await method.call(newData)
+    const result = await method.call(Object.values(newData))
     console.log(result)
     hashValue.value = result;
   }
