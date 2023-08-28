@@ -162,10 +162,4 @@ const refreshCanister = ()=>{
 }
 </script>
 <style scoped lang="less">
-.tableShow{
-  display: inline-block;
-}
-.tableHiddle{
-  display: none;
-}
 </style>
