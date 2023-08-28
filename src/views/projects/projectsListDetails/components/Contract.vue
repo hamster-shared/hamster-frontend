@@ -76,7 +76,7 @@ const props = defineProps({
   frameType: Number,
   name:String
 });
-const { detailId, frameType,name } = toRefs(props);
+const { detailId, frameType, name } = toRefs(props);
 
 const contractList = ref(["All Contract"]);
 const contract = ref("All Contract");
@@ -101,7 +101,7 @@ const msgParam = ref({
   operateType: 1,
 });
 
-const contractTableColumns = computed<any[]>(() => [
+const contractTableColumns = ref( [
   {
     title: 'Contract',
     dataIndex: 'name',
@@ -115,6 +115,13 @@ const contractTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'version',
+  },
+  {
+    title: 'Branch',
+    dataIndex: 'branch',
+    align: 'center',
+    ellipsis: 'fixed',
+    key: 'branch',
   },
   {
     title: 'Network',
@@ -165,6 +172,13 @@ const contractPagination = reactive({
 });
 
 onMounted(() => {
+  
+  if (frameType?.value === 7) {
+    contractTableColumns.value = contractTableColumns.value.filter(item => item.dataIndex !== 'network')
+  } else {
+    contractTableColumns.value = contractTableColumns.value.filter(item => item.dataIndex !== 'branch')
+  }
+
   getProjectsContract();
   getProjectsContractName();
   getProjectsContractNetwork();
