@@ -40,7 +40,7 @@ const cycles = ref()
 
 const tableList = ref([{'name':'name'}]);
 
-const tableColumns = computed<any[]>(() => [
+const tableColumns = ref([
   {
     title: 'Canister ID',
     dataIndex: 'canisterId',
@@ -61,7 +61,6 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'contract',
-    className:frameType?.value===7?'tableShow':'tableHiddle'
   },
   {
     title: 'Cycles',
@@ -118,6 +117,10 @@ const pagination = reactive({
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
 onMounted(() => {
+  if (frameType?.value !== 7) {
+    tableColumns.value = tableColumns.value.filter(item => item.dataIndex !== 'contract')
+  }
+  
   getProjectsCanisters()
 })
 
