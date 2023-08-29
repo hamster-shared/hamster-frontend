@@ -20,7 +20,7 @@
             <div v-if="props.checkType != ''">{{ props.checkType }}</div>
             <div v-else>{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
           </div>
-          <div v-if="workflowsDetailsData.status == 2 && type == '2' && deployType == '3'" class="process-detail-info">
+          <div v-if="workflowsDetailsData.status == 2 && (type == '2' || type=='1') && deployType == '3'" class="process-detail-info">
             Insufficient cycle, <a href="javascript:;" @click="openBuyCycles">buy cycles</a>
           </div>
           <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
