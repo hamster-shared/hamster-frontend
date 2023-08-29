@@ -112,7 +112,7 @@
                 </div>
                 <!-- 按钮 -->
                 <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
-                <div class="flex text-[16px]">
+                <div class="flex text-[16px] mt-2">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
@@ -391,7 +391,5 @@ onMounted(() => {
   border: none;
   border-radius: 15px 15px 15px 15px;
   color: #fff;
-  bottom: 50px;
-  left: -3px;
 }
 </style>
