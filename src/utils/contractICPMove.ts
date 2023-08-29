@@ -39,7 +39,20 @@ export class ICPMethodWrapper implements ICPMethod {
     }
 
     call(args: any[]): Promise<any> {
-        return this.client.call(this.name, ...args)
+
+        let callArgs = []
+        if(args.length === this.args.length){
+            for(let i=0; i< this.args.length; i++){
+                if(this.args[i].type === 'nat' || this.args[i].type.indexOf("int") > 0 ) {
+                    callArgs.push(parseFloat(args[i]))
+                }else {
+                    callArgs.push(args[i])
+                }
+            }
+            return this.client.call(this.name, ...callArgs)
+        }else {
+            throw new Error("args number does not match definition")
+        }
     }
 }
 

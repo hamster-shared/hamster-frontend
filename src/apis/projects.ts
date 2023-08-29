@@ -44,6 +44,9 @@ interface GetProjectsContractDeployParams {
   address: string,
 }
 
+//TODO contract deploy
+interface ProjectContractDeployIngParam {}
+
 interface apiProjectsWorkflowsDetailStopParams {
   id: string,
   workflowsId: string,
@@ -250,7 +253,7 @@ export function apiDeleteProjects(id: String) {
   });
 }
 
-//删除workflows 
+//删除workflows
 export function apiDeleteWorkflows(workflowId: String, workflowDetailId: String) {
   return httpRequest({
     // url: `/api/projects/${id}/workflows/${workflowId}`,
@@ -277,7 +280,7 @@ export function apiGetProjectsPackages(id: String, params: GetPackageParams) {
   });
 }
 
-// package里得deploy 操作 
+// package里得deploy 操作
 export function apiProjectsDeploy(params: apiProjectsDeployParams) {
   return httpRequest({
     url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
