@@ -27,7 +27,8 @@
       <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
       </Deployment>
     </div>
-    <Canisters v-if="queryJson.type === '3'" :detailId="id" ></Canisters>
+    <!-- 只有合约的 icp 才在deploy详情页展示 罐列表 -->
+    <Canisters v-if="queryJson.type === '3' && workflowsDetailsData.frameType == 7" :detailId="id" ></Canisters>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
