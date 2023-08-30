@@ -11,7 +11,7 @@
         <div>
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
-            :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
+            :class="(checkValue === val.name && checkValueIndex === index || checkValue.substring(0,checkValue.indexOf('：'))==val.name) ? 'checked' : ''"
             v-for="(val, index) in sendAbis" :key="val.name" @click="checkContract(val.name, val, 'Transact', index)">
             {{ ellipsisFunction(val.name) }}</div>
         </div>
@@ -25,7 +25,7 @@
         <div>
           <div
             class="contractList-title dark:text-[#E0DBD2] text-[#73706E] h-[51px] leading-[51px] rounded-[12px] pl-[30px] cursor-pointer"
-            :class="(checkValue === val.name && checkValueIndex === index) ? 'checked' : ''"
+            :class="(checkValue === val.name && checkValueIndex === index || checkValue.substring(0,checkValue.indexOf('：'))==val.name) ? 'checked' : ''"
             v-for="(val, index) in callAbis" :key="val.name" @click="checkContract(val.name, val, 'Call', index)">
             {{ ellipsisFunction(val.name) }}</div>
         </div>
@@ -133,10 +133,13 @@ const checkContract = async (name: string, val: any, text: string, index: number
   console.log('checkContract',val)
   checkValueIndex.value = index;
   // console.log(buttonInfo, 'buttonInfo')
-  
-  const argString = await toDisplay(val)
-  checkValue.value = name + "：" + argString;
-  subTitle.value = val.description;
+  if(frameType?.value==7){
+    const argString = await toDisplay(val)
+    checkValue.value = name + "：" + argString;
+    subTitle.value = val.description;
+  }else{
+    checkValue.value = name
+  }
   // 如果是aptos需要单独处理
   if(frameType?.value ===2){
     if(val?.abilities){

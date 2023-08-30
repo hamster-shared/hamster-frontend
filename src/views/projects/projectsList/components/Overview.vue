@@ -173,7 +173,7 @@
         <div>
           <div class="text-[16px] font-bold">Recent Deploy</div>
           <div v-if="projectType === '1'">
-            <div class="my-2" v-if="viewInfo.recentDeploy.version === ''">No Data</div>
+            <div class="my-2" v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">No Data</div>
             <div class="flex items-center my-2" v-else>
               <div v-if="viewInfo.recentDeploy.status === 1">Deploying |
                 {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}

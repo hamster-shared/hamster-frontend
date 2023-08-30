@@ -261,6 +261,7 @@ const submit = async () => {
 }
 // icp move 调用
 const contractIcpFn = async()=>{
+  isSend.value = true
   // 把 abi 转成可用数组
   const temArr:any = await toICPService(JSON.parse(abiInfo?.value))
   console.log('temArr::',temArr,checkValue?.value?.indexOf('：'))
@@ -279,9 +280,16 @@ const contractIcpFn = async()=>{
       })
     }
     console.log('newData：：：', newData)
-    const result = await method.call(Object.values(newData))
-    console.log(result)
-    hashValue.value = result;
+    try {
+      const result = await method.call(Object.values(newData))
+      isSend.value = false
+      console.log(result)
+      hashValue.value = result;
+    } catch (error:any) {
+      isSend.value = false
+      message.error('Failed ',error)
+      console.log('error:',error)
+    }
   }
 }
 
