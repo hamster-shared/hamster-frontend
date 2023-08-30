@@ -16,7 +16,7 @@
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
         <GasUsageReport :gasUsageReportData="gasUsageReportData"
           v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
+        <ContractList v-if="queryJson.type === '2' && workflowsDetailsData.frameType != 0" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
       </div>
     </div>
     <div v-else>
