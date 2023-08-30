@@ -4,7 +4,7 @@
       <Breadcrumb :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" :frameType="workflowsDetailsData.frameType"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
