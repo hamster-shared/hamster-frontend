@@ -42,10 +42,19 @@ interface GetProjectsContractDeployParams {
   version: string,
   network: string,
   address: string,
+  deployTxHash: string,
 }
 
-//TODO contract deploy
-interface ProjectContractDeployIngParam {}
+// contract deploying
+interface ProjectContractDeployIngParam {
+  contractId: number,
+  projectId: string,
+  version: string,
+  network: string,
+  deployTxHash: string,
+  rpcUrl: string
+
+}
 
 interface apiProjectsWorkflowsDetailStopParams {
   id: string,
@@ -195,10 +204,19 @@ export function apiProjectsContractVersion(id: String, version: String) {
   });
 }
 
+//  保存部署中信息
+export function apiProjectsContractDeploying(params: ProjectContractDeployIngParam) {
+  return httpRequest({
+    url: `/api/projects/${params.projectId}/contract/deploying`,
+    method: "post",
+    data: params,
+  });
+}
+
 //  保存部署信息
 export function apiProjectsContractDeploy(params: GetProjectsContractDeployParams) {
   return httpRequest({
-    url: `/api/projects/${params.id}/contract/deploy`,
+    url: `/api/projects/${params.projectId}/contract/deploy`,
     method: "post",
     data: params,
   });

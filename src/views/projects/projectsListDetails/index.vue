@@ -363,7 +363,7 @@ const getProjectsDetail = async () => {
 
     localStorage.setItem("projectName", data.name)
     localStorage.setItem("projectId", data.id)
-    if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1)
+    if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.frameType === 7 && data.recentDeploy.status === 1)
       || projectType.value === '2' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.recentDeploy.status === 1)) {
 
       timer.value = setTimeout(() => {
