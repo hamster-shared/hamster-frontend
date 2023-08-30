@@ -197,8 +197,10 @@ const getProjectsContract = async (type: string | undefined) => {
 }
 const projectRunning = (projectList: any) => {
   const isRunning = ref(false);
-  projectList.forEach((element: { recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; }) => {
-    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
+  projectList.forEach((element: {
+frameType: number; recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; 
+}) => {
+    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.frameType === 7 && element.recentDeploy.status === 1)
       || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
       isRunning.value = true;
     }
