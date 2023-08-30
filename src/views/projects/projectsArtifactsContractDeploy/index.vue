@@ -101,7 +101,7 @@
 import {onMounted, reactive, ref} from "vue";
 import type {FormInstance} from 'ant-design-vue';
 import {message} from "ant-design-vue";
-import {useRouter,useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
 import BreadCrumb from "@/components/BreadCrumb.vue";
@@ -111,13 +111,13 @@ import {useThemeStore} from "@/stores/useTheme";
 import {useDeployAddressStore} from "@/stores/useDeployAddress";
 import {useI18n} from 'vue-i18n';
 import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
-import {apiGetProjectsDetail, apiProjectsContractDeploy} from "@/apis/projects";
+import {apiGetProjectsDetail, apiProjectsContractDeploy, apiProjectsContractDeploying} from "@/apis/projects";
 import {connect} from "@argent/get-starknet";
-import {ContractFrameTypeEnum} from "@/enums/frameTypeEnum";
 import {PetraWallet} from "petra-plugin-wallet-adapter";
 import {WalletCore} from '@aptos-labs/wallet-adapter-core'
 import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
 import {sleep} from "@/utils/tool"
+import {type Chain, ChainList, getChain} from "@/utils/chainlist"
 
 import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
@@ -208,7 +208,7 @@ const deployContract = async (item: any) => {
       classHash: item.byteCode,
       constructorCalldata: []
     })
-    setProjectsContractDeploy('', response.contract_address[0], item.id)
+    setProjectsContractDeploy('', response.contract_address[0], item.id,response.transaction_hash)
 
     const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
     deployAddress.setDeployAddress(starkWareData)
@@ -287,6 +287,7 @@ const deploySuiContract = async (item: any)=> {
   try{
     console.log('submit tx')
     const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
+    result.
     console.log('submit tx result: ', result)
     digest = result.digest
   }catch (e) {
@@ -339,7 +340,7 @@ const deploySuiContract = async (item: any)=> {
       return
     }
 
-    await setProjectsContractDeploy('',publishChange.packageId,item.id)
+    await setProjectsContractDeploy('',publishChange.packageId,item.id,digest)
 
   }
 
@@ -388,8 +389,9 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
   try {
     let value = argsMapData || {}
     const contract = await factory.deploy(...Object.values(value));
+    setProjectsContractDeployIng(ethereum.chainId,contract.address, contractId, contract.deployTransaction.hash).then(() => {})
     await contract.deployed();
-    return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
+    return setProjectsContractDeploy(ethereum.chainId, contract.address, contractId,contract.deployTransaction.hash)
   } catch (errorInfo) {
     // 失败的处理
     message.error(t('common.operateFail'));
@@ -407,7 +409,7 @@ const switchToChain = async (chainId: string) => {
   loading.value = true;
   window.ethereum && window.ethereum.request({
     method: "wallet_switchEthereumChain",
-    params: [{ chainId: `0x${chainId}` }],
+    params: [{ chainId: chainId }],
   }).then((res: any) => {
     loading.value = false;
     message.success('success');
@@ -425,18 +427,25 @@ const switchToChain = async (chainId: string) => {
 
 const addToChain = (chainId: string) => {
 
+    let chain = getChain(chainId)
+    if(chain === undefined ){
+        message.error(`cannot add chain: ${chainId}`)
+        return
+    }
+
   window.ethereum && window.ethereum.request({
     method: "wallet_addEthereumChain",
     params: [
       {
-        chainId: `0x${chainId}`,
-        chainName: chainName.value,
-        rpcUrls: [rpcUrl.value],
+        chainId: chain.id,
+        chainName: chain.name,
+        rpcUrls: [chain.rpcUrl],
         nativeCurrency: {
-          // name: 'Hm',
-          symbol: 'ETH',
-          decimals: 18,
+          name: chain.symbol,
+          symbol: chain.symbol,
+            decimals: 18
         },
+          blockExplorerUrls: [chain.blockExplorerUrl]
       },
     ],
   }).then((res: any) => {
@@ -457,15 +466,37 @@ const addToChain = (chainId: string) => {
   })
 }
 
-const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
+const setProjectsContractDeployIng = async (chainId: string, address: string, contractId: number,deployTxHash: string) => {
+
+    let chain = getChain(chainId)
+    if(chain == undefined ){
+        console.error(`cannot get chain ${chainId}`)
+        return
+    }
+
+    const param = {
+        contractId: contractId,
+        projectId: queryParams.id,
+        version: formState.version,
+        network: chain.name,
+        address: address,
+        deployTxHash: deployTxHash,
+        rpcUrl: chain.rpcUrl
+    }
+    const { data } = await apiProjectsContractDeploying(param)
+    return data
+}
+
+const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number,deployTxHash: string) => {
   const network: any = networkData.value.find(item => { return item.id === formState.network })
   const queryJson = {
-    id: queryParams.id,
-    contractId: contractId,
-    projectId: queryParams.id,
-    version: formState.version,
-    network: network.name,
-    address: address,
+      id: queryParams.id,
+      contractId: contractId,
+      projectId: queryParams.id,
+      version: formState.version,
+      network: network.name,
+      address: address,
+      deployTxHash: deployTxHash
   }
   const { data } = await apiProjectsContractDeploy(queryJson)
   return data
@@ -603,7 +634,7 @@ const deployClick = async () => {
         // const modalValues = await modalFormRef?.value.validateFields();
         const { nameData } = formState;
         const { ethereum } = window;
-        const network = `0x${formState.network}`
+        const network = formState.network
         if (ethereum.chainId !== network) {
           switchToChain(formState.network)
         } else {
@@ -698,74 +729,10 @@ const changeNetwork = (val: any) => {
 
 const changeChain = (val: string) => {
   formState.network = undefined;
-  if (val === 'Ethereum') {
-    // ETH
-    networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }, {name: 'Ethereum/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
-  } else if (val === 'Polygon') {
-    // 货币符号 currencySymbol = MATIC
-    networkData.value = [{ name: 'Polygon/Mainnet', id: '89', url: 'https://polygon-rpc.com/', networkName: 'Polygon Mainnet' }, { name: 'Polygon/Mumbai', id: '13881', url: 'https://rpc-mumbai.maticvigil.com', networkName: 'Polygon Mumbai' }]
-  } else if (val === 'BNB Smart Chain') {
-    // 货币符号  BNB
-    networkData.value = [{
-      name: 'Bsc/Mainnet',
-      id: '38',
-      url: 'https://bsc.nodereal.io/',
-      networkName: 'Mainnet'
-    }, {
-      name: 'Bsc/Testnet',
-      id: '61',
-      url: 'https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5	',
-      networkName: 'Testnet'
-    }]
-  } else if(val === 'Arbitrum'){
-    networkData.value = [{ name: 'Arbitrum One', id: 'a4b1', url: 'https://arbitrum-mainnet.infura.io', networkName: 'Arbitrum One' },{ name: 'Arbitrum Nova', id: 'a4ba', url: 'https://nova.arbitrum.io/rpc', networkName: 'Arbitrum Nova' },{ name: 'Nitro Goerli Rollup Testnet', id: '66eed', url: 'https://goerli-rollup.arbitrum.io/rpc', networkName: 'Nitro Goerli Rollup Testnet' }]
-  }else if(val === 'IRIShub'){
-    networkData.value = [{ name: 'Mainnet', id: '1a20', url: 'https://evmrpc.irishub-1.irisnet.org', networkName: 'Mainnet' },{ name: 'Testnet NYANCAT', id: '4130', url: 'https://evmrpc.nyancat.irisnet.org', networkName: 'Testnet NYANCAT' }]
-  }else if (val === 'Sui'){
-    networkData.value = [{
-      name: 'Devnet',
-      id: 'sui:devnet',
-      url: 'https://explorer-rpc.devnet.sui.io/',
-      networkName: 'Devnet'
-    },{
-      name: 'Testnet',
-      id: 'sui:testnet',
-      url: 'https://explorer-rpc.testnet.sui.io/',
-      networkName: 'Testnet'
-    }]
-  }else if (val === 'Filecoin'){
-    networkData.value = [{
-      name: 'Filecoin/Calibrationnet',
-      id: '4cb2f',
-      url: 'https://api.calibration.node.glif.io/rpc/v1',
-      networkName: 'Filecoin/Calibrationnet'
-    },{
-      name: 'Filecoin/Mainnet',
-      id: '13a',
-      url: 'https://api.node.glif.io/rpc/v1',
-      networkName: 'Filecoin/Mainnet'
-    }]
-  }else if(val === 'Scroll'){
-    networkData.value = [
-      {name : "Scroll Alpha Testnet",  id: "82751", url: "https://alpha-rpc.scroll.io/l2", networkName: "Scroll Alpha Testnet"},
-      {name : "Scroll Sepolia Testnet",  id: "8274f", url: "https://sepolia-rpc.scroll.io", networkName: "Scroll Sepolia Testnet"}
-    ]
-  }else if(val === 'Linea'){
-      networkData.value = [
-          {name : "Linea",  id: "e708", url: "https://rpc.linea.build", networkName: "Linea"},
-          {name : "Linea Testnet",  id: "e704", url: "https://rpc.goerli.linea.build", networkName: "Linea Testnet"}
-      ]
-  }else if(val === 'Base'){
-      networkData.value = [
-          {name : "Base Mainnet",  id: "2105", url: "https://mainnet.base.org", networkName: "Base Mainnet"},
-          {name : "Base Goerli Testnet",  id: "14a33", url: "https://goerli.base.org", networkName: "Base Goerli Testnet"}
-      ]
-  }else if(val === 'conflux'){
-      networkData.value = [
-          {name : "Conflux eSpace (Testnet)",  id: "47", url: "https://evmtestnet.confluxrpc.com", networkName: "Conflux eSpace (Testnet)"},
-          {name : "Conflux eSpace",  id: "14a33", url: "https://evm.confluxrpc.com", networkName: "Conflux eSpace"}
-      ]
-  }
+
+  networkData.value = ChainList.filter((t: Chain) => {
+      return t.category === val
+  })
 }
 
 const changeVersion = (val: string) => {
