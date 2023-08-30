@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, toRefs } from "vue";
+import { onMounted, reactive, ref, toRefs } from "vue";
 import { useRouter,useRoute } from "vue-router";
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
@@ -72,7 +72,7 @@ import {
 
 const router = useRouter();
 const route = useRoute()
-const columns = [{
+const columns = ref([{
   title: 'Contract',
   dataIndex: 'name',
   align: "center",
@@ -91,6 +91,13 @@ const columns = [{
     }
   },
   key: 'version',
+},
+{
+  title: 'Branch',
+  dataIndex: 'branch',
+  align: 'center',
+  ellipsis: 'fixed',
+  key: 'branch',
 },
 {
   title: 'Network',
@@ -114,7 +121,7 @@ const columns = [{
   title: 'Action',
   align: "center",
   key: 'action',
-}];
+}]);
 
 const state = reactive({
   id: router.currentRoute.value.params?.id,
@@ -208,6 +215,14 @@ const downloadAbi = (val: any) => {
   }
 };
 
+
+onMounted(() => {
+  if (frameType?.value === 7) {
+    columns.value = columns.value.filter(item => item.dataIndex !== 'network')
+  } else {
+    columns.value = columns.value.filter(item => item.dataIndex !== 'branch')
+  }
+})
 </script>
 
 <style lang="less" scoped>
