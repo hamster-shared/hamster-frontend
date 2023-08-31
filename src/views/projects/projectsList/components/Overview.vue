@@ -41,14 +41,14 @@
           <!-- <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
             <svg-icon name="check" size="13" />
           </label> -->
-          <label class="action-button-item">
+          <label :class="[checkCondition() && item.name == 'Check' || opsCondition() && item.name==='Ops' ? 'action-button-disabled' : 'action-button-item']">
             <label class="action-icon mx-[8px]">
-              <svg-icon :name="item.url" size="15" :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '1' && viewInfo.frameType == 7)) && item.name == 'Check' || (viewInfo.type == '2' && viewInfo.deployType==3) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}"/>
+              <svg-icon :name="item.url" size="15" :style="{cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name==='Ops' ? 'default' : 'cursor'}"/>
             </label>
             <!-- 按钮 -->
             <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
             <!-- <label class="ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-            <label :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '1' && viewInfo.frameType == 7)) && item.name == 'Check' || (viewInfo.type == '2' && viewInfo.deployType==3) && (item.name == 'Check'||item.name==='Ops') ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
+            <label :style="{cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name==='Ops' ? 'default' : 'cursor'}" class="hover:open-link-css ml-1 cursor-pointer align-middle" @click="projectsAction(viewInfo, item.name, $event)">
               {{ item.name }}
             </label>
           </label>
@@ -105,9 +105,9 @@
           </div> -->
           <div v-if="projectType === '3'">Check Now</div>
           <div v-else>
-            <div class="open-link-css cursor-pointer inline-block"
+            <div class="cursor-pointer inline-block" :class="[checkCondition() ? 'action-button-disabled' : 'open-link-css']"
               @click="projectsCheck(viewInfo.id, viewInfo.recentCheck.status, $event)"
-              :style="{cursor: (viewInfo.type == '3' || (viewInfo.type == '2' && viewInfo.deployType==3) || viewInfo.type == '1' && viewInfo.frameType == 7) ? 'default' : 'cursor'}"
+              :style="{cursor: checkCondition() ? 'default' : 'cursor'}"
               v-if="viewInfo.recentCheck.status === 0">
               <span>Check Now</span>
             </div>
@@ -343,6 +343,21 @@ const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) ||
 // console.log(starknetHashData, 'starknetHashData')
 const deployTxHash = starknetHashData[props.viewInfo.id]?.deployTxHash || '';
 // console.log('deployTxHash', props.viewInfo.id, deployTxHash)
+
+const checkCondition = () => {
+  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType==3) {
+    return true;
+  } else {
+    return false;
+  }
+}
+const opsCondition = () => {
+  if (viewInfo.value.type == '2' && viewInfo.value.deployType==3) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 const goDetail = (id: string, type: string) => {
   localStorage.setItem("projectName", viewInfo.value.name)
@@ -866,6 +881,18 @@ const SaveDFXCon = async(params:string) => {
 }
 @baseColor: #E2B578;
 
+  
+.action-button-disabled {
+  color: rgba(38, 38, 38, 0.3);
+  label{
+    color: rgba(38, 38, 38, 0.3);
+  }
+  .action-icon {
+    .svg-icon {
+      color: rgba(38, 38, 38, 0.3);
+    }
+  };
+}
 html[data-theme='dark'] {
 
   a,
@@ -880,6 +907,18 @@ html[data-theme='dark'] {
 
   .disabledCheckCss:hover {
     color: #E0DBD2;
+  }
+  
+  .action-button-disabled {
+    color: rgba(255, 255, 255, 0.3);
+    label{
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .action-icon {
+      .svg-icon {
+        color: rgba(255, 255, 255, 0.3);
+      }
+    };
   }
 }
 
