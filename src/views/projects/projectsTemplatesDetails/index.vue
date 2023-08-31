@@ -64,7 +64,7 @@
         <a-tabs v-model:activeKey="activeKey">
           <a-tab-pane key="1" tab="Modules" v-if="frameType === '5'">
             <div class="flex">
-              <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
+              <div class="p-4 border-r-css w-1/4">
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionsList(item)"
                     :class="[{ '!open-link-css': item.name === moduleName },{'mt-4': index != 0}]"
@@ -91,25 +91,25 @@
           </a-tab-pane>
           <a-tab-pane key="1" tab="Functions"  v-if="frameType !== '5'">
             <div class="flex">
-              <div class="p-4 border-r-[#302D2D] border-r border w-1/4">
-                <div class="flex items-center ">
+              <div class="p-4  border-r-css w-1/4">
+                <div class="flex items-center mb-4">
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Send
                 </div>
                 <div class="pb-4 "><!-- h-[120px] overflow-auto -->
                   <div @click="setFunctionList(item, index)"
-                    :class="{ '!open-link-css': item.name === functionName && slectedIndex === index }"
-                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
+                    :class="{ '!open-link-css active-css': item.name === functionName && slectedIndex === index }"
+                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px]  py-[10px]"
                     v-for="(item, index) in sendList" :key="index">{{ item.name }}</div>
                 </div>
-                <div class="flex items-center mt-4">
+                <div class="flex items-center mb-4">
                   <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                   <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Call
                 </div>
                 <div class="pb-4 "><!-- h-[130px] overflow-auto -->
                   <div @click="setFunctionList(item, index)"
-                    :class="{ '!open-link-css': item.name === functionName && slectedIndex === index }"
-                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px] mt-4"
+                    :class="{ '!open-link-css active-css': item.name === functionName && slectedIndex === index }"
+                    class=" cursor-pointer  text-[#73706E] dark:text-[#E0DBD2] pl-[25px]  py-[10px]"
                     v-for="(item, index) in callList" :key="index">{{ item.name }}</div>
                   <!-- <div @click="setFunctionList(item)"
                     :class="{ '!bg-[#E2B578] !text-white': item.name === functionName }"
@@ -129,7 +129,7 @@
           </a-tab-pane>
           <a-tab-pane key="2" tab="Events" v-if="eventAllList.length > 0 && frameType !=2">
             <div class="flex">
-              <div class="p-4 border-r-[#302D2D] border-r border w-1/4"><!--  h-[300px] overflow-auto -->
+              <div class="p-4  border-r-css w-1/4"><!--  h-[300px] overflow-auto -->
                 <div @click="setEventList(item)" :class="{ '!open-link-css': item.name === eventName }"
                   class="text-[#73706E] dark:text-[#E0DBD2] mb-[24px] cursor-pointer"
                   v-for="(item, index) in eventAllList" :key="index">{{ item.name }}</div>
@@ -807,6 +807,23 @@ pre {
 }
 :deep(.ant-collapse>.ant-collapse-item>.ant-collapse-header){
   font-weight: bold;
+}
+
+.active-css{
+  background: rgba(226, 181, 120, 0.2);
+  // box-shadow: 6px 6px 15px 0px rgba(242,238,234,0.1);
+  border-radius: 12px;
+  width: 200px;
+}
+.dark-css{
+  .border-r-css{
+    border-right: 1px solid #434343;
+  }
+}
+.white-css{
+  .border-r-css{
+    border-right: 1px solid #EBEBEB;
+  }
 }
 </style>
 

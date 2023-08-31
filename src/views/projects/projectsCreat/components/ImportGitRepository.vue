@@ -32,7 +32,7 @@
   </div>
 
   <div>
-    <a-modal :footer="null" width="760px" v-model:visible="importVisible" @cancel="handleCancelImport">
+    <a-modal :footer="null" width="760px" centered="true" v-model:visible="importVisible" @cancel="handleCancelImport">
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancelImport"/>
       </template>
