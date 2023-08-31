@@ -175,8 +175,19 @@
           <div v-if="projectType === '1'">
             <div class="my-2" v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">No Data</div>
             <div class="flex items-center my-2" v-else>
-              <div v-if="viewInfo.recentDeploy.status === 1">Deploying |
-                {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
+              <div v-if="viewInfo.recentDeploy.status === 1">
+                <div v-if="viewInfo.frameType === 7">
+                  <div class="flex items-center">
+                    <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
+                    <div class="text-ellipsis">
+                      {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
+                        fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  Deploying | {{ fromNowexecutionTime(viewInfo.recentDeploy.deployTime, "noThing") }}
+                </div>
               </div>
               <div v-else>
                 <img src="@/assets/icons/success.svg" class="h-[16px] mr-1" />
@@ -185,7 +196,7 @@
               </div>
             </div>
 
-            <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === ''">Explorer</div>
+            <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">Explorer</div>
             <div v-else class="open-link-css cursor-pointer inline-block">
               <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
               <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
@@ -245,7 +256,7 @@
 </template>
 
 <script lang='ts' setup>
-import { ref, toRefs, computed, reactive,defineComponent } from 'vue';
+import { ref, toRefs, computed, reactive,defineComponent, type Ref } from 'vue';
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
@@ -318,6 +329,7 @@ const msgType = ref("");
 //设置弹框隐藏
 const evmCheckVisible=ref(false)
 
+const deployParams = ref<any>([])
 const msgParam = ref({
   id: viewInfo?.value.id,
   workflowsId: viewInfo?.value.recentDeploy.workflowId,
@@ -660,9 +672,13 @@ const goContractDeploy = async (id: string, status: number) => {
 // };
 
 const goContractDetail = async (id: string, version: string) => {
-  localStorage.setItem("projectName", viewInfo.value.name)
-  localStorage.setItem("projectId", id)
-  router.push("/projects/" + id + "/contracts-details/" + version + '?fromList=1');
+  if (viewInfo.value.frameType === 7 && viewInfo.value.recentDeploy.status === 1) {
+    router.push(`/projects/${id}/${deployParams.value[id].wfId}/workflows/${deployParams.value[id].wfDetailId}/3/${projectType?.value}`);
+  } else {
+    localStorage.setItem("projectName", viewInfo.value.name)
+    localStorage.setItem("projectId", id)
+    router.push("/projects/" + id + "/contracts-details/" + version + '?fromList=1');
+  }
 }
 const goFrontendDeploy = async () => {
   try {
@@ -744,8 +760,13 @@ const frontendContainerCheck = async () => {
     message.error(error.response.data.message);
   }
 }
-
 const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateTypeVal: any) => {
+  if (msgTypeVal === 'deploy') {
+    deployParams.value[viewInfo?.value.id] = {
+      wfId: workflowId,
+      wfDetailId: detailId
+    }
+  }
   msgParam.value.workflowsId = workflowId;
   msgParam.value.workflowDetailId = detailId;
   msgParam.value.operateType = operateTypeVal;
