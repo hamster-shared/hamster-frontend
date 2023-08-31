@@ -68,6 +68,8 @@ const tableColumns = ref([
     key: 'cycles',
     ellipsis: 'fixed',
     align: 'center',
+    // 加上单位
+    customRender: ({ text }) => `${text} T`
   },
   {
     title: 'Status',
