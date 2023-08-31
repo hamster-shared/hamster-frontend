@@ -196,9 +196,21 @@ export const ChainList: Chain[] = [
         rpcUrl: "https://evm.confluxrpc.com",
         symbol: "CFX",
         blockExplorerUrl: "https://evmtestnet.confluxscan.net"
+    },
+    {
+        category: "zetachain",
+        id: "0x1b59",
+        name: "ZetaChain Athens-3 Testnet",
+        rpcUrl: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
+        symbol: "aZETA",
+        blockExplorerUrl: "https://zetachain-athens-3.blockscout.com/"
     }
 ]
 
 export function getChain(id : string): Chain | undefined {
     return ChainList.find(t => t.id === id)
+}
+
+export function getChainListNames(): string[] {
+    return ChainList.map(t => {return t.name})
 }
