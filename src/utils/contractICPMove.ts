@@ -1,4 +1,5 @@
-import {AgentCanister, ic} from 'ic0';
+// @ts-ignore
+import {AgentCanister, ic} from 'abing258-ic0';
 
 // contract icp 合约调用
 export interface ICPService {
