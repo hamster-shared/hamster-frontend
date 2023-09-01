@@ -59,10 +59,12 @@ export class ICPMethodWrapper implements ICPMethod {
     }
 
     typeUnPackage(data: any): any {
-        if(typeof data === "bigint"){
+        if(data === undefined){
+            return ""
+        }else if(typeof data === "bigint"){
             return Number(data)
-        }else return {
-            data
+        }else {
+            return data
         }
     }
 }
