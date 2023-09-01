@@ -42,6 +42,9 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       symbolId: "icon-[dir]-[name]",
     }),
   ],
+  define: {
+    global: 'globalThis'
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

@@ -1,4 +1,4 @@
-import {local, ic} from 'abing258-ic0';
+import {AgentCanister, ic} from 'ic0';
 
 // contract icp 合约调用
 export interface ICPService {
@@ -26,7 +26,7 @@ export class ICPMethodWrapper implements ICPMethod {
     name: string;
     res: ICPMethodArg[];
     type: string;
-    client: any
+    client: AgentCanister
 
     constructor(method: ICPMethod, client: any) {
         this.annotation = method.annotation
@@ -43,15 +43,25 @@ export class ICPMethodWrapper implements ICPMethod {
         let callArgs = []
         if(args.length === this.args.length){
             for(let i=0; i< this.args.length; i++){
-                if(this.args[i].type === 'nat' || this.args[i].type.indexOf("int") > 0 ) {
+                if(this.args[i].type === 'nat' || this.args[i].type.indexOf("int") >= 0 ) {
                     callArgs.push(parseFloat(args[i]))
                 }else {
                     callArgs.push(args[i])
                 }
             }
-            return this.client.call(this.name, ...callArgs)
+            return this.client.call(this.name, ...callArgs).then(result => {
+                return this.typeUnPackage(result)
+            })
         }else {
             throw new Error("args number does not match definition")
+        }
+    }
+
+    typeUnPackage(data: any): any {
+        if(typeof data === "bigint"){
+            return Number(data)
+        }else return {
+            data
         }
     }
 }
@@ -59,7 +69,7 @@ export class ICPMethodWrapper implements ICPMethod {
 export class ICPServiceWrapper implements ICPService {
     id: string;
     methods: ICPMethodWrapper[];
-    client: any
+    client: AgentCanister
 
     constructor(svc: ICPService, canisterId: string) {
         this.id = svc.id
@@ -969,4 +979,28 @@ export function getBasisDaoDID(): any {
         ]
     }
 
+}
+
+export function getHelloWorldDID(): any {
+    return {
+        "Definitions": null,
+        "Services": [
+            {
+                "ID": null,
+                "Methods": [
+                    {
+                        "Name": "main",
+                        "Func": {
+                            "ArgTypes": null,
+                            "ResTypes": null,
+                            "Annotation": "oneway"
+                        },
+                        "ID": null,
+                        "Description": ""
+                    }
+                ],
+                "MethodId": null
+            }
+        ]
+    }
 }

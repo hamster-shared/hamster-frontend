@@ -5,7 +5,7 @@ import {
     toDisplay,
     ICPServiceWrapper,
     getCalcDID,
-    getBasisDaoDID
+    getBasisDaoDID, getHelloWorldDID
 } from "./contractICPMove";
 import {callCanister} from "./icp/icpCanisterCall";
 
@@ -25,21 +25,23 @@ describe('toICPMethod', () => {
 
 describe('callICP', () => {
     it('should call', async () => {
-        const json = getCalcDID()
+        const json = getHelloWorldDID()
         // canisterId: 3e3tu-wyaaa-aaaag-abvsa-cai  network: ic
-        const canisterId_ic = "yimdd-5yaaa-aaaag-abvya-cai"
+        const canisterId_ic = "iuhst-tiaaa-aaaag-abwxa-cai"
         const svc = new ICPServiceWrapper( toICPService(json)[0],canisterId_ic)
         const methods = svc.methods;
-        const method = methods.find(t => t.name === "add")
+        const method = methods.find(t => t.name === "main")
         expect(method).toBeDefined()
 
         if(method){
             // const result = await method.call(["hello"])
             // console.log(result)
-            const args: any[] = [1];
+            const args: any[] = [];
            const result = await callCanister(false,canisterId_ic,"add",...args)
             console.log(result)
         }
+
+        console.log("end")
 
 
     }, 60_000)
