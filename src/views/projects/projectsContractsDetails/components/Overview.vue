@@ -5,13 +5,17 @@
       <div class="border-r">
         <div class="box-title">Canister ID</div>
         <div class="box-sub">{{ deployInfo.address }}
-          <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard(deployInfo.address)"/>
+          <div class="mx-[10px]">
+            <svg-icon name="copy" size="18" @click="copyToClipboard(deployInfo.address)"/>
+          </div>
         </div>
       </div>
       <div class="border-r">
         <div class="box-title">Canister Name</div>
         <div class="box-sub">{{ deployInfo.name }}
-          <svg-icon name="copy" size="18" class="ml-[10px]" @click="copyToClipboard(deployInfo.name)"/>
+          <div class="mx-[10px]">
+            <svg-icon name="copy" size="18" @click="copyToClipboard(deployInfo.name)"/>
+          </div>
         </div>
       </div>
       <div class="border-r">
@@ -65,7 +69,7 @@ const getImageUrl = (status: any) => {
   @apply font-bold mb-[15px] text-[#383B46] dark:text-[#FFFFFF];
 }
 .box-sub{
-  @apply text-[#151210] dark:text-[#FFFFFF] flex items-center;
+  @apply text-[#151210] dark:text-[#FFFFFF] flex ;
 }
 .svg-icon{
   color: #E2B578;
