@@ -183,11 +183,8 @@ const getProjectsContract = async (type: string | undefined) => {
     }
     const { data } = await apiGetProjects(params);
     if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
-      if (activeKey.value === "2") {
-        goCreateProject();
-      } else {
-        getProjectsFrontend('2');
-      }
+
+      checkListEmpty(type);
     } else {
       contractList.value = data.data;
       totalContract.value = data.total;
@@ -200,8 +197,10 @@ const getProjectsContract = async (type: string | undefined) => {
 }
 const projectRunning = (projectList: any) => {
   const isRunning = ref(false);
-  projectList.forEach((element: { recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; }) => {
-    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1)
+  projectList.forEach((element: {
+frameType: number; recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; 
+}) => {
+    if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.frameType === 7 && element.recentDeploy.status === 1)
       || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
       isRunning.value = true;
     }
@@ -225,11 +224,8 @@ const getProjectsFrontend = async (type: string | undefined) => {
     }
     const { data } = await apiGetProjects(params);
     if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
-      if (activeKey.value === "1") {
-        goCreateProject();
-      } else {
-        getProjectsContract('1');
-      }
+
+      checkListEmpty(type);
     } else {
       frontentList.value = data.data;
       totalFrontend.value = data.total;
@@ -253,11 +249,8 @@ const getProjectsNode = async (type: string | undefined) => {
     }
     const { data } = await apiGetProjects(params);
     if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
-      if (activeKey.value === "1") {
-        goCreateProject();
-      } else {
-        getProjectsContract('1');
-      }
+      
+      checkListEmpty(type);
     } else {
       nodeList.value = data.data;
       totalNode.value = data.total;
@@ -267,6 +260,34 @@ const getProjectsNode = async (type: string | undefined) => {
     console.log("erro:", error)
   } finally {
     // loading.value = false;
+  }
+}
+
+const checkListEmpty = (type: any) => {
+  if (activeKey.value === "1") {
+    if (type === '1') {
+      getProjectsFrontend('2');
+    } else if (type === '2') {
+      getProjectsNode('3')
+    } else { //三个tab都没有数据，跳转到新增页
+      goCreateProject();
+    }
+  } else if (activeKey.value === "2") {
+    if (type === '2') {
+      getProjectsContract('1');
+    } else if (type === '1') {
+      getProjectsNode('3')
+    } else { //三个tab都没有数据，跳转到新增页
+      goCreateProject();
+    }
+  } else if (activeKey.value === "3") {
+    if (type === '3') {
+      getProjectsContract('1');
+    } else if (type === '1') {
+      getProjectsFrontend('2');
+    } else { //三个tab都没有数据，跳转到新增页
+      goCreateProject();
+    }
   }
 }
 </script>

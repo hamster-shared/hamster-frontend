@@ -58,7 +58,7 @@
                 <a-radio :style="radioStyle" value="6">Filecoin
                   <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
                 </a-radio>
-                <a-radio :style="radioStyle" value="7" v-if="false">Internet Computer
+                <a-radio :style="radioStyle" value="7">Internet Computer
                   <div class="radio-sub">Build application based on IC and Motoko language</div>
                 </a-radio>
               </div>
@@ -78,7 +78,7 @@
               <a-radio :style="radioStyle" value="2">Container
                 <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
               </a-radio>
-              <a-radio v-if="false" :style="radioStyle" value="3">Internet Computer
+              <a-radio :style="radioStyle" value="3">Internet Computer
                 <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
               </a-radio>
             </a-radio-group>
@@ -99,7 +99,7 @@
             most deployed FrontEnd.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '3'">A collection of our most deployed substrate templates.</div>
           <!-- filecoin的是上下布局，反之是两栏布局 -->
-          <div v-if="formData.type === '1' || formData.type === '3'" :class="formData.frameType != '6' ? 'grid grid-cols-2 gap-4':''" class="template-height">
+          <div v-if="formData.type === '1' || formData.type === '3'" :class="formData.frameType != '6' ? 'grid grid-cols-2 gap-4':''" class="template-height1">
             <div v-if="formData.frameType != '6'" v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
@@ -112,7 +112,7 @@
                 </div>
                 <!-- 按钮 -->
                 <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
-                <div class="flex text-[16px]">
+                <div class="flex text-[16px] mt-2">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
                     <img src="@/assets/icons/version-dark.svg" class="h-[20px] hidden dark:inline-block" />
@@ -391,7 +391,5 @@ onMounted(() => {
   border: none;
   border-radius: 15px 15px 15px 15px;
   color: #fff;
-  bottom: 50px;
-  left: -3px;
 }
 </style>

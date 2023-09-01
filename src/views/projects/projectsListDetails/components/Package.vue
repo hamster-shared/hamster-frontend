@@ -192,7 +192,7 @@ const SaveDFXCon = async(params:string) => {
   const res = await apiSaveDfx(id,data)
   if(res.code==200){
     showDFX.value = false
-    message.success(res.message)
+    // message.success(res.message)
     commonFn(ProjectId.value,WorkflowId.value,WorkflowDetailId.value)
   }else{
     message.error(res.message)

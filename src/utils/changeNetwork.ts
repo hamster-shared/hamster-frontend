@@ -13,8 +13,9 @@ export const addToChain = (chainId: string,chainName:string,rpcUrl:string,symbol
               decimals：本地货币精度；
             */
             nativeCurrency: {
-              symbol: symbol,
-              decimals: decimals,
+                name: symbol,
+                symbol: symbol,
+                decimals: decimals,
             },
         },
     ],

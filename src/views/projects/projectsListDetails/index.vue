@@ -44,7 +44,7 @@
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
               <!-- 展示dfx生成弹框 -->
-              <a-menu-item v-if="projectsDetail.deployType == 3" @click="showDfxModal">
+              <a-menu-item v-if="projectsDetail.deployType == 3 || projectsDetail.frameType === 7" @click="showDfxModal">
                 <a href="javascript:;" style="color:#151210">Configure dfx.json</a>
               </a-menu-item>
             </a-menu>
@@ -61,7 +61,7 @@
       <div class="flex mb-2 items-center text-[24px] font-bold">Artifacts</div>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane v-if="params.type === '1'" key="1" tab="Contract">
-          <Contract ref="contractRef" :detailId="detailId" :frameType="frameType" :name="projectsDetail.name"/>
+          <Contract ref="contractRef" v-if="frameType != 0" :detailId="detailId" :frameType="frameType" :name="projectsDetail.name"/>
         </a-tab-pane>
         <a-tab-pane v-if="params.type === '2' && (projectsDetail.deployType == '1' || projectsDetail.deployType == '3')" key="2" tab="Package">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
@@ -73,13 +73,13 @@
         <a-tab-pane v-if="params.type === '3'" key="2" tab="Image">
           <Package ref="packageRef" pageType="project" :detailId="detailId" :deployType="projectsDetail.deployType" />
         </a-tab-pane>
-        <a-tab-pane key="3" tab="Report" v-if="params.type != '3' && projectsDetail.deployType != '3'">
+        <a-tab-pane key="3" tab="Report" v-if="params.type != '3' && projectsDetail.deployType != '3' && frameType != 7">
           <Report ref="reportRef" :detailId="detailId" :projectType="projectType" :frameType="frameType"/>
         </a-tab-pane>
       </a-tabs>
     </div>
     <!-- 只有前端项目的ic有 -->
-    <Canisters v-if="params.type === '2' && projectsDetail.deployType == '3'" :detailId="detailId" ></Canisters>
+    <Canisters v-if="params.type === '2' && projectsDetail.deployType == '3' || frameType == 7" :detailId="detailId" :frameType="frameType" ></Canisters>
   </div>
   <a-modal v-model:visible="visibleModal" :footer="null" @cancel="formRef.resetFields()">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Edit projectName</div>
@@ -108,6 +108,7 @@
   <!-- 弹框组件 -->
   <Configure v-if="visible" :visible="visible" :selectData="selectEVMData"  @getDoneData="getDoneData" @cancel="handleCancel" />
   <ConfigureDFX v-if="showDFX" :visible="showDFX" :pDfxContent="pDfxContent" @CancelDFX="CancelDeployDFX" @SaveDFXCon="SaveDFXCon"/>
+  <ConfigureContractDFX  v-if="showContractDFX" :visible="showContractDFX" :pDfxContent="pDfxContent" @CancelDFX="CancelContractDFX" @SaveDFXCon="SaveDFXCon"></ConfigureContractDFX>
 </template>
 <script lang='ts' setup>
 import { reactive, ref, computed, onMounted, onBeforeUnmount } from "vue";
@@ -141,6 +142,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import type { ViewInfoItem } from "@/views/projects/components/data";
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import ConfigureDFX from '@/views/projects/projectsList/components/ConfigureDFX.vue'
+import ConfigureContractDFX from '@/views/projects/projectsList/components/ConfigureContractDFX.vue'
 // dfx 查询，保存，更新
 import { apiDfxInfo, apiSaveDfx, apiUpdateDfx, apiCheckDfx } from '@/apis/canister'
 const theme = useThemeStore()
@@ -182,6 +184,7 @@ const selectEVMData = ref<any>([])
 console.log(projectsDetail.value)
 const breadCrumbInfo = ref<any>([])
 const showDFX = ref(false);
+const showContractDFX = ref(false);
 const dfxId = ref()
 const pDfxContent = ref()
 
@@ -360,7 +363,7 @@ const getProjectsDetail = async () => {
 
     localStorage.setItem("projectName", data.name)
     localStorage.setItem("projectId", data.id)
-    if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1)
+    if (projectType.value === '1' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.frameType === 7 && data.recentDeploy.status === 1)
       || projectType.value === '2' && (data.recentCheck.status === 1 || data.recentBuild.status === 1 || data.recentDeploy.status === 1)) {
 
       timer.value = setTimeout(() => {
@@ -432,17 +435,24 @@ const SaveDFXCon = async(params:string) => {
   const res = !dfxId.value ? await apiSaveDfx(detailId.value.toString(),data) : await apiUpdateDfx(detailId.value.toString(),dfxId.value,data)
   if(res.code==200){
     message.success(res.message)
-    showDFX.value = false
+    if (projectsDetail.value.type == '1' && frameType.value == 7) {
+      showContractDFX.value = false;
+    } else {
+      showDFX.value = false
+    }
+    
   }else{
     message.error(res.message)
   }
 }
-
+const CancelContractDFX = () => {
+  showContractDFX.value = false;
+}
 const CancelDeployDFX = () => {
   showDFX.value = false;
 }
 
-const showDfxModal = async() => {
+const showDfxModal = async () => {
   // 先判断是否存在dfx
   const result = await apiCheckDfx(detailId.value.toString())
   if(result.data){
@@ -454,7 +464,13 @@ const showDfxModal = async() => {
     dfxId.value = ''
     pDfxContent.value = ''
   }
-  showDFX.value = true;
+  if (frameType.value === 7) { //contract ic
+    showContractDFX.value = true;
+  } else {
+    
+    showDFX.value = true;
+  }
+  
 }
 
 const hideAptosBuildVisible = () => {

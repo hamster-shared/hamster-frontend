@@ -268,30 +268,30 @@ const stopWorkflow = async (projectId: String, workflowId: number, detailId: num
   }
 }
 
-watch(() => props.frameType,
-  (value) => {
-    if (props.projectType === '1') {
-      if (value === 4) {
-        actionList.value = [
-          { label: "All Action", value: "0" },
-          { label: "Build", value: "2" },
-        ]
-      } else {
-        actionList.value = [
-          { label: "All Action", value: "0" },
-          { label: "Check", value: "1" },
-          { label: "Build", value: "2" },
-        ]
-      }
-    } else {
-      actionList.value = [
-        { label: "All Action", value: "0" },
-        { label: "Check", value: "1" },
-        { label: "Build", value: "2" },
-        { label: "Deploy", value: "3" }
-      ]
-    }
-  }
-)
+// watch(() => props.frameType,
+//   (value) => {
+//     if (props.projectType === '1') {
+//       if (value === 4) {
+//         actionList.value = [
+//           { label: "All Action", value: "0" },
+//           { label: "Build", value: "2" },
+//         ]
+//       } else {
+//         actionList.value = [
+//           { label: "All Action", value: "0" },
+//           { label: "Check", value: "1" },
+//           { label: "Build", value: "2" },
+//         ]
+//       }
+//     } else {
+//       actionList.value = [
+//         { label: "All Action", value: "0" },
+//         { label: "Check", value: "1" },
+//         { label: "Build", value: "2" },
+//         { label: "Deploy", value: "3" }
+//       ]
+//     }
+//   }
+// )
 
 </script>

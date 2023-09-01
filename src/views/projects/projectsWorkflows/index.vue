@@ -4,7 +4,7 @@
       <Breadcrumb :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" :frameType="workflowsDetailsData.frameType"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
@@ -16,7 +16,7 @@
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
         <GasUsageReport :gasUsageReportData="gasUsageReportData"
           v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-        <ContractList v-if="queryJson.type === '2'" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
+        <ContractList v-if="queryJson.type === '2' && workflowsDetailsData.frameType != 0" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
       </div>
     </div>
     <div v-else>
@@ -27,7 +27,8 @@
       <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
       </Deployment>
     </div>
-    <Canisters v-if="queryJson.type === '3'" :detailId="id" ></Canisters>
+    <!-- 只有合约的 icp 才在deploy详情页展示 罐列表 -->
+    <Canisters v-if="queryJson.type === '3' && workflowsDetailsData.frameType == 7" :detailId="id" ></Canisters>
     <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
@@ -260,7 +261,7 @@ const getProjectsDetailData = async () => {
 const setCurrentName = () => {
   if (queryJson.projectType === '1') {
     // projectType === '1' === contract
-    title.value = queryJson.type === '1' ? 'Check' : 'Build';
+    title.value = queryJson.type === '1' ? 'Check' : queryJson.type === '2' ? 'Build' : 'Deploy';
     currentName.value = `Contract ${title.value}_#${workflowsDetailsData.execNumber}`
   } else {
     // projectType === '2' === frontend

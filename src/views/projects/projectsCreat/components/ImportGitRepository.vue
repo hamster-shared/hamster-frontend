@@ -32,7 +32,7 @@
   </div>
 
   <div>
-    <a-modal :footer="null" width="760px" v-model:visible="importVisible" @cancel="handleCancelImport">
+    <a-modal :footer="null" width="760px" centered="true" v-model:visible="importVisible" @cancel="handleCancelImport">
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancelImport"/>
       </template>
@@ -54,7 +54,7 @@
             <!-- <a-select-option value="3">TON</a-select-option> -->
             <a-select-option value="4">Starknet</a-select-option>
             <a-select-option value="5">Sui</a-select-option>
-            <a-select-option value="6" v-if="false">Internet Computer</a-select-option>
+            <a-select-option value="7">Internet Computer</a-select-option>
           </a-select>
         </a-form-item>
         <div v-else>
@@ -78,13 +78,6 @@
                 <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
               </a-radio>
             </a-radio-group>
-            <!-- 又不要了，真烦人 -->
-            <div v-if="false" class="bg-[#FFF9F2] p-[20px] border border-solid border-[#E2B578] rounded-[5px]">
-              <div>dfx.json</div>
-              <div class="text-[#73706E] mt-[10px]">The dfx.json file is the configuration manifest for Internet Computer projects, user to define basic project information and deployment settings.<br>
-Please download the dfx.json file template, and place it in the root directory of your project, so that Hamster can locate and read the configuration.</div>
-              <div class="text-right"><a>Download</a></div>
-            </div>
           </a-form-item>
         </div>
         <div class="text-center">
@@ -443,12 +436,19 @@ Please download the dfx.json file template, and place it in the root directory o
     } else {
       importFormData.value.type = 2;
     }
-    importFormData.value.ecosystem = importFormData.value.ecosystem - 0;
-    importFormData.value.deployType = importFormData.value.deployType - 0;
+    // importFormData.value.ecosystem = importFormData.value.ecosystem - 0;
+    // importFormData.value.deployType = importFormData.value.deployType - 0;
+    const params = {
+      name: importFormData.value.name,
+      ecosystem: importFormData.value.ecosystem - 0,
+      cloneUrl: importFormData.value.cloneUrl,
+      type: importFormData.value.type,
+      deployType: importFormData.value.deployType - 0,
+    }
     try {
-      const { data } = await apiPostRepository(importFormData.value)
+      const { data } = await apiPostRepository(params)
       router.push(`/projects/integrated/${data}?type=repository`)
-    } catch (err:any) {
+    } catch (err: any) {
       nameDupErrInfo.value = err.response.data.message
     } finally {
       doneLoading.value = false
