@@ -4,7 +4,6 @@ import { defineConfig, loadEnv } from "vite";
 import type { ConfigEnv } from 'vite';
 import vue from "@vitejs/plugin-vue";
 import viteCompression from 'vite-plugin-compression';
-import PkgConfig from 'vite-plugin-package-config';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import prismjs from "vite-plugin-prismjs";
 
@@ -32,7 +31,6 @@ export default ({ mode }: ConfigEnv) => defineConfig({
     viteCompression({
       // threshold: 1024000 // 对大于 1mb 的文件进行压缩
     }),
-    PkgConfig(),//从包依赖中读取预构建项
     createSvgIconsPlugin({
       // 指定需要缓存的图标文件夹
       iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
