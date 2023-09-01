@@ -285,6 +285,7 @@ const contractIcpFn = async()=>{
       isSend.value = false
       console.log(result)
       hashValue.value = result;
+      message.success('Success')
     } catch (error:any) {
       isSend.value = false
       message.error('Failed ',error)
