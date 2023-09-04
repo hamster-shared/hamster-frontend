@@ -24,7 +24,7 @@
         :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
         :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type">
+      <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type" :projectType="queryJson.projectType">
       </Deployment>
     </div>
     <!-- 只有合约的 icp 才在deploy详情页展示 罐列表 -->
