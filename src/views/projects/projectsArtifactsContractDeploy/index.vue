@@ -287,7 +287,6 @@ const deploySuiContract = async (item: any)=> {
   try{
     console.log('submit tx')
     const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
-    result.
     console.log('submit tx result: ', result)
     digest = result.digest
   }catch (e) {
@@ -730,9 +729,28 @@ const changeNetwork = (val: any) => {
 const changeChain = (val: string) => {
   formState.network = undefined;
 
-  networkData.value = ChainList.filter((t: Chain) => {
-      return t.category === val
-  })
+  // ethereum category
+  if(frameType.value === 1) {
+      networkData.value = ChainList.filter((t: Chain) => {
+          return t.category === val
+      })
+  }
+
+  // sui
+  if(frameType.value === 5 && val === 'Sui'){
+      networkData.value = [{
+          name: 'Devnet',
+          id: 'sui:devnet',
+          url: 'https://explorer-rpc.devnet.sui.io/',
+          networkName: 'Devnet'
+      },{
+          name: 'Testnet',
+          id: 'sui:testnet',
+          url: 'https://explorer-rpc.testnet.sui.io/',
+          networkName: 'Testnet'
+      }]
+  }
+
 }
 
 const changeVersion = (val: string) => {
@@ -754,6 +772,7 @@ const getProjectsDetail = async () => {
       case 2:
         // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系
         Object.assign(chainData, ['Aptos'])
+          debugger
         networkData.value = [{ name: 'Mainnet', id: 'Mainnet' }, { name: 'Testnet', id: 'Testnet' }, { name: 'Devnet', id: 'Devnet' }]
         break;
       case 3:
