@@ -174,46 +174,45 @@ const checkContract = async (name: string, val: any, text: string, index: number
 }
 
 const getContractICPMoveInfo = async(abi:any)=>{
-  // 把 abi 转成可用数组
-  const temArr:any = await toICPService(abi)
-  // 取出数组中的 methods 用于遍历出 send call
-  const methodsArr = temArr.map((item:any)=>{
-    return item.methods
+  // 把 abi 转成可用数组
+  const temArr:any = await toICPService(abi)
+  // 取出数组中的 methods 用于遍历出 send call
+  const methodsArr = temArr.map((item:any)=>{
+    return item.methods
   })?.flat()
 
-  methodsArr.map((it:any)=>{
-    if(it.type=='send'){
-      sendAbis.push(it)
-    }else if(it.type=='call'){
-      callAbis.push(it)
-    }
-  })
-  console.log('getContractICPMoveInfo:', methodsArr)
-  console.log('sendAbis,callAbis:',sendAbis,callAbis)
-  if (sendAbis.length > 0) {
-    inputs.value = sendAbis[0].args;
-    subTitle.value = sendAbis[0].description
-    const argString = await toDisplay(sendAbis[0])
-    checkValue.value = sendAbis[0]?.name +"："+argString;
-    buttonInfo.value = 'Transact'
-  }else if (sendAbis.length <= 0 && callAbis.length > 0) {
-    inputs.value = callAbis[0].args;
-    subTitle.value = callAbis[0].description
-    const argString = await toDisplay(callAbis[0])
-    checkValue.value = callAbis[0]?.name +"："+argString;
-    buttonInfo.value = 'Call'
-  }else{
-    checkValue.value = ''
-  }
+  methodsArr.map((it:any)=>{
+    if(it.type=='send'){
+      sendAbis.push(it)
+    }else if(it.type=='call'){
+      callAbis.push(it)
+    }
+  })
+  console.log('getContractICPMoveInfo:', methodsArr)
+  console.log('sendAbis,callAbis:',sendAbis,callAbis)
+  if (sendAbis.length > 0) {
+    inputs.value = sendAbis[0].args;
+    subTitle.value = sendAbis[0].description
+    const argString = await toDisplay(sendAbis[0])
+    checkValue.value = sendAbis[0]?.name +"："+argString;
+    buttonInfo.value = 'Transact'
+  }else if (sendAbis.length <= 0 && callAbis.length > 0) {
+    inputs.value = callAbis[0].args;
+    subTitle.value = callAbis[0].description
+    const argString = await toDisplay(callAbis[0])
+    checkValue.value = callAbis[0]?.name +"："+argString;
+    buttonInfo.value = 'Call'
+  }else{
+    checkValue.value = ''
+  }
 }
 
 onMounted(()=>{
   // debugger send call
-  // debugger
   // console.log(111111111111111,contractAddress?.value, abiInfo?.value, frameType?.value)
   if(frameType?.value && frameType?.value==2){
     Object.assign(sendAbis, data.exposed_functions)
-    Object.assign(callAbis, data.structs)
+    // Object.assign(callAbis, data.structs)
     console.log('sendAbis,callAbis',sendAbis,callAbis)
     aptosName.value = data.name
     aptosAddress.value = data.address
