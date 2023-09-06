@@ -243,8 +243,6 @@ const columns = [
   }
 ];
 const { checkReportData, projectType, checkStatus } = toRefs(props)
-console.log("projectType:::",projectType.value);
-console.log("checkReportData:::",checkReportData.value);
 </script>
 
 <style lang="less" scoped>
