@@ -56,18 +56,23 @@
       <a-button class="done-btn" @click="aptosAbiShow=false">Done</a-button>
     </div>
   </a-modal>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, toRefs } from "vue";
+import { onMounted, reactive, ref, toRefs } from "vue";
 import { useRouter,useRoute } from "vue-router";
 import { message } from 'ant-design-vue';
 import dayjs from "dayjs";
+import CustomMsg from '@/components/CustomMsg.vue';
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
+import {
+  apiProjectsDeploy
+} from "@/apis/projects";
 
 const router = useRouter();
 const route = useRoute()
-const columns = [{
+const columns = ref([{
   title: 'Contract',
   dataIndex: 'name',
   align: "center",
@@ -86,6 +91,13 @@ const columns = [{
     }
   },
   key: 'version',
+},
+{
+  title: 'Branch',
+  dataIndex: 'branch',
+  align: 'center',
+  ellipsis: 'fixed',
+  key: 'branch',
 },
 {
   title: 'Network',
@@ -109,7 +121,7 @@ const columns = [{
   title: 'Action',
   align: "center",
   key: 'action',
-}];
+}]);
 
 const state = reactive({
   id: router.currentRoute.value.params?.id,
@@ -131,10 +143,53 @@ const props = defineProps({
 
 const { contractListData,frameType,currentName } = toRefs(props)
 
+const showMsg = ref(false);
+const msgType = ref("");
+const msgParam = ref({
+  id: router.currentRoute.value.params?.id,
+  workflowsId: 0,
+  workflowDetailId: 0,
+  projectType: 0,
+  operateType: 1,
+});
+
 const toDeployUrl = (val: any) => {
-  const contract = val.id || '00';
-  const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','[')}`
-  router.push(path)
+  if (frameType?.value === 7) { 
+    frontendDeploying(val)
+  } else {
+    const contract = val.id || '00';
+    const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','[')}`
+    router.push(path)
+  }
+}
+
+const frontendDeploying = async (contractData: any) => {
+  try {
+    const params = ref({
+      id: contractData.projectId,
+      workflowsId: contractData.workflowId,
+      workflowDetailId: contractData.workflowDetailId,
+    });
+    const { data } = await apiProjectsDeploy(params.value);
+    
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
+
+    // loadView();
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateTypeVal: any) => {
+  msgParam.value.workflowsId = workflowId;
+  msgParam.value.workflowDetailId = detailId;
+  msgParam.value.operateType = operateTypeVal;
+  msgType.value = msgTypeVal;
+  showMsg.value = true;
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
 }
 
 const toDetailUrl = (val: any) => {
@@ -160,6 +215,14 @@ const downloadAbi = (val: any) => {
   }
 };
 
+
+onMounted(() => {
+  if (frameType?.value === 7) {
+    columns.value = columns.value.filter(item => item.dataIndex !== 'network')
+  } else {
+    columns.value = columns.value.filter(item => item.dataIndex !== 'branch')
+  }
+})
 </script>
 
 <style lang="less" scoped>

@@ -2,21 +2,43 @@
   <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" name="basic" :label-col="{ span: 0 }"
     :model="formData" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle @submit="submit">
     <a-form-item>
-      <div class="mb-[32px]">
+      <div >
         <div class="dark:text-white text-[#121211] text-[16px] font-blod leading-[43px]">{{ checkValue }}</div>
         <div class="dark:text-white text-[#121211] text-[12px] leading-[43px]">{{ subTitle }}</div>
       </div>
     </a-form-item>
-    <div v-if="inputs?.length" v-for="item in inputs">
+    <div v-if="inputs?.length" v-for="(item,index) in inputs">
       <a-form-item class="" :name="item.name" :rules="[{ required: true, message: `Please input your ${item.name}` }]">
         <div class="mb-[12px]">
-          <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name }}</span>
+          <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `param${index+1}` }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          :placeholder= "'Enter a value for ' + (frameType === 4 ? item.type : item.internalType)" allowClear
-          v-model:value="formData[item.name]"></a-input>
+          :placeholder= "'Enter a value for ' + (frameType === 4 || frameType === 7 ? item.type : item.internalType)" allowClear
+          v-model:value="formData[item.name || `param${index+1}`]"></a-input>
       </a-form-item>
     </div>
+
+      <div v-if="payable">
+          <div class="mb-[12px]">
+              <a-form-item class="" name="value" :rules="[{ required: false, message: `Please input your value` }]">
+                <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold"> value </span>
+                <div class="flex justify-between w-[100%]">
+                  <a-input class="dark:text-white text-[121211] !w-[60%]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
+                         :placeholder= "'value to send '" allowClear v-model:value="payableValue"></a-input>
+                  <a-select v-model:value="payUnit" class="!w-[20%]">
+                      <a-select-option value="ether">ether</a-select-option>
+                      <a-select-option value="finney">finney</a-select-option>
+                      <a-select-option value="szabo">szabo</a-select-option>
+                      <a-select-option value="gwei">gwei</a-select-option>
+                      <a-select-option value="mwei">mwei</a-select-option>
+                      <a-select-option value="kwei">kwei</a-select-option>
+                      <a-select-option value="wei">wei</a-select-option>
+                  </a-select>
+                </div>
+              </a-form-item>
+          </div>
+      </div>
+
     <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
         isSend ? buttonInfo + 'ing' : buttonInfo
       }}</a-button>
@@ -44,6 +66,7 @@ import { stark, number,uint256 } from "starknet";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { WalletCore } from '@aptos-labs/wallet-adapter-core';
 import { AptosClient } from 'aptos'
+import { toICPService, toDisplay, ICPServiceWrapper } from "@/utils/contractICPMove";
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const props = defineProps({
@@ -55,6 +78,7 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  payable: Boolean,
   inputs: { type: Array as any, default: () => { return [] } },
   outputs: { type: Array as any, default: () => { return [] } },
   aptosName: String,
@@ -62,8 +86,13 @@ const props = defineProps({
   subTitle:{
     type:String,
     default:''
-  }
+  },
+  canisterId:{
+    type:String,
+    default:''
+  },
 })
+
 const isSend = ref(false);
 const hashValue = ref('')
 const formRef = ref();
@@ -75,6 +104,9 @@ const formState = reactive({
   frameType: Number,
 });
 
+const payableValue = ref(0)
+const payUnit = ref("ether")
+
 // aptos
 const arr = [new PetraWallet()]
 const aptosWallet: any = new WalletCore(arr)
@@ -83,7 +115,7 @@ const aptosNetwork = ref('')
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle } = toRefs(props)
+const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle,canisterId } = toRefs(props)
 Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
@@ -194,12 +226,12 @@ const executeSet = async () => {
   }
 }
 const submit = async () => {
-  const emptyInputs = inputs?.value.filter( (item: { name: string | number; }) => !formData[item.name]);
+  const emptyInputs = inputs?.value.filter( (item: { name: string | number;}, key: number) => !formData[item.name || `param${key+1}`]);
   if (emptyInputs.length > 0) {
     message.warning('Please enter the necessary parameters')
     return
   }
-  // console.log(deployAddress.deployAddressValue, 'deployAddressValue')
+  console.log(deployAddress.deployAddressValue, 'deployAddressValue')
   if (frameType?.value == 4) {
     // console.log(formState.frameType, 'formState.frameType')
     // console.log(formState.frameType, 'formState.frameType')
@@ -220,10 +252,48 @@ const submit = async () => {
         executeSet()
       }
     }
+  } else if (frameType?.value == 7) {
+    // 合约的icp move 调用
+    contractIcpFn()
   } else {
     evmDeployFunction();
   }
 }
+// icp move 调用
+const contractIcpFn = async()=>{
+  isSend.value = true
+  // 把 abi 转成可用数组
+  const temArr:any = await toICPService(JSON.parse(abiInfo?.value))
+  console.log('temArr::',temArr,checkValue?.value?.indexOf('：'))
+  // 第一个参数：ICPService
+  // 第二个参数：canisterId
+  const svc = new ICPServiceWrapper(temArr[0], canisterId.value)
+  const methods = svc.methods;
+  const method = methods.find(t => t.name === checkValue?.value?.substring(0,checkValue?.value?.indexOf('：')))
+  console.log('contractIcpFn', svc)
+  if(method){
+    // [] 是页面表单参数
+    let newData:any = {};
+    if (inputs?.value.length > 0) {
+      inputs?.value.forEach((item: any, key: any) => {
+        newData[item.name || `param${key+1}`] = formData[item.name || `param${key+1}`];
+      })
+    }
+    console.log('newData：：：', newData)
+    try {
+      const result = await method.call(Object.values(newData))
+      isSend.value = false
+      console.log(result)
+      hashValue.value = result;
+      message.success('Success')
+    } catch (error:any) {
+      isSend.value = false
+      message.error('Failed ',error)
+      console.log('error:',error)
+    }
+  }
+}
+
 // evm合约方法调用
 const evmDeployFunction = () => {
   // debugger
@@ -243,9 +313,12 @@ const evmDeployFunction = () => {
             newData[item.name] = formData[item.name];
           })
         }
+
+        const value = ethers.utils.parseUnits(payableValue.value+"",payUnit.value)
+
         console.log(newData,'---new');
         console.log('Transact传入的参数：',...(Object.values(newData)),formState.checkValue)
-        contract[formState.checkValue](...(Object.values(newData))).then((tx: any) => {
+        contract[formState.checkValue](...(Object.values(newData)),{value: props.payable?value:0}).then((tx: any) => {
           tx.wait().then((result: any) => {
             // isSend.value = false;
             hashValue.value = tx.hash;

@@ -102,6 +102,10 @@ const props = defineProps<{
   id:{
     type:String,
     default:''
+  },
+  projectType:{
+    type:String,
+    default:''
   }
 }>()
 
@@ -168,7 +172,9 @@ const getCanisterId = async()=>{
 }
 
 onMounted(()=>{
-  getCanisterId()
+  if(props.projectType=='2'){
+    getCanisterId()
+  }
 })
 
 </script>

@@ -19,7 +19,8 @@
   <div class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] p-[32px] rounded-[8px]">
     <a-tabs v-model:activeKey="activeKeyId" class="dark:text-white text-[#121211]" @change="changeActiveKey">
       <a-tab-pane v-for="(item, key) in contractInfo" :key="item.id" :tab="key">
-        <a-table :dataSource="item.deployInfo" :columns="columns" class="mb-[32px]" :pagination="false"
+        <Overview v-if="frameType === 7" :deployInfo="item.deployInfo[0]"></Overview>
+        <a-table v-else :dataSource="item.deployInfo" :columns="columns" class="mb-[32px]" :pagination="false"
           :customRow="customRowClick" :rowClassName="setRowClassName">
           <template #bodyCell="{ record, column }">
             <template v-if="column.key === 'action'">
@@ -30,8 +31,8 @@
         </a-table>
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
-          <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="item.deployInfo[0].address" :frameType="frameType"
-            @checkContract="checkContract">
+          <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
+            @checkContract="checkContract" :canisterId="item.deployInfo[0].address">
           </ContractList>
         </div>
         <div v-if="frameType ===  5">
@@ -96,6 +97,7 @@ import { useRouter,useRoute } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 import Breadcrumb from "@/components/BreadCrumb.vue";
 import ContractList from "./components/ContractList.vue";
+import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
@@ -410,6 +412,12 @@ const changeVersion = (val: any) => {
 }
 
 const changeActiveKey = (activeKey: any) => {
+  for (let contractInfoKey in contractInfo) {
+    if (activeKey == contractInfo[contractInfoKey]?.id) {
+      contractAddress.value = contractInfo[contractInfoKey]?.deployInfo[0]?.address
+      selectedRow.value = 0;
+    }
+  }
   console.log(activeKey, 'activeKey')
 }
 

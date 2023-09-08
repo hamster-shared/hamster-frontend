@@ -26,9 +26,10 @@ import { apiCanisterList } from '@/apis/canister'
 import { CanisterStatusEnum } from '@/enums/frameTypeEnum'
 
 const props = defineProps({
-  detailId: String
+  detailId: String,
+  frameType: Number
 });
-const { detailId } = toRefs(props);
+const { detailId, frameType } = toRefs(props);
 const showAddCycle = ref(false);
 const showBuyCycle = ref(false);
 const showMsg = ref(false);
@@ -39,7 +40,7 @@ const cycles = ref()
 
 const tableList = ref([{'name':'name'}]);
 
-const tableColumns = computed<any[]>(() => [
+const tableColumns = ref([
   {
     title: 'Canister ID',
     dataIndex: 'canisterId',
@@ -55,11 +56,20 @@ const tableColumns = computed<any[]>(() => [
     key: 'canisterName',
   },
   {
+    title: 'Contract',
+    dataIndex: 'contract',
+    align: 'center',
+    ellipsis: 'fixed',
+    key: 'contract',
+  },
+  {
     title: 'Cycles',
     dataIndex: 'cycles',
     key: 'cycles',
     ellipsis: 'fixed',
     align: 'center',
+    // 加上单位
+    customRender: ({ text }) => `${text} T`
   },
   {
     title: 'Status',
@@ -86,7 +96,7 @@ const tableColumns = computed<any[]>(() => [
 
 const pagination = reactive({
   // 分页配置器
-  pageSize: 3, // 一页的数据限制
+  pageSize: 10, // 一页的数据限制
   current: 1, // 当前页
   total: 10, // 总数
   size: 'small',
@@ -109,6 +119,10 @@ const pagination = reactive({
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
 onMounted(() => {
+  if (frameType?.value !== 7) {
+    tableColumns.value = tableColumns.value.filter(item => item.dataIndex !== 'contract')
+  }
+  
   getProjectsCanisters()
 })
 
@@ -149,3 +163,5 @@ const refreshCanister = ()=>{
   getProjectsCanisters()
 }
 </script>
+<style scoped lang="less">
+</style>

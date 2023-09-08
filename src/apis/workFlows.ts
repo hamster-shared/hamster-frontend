@@ -86,7 +86,7 @@ export function apiGetWorkflowsDetail(params: GetWorkflowsDetailParams) {
 // 合约列表详情  workflows/:id/details/:workflowDetailId/contract
 export function apiGetWorkFlowsContract(params: GetWorkflowsDetailParams) {
   return httpRequest({
-    url: `/api/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/contract`,
+    url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/contract`,
     method: "get",
   });
 }

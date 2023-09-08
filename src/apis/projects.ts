@@ -42,6 +42,18 @@ interface GetProjectsContractDeployParams {
   version: string,
   network: string,
   address: string,
+  deployTxHash: string,
+}
+
+// contract deploying
+interface ProjectContractDeployIngParam {
+  contractId: number,
+  projectId: string,
+  version: string,
+  network: string,
+  deployTxHash: string,
+  rpcUrl: string
+
 }
 
 interface apiProjectsWorkflowsDetailStopParams {
@@ -192,10 +204,19 @@ export function apiProjectsContractVersion(id: String, version: String) {
   });
 }
 
+//  保存部署中信息
+export function apiProjectsContractDeploying(params: ProjectContractDeployIngParam) {
+  return httpRequest({
+    url: `/api/projects/${params.projectId}/contract/deploying`,
+    method: "post",
+    data: params,
+  });
+}
+
 //  保存部署信息
 export function apiProjectsContractDeploy(params: GetProjectsContractDeployParams) {
   return httpRequest({
-    url: `/api/projects/${params.id}/contract/deploy`,
+    url: `/api/projects/${params.projectId}/contract/deploy`,
     method: "post",
     data: params,
   });
@@ -250,7 +271,7 @@ export function apiDeleteProjects(id: String) {
   });
 }
 
-//删除workflows 
+//删除workflows
 export function apiDeleteWorkflows(workflowId: String, workflowDetailId: String) {
   return httpRequest({
     // url: `/api/projects/${id}/workflows/${workflowId}`,
@@ -277,7 +298,7 @@ export function apiGetProjectsPackages(id: String, params: GetPackageParams) {
   });
 }
 
-// package里得deploy 操作 
+// package里得deploy 操作
 export function apiProjectsDeploy(params: apiProjectsDeployParams) {
   return httpRequest({
     url: `/api/projects/${params.id}/workflows/${params.workflowsId}/detail/${params.workflowDetailId}/deploy`,
