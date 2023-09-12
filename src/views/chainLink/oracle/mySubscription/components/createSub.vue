@@ -43,7 +43,7 @@ const createSubLoading = ref(false)
 // ETH
 // 经产品要求，隐藏掉这个网络{label: 'Hamster Moonbeam Testnet',networkName: 'Hamster Moonbeam', value: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}
 // networkData.value = [{ name: 'mainnet', id: '1' }, { name: 'Testnet/Goerli', id: '5' }, { name: 'Testnet/Sepolia', id: 'aa36a7' }, {name: 'Testnet/Hamster',networkName: 'Hamster Moonbeam', id: '501', url: 'https://rpc-moonbeam.hamster.newtouch.com'}]
-const subNetOptions = ref([{ label: 'Ethereum Sepolia Testnet', value: 'aa36a7',url:'https://eth-sepolia.g.alchemy.com/v2/demo' },{ label: 'Polygon Mumbai Testnet', value: '13881',url:'https://rpc-mumbai.maticvigil.com' }])
+const subNetOptions = ref([{ label: 'Ethereum Sepolia', value: 'aa36a7',url:'https://eth-sepolia.g.alchemy.com/v2/demo' },{ label: 'Polygon Mumbai', value: '13881',url:'https://rpc-mumbai.maticvigil.com' }])
 const formData = reactive({
     network: null,
     name: '',
@@ -81,14 +81,15 @@ const handleCreateSub = async()=>{
         const chainNetArr = formData?.network?.split(' ')
         const params = {
             chain:chainNetArr[0],
-            network:chainNetArr.slice(1,chainNetArr.length).join(' '),
+            network:chainNetArr[1],
+            //network:chainNetArr.slice(1,chainNetArr.length).join(' '),
             name:formData.name?.replaceAll('_',''),
             // subscriptionId:'',
             admin:walletAdr,
             transactionTx:tx.hash
-        } 
+        }
         console.log('tx111111',tx)
-        // 创建订阅存入后端接口   
+        // 创建订阅存入后端接口
         const res = await apiCreateSub(params)
         // if(res.code===200){
         //     message.success(res.message)
