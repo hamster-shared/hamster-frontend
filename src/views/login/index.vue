@@ -32,6 +32,7 @@
 import { message } from "ant-design-vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import {saveWallet} from "@/apis/login";
 
 
 const router = useRouter()
@@ -70,6 +71,9 @@ const commonJump = ()=>{
 const awakeWallet = async()=>{
   if (window.ethereum) {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    for(let account of accounts ){
+        saveWallet(account).then()
+    }
     const address = accounts[0];
     if(address){
       localStorage.setItem('token',address)
@@ -144,4 +148,4 @@ onMounted(()=>{
     }
   }
 }
-</style> 
+</style>

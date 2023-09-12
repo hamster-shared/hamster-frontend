@@ -182,7 +182,7 @@ export const ChainList: Chain[] = [
         blockExplorerUrl: "https://goerli.basescan.org"
     },
     {
-        category: "conflux",
+        category: "Conflux",
         id: "0x406",
         name: "Conflux eSpace",
         rpcUrl: "https://evm.confluxrpc.com",
@@ -190,7 +190,7 @@ export const ChainList: Chain[] = [
         blockExplorerUrl: "https://evm.confluxscan.net"
     },
     {
-        category: "conflux",
+        category: "Conflux",
         id: "0x47",
         name: "Conflux eSpace (Testnet)",
         rpcUrl: "https://evm.confluxrpc.com",
@@ -198,7 +198,7 @@ export const ChainList: Chain[] = [
         blockExplorerUrl: "https://evmtestnet.confluxscan.net"
     },
     {
-        category: "zetachain",
+        category: "ZetaChain",
         id: "0x1b59",
         name: "ZetaChain Athens-3 Testnet",
         rpcUrl: "https://zetachain-athens-evm.blockpi.network/v1/rpc/public",
