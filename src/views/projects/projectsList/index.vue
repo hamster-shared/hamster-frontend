@@ -10,6 +10,7 @@
         </a-input>
       </div>
       <a-button type="primary" @click="goCreateProject">Create Project</a-button>
+      <a-button type="primary" @click="testContract">test contract</a-button>
     </div>
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
@@ -67,7 +68,29 @@ import Overview from "./components/Overview.vue";
 import NoData from "@/components/NoData.vue"
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
+import type {ContractBuild, DeployRecord, DeployStep} from "@/utils/contract/types";
 const theme = useThemeStore()
+import {
+  ERC20_ABI,
+  ERC20_BYTECODE,
+  Logic1,
+  Logic1_ByteCode,
+  Logic2,
+  Logic2_ByteCode,
+  SimpleUpgrade,
+  SimpleUpgrade_Bytecode
+} from "@/utils/contract/contracts";
+import {
+  CONSTRUCTOR,
+  ERC1967_ABI,
+  ERC1967_BYTECODE,
+  FUNCTION,
+  JSON_PRC,
+  PROXY_CONSTRUCTOR,
+  PROXY_UPGRADE
+} from "@/utils/contract/types";
+import {ethers} from "ethers";
+import {NewEngine} from "@/utils/contract/engine";
 
 const showGuide = ref(false)
 const timer = ref();
@@ -85,6 +108,90 @@ const pageSize = ref(10);
 const contractList = ref([]);
 const frontentList = ref([]);
 const nodeList = ref([])
+const abiMap = new Map<String,ContractBuild>()
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+abiMap.set("Logic1", {
+  abi: Logic1,
+  bytecode: Logic1_ByteCode
+})
+abiMap.set("Logic2", {
+  "abi": Logic2,
+  "bytecode": Logic2_ByteCode
+})
+abiMap.set("SimpleUpgrade", {
+  "abi": SimpleUpgrade,
+  "bytecode": SimpleUpgrade_Bytecode
+})
+abiMap.set("ERC20", {
+  abi: ERC20_ABI,
+  bytecode: ERC20_BYTECODE,
+})
+const deployRecord:ref<DeployRecord> = ref({
+  deployStep: [
+    {
+      Contract: {
+        name: "Logic1",
+        address: '',
+        proxy: false
+
+      },
+      steps: [
+        {
+          type: "constructor",
+          method: "",
+          params: [],
+          status: "PENDDING",
+        },
+      ],
+      step: 0,
+    },
+    {
+      Contract: {
+        name: "SimpleUpgrade",
+        address: '',
+        proxy: false
+      },
+      step: 0,
+      steps: [
+        {
+          type: "constructor",
+          method: "",
+          params: ["$Logic1.address"],
+          status: "PENDDING",
+        },
+        {
+          type: "function",
+          method: "upgrade",
+          params: ["$Logic1.address"],
+          status: "PENDDING",
+        }
+      ]
+    }
+  ],
+  step: 0
+})
+const deployRecord2:ref<DeployRecord> = ref({
+  deployStep:[
+    {
+      Contract: {
+        name: "ERC20",
+        address: "",
+        proxy: true,
+      },
+      steps: [{
+        type: PROXY_CONSTRUCTOR,
+        method: "",
+        params: [],
+        status: "PENDDING"
+      }],
+      step: 0
+    }
+  ],
+  step: 0
+})
+const testContract = () => {
+  // const newEngine = new NewEngine(provider)
+}
 
 const onChange = (pageNumber: number) => {
   if(activeKey.value === "1"){
@@ -96,6 +203,7 @@ const onChange = (pageNumber: number) => {
   }
   getList(activeKey.value)
 }
+
 const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
   pageSize.value = pageSizeVal;
   if(activeKey.value === "1"){
