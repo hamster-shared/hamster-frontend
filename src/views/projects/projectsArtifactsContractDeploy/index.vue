@@ -772,7 +772,6 @@ const getProjectsDetail = async () => {
       case 2:
         // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系
         Object.assign(chainData, ['Aptos'])
-          debugger
         networkData.value = [{ name: 'Mainnet', id: 'Mainnet' }, { name: 'Testnet', id: 'Testnet' }, { name: 'Devnet', id: 'Devnet' }]
         break;
       case 3:
