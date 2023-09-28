@@ -384,7 +384,7 @@ onMounted(() => {
   -webkit-line-clamp: 6;
 }
 .btn{
-  width: 70px;
+  width: 80px;
   height: 20px;
   background: #E2B578;
   line-height: 20px;

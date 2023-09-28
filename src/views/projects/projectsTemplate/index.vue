@@ -30,7 +30,7 @@
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
                   <!-- Middleware Button -->
-                  <button class="chainlink" v-if="items.name==='MiddleWare'">Chainlink</button>
+                  <button class="chainlink" v-if="item.labelDisplay">{{item.labelDisplay}}</button>
                 </div>
               </div>
             </div>
