@@ -92,6 +92,11 @@ const projectsRoute = [
         path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
         name: "projectsFrontendDetails",
         component: () => import('@/views/projects/projectsFrontendDetails/index.vue'),
+      },
+      {
+        path: "/projects/projectsDeploymentOrchestration",
+        name: "projectsDeploymentOrchestration",
+        component: () => import('@/views/projects/projectsDeploymentOrchestration/index.vue'),
       }
     ]
   }
