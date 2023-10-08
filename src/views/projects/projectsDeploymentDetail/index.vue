@@ -11,7 +11,7 @@
 import { computed, onMounted, reactive, ref, watchEffect } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 import BreadCrumb from "@/components/BreadCrumb.vue";
-import DeployVersionInfomation from '@/views/projects/components/DeployVersionInfomation.vue';
+import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 
