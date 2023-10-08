@@ -42,11 +42,39 @@
         </div> -->
         <!-- right -->
         <div>
+          <div>
+            <div class="text-[24px] font-bold">Contract Parameters</div>
+            <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Parameters the contract specifies to be passed in during
+              deploymrnt
+            </div>
+
+            <div
+              class="h-[90px] leading-[90px] text-center border border-solid rounded-[12px] border-[#302D2D] bg-[#191816] text-[14px] text-[#666666] ">
+              No Data
+            </div>
+          </div>
+          <div class="mt-[30px]">
+            <div class="text-[24px] font-bold">Invoke Contract Method</div>
+            <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Automatically call contract methods post-deployment,
+              including
+              its
+              own init method or other contracts' methods
+            </div>
+            <div
+              class="h-[60px] leading-[60px] text-[16px] text-[#C3C4C7] text-center border border-dashed rounded-[12px] border-[#6C6C6C] bg-[#191816]">
+              <img>
+              <label>Add More Contract Methods</label>
+            </div>
+
+          </div>
+
+
+
           <!-- <ContractParameters />
           <invoke-contract-method /> -->
           <!-- Proxy Contract -->
           <div>
-            <div class="flex justify-between">
+            <div class="flex justify-between mt-[30px]">
               <div class="text-[24px] font-bold">Proxy Contract</div>
               <a-switch v-model:checked="checked" @change="changeChecked" />
             </div>
