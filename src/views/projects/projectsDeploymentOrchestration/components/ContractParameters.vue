@@ -5,12 +5,12 @@
     </div>
     <div>
       <a-form ref="formRef" name="dynamic_form_nest_item" :model="dynamicValidateForm" layout="vertical">
-        <a-space style="display: flex; margin-bottom: 8px" align="baseline">
+        <a-space style="margin-bottom: 8px, width: 100%;">
           <a-form-item :name="dynamicValidateForm.param1" :rules="{
             required: true,
             message: 'Missing first name',
           }" label="param1">
-            <a-select ref="select" v-model:value="dynamicValidateForm.param1" @change="changeParams"
+            <a-select ref="select" v-model:value="dynamicValidateForm.param1" @change="changeParams" style="width: 50%"
               placeholder="Select project contract" :options="paramList.map(item => ({ value: item }))">
             </a-select>
           </a-form-item>
@@ -18,7 +18,7 @@
             required: true,
             message: 'Missing last name',
           }" labelAlign="right">
-            <a-select ref="select" v-model:value="dynamicValidateForm.param2" @change="changeParams"
+            <a-select ref="select" v-model:value="dynamicValidateForm.param2" @change="changeParams" style="width: 100%"
               placeholder="Contract Address" :options="paramList.map(item => ({ value: item }))">
             </a-select>
             <!-- <a-input v-model:value="dynamicValidateForm.param2" placeholder="Last Name" /> -->
@@ -52,6 +52,10 @@ const dynamicValidateForm = reactive({
 });
 
 const paramList = ref(['1', '2', '3'])
+
+const labelColData = reactive({
+  labelCol: { span: 3, offset: 12 }
+})
 
 const changeParams = () => {
 

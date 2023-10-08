@@ -62,6 +62,11 @@ const dynamicValidateForm = reactive({
 const paramList = ref(['1', '2', '3'])
 
 
+const changeParams = () => {
+
+}
+
+
 </script>
 
 <style scoped lang="less">
@@ -72,4 +77,6 @@ const paramList = ref(['1', '2', '3'])
   margin-right: 8px;
   margin-bottom: 8px;
 }
+
+
 </style>
