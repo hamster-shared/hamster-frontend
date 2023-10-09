@@ -25,7 +25,7 @@ onMounted(async () => {
       path: '/projects'
     },
     {
-      breadcrumbName: 'projectsDeploymentDetail',
+      breadcrumbName: 'Deployment Details',
       path: ''
     },
   ]
