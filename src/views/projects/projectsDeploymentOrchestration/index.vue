@@ -109,6 +109,9 @@
       </div>
     </div>
   </div>
+  <!-- <UsingWalltModal /> -->
+  <!-- <CustomParamsmodal /> -->
+  <!-- <DeploymentOrchestrationmodal /> -->
 </template>
 
 <script setup lang="ts">
@@ -120,6 +123,9 @@ import ContractParams from './components/ContractParams.vue';
 import InvokeContract from './components/InvokeContract.vue';
 import ContractParameters from "./components/ContractParameters.vue";
 import InvokeContractMethod from "./components/InvokeContractMethod.vue";
+import UsingWalltModal from "./components/UsingWalltModal.vue";
+import CustomParamsmodal from "./components/CustomParamsmodal.vue";
+import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmodal.vue";
 const theme = useThemeStore();
 const value1 = ref<string>('1');
 const checked = ref<boolean>(false);
