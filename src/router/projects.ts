@@ -102,6 +102,11 @@ const projectsRoute = [
         path: '/projects/projectsDeploymentDetail',
         name: "projectsDeploymentDetail",
         component: () => import('@/views/projects/projectsDeploymentDetail/index.vue'),
+      },
+      {
+        path: '/projects/projectsDashboard',
+        name: "projectsDashboard",
+        component: () => import('@/views/projects/projectsDashboard/index.vue'),
       }
     ]
   }

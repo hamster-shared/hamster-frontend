@@ -10,7 +10,10 @@
       <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
       <div class="grid grid-cols-2 gap-8">
         <!-- left -->
-        <div>left</div>
+        <div>
+          <DeploymentOrder></DeploymentOrder>
+        </div>
+
         <!-- <div>
           <div class="text-[16px] font-bold">Deployment Order</div>
           <div class="text-[#E0DBD2] text-[16px] mb-[20px]">The deployment order can be freely set by dragging the
@@ -70,8 +73,8 @@
 
 
 
-          <!-- <ContractParameters />
-          <invoke-contract-method /> -->
+          <!-- <ContractParameters /> -->
+          <!-- <invoke-contract-method /> -->
           <!-- Proxy Contract -->
           <div>
             <div class="flex justify-between mt-[30px]">
@@ -120,6 +123,7 @@ import InvokeContractMethod from "./components/InvokeContractMethod.vue";
 import UsingWalltModal from "./components/UsingWalltModal.vue";
 import CustomParamsmodal from "./components/CustomParamsmodal.vue";
 import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmodal.vue";
+import DeploymentOrder from "./components/DeploymentOrder.vue";
 const theme = useThemeStore();
 const value1 = ref<string>('1');
 const checked = ref<boolean>(false);
