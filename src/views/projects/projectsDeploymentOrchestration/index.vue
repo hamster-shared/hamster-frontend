@@ -42,6 +42,10 @@
         </div> -->
         <!-- right -->
         <div>
+          <ContractParams></ContractParams>
+          <InvokeContract></InvokeContract>
+        </div>
+        <div v-if="false">
           <div>
             <div class="text-[24px] font-bold">Contract Parameters</div>
             <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Parameters the contract specifies to be passed in during
@@ -112,6 +116,8 @@ import { computed, onMounted, reactive, ref, watchEffect } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
+import ContractParams from './components/ContractParams.vue';
+import InvokeContract from './components/InvokeContract.vue';
 import ContractParameters from "./components/ContractParameters.vue";
 import InvokeContractMethod from "./components/InvokeContractMethod.vue";
 const theme = useThemeStore();
