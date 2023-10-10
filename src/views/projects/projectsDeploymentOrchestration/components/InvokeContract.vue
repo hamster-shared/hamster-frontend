@@ -8,14 +8,13 @@
       <div class="flex justify-between mb-[20px]">
         <div class="text-[21px] font-bold">Contract Method</div>
         <div>
-          <a-popover placement="leftTop">
+          <a-popover trigger="hover" placement="left">
             <template #content>
-              <div>Delete</div>
-              <div class="mt-[15px]">Add Custom Params</div>
+              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="deleteBtn">Delete</div>
+              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="addCustomParamsBtn">Add Custom Params
+              </div>
             </template>
-            <div class="w-[18px] cursor-pointer">
-              <img src="@/assets/images/diandian.png" class="h-[18px]" />
-            </div>
+            <img class="w-[4px] cursor-pointer" src="@/assets/images/diandian.png" />
           </a-popover>
         </div>
 
@@ -70,12 +69,12 @@ const paramList = ref(['1', '2', '3'])
 
 
 const formRules = computed(() => {
-    const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
-    return {
-        param1: [requiredRule('')],
-        param2: [requiredRule('')],
-        param3: [requiredRule('')],
-    };
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+  return {
+    param1: [requiredRule('')],
+    param2: [requiredRule('')],
+    param3: [requiredRule('')],
+  };
 });
 
 const changeParams = () => {
@@ -93,6 +92,4 @@ const changeParams = () => {
   margin-right: 8px;
   margin-bottom: 8px;
 }
-
-
 </style>

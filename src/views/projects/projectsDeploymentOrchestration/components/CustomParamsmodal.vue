@@ -1,9 +1,9 @@
 <template>
   <div>
-    <a-modal :footer="null" width="760px" centered="true" v-model:visible="importVisible">
+    <a-modal :footer="null" width="760px" centered="true" v-model:visible="visible">
       <div class="text-[24px] text-[#151210] font-bold">Custom Params</div>
       <template #closeIcon>
-        <img class="mt-5" src="@/assets/icons/closeIcon.svg" />
+        <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancelVisible" />
       </template>
       <div>
         <a-form class="modal-form" :model="formData" ref="formRef" :rules="formRules" layout="vertical">
@@ -11,14 +11,15 @@
             <div class="text-[18px] text-[#151210] font-bold mt-[32px] mb-[20px]">Contract A.init</div>
             <a-input-group>
               <a-row :gutter="8" v-for="item in formData.secretArr" class="mt-[5px]">
-                <a-col :span="11">
+                <a-col :span="formData.secretArr.length > 1 ? 11 : 12">
                   <a-input class="modal-input" v-model:value="item.secretName" allow-clear autocomplete="off" />
                 </a-col>
-                <a-col :span="11">
+                <a-col :span="formData.secretArr.length > 1 ? 11 : 12">
                   <a-input class="modal-input" v-model:value="item.secretValue" allow-clear autocomplete="off" />
                 </a-col>
-                <a-col :span="2" class="cursor-pointer">
-                  <label class="text-[18px] text-[#E2B578] leading-[42px]" @click="deleteSecret(item)">Delete</label>
+                <a-col :span="2" class="cursor-pointer" v-if="formData.secretArr.length > 1">
+                  <label class="text-[18px] text-[#E2B578] leading-[42px] cursor-pointer"
+                    @click="deleteSecret(item)">Delete</label>
                 </a-col>
               </a-row>
             </a-input-group>
@@ -34,9 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, toRefs } from "vue";
 
-const importVisible = ref<boolean>(true);
+
+const props = defineProps({
+  visible: Boolean,
+});
+
+const { visible } = toRefs(props);
 
 const formData = reactive<any>({
   secretArr: [
@@ -83,10 +89,18 @@ const addSecret = (item: any) => {
   })
 }
 
+const emit = defineEmits(["showContract", "doneSecret"]);
+
 const doneSecret = () => {
   console.log('完成参数设置,调接口吧')
+  emit("doneSecret", formData.secretArr)
 }
 
+
+
+const handleCancelVisible = () => {
+  emit("showContract");
+}
 
 </script>
 
