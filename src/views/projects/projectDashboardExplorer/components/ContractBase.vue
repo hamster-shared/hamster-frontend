@@ -17,12 +17,12 @@
       <div class="font-bold mb-[20px]">Source Info</div>
       <div class="text-[14px]">
         <img src="@/assets/images/link.png" class="h-[17px] mr-[10px] hidden dark:inline-block" />
-        <img src="@/assets/icons/link-white.png" class="h-[17px] mr-[10px] dark:hidden" />
+        <img src="@/assets/images/link-white.png" class="h-[17px] mr-[10px] dark:hidden" />
         https://github.com/hamster-shared/hamster.git/main
       </div>
       <div class="mt-[10px] text-[14px]">
         <img src="@/assets/images/info.png" class="h-[17px] mr-[10px] hidden dark:inline-block" />
-        <img src="@/assets/icons/info-white.png" class="h-[17px] mr-[10px] dark:hidden" />
+        <img src="@/assets/images/info-white.png" class="h-[17px] mr-[10px] dark:hidden" />
         3f433f6 | commit on Nov 3, 2022 | upgrade go version
       </div>
     </div>
