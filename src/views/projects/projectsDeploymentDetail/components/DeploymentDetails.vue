@@ -4,8 +4,8 @@
       <div class="font-bold text-[24px]">Deployment Details</div>
       <div>
         <a-button type="primary" ghost>Stop</a-button>
-        <a-button type="primary" class="mx-[24px]">View Dashboard</a-button>
-        <a-select ref="select" v-model:value="actionVal" class="w-[140px]"
+        <!-- <a-button type="primary" class="mx-[24px]">View Dashboard</a-button> -->
+        <a-select ref="select" v-model:value="actionVal" class="w-[140px] !ml-[24px]"
           :options="actionOptions">
         </a-select>
       </div>
@@ -55,8 +55,8 @@ const { getImageURL } = useAssets();
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
 const actionOptions = ref([
-  {lable: 'View Dashboard', value: 'Dashboard'},
-  {lable: 'View Setting', value: 'Setting'},
+  {label: 'View Dashboard', value: 'Dashboard'},
+  {label: 'View Setting', value: 'Setting'},
 ]);
 const deploymentList = ref<any>([
   {name: 'Contract A',id:'1',status:'Success',content: '123'},
