@@ -3,7 +3,7 @@
     <div class="text-[24px] font-bold">Contract Parameters</div>
     <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
-    <div>
+    <div v-if="selectedId">
       <a-form ref="formRef" :rules="formRules" :model="dynamicValidateForm" layout="vertical">
         <a-form-item :name="dynamicValidateForm.param1" label="param1">
           <a-select v-model:value="dynamicValidateForm.param1" @change="changeParams" style="width: 45%;margin-right:5%"
@@ -20,10 +20,9 @@
         <a-form-item label="param3" name="param3">
           <a-input v-model:value="dynamicValidateForm.param3" placeholder="Please enter a value for unit64" allow-clear />
         </a-form-item>
-
       </a-form>
     </div>
-    <div v-if="false"
+    <div v-else
       class="h-[90px] leading-[90px] text-center border border-solid rounded-[12px] border-[#302D2D] bg-[#191816] text-[14px] text-[#666666] ">
       No Data
     </div>
@@ -31,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, toRefs } from "vue";
 import type { FormInstance } from 'ant-design-vue';
 const formRef = ref<FormInstance>();
 const dynamicValidateForm = reactive({
@@ -41,6 +40,12 @@ const dynamicValidateForm = reactive({
   param3: '',
 });
 
+const props = defineProps({
+  selectedId: String,
+});
+
+const { selectedId } = toRefs(props);
+
 const paramList = ref(['1', '2', '3'])
 
 const labelColData = reactive({
@@ -48,12 +53,12 @@ const labelColData = reactive({
 })
 
 const formRules = computed(() => {
-    const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
-    return {
-        param1: [requiredRule('')],
-        param2: [requiredRule('')],
-        param3: [requiredRule('')],
-    };
+  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+  return {
+    param1: [requiredRule('')],
+    param2: [requiredRule('')],
+    param3: [requiredRule('')],
+  };
 });
 
 const changeParams = () => {
