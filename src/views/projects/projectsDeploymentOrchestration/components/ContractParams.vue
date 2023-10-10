@@ -1,7 +1,7 @@
 <template>
   <div class="mb-[30px]">
     <div class="text-[24px] font-bold">Contract Parameters</div>
-    <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
+    <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
     <div>
       <a-form ref="formRef" :rules="formRules" :model="dynamicValidateForm" layout="vertical">
@@ -9,7 +9,7 @@
           <a-select v-model:value="dynamicValidateForm.param1" @change="changeParams" style="width: 45%;margin-right:5%"
             placeholder="Select project contract" :options="paramList.map(item => ({ value: item }))">
           </a-select>
-          <label class="text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
+          <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
           <a-select v-model:value="dynamicValidateForm.address" @change="changeParams" style="width: 50%"
             placeholder="Contract Address" :options="paramList.map(item => ({ value: item }))">
           </a-select>
