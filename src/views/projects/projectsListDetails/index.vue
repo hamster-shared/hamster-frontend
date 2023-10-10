@@ -43,6 +43,9 @@
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
+              <a-menu-item v-if="projectType === '1'" @click="deploySetting">
+                <a href="javascript:;" style="color:#151210">Deploy Setting</a>
+              </a-menu-item>
               <!-- 展示dfx生成弹框 -->
               <a-menu-item v-if="projectsDetail.deployType == 3 || projectsDetail.frameType === 7" @click="showDfxModal">
                 <a href="javascript:;" style="color:#151210">Configure dfx.json</a>
@@ -155,6 +158,7 @@ const projectType = ref(params.type);
 const activeKey = ref();
 const loading = ref(false)
 const detailId = ref(params.id);
+console.log('detailId::::',detailId.value)
 const viewType = ref("detail");
 const visibleModal = ref(false);
 const deleteModal = ref(false);
@@ -425,6 +429,11 @@ const getAptosBuild = async () => {
   aptosBuildVisible.value = true
   getAptosBuildParams()
 };
+
+// 查看合约部署信息入口，数据回填
+const deploySetting = ()=>{
+  router.push(`/projects/projectsDeploymentOrchestration?id=${detailId.value}`)
+}
 
 // 保存/更新 dfx.json
 const SaveDFXCon = async(params:string) => {

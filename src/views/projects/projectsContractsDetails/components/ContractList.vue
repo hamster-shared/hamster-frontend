@@ -253,7 +253,7 @@ onMounted(()=>{
 
 html[data-theme='dark'] {
   .checked {
-    background-color: #36322D;
+    background-color: rgba(226, 181, 120, 0.2);
   }
 
   .contractList-left {
@@ -262,6 +262,6 @@ html[data-theme='dark'] {
 }
 
 .checked {
-  background-color: #F9F9F9;
+  background-color: rgba(226, 181, 120, 0.2);
 }
 </style>

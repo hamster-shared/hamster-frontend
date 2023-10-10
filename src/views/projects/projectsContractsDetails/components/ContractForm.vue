@@ -42,6 +42,7 @@
     <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
         isSend ? buttonInfo + 'ing' : buttonInfo
       }}</a-button>
+    <div v-if="submitErrorInfo" class="border border-solid border-[#F6662B] rounded-[12px] bg-[rgba(246,102,43,0.13)] p-[20px] mt-[32px]">{{ submitErrorInfo }}</div>
     <div class="mb-[24px] mt-[24px]">
       <div class="flex justify-between  mb-[12px]">
         <span class="dark:text-[#FFFFFF] text-[#151210]  text-[16px] font-bold">outputs</span>
@@ -106,6 +107,7 @@ const formState = reactive({
 
 const payableValue = ref(0)
 const payUnit = ref("ether")
+const submitErrorInfo = ref('');
 
 // aptos
 const arr = [new PetraWallet()]
@@ -171,7 +173,8 @@ const executeGet = async () => {
     // console.log(firstReturnData, number.toFelt(firstReturnData))
     // hashValue.value = number.toFelt(firstReturnData)
   } catch (err: any) {
-    message.error(err.toString())
+    // message.error(err.toString())
+    submitErrorInfo.value = err.toString();
   } finally {
     isSend.value = false;
   }
@@ -220,15 +223,18 @@ const executeSet = async () => {
     // console.log(receiptResponsePromise, 'receiptResponsePromise')
     hashValue.value = invokeResponse.transaction_hash;
   } catch (err: any) {
-    message.error(err.toString())
+    // message.error(err.toString())
+    submitErrorInfo.value = err.toString();
   } finally {
     isSend.value = false;
   }
 }
 const submit = async () => {
+  submitErrorInfo.value = '';
   const emptyInputs = inputs?.value.filter( (item: { name: string | number;}, key: number) => !formData[item.name || `param${key+1}`]);
   if (emptyInputs.length > 0) {
-    message.warning('Please enter the necessary parameters')
+    // message.warning('Please enter the necessary parameters')
+    submitErrorInfo.value = 'Please enter the necessary parameters';
     return
   }
   console.log(deployAddress.deployAddressValue, 'deployAddressValue')
@@ -288,7 +294,8 @@ const contractIcpFn = async()=>{
       message.success('Success')
     } catch (error:any) {
       isSend.value = false
-      message.error('Failed ',error)
+      // message.error('Failed ',error)
+      submitErrorInfo.value = 'Failed '+ error;
       console.log('error:',error)
     }
   }
@@ -324,13 +331,15 @@ const evmDeployFunction = () => {
             hashValue.value = tx.hash;
           }).catch((err: any) => {
             console.log(err, '调用失败err')
-            message.error('调用失败')
+            // message.error('调用失败')
+            submitErrorInfo.value = '调用失败';
             hashValue.value = 'No Data';
           }).finally(() => {
             isSend.value = false;
           })
         }).catch((err:any)=>{
-          message.error(err.message)
+          // message.error(err.message)
+          submitErrorInfo.value = err.message;
           isSend.value = false;
         })
       } else {
@@ -379,7 +388,8 @@ const evmDeployFunction = () => {
   } catch (errorInfo: any) {
     console.log('errorInfo:' + errorInfo)
     isSend.value = false;
-    message.error('调用失败')
+    // message.error('调用失败')
+    submitErrorInfo.value = '调用失败';
   }
 }
 const aptosSendAbiFn = async () => {
