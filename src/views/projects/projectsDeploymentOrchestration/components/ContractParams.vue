@@ -23,7 +23,7 @@
       </a-form>
     </div>
     <div v-else
-      class="h-[90px] leading-[90px] text-center border border-solid rounded-[12px] border-[#302D2D] bg-[#191816] text-[14px] text-[#666666] ">
+    class="h-[90px] leading-[90px] text-center border border-solid rounded-[12px] border-[#D2D2D2] dark:border-[#302D2D] bg-[#FCFCFC] dark:bg-[#191816] text-[14px] text-[#666666] ">
       No Data
     </div>
   </div>
