@@ -2,7 +2,7 @@
   <div>
     <BreadCrumb :routes="breadCrumbInfo" />
     <ContractBase></ContractBase>
-    <div class="bg-[#1D1C1A] rounded-[12px] p-[32px] mt-[32px]">
+    <div class="bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px] mt-[32px]">
       <div class="text-[24px] font-bold mb-[32px]">Contract Explorer</div>
       <ContractList v-if="frameType" :abiInfo="contractInfo.abiInfo" :contractAddress="contractInfo.contractAddress" :frameType="frameType"
         @checkContract="checkContract" :canisterId="contractInfo.canisterId">
