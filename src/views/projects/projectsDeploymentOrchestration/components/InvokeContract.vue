@@ -8,11 +8,14 @@
       <div class="flex justify-between mb-[20px]">
         <div class="text-[21px] font-bold">Contract Method</div>
         <div>
-          <a-popover placement="left">
+          <a-popover placement="leftTop">
             <template #content>
-              <p>Delete</p>
+              <div>Delete</div>
+              <div class="mt-[15px]">Add Custom Params</div>
             </template>
-            <a-button type="primary">Hover me</a-button>
+            <div class="w-[18px] cursor-pointer">
+              <img src="@/assets/images/diandian.png" class="h-[18px]" />
+            </div>
           </a-popover>
         </div>
 
@@ -44,9 +47,9 @@
 
       </a-form>
     </div>
-    <div  v-if="false"
-      class="h-[60px] leading-[60px] text-[16px] text-[#C3C4C7] text-center border border-dashed rounded-[12px] border-[#6C6C6C] bg-[#191816]">
-      <img>
+    <div 
+      class="flex justify-center items-center mt-[30px] h-[60px] leading-[60px] text-[16px] text-[#C3C4C7] text-center border border-dashed rounded-[12px] border-[#6C6C6C] bg-[#191816]">
+      <img src="@/assets/images/add.png" class="h-[32px] mr-[20px]" />
       <label>Add More Contract Methods</label>
     </div>
   </div>
