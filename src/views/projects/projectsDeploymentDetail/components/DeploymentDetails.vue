@@ -18,8 +18,8 @@
         <a-collapse-panel v-for="item in deploymentList" :key="item.id" :header="item.name" @click="">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.status === 'failed'" class="text-[#E2B578] font-semibold mr-[20px]">Redeploy</div>
-              <svg-icon :name="item.status" size="22" class="mr-2" />
+              <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]">Redeploy</div>
+              <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" />
               <div class="w-[60px]">{{ item.status }}</div>
             </div>
           </template>
@@ -29,7 +29,7 @@
                 <div class="flex items-center">
                   <div class="collapse-content-title">Transaction Hash:</div>
                   <div>0xce5d907630930b336f1ce6eacbbcc6816906b65d980fa28e6b3f3d8a0c626321
-                    <svg-icon name="copy" size="18" class="svg-color ml-2" />
+                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
@@ -47,6 +47,10 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
+import{ copyToClipboard } from "@/utils/tool";
+import useAssets from "@/stores/useAssets";
+
+const { getImageURL } = useAssets();
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -55,9 +59,9 @@ const actionOptions = ref([
   {label: 'View Setting', value: 'Setting'},
 ]);
 const deploymentList = ref<any>([
-  {name: 'Contract A',id:'1',status:'success',content: '123'},
-  {name: 'Contract B',id:'2',status:'failed',content: '123'},
-  {name: 'Contract C',id:'3',status:'wait'},
+  {name: 'Contract A',id:'1',status:'Success',content: '123'},
+  {name: 'Contract B',id:'2',status:'Failed',content: '123'},
+  {name: 'Contract C',id:'3',status:'Wait'},
 ]);
 </script>
 <style scoped lang="less">
