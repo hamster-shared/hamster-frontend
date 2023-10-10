@@ -1,5 +1,5 @@
 <template>
-  <div class="dark:bg-[#1D1C1A] bg-[#FFFFFF] mt-[25px] rounded-[12px] p-[32px]">
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="dark:bg-[#1D1C1A] bg-[#FFFFFF] mt-[25px] rounded-[12px] p-[32px]">
     <div class="flex justify-between items-center">
       <div class="font-bold text-[24px]">Deployment Details</div>
       <div>
@@ -23,7 +23,7 @@
               <div class="w-[60px]">{{ item.status }}</div>
             </div>
           </template>
-          <div class="bg-[#191816]">
+          <div class="bg-[#F6F6F6] dark:bg-[#191816]">
             <div v-if="item.content" class="p-[20px] flex justify-between">
               <div>
                 <div class="flex items-center">
@@ -49,8 +49,10 @@
 import { ref } from 'vue';
 import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
+import { useThemeStore } from "@/stores/useTheme";
 
 const { getImageURL } = useAssets();
+const theme = useThemeStore();
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -72,6 +74,19 @@ const deploymentList = ref<any>([
 }
 .svg-color{
   color: #E2B578;
+}
+.white-css{
+  :deep(.ant-collapse){
+    background: #FFFFFF;
+    box-shadow: 3px 3px 12px 0px rgba(203,217,207,0.2);
+    border: 1px solid #F8F8F8;
+  }
+  :deep(.ant-collapse > .ant-collapse-item){
+    border-color: #EBEBEB;
+  }
+  :deep(.ant-collapse-content>.ant-collapse-content-box){
+    background-color: #FFFFFF; 
+  }
 }
 :deep(.ant-collapse){
   background-color: #36322D;
@@ -98,6 +113,6 @@ const deploymentList = ref<any>([
 </style>
 <style scoped>
 .collapse-content-title{
-  @apply text-[14px] text-[#BBBAB9] font-medium mr-[20px] w-[170px] text-right;
+  @apply text-[14px] text-[#73706E] dark:text-[#BBBAB9] font-medium mr-[20px] w-[170px] text-right;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <div class="mb-[30px]">
     <div class="text-[24px] font-bold">Invoke Contract Method</div>
-    <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
+    <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
       own init method or other contracts' methods
     </div>
-    <div class="border border-solid border-[#6C6C6C] bg-[#191816] rounded-[12px] p-[20px]">
+    <div class="border border-solid border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] rounded-[12px] p-[20px]">
       <div class="flex justify-between mb-[20px]">
         <div class="text-[21px] font-bold">Contract Method</div>
         <div>
@@ -32,7 +32,7 @@
           <a-select v-model:value="dynamicValidateForm.param1" @change="changeParams" style="width: 45%;margin-right:5%"
             placeholder="Select project contract" :options="paramList.map(item => ({ value: item }))">
           </a-select>
-          <label class="text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
+          <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
           <a-select v-model:value="dynamicValidateForm.address" @change="changeParams" style="width: 50%"
             placeholder="Contract Address" :options="paramList.map(item => ({ value: item }))">
           </a-select>
@@ -49,10 +49,10 @@
         </a-form-item>
       </a-form>
     </div>
-    <div
-      class="h-[60px] leading-[60px] text-[16px] text-[#C3C4C7] text-center border border-dashed rounded-[12px] border-[#6C6C6C] bg-[#191816] mt-[30px] cursor-pointer">
-      <img class="w-[28px] mr-[20px]" src="@/assets/images/Add.png" />
-      <label class="cursor-pointer">Add More Contract Methods</label>
+    <div 
+      class="flex justify-center items-center mt-[30px] h-[60px] leading-[60px] text-[16px] text-[#666666] dark:text-[#C3C4C7] text-center border border-dashed rounded-[12px] border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816]">
+      <img src="@/assets/images/add.png" class="h-[32px] mr-[20px]" />
+      <label>Add More Contract Methods</label>
     </div>
   </div>
   <CustomParamsmodal :visible="visible" @showContract="visible = false" @doneSecret="doneSecret" />
