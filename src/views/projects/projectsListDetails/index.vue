@@ -158,6 +158,7 @@ const projectType = ref(params.type);
 const activeKey = ref();
 const loading = ref(false)
 const detailId = ref(params.id);
+console.log('detailId::::',detailId.value)
 const viewType = ref("detail");
 const visibleModal = ref(false);
 const deleteModal = ref(false);
@@ -431,7 +432,7 @@ const getAptosBuild = async () => {
 
 // 查看合约部署信息入口，数据回填
 const deploySetting = ()=>{
-  // router.push()
+  router.push(`/projects/projectsDeploymentOrchestration?id=${detailId.value}`)
 }
 
 // 保存/更新 dfx.json
