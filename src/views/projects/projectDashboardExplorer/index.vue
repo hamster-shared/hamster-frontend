@@ -30,6 +30,9 @@ const frameType = ref(1);
 const contractAddress = ref('');
 const abiInfo = ref('');
 const versionData = ref([]);
+const singleContractId = route.query.singleContractId
+// 合约信息对象
+const contractInfo = ref<any>()
 
 const checkContract = (name: string) => {
   contractName.value = name
@@ -37,7 +40,8 @@ const checkContract = (name: string) => {
 
 const getContractDeployDetail = async () => {
   const queryJson = {
-    id: route.query.id,
+    // id: route.query.singleContractId,
+    id: '65a141e7-95c6-4229-850d-e3c38b405d09',
     version: '1',
   }
   const { data } = await apiGetContractDeployDetail(queryJson)
@@ -57,22 +61,44 @@ const getContractDeployDetail = async () => {
 }
 
 const getVersion = async () => {
-  const { data } = await apiGetProjectsVersions({ id: route.query.id });
+  const { data } = await apiGetProjectsVersions({ id: '65a141e7-95c6-4229-850d-e3c38b405d09' });
   Object.assign(versionData, data)
 }
 
-onMounted(async () => {
+const initBreadCrumb = ()=>{
   // 导航栏
   breadCrumbInfo.value = [
-    {
+  {
       breadcrumbName: 'Projects',
       path: '/projects'
+    },
+    {
+      breadcrumbName: contractInfo.value.name,
+      path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
+    },
+    {
+      breadcrumbName: 'Dashboard',
+      path: `/projects/projectsDashboard?id=${route.query.id}`
     },
     {
       breadcrumbName: 'projectsDashboardExplorer',
       path: ''
     },
   ]
+}
+
+// 获取合约详情
+const getContactDetail = async()=>{
+  const res = await apiGetProjectsDetail(route.query.id)
+  if(res.code===200){
+    contractInfo.value = res.data
+    console.log('获取合约详情:',res)
+  }
+}
+
+onMounted(async () => {
+  await getContactDetail()
+  initBreadCrumb()
 })
 
 onBeforeMount(async () => {
