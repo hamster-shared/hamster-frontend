@@ -109,7 +109,7 @@ const splitDataSource = () => {
 
 const goExplorer = (id: string) => {
   console.log(id)
-  router.push(`/projects/projectDashboardExplorer?id=${id}`)
+  router.push(`/projects/projectDashboardExplorer?singleContractId=${id}`)
 }
 
 const initBreadCrumb = ()=>{
