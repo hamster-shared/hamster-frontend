@@ -30,6 +30,7 @@ const frameType = ref(1);
 const contractAddress = ref('');
 const abiInfo = ref('');
 const versionData = ref([]);
+const singleContractId = route.query.singleContractId
 
 const checkContract = (name: string) => {
   contractName.value = name
@@ -37,7 +38,8 @@ const checkContract = (name: string) => {
 
 const getContractDeployDetail = async () => {
   const queryJson = {
-    id: route.query.id,
+    // id: route.query.singleContractId,
+    id: '65a141e7-95c6-4229-850d-e3c38b405d09',
     version: '1',
   }
   const { data } = await apiGetContractDeployDetail(queryJson)
@@ -57,7 +59,7 @@ const getContractDeployDetail = async () => {
 }
 
 const getVersion = async () => {
-  const { data } = await apiGetProjectsVersions({ id: route.query.id });
+  const { data } = await apiGetProjectsVersions({ id: '65a141e7-95c6-4229-850d-e3c38b405d09' });
   Object.assign(versionData, data)
 }
 
