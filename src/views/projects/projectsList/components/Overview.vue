@@ -688,6 +688,11 @@ const goContractDeploy = async (id: string, status: number) => {
 // };
 
 const goContractDetail = async (id: string, version: string) => {
+  // 如果是evm生态走多链部署，其它生态保持原来
+  if(viewInfo.value.frameType==1){
+    router.push(`/projects/projectsDeploymentOrchestration?id=${id}`)
+    return
+  }
   if (viewInfo.value.frameType === 7 && viewInfo.value.recentDeploy.status === 1) {
     router.push(`/projects/${id}/${deployParams.value[id].wfId}/workflows/${deployParams.value[id].wfDetailId}/3/${projectType?.value}`);
   } else {
