@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeMount } from "vue";
+import { useRoute, useRouter } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import ContractBase from './components/ContractBase.vue';
 import ContractList from '@/views/projects/projectsContractsDetails/components/ContractList.vue';
@@ -23,7 +24,7 @@ import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workF
 const breadCrumbInfo = ref<any>([]);
 const contractDeployDetail = reactive({});
 
-
+const route = useRoute()
 const contractName = ref('');
 const frameType = ref(1);
 const contractAddress = ref('');
@@ -36,18 +37,27 @@ const checkContract = (name: string) => {
 
 const getContractDeployDetail = async () => {
   const queryJson = {
-    id: 'f6db9205-2e19-4256-a6dd-d9121d1f4739',
+    id: route.query.id,
     version: '1',
   }
   const { data } = await apiGetContractDeployDetail(queryJson)
-  Object.assign(contractDeployDetail, data);
-  abiInfo.value = data.contractInfo.ExampleToken.abiInfo;
-  contractAddress.value = data.contractInfo.ExampleToken.deployInfo[0].address;
+  // Object.assign(contractDeployDetail, data);
+  const contractInfo = {};
+  Object.assign(contractInfo, data.contractInfo);
+
+  // console.log(contractInfo, 'contractInfo')
+  for (let key in contractInfo) {
+    abiInfo.value = data.contractInfo[key].abiInfo;
+    contractAddress.value = data.contractInfo[key].deployInfo[0].address;
+  }
+
+  // abiInfo.value = data.contractInfo.ExampleToken.abiInfo;
+  // contractAddress.value = data.contractInfo.ExampleToken.deployInfo[0].address;
 
 }
 
 const getVersion = async () => {
-  const { data } = await apiGetProjectsVersions({ id: 'f6db9205-2e19-4256-a6dd-d9121d1f4739' });
+  const { data } = await apiGetProjectsVersions({ id: route.query.id });
   Object.assign(versionData, data)
 }
 
