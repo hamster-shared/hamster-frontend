@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="text-[24px] font-bold">Deployment Order</div>
-    <div class="text-[#E0DBD2] text-[16px] mb-[20px]">The deployment order can be freely set by dragging the
+    <div class="text-[#73706E] dark:text-[#E0DBD2] text-[16px] mb-[20px]">The deployment order can be freely set by dragging the
       concant
       cards up
       and down. The
@@ -9,13 +9,12 @@
       start the deploymnet, whic is convenient and fast.</div>
   </div>
 
-  <div class="main">
-    <div
-      class="flex justify-between item bg-[#FCFCFC] dark:bg-[#35322E] border-[#D2D2D2] border border-solid dark:border-[#434343] text-[#000000] dark:text-[#fff]"
-      :class="selectId == item.id ? 'selected' : ''" v-for="(item, index) in dataList" :key="item.id" draggable="true"
-      @click="selectContractId(item)" @dragstart="dragstart(item)" @dragenter="dragenter(item)" @dragend="dragend(item)">
-      <div>
-        <span class="font-bold bg-[#E2B578] color-[#FFFFFF] px-[8px] py-[2px] rounded-[2px] mr-[20px]">{{ index + 1
+  <div class="main" :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
+    <div class="flex justify-between item" :class="selectId == item.id ? 'selected' : ''"
+      v-for="(item, index) in dataList" :key="item.id" draggable="true" @click="selectContractId(item)"
+      @dragstart="dragstart(item)" @dragenter="dragenter(item)" @dragend="dragend(item)">
+      <div class="font-bold">
+        <span class=" bg-[#E2B578] text-[#FFFFFF] px-[8px] py-[2px] rounded-[2px] mr-[20px]">{{ index + 1
         }}</span>
         <span>{{ item.name }}</span>
       </div>
@@ -38,8 +37,8 @@
   <div class="main mb-[10px]">
     <div class="flex justify-between item" v-for="(item, index) in duplicateDataList" :key="item.id"
       @click="selectContractId(item)">
-      <div>
-        <span class="font-bold bg-[#E2B578] color-[#FFFFFF] px-[12px] py-[2px] rounded-[2px] mr-[20px] opacity-30"></span>
+      <div class="font-bold">
+        <span class="bg-[#E2B578] text-[#FFFFFF] px-[12px] py-[2px] rounded-[2px] mr-[20px] opacity-30"></span>
         <span>{{ item.name }}</span>
       </div>
       <div>
@@ -56,7 +55,10 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useThemeStore } from "@/stores/useTheme";
 
+const theme = useThemeStore();
+  
 const dataList = ref([{ name: 'Contract A', id: '1' }, { name: 'Contract B', id: '2' }, { name: 'Contract C', id: '3' }, { name: 'Contract D', id: '4' }, { name: 'Contract E', id: '5' }]);
 const clickVal = ref<string>();//点击的元素，即最开始要移动的元素（改变位置）
 const moveVal = ref<string>();//移动的元素
@@ -131,15 +133,21 @@ const cancelSkipBtn = (item: any) => {
     height: 62px;
     line-height: 62px;
     // color: #fff;
-    // background: #35322E;
+    background: #35322E;
     border-radius: 12px;
     // border: 1px solid #434343;
     padding-left: 20px;
     padding-right: 20px;
   }
 
-  .item.selected {
+  .item.selected, .item:hover {
     border: 1px solid #E2B578;
+  }
+}
+.white-css{
+  .item{
+    background-color: #F6F6F6;
+    border-color: #EBEBEB;
   }
 }
 
