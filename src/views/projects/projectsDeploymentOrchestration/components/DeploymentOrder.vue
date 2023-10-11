@@ -10,9 +10,10 @@
   </div>
 
   <div class="main">
-    <div class="flex justify-between item" :class="selectId == item.id ? 'selected' : ''"
-      v-for="(item, index) in dataList" :key="item.id" draggable="true" @click="selectContractId(item)"
-      @dragstart="dragstart(item)" @dragenter="dragenter(item)" @dragend="dragend(item)">
+    <div
+      class="flex justify-between item bg-[#FCFCFC] dark:bg-[#35322E] border-[#D2D2D2] border border-solid dark:border-[#434343] text-[#000000] dark:text-[#fff]"
+      :class="selectId == item.id ? 'selected' : ''" v-for="(item, index) in dataList" :key="item.id" draggable="true"
+      @click="selectContractId(item)" @dragstart="dragstart(item)" @dragenter="dragenter(item)" @dragend="dragend(item)">
       <div>
         <span class="font-bold bg-[#E2B578] color-[#FFFFFF] px-[8px] py-[2px] rounded-[2px] mr-[20px]">{{ index + 1
         }}</span>
@@ -129,10 +130,10 @@ const cancelSkipBtn = (item: any) => {
     text-align: center;
     height: 62px;
     line-height: 62px;
-    color: #fff;
-    background: #35322E;
+    // color: #fff;
+    // background: #35322E;
     border-radius: 12px;
-    border: 1px solid #434343;
+    // border: 1px solid #434343;
     padding-left: 20px;
     padding-right: 20px;
   }
