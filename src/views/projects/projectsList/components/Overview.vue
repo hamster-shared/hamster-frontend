@@ -665,7 +665,12 @@ const goContractDeploy = async (id: string, status: number) => {
   {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
-    router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
+    // 如果是evm生态走多链部署，其它生态保持原来
+    if(viewInfo.value.frameType==1){
+      router.push(`/projects/projectsDeploymentOrchestration?id=${id}`)
+    }else{
+      router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
+    }
     // router.push("/projects/" + id + "/artifacts-contract/" + status + "/deploy/00");
   }
   else if

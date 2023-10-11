@@ -43,7 +43,8 @@
               <a-menu-item v-if="projectType === '1' && frameType === 2" @click="getAptosBuild">
                 <a href="javascript:;" style="color:#151210">Build Setting</a>
               </a-menu-item>
-              <a-menu-item v-if="projectType === '1'" @click="deploySetting">
+              <!-- 只有evm系 开放多链部署入口 -->
+              <a-menu-item v-if="projectType === '1' && frameType === 1" @click="deploySetting">
                 <a href="javascript:;" style="color:#151210">Deploy Setting</a>
               </a-menu-item>
               <!-- 展示dfx生成弹框 -->
