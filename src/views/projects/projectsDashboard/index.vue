@@ -18,6 +18,7 @@
           </template>
 
           <template v-if="column.key === 'action'">
+            <!-- 单个合约id -->
             <a-button type="link" @click="goExplorer(record.id)">Explorer</a-button>
           </template>
         </template>
@@ -108,6 +109,7 @@ const splitDataSource = () => {
 
 const goExplorer = (id: string) => {
   console.log(id)
+  router.push(`/projects/projectDashboardExplorer?id=${id}`)
 }
 
 const initBreadCrumb = ()=>{
@@ -122,7 +124,7 @@ const initBreadCrumb = ()=>{
       path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
     },
     {
-      breadcrumbName: 'projectsDashboard',
+      breadcrumbName: 'Dashboard',
       path: ''
     },
   ]
