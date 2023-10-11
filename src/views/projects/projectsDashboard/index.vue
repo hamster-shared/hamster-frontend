@@ -12,7 +12,7 @@
           <template v-if="column.key === 'contractAddressMinData'">
             <div>
               <span>{{ record.contractAddressMinData }}</span>
-              <img @click="copyInfo(record.contractAddress)" src="@/assets/icons/copy.svg"
+              <img @click="copyToClipboard(record.contractAddress)" src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer ml-[8px]" />
             </div>
           </template>
@@ -30,9 +30,10 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+import { apiGetProjectsDetail } from '@/apis/projects'
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import { useThemeStore } from "@/stores/useTheme";
-import { apiGetProjectsDetail } from '@/apis/projects'
+import { copyToClipboard } from "@/utils/tool";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const versionvValue = ref('1')
@@ -46,8 +47,6 @@ const contractInfo = ref<any>()
 const changeContractVersion = (val: any) => {
   console.log('当前版本：' + val)
 }
-
-
 
 
 const columns = ref([{
@@ -104,22 +103,6 @@ const splitDataSource = () => {
       item.contractAddressMinData = item.contractAddress.substring(0, 6) + "..." + item.contractAddress.substring(item.contractAddress.length - 4)
     }
   })
-}
-
-
-const copyInfo = async (_items: any) => {
-  let OrderNumber = _items;
-  let newInput = document.createElement("input");
-  newInput.value = OrderNumber;
-  document.body.appendChild(newInput);
-  newInput.select();
-  try {
-    await document.execCommand('Copy') // 执行浏览器复制命令
-    newInput.remove();
-    message.success("copy success");
-  } catch {
-    message.error("copy failed");
-  }
 }
 
 
