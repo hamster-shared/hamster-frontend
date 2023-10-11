@@ -9,10 +9,11 @@
 
         <template #bodyCell="{ column, record }">
 
-          <template v-if="column.key === 'contractAddress'">
+          <template v-if="column.key === 'contractAddressMinData'">
             <div>
-              <span>{{ record.contractAddress }}</span>
-              <span>hh</span>
+              <span>{{ record.contractAddressMinData }}</span>
+              <img @click="copyInfo(record.contractAddress)" src="@/assets/icons/copy.svg"
+                class="h-[19px] cursor-pointer ml-[8px]" />
             </div>
           </template>
 
@@ -27,6 +28,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { message } from 'ant-design-vue';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
@@ -40,20 +42,7 @@ const changeContractVersion = (val: any) => {
 }
 
 
-const dataSource = ref([{
-  contract: 'Contract A',
-  version: '#1',
-  network: 'Ethereum/Goerli',
-  contractAddress: '哈哈',
-  timestamp: '嘻嘻',
-},
-{
-  contract: 'Contract B',
-  version: '#1',
-  network: 'Ethereum/Goerli',
-  contractAddress: '哈哈',
-  timestamp: '嘻嘻',
-},])
+
 
 const columns = ref([{
   title: 'Contract',
@@ -72,8 +61,8 @@ const columns = ref([{
 },
 {
   title: 'Contract Address',
-  dataIndex: 'contractAddress',
-  key: 'contractAddress',
+  dataIndex: 'contractAddressMinData',
+  key: 'contractAddressMinData',
 },
 {
   title: 'Timestamp',
@@ -87,12 +76,54 @@ const columns = ref([{
 },])
 
 
+const dataSource = ref([{
+  contract: 'Contract A',
+  version: '#1',
+  network: 'Ethereum/Goerli',
+  contractAddress: '0x5Baf67hgs88990stbnjs8ja3400',
+  timestamp: '嘻嘻',
+},
+{
+  contract: 'Contract B',
+  version: '#1',
+  network: 'Ethereum/Goerli',
+  contractAddress: '0x5Baf67hgs88990stbnjs8ja0',
+  timestamp: '嘻嘻',
+},])
+
+
+const splitDataSource = () => {
+  dataSource.value.map((item: any) => {
+    if (item.contractAddress) {
+      item.contractAddressMinData = item.contractAddress.substring(0, 6) + "..." + item.contractAddress.substring(item.contractAddress.length - 4)
+    }
+  })
+}
+
+
+const copyInfo = async (_items: any) => {
+  let OrderNumber = _items;
+  let newInput = document.createElement("input");
+  newInput.value = OrderNumber;
+  document.body.appendChild(newInput);
+  newInput.select();
+  try {
+    await document.execCommand('Copy') // 执行浏览器复制命令
+    newInput.remove();
+    message.success("copy success");
+  } catch {
+    message.error("copy failed");
+  }
+}
+
+
 const goExplorer = (id: string) => {
   console.log(id)
 }
 
 
 onMounted(async () => {
+  splitDataSource();
   // 导航栏
   breadCrumbInfo.value = [
     {
