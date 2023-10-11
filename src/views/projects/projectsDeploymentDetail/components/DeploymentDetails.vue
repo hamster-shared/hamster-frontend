@@ -6,7 +6,7 @@
         <a-button type="primary" ghost>Stop</a-button>
         <!-- <a-button type="primary" class="mx-[24px]">View Dashboard</a-button> -->
         <a-select ref="select" v-model:value="actionVal" class="w-[140px] !ml-[24px]"
-          :options="actionOptions">
+          :options="actionOptions" @select="goPage(actionVal)">
         </a-select>
       </div>
     </div>
@@ -47,12 +47,15 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
+const route = useRoute()
+const router = useRouter()
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -65,6 +68,15 @@ const deploymentList = ref<any>([
   {name: 'Contract B',id:'2',status:'Failed',content: '123'},
   {name: 'Contract C',id:'3',status:'Wait'},
 ]);
+
+const goPage = (val:string)=>{
+  console.log('goPage', val)
+  if(val=='Dashboard'){
+    router.push(`/projects/projectsDashboard?id=${route.query.id}`)
+  }else{
+    router.push(``)
+  }
+}
 </script>
 <style scoped lang="less">
 
