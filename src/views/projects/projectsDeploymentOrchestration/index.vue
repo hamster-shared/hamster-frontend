@@ -42,7 +42,7 @@
           </a-select>
           <div>
             <a-button>Connect Wallet</a-button>
-            <a-button>Deploy Now</a-button>
+            <a-button @click="deployManyContract">Deploy Now</a-button>
           </div>
         </div>
       </div>
@@ -55,6 +55,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
@@ -64,12 +65,17 @@ import UsingWalltModal from "./components/UsingWalltModal.vue";
 import CustomParamsmodal from "./components/CustomParamsmodal.vue";
 import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmodal.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
+import { apiGetProjectsDetail } from '@/apis/projects'
 const theme = useThemeStore();
 const value1 = ref<string>('1');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
 const versionList = ref(["1", "2", "3"]);
 const selectedId = ref('');
+const route = useRoute()
+const router = useRouter()
+// 合约信息对象
+const contractInfo = ref<any>()
 
 
 const changeChecked = (val: any) => {
@@ -80,25 +86,49 @@ const changeContractVersion = (val: any) => {
   console.log(val, 'version')
 }
 
-onMounted(async () => {
-  // 导航栏
+// 导航栏
+const initBreadCrumb = ()=>{
   breadCrumbInfo.value = [
     {
       breadcrumbName: 'Projects',
       path: '/projects'
     },
     {
-      breadcrumbName: 'projectsDeploymentOrchestration',
+      breadcrumbName: contractInfo.value.name,
+      path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
+    },
+    {
+      breadcrumbName: 'Deploy',
       path: ''
     },
   ]
-})
-
+}
 
 const selectContractId = (id: string) => {
   selectedId.value = id;
   console.log(id + 'id')
 }
+
+// 获取合约详情
+const getContactDetail = async()=>{
+  const res = await apiGetProjectsDetail(route.query.id)
+  if(res.code===200){
+    contractInfo.value = res.data
+    console.log('获取合约详情:',res)
+  }
+}
+
+const deployManyContract = async()=>{
+  // 部署调用代码
+
+  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
+}
+
+onMounted(async () => {
+  await getContactDetail()
+  initBreadCrumb()
+})
+
 </script>
 
 <style lang='less' scoped>
