@@ -74,7 +74,7 @@ const goPage = (val:string)=>{
   if(val=='Dashboard'){
     router.push(`/projects/projectsDashboard?id=${route.query.id}`)
   }else{
-    router.push(``)
+    router.push(`/projects/projectsDeploySeting?id=${route.query.id}`)
   }
 }
 </script>

@@ -31,7 +31,7 @@
     <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
     <div class="text-right">
       <a-button class="delete-btn w-[143px] mr-[20px] ">Delete</a-button>
-      <a-button class="w-[143px]">Save</a-button>
+      <a-button class="w-[143px]" @click="goBack">Save</a-button>
     </div>
 
   </div>
@@ -39,11 +39,19 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeploymentOrder from "../projectsDeploymentOrchestration/components/DeploymentOrder.vue";
 import ContractParams from '../projectsDeploymentOrchestration/components/ContractParams.vue';
 import InvokeContract from '../projectsDeploymentOrchestration/components/InvokeContract.vue';
-const breadCrumbInfo = ref([]);
+import { apiGetProjectsDetail } from '@/apis/projects'
+
+const route = useRoute()
+const router = useRouter()
+// 合约信息对象
+const contractInfo = ref<any>()
+
+const breadCrumbInfo = ref<any>([]);
 const selectedId = ref('');
 
 
@@ -51,6 +59,42 @@ const selectContractId = (id: string) => {
   selectedId.value = id;
   console.log(id + 'id')
 }
+
+const goBack = ()=>{
+  router.back()
+}
+
+// 获取合约详情
+const getContactDetail = async()=>{
+  const res = await apiGetProjectsDetail(route.query.id)
+  if(res.code===200){
+    contractInfo.value = res.data
+    console.log('获取合约详情:',res)
+  }
+}
+
+const initBreadCrumb = ()=>{
+  // 导航栏
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName: 'Projects',
+      path: '/projects'
+    },
+    {
+      breadcrumbName: contractInfo.value.name,
+      path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
+    },
+    {
+      breadcrumbName: 'Deploy Setting',
+      path: ''
+    },
+  ]
+}
+
+onMounted(async()=>{
+  await getContactDetail()
+  initBreadCrumb()
+})
 
 </script>
 

@@ -433,7 +433,7 @@ const getAptosBuild = async () => {
 
 // 查看合约部署信息入口，数据回填
 const deploySetting = ()=>{
-  router.push(`/projects/projectsDeploymentOrchestration?id=${detailId.value}`)
+  router.push(`/projects/projectsDeploySeting?id=${detailId.value}`)
 }
 
 // 保存/更新 dfx.json
