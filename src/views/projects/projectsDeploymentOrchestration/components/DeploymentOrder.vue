@@ -19,7 +19,7 @@
         <span>{{ item.name }}</span>
       </div>
       <div>
-        <a-popover trigger="click" placement="left">
+        <a-popover trigger="hover" placement="left">
           <template #content>
             <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="deployBtn(item)">Do Not Deploy</div>
             <div class="cursor-pointer hover:text-[#E2B578]" @click="duplicateBtn(item)">Duplicate</div>
