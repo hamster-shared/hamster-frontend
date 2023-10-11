@@ -2,38 +2,40 @@
   <div>
     <bread-crumb :routes="breadCrumbInfo" />
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
-      <div class="text-[28px] font-bold mb-[10px]">Deployment Orchestration</div>
-      <div class="text-[16px] text-[#E0DBD2]">Automate multi-contract deployment through presetvdeployment sequence and
-        logic</div>
-      <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
-    </div>
-    <div class="grid grid-cols-2 gap-8">
       <div>
-        <DeploymentOrder @selectContractId="selectContractId"></DeploymentOrder>
+        <div class="text-[28px] font-bold mb-[10px]">Deployment Orchestration</div>
+        <div class="text-[16px] text-[#E0DBD2]">Automate multi-contract deployment through presetvdeployment sequence and
+          logic</div>
+        <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
       </div>
-
-      <div>
-        <ContractParams :selectedId="selectedId"></ContractParams>
-        <InvokeContract></InvokeContract>
+      <div class="grid grid-cols-2 gap-8">
         <div>
-          <div class="flex justify-between mt-[30px]">
-            <div class="text-[24px] font-bold">Proxy Contract</div>
-            <a-switch v-model:checked="checked" @change="changeChecked" />
-          </div>
+          <DeploymentOrder @selectContractId="selectContractId"></DeploymentOrder>
+        </div>
 
-          <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Automatically call contract methods post-deployment,
-            including its
-            own init method or other contracts' methods</div>
+        <div>
+          <ContractParams :selectedId="selectedId"></ContractParams>
+          <InvokeContract></InvokeContract>
+          <div>
+            <div class="flex justify-between mt-[30px]">
+              <div class="text-[24px] font-bold">Proxy Contract</div>
+              <a-switch v-model:checked="checked" @change="changeChecked" />
+            </div>
+
+            <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Automatically call contract methods post-deployment,
+              including its
+              own init method or other contracts' methods</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
-    <div class="text-right">
-      <a-button class="delete-btn w-[143px] mr-[20px] ">Delete</a-button>
-      <a-button class="w-[143px]" @click="goBack">Save</a-button>
+      <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
+      <div class="text-right">
+        <a-button :class="theme.themeValue === 'dark' ? 'dark-btn' : 'white-btn'"
+          class="delete-btn w-[143px] mr-[20px] bg-[#ffffff] dark:bg-[#1D1C1A]">Delete</a-button>
+        <a-button class="w-[143px]" @click="goBack">Save</a-button>
+      </div>
     </div>
-
   </div>
 </template>
 
@@ -41,18 +43,19 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
-import DeploymentOrder from "../projectsDeploymentOrchestration/components/DeploymentOrder.vue";
-import ContractParams from '../projectsDeploymentOrchestration/components/ContractParams.vue';
-import InvokeContract from '../projectsDeploymentOrchestration/components/InvokeContract.vue';
+import { useThemeStore } from "@/stores/useTheme";
+import DeploymentOrder from "@/views/projects/projectsDeploymentOrchestration/components/DeploymentOrder.vue";
+import ContractParams from '@/views/projects/projectsDeploymentOrchestration/components/ContractParams.vue';
+import InvokeContract from '@/views/projects/projectsDeploymentOrchestration/components/InvokeContract.vue';
 import { apiGetProjectsDetail } from '@/apis/projects'
-
+const theme = useThemeStore();
+const breadCrumbInfo = ref<any>([]);
+const selectedId = ref('');
+const checked = ref(false)
 const route = useRoute()
 const router = useRouter()
 // 合约信息对象
 const contractInfo = ref<any>()
-
-const breadCrumbInfo = ref<any>([]);
-const selectedId = ref('');
 
 
 const selectContractId = (id: string) => {
@@ -61,6 +64,7 @@ const selectContractId = (id: string) => {
 }
 
 const goBack = ()=>{
+  // 这一步还需具体确认
   router.back()
 }
 
@@ -101,8 +105,48 @@ onMounted(async()=>{
 <style lang="less" scoped>
 .ant-btn {
   height: 43px;
-
 }
 
-.delete-btn {}
+.dark-btn {
+  background-color: #1D1C1A;
+  color: #E2B578;
+}
+
+.dark-btn:hover {
+  background-color: #1D1C1A;
+}
+
+.dark-btn:focus {
+  background-color: #1D1C1A;
+}
+
+.white-btn {
+  background-color: #FFFFFF;
+  color: #E2B578;
+}
+
+.white-btn:hover {
+  background-color: #FFFFFF;
+}
+
+.white-btn:focus {
+  background-color: #FFFFFF;
+}
+
+.ant-switch {
+  background-color: #f0f0f0;
+
+  &.ant-switch-checked {
+    background-color: #E2B578;
+
+    &:hover {
+      box-shadow: 0 0 0 2px #E2B578;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px #E2B578;
+    }
+  }
+
+}
 </style>

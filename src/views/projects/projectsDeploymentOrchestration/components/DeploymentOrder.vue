@@ -135,7 +135,7 @@ const cancelSkipBtn = (item: any) => {
     // color: #fff;
     background: #35322E;
     border-radius: 12px;
-    border: 1px solid #434343;
+    // border: 1px solid #434343;
     padding-left: 20px;
     padding-right: 20px;
   }
