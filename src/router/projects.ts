@@ -112,6 +112,11 @@ const projectsRoute = [
         path: '/projects/projectDashboardExplorer',
         name: "projectDashboardExplorer",
         component: () => import('@/views/projects/projectDashboardExplorer/index.vue'),
+      },
+      {
+        path: '/projects/projectsDeploySeting',
+        name: "projectsDeploySeting",
+        component: () => import('@/views/projects/projectsDeploySeting/index.vue'),
       }
     ]
   }
