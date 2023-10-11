@@ -12,7 +12,7 @@
           <template v-if="column.key === 'contractAddressMinData'">
             <div>
               <span>{{ record.contractAddressMinData }}</span>
-              <img @click="copyInfo(record.contractAddress)" src="@/assets/icons/copy.svg"
+              <img @click="copyToClipboard(record.contractAddress)" src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer ml-[8px]" />
             </div>
           </template>
@@ -28,20 +28,25 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
+import { apiGetProjectsDetail } from '@/apis/projects'
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import { useThemeStore } from "@/stores/useTheme";
+import { copyToClipboard } from "@/utils/tool";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const versionvValue = ref('1')
 const versionList = ref(['1', '2', '3']);
+const route = useRoute()
+const router = useRouter()
+// 合约信息对象
+const contractInfo = ref<any>()
 
 
 const changeContractVersion = (val: any) => {
   console.log('当前版本：' + val)
 }
-
-
 
 
 const columns = ref([{
@@ -101,29 +106,11 @@ const splitDataSource = () => {
 }
 
 
-const copyInfo = async (_items: any) => {
-  let OrderNumber = _items;
-  let newInput = document.createElement("input");
-  newInput.value = OrderNumber;
-  document.body.appendChild(newInput);
-  newInput.select();
-  try {
-    await document.execCommand('Copy') // 执行浏览器复制命令
-    newInput.remove();
-    message.success("copy success");
-  } catch {
-    message.error("copy failed");
-  }
-}
-
-
 const goExplorer = (id: string) => {
   console.log(id)
 }
 
-
-onMounted(async () => {
-  splitDataSource();
+const initBreadCrumb = ()=>{
   // 导航栏
   breadCrumbInfo.value = [
     {
@@ -131,10 +118,29 @@ onMounted(async () => {
       path: '/projects'
     },
     {
+      breadcrumbName: contractInfo.value.name,
+      path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
+    },
+    {
       breadcrumbName: 'projectsDashboard',
       path: ''
     },
   ]
+}
+
+// 获取合约详情
+const getContactDetail = async()=>{
+  const res = await apiGetProjectsDetail(route.query.id)
+  if(res.code===200){
+    contractInfo.value = res.data
+    console.log('获取合约详情:',res)
+  }
+}
+
+onMounted(async () => {
+  splitDataSource();
+  await getContactDetail()
+  initBreadCrumb()
 })
 </script>
 
