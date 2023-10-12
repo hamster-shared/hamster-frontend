@@ -4,7 +4,8 @@
     <DeployVersionInfomation />
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="text-[28px] font-bold mb-[10px]">Deployment Orchestration</div>
-      <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automate multi-contract deployment through presetvdeployment sequence and
+      <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automate multi-contract deployment through
+        presetvdeployment sequence and
         logic</div>
       <!-- line -->
       <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
@@ -23,7 +24,8 @@
               <a-switch v-model:checked="checked" @change="changeChecked" />
             </div>
 
-            <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment,
+            <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods
+              post-deployment,
               including its
               own init method or other contracts' methods</div>
           </div>
@@ -38,10 +40,10 @@
         </div>
         <div class="flex justify-between">
           <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
-            :options="versionList.map(item => ({ value: item }))">
+            :options="networkListData.map(item => ({ value: item.name }))">
           </a-select>
           <div>
-            <a-button>Connect Wallet</a-button>
+            <a-button @click="connectWallet">Connect Wallet</a-button>
             <a-button @click="deployManyContract">Deploy Now</a-button>
           </div>
         </div>
@@ -51,6 +53,7 @@
   <!-- <UsingWalltModal /> -->
   <!-- <CustomParamsmodal /> -->
   <!-- <DeploymentOrchestrationmodal /> -->
+  <!-- <Wallets ref="showWallets"></Wallets> -->
 </template>
 
 <script setup lang="ts">
@@ -64,18 +67,23 @@ import InvokeContract from './components/InvokeContract.vue';
 import UsingWalltModal from "./components/UsingWalltModal.vue";
 import CustomParamsmodal from "./components/CustomParamsmodal.vue";
 import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmodal.vue";
+import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 const theme = useThemeStore();
-const value1 = ref<string>('1');
+const value1 = ref<string>('Ethereum/Mainnet');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
 const versionList = ref(["1", "2", "3"]);
 const selectedId = ref('');
 const route = useRoute()
 const router = useRouter()
+const showWallets = ref();
 // 合约信息对象
 const contractInfo = ref<any>()
+
+const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
+
 
 
 const changeChecked = (val: any) => {
@@ -87,7 +95,7 @@ const changeContractVersion = (val: any) => {
 }
 
 // 导航栏
-const initBreadCrumb = ()=>{
+const initBreadCrumb = () => {
   breadCrumbInfo.value = [
     {
       breadcrumbName: 'Projects',
@@ -110,18 +118,28 @@ const selectContractId = (id: string) => {
 }
 
 // 获取合约详情
-const getContactDetail = async()=>{
+const getContactDetail = async () => {
   const res = await apiGetProjectsDetail(route.query.id)
-  if(res.code===200){
+  if (res.code === 200) {
     contractInfo.value = res.data
-    console.log('获取合约详情:',res)
+    console.log('获取合约详情:', res)
   }
 }
 
-const deployManyContract = async()=>{
+const deployManyContract = async () => {
   // 部署调用代码
 
   router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
+}
+
+
+const connectWallet = () => {
+  // const walletAccount = window.localStorage.getItem("walletAccount");
+  // if (walletAccount === undefined || walletAccount === null) {
+  //   showWallets.value?.onClickConnect();
+  // } else{
+  // 
+  // }
 }
 
 onMounted(async () => {
