@@ -33,7 +33,7 @@
       <div class="text-right">
         <a-button :class="theme.themeValue === 'dark' ? 'dark-btn' : 'white-btn'"
           class="delete-btn w-[143px] mr-[20px] bg-[#ffffff] dark:bg-[#1D1C1A]">Delete</a-button>
-        <a-button class="w-[143px]">Save</a-button>
+        <a-button class="w-[143px]" @click="goBack">Save</a-button>
       </div>
     </div>
   </div>
@@ -41,15 +41,21 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrder from "@/views/projects/projectsDeploymentOrchestration/components/DeploymentOrder.vue";
 import ContractParams from '@/views/projects/projectsDeploymentOrchestration/components/ContractParams.vue';
 import InvokeContract from '@/views/projects/projectsDeploymentOrchestration/components/InvokeContract.vue';
+import { apiGetProjectsDetail } from '@/apis/projects'
 const theme = useThemeStore();
-const breadCrumbInfo = ref([]);
+const breadCrumbInfo = ref<any>([]);
 const selectedId = ref('');
-const checked = ref(false);
+const checked = ref(false)
+const route = useRoute()
+const router = useRouter()
+// 合约信息对象
+const contractInfo = ref<any>()
 
 
 const selectContractId = (id: string) => {
@@ -57,9 +63,42 @@ const selectContractId = (id: string) => {
   console.log(id + 'id')
 }
 
-const changeContractVersion = (val: any) => {
-  console.log(val, 'version')
+const goBack = ()=>{
+  // 这一步还需具体确认
+  router.back()
 }
+
+// 获取合约详情
+const getContactDetail = async()=>{
+  const res = await apiGetProjectsDetail(route.query.id)
+  if(res.code===200){
+    contractInfo.value = res.data
+    console.log('获取合约详情:',res)
+  }
+}
+
+const initBreadCrumb = ()=>{
+  // 导航栏
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName: 'Projects',
+      path: '/projects'
+    },
+    {
+      breadcrumbName: contractInfo.value.name,
+      path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
+    },
+    {
+      breadcrumbName: 'Deploy Setting',
+      path: ''
+    },
+  ]
+}
+
+onMounted(async()=>{
+  await getContactDetail()
+  initBreadCrumb()
+})
 
 </script>
 
