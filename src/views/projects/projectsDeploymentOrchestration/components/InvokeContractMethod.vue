@@ -1,7 +1,7 @@
 <template>
   <div class="mb-[30px]">
     <div class="text-[24px] font-bold">Invoke Contract Method</div>
-    <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
+    <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
       own init method or other contracts' methods
     </div>
     <div class="border border-solid border-[#6C6C6C] rounded-[12px] p-[20px]">
