@@ -78,6 +78,14 @@ export const ChainList: Chain[] = [
         blockExplorerUrl: "https://testnet.bscscan.com"
     },
     {
+        category: "BNB Smart Chain",
+        id: "0x15E0",
+        name: "Greenfield Mekong Testnet",
+        rpcUrl: "https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org",
+        symbol: "tBNB",
+        blockExplorerUrl: "https://greenfieldscan.com/",
+    },
+    {
         category: "Arbitrum",
         id: "0xa4b1",
         name: "Arbitrum One",
