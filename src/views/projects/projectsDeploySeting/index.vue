@@ -4,7 +4,7 @@
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div>
         <div class="text-[28px] font-bold mb-[10px]">Deployment Orchestration</div>
-        <div class="text-[16px] text-[#E0DBD2]">Automate multi-contract deployment through presetvdeployment sequence and
+        <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automate multi-contract deployment through presetvdeployment sequence and
           logic</div>
         <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
       </div>
@@ -22,7 +22,7 @@
               <a-switch v-model:checked="checked" @change="changeChecked" />
             </div>
 
-            <div class="mb-[20px] text-[16px] text-[#E0DBD2]">Automatically call contract methods post-deployment,
+            <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment,
               including its
               own init method or other contracts' methods</div>
           </div>
