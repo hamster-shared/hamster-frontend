@@ -31,8 +31,9 @@
 
       <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
       <div class="text-right">
-        <a-button :class="theme.themeValue === 'dark' ? 'dark-btn' : 'white-btn'"
-          class="delete-btn w-[143px] mr-[20px] bg-[#ffffff] dark:bg-[#1D1C1A]">Delete</a-button>
+        <!-- 经产品确认没有删除 -->
+        <!-- <a-button :class="theme.themeValue === 'dark' ? 'dark-btn' : 'white-btn'"
+          class="delete-btn w-[143px] mr-[20px] bg-[#ffffff] dark:bg-[#1D1C1A]">Delete</a-button> -->
         <a-button class="w-[143px]" @click="goBack">Save</a-button>
       </div>
     </div>

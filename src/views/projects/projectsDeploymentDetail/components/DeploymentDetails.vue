@@ -44,6 +44,7 @@
         </a-collapse-panel>
       </a-collapse>
   </div>
+  <DeploymentOrchestrationmodal v-if="showOrchestrationInfo"/>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
@@ -51,11 +52,14 @@ import { useRoute, useRouter } from 'vue-router';
 import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
+import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const route = useRoute()
 const router = useRouter()
+// 展示部署信息弹框
+const showOrchestrationInfo = ref(false)
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -74,7 +78,8 @@ const goPage = (val:string)=>{
   if(val=='Dashboard'){
     router.push(`/projects/projectsDashboard?id=${route.query.id}`)
   }else{
-    router.push(`/projects/projectsDeploySeting?id=${route.query.id}`)
+    showOrchestrationInfo.value = true
+    // router.push(`/projects/projectsDeploySeting?id=${route.query.id}`)
   }
 }
 </script>
