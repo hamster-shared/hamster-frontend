@@ -107,31 +107,21 @@ onMounted(async()=>{
   height: 43px;
 }
 
-.dark-btn {
-  background-color: #1D1C1A;
-  color: #E2B578;
+// rgba(226, 181, 120, 0.2)
+.ant-btn:hover {
+  background-color: rgba(226, 181, 120, 0.2)
 }
 
-.dark-btn:hover {
-  background-color: #1D1C1A;
+.ant-btn:focus {
+  background-color: rgba(226, 181, 120, 0.2)
 }
 
-.dark-btn:focus {
-  background-color: #1D1C1A;
-}
 
 .white-btn {
   background-color: #FFFFFF;
   color: #E2B578;
 }
 
-.white-btn:hover {
-  background-color: #FFFFFF;
-}
-
-.white-btn:focus {
-  background-color: #FFFFFF;
-}
 
 .ant-switch {
   background-color: #f0f0f0;
