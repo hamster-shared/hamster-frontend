@@ -19,7 +19,7 @@
 
           <template v-if="column.key === 'action'">
             <!-- 单个合约id -->
-            <a-button type="link" @click="goExplorer(record.id)">Explorer</a-button>
+            <a-button type="link" @click="goExplorer(record.contractId)">Explorer</a-button>
           </template>
         </template>
       </a-table>
@@ -35,10 +35,12 @@ import { apiGetProjectsDetail } from '@/apis/projects'
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { copyToClipboard } from "@/utils/tool";
+import { apiGetExecuteInfoList } from '@/apis/contractOrchestrationDeploy'
+import { apiGetProjectsVersions } from "@/apis/workFlows";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const versionvValue = ref('1')
-const versionList = ref(['1', '2', '3']);
+const versionList = ref<any>([]);
 const route = useRoute()
 const router = useRouter()
 // 合约信息对象
@@ -59,21 +61,23 @@ const columns = ref([{
   title: 'Version',
   dataIndex: 'version',
   key: 'version',
+  customRender: ({ text }) => `#${text}`,
 },
 {
   title: 'Network',
   dataIndex: 'network',
   key: 'network',
+
 },
 {
   title: 'Contract Address',
-  dataIndex: 'contractAddressMinData',
+  dataIndex: 'address',
   key: 'contractAddressMinData',
 },
 {
   title: 'Timestamp',
-  dataIndex: 'timestamp',
-  key: 'timestamp',
+  dataIndex: 'deployTime',
+  key: 'deployTime',
 },
 {
   title: 'Action',
@@ -82,26 +86,13 @@ const columns = ref([{
 },])
 
 
-const dataSource = ref([{
-  contract: 'Contract A',
-  version: '#1',
-  network: 'Ethereum/Goerli',
-  contractAddress: '0x5Baf67hgs88990stbnjs8ja3400',
-  timestamp: '嘻嘻',
-},
-{
-  contract: 'Contract B',
-  version: '#1',
-  network: 'Ethereum/Goerli',
-  contractAddress: '0x5Baf67hgs88990stbnjs8ja0',
-  timestamp: '嘻嘻',
-},])
+const dataSource = ref<any>([])
 
 
 const splitDataSource = () => {
   dataSource.value.map((item: any) => {
-    if (item.contractAddress) {
-      item.contractAddressMinData = item.contractAddress.substring(0, 6) + "..." + item.contractAddress.substring(item.contractAddress.length - 4)
+    if (item.address) {
+      item.contractAddressMinData = item.address.substring(0, 6) + "..." + item.address.substring(item.address.length - 4)
     }
   })
 }
@@ -139,7 +130,29 @@ const getContactDetail = async()=>{
   }
 }
 
+// 获取列表
+const getList = async()=>{
+  const res = await apiGetExecuteInfoList(route.query.id,versionvValue.value)
+  try {
+    dataSource.value = res.data
+  } catch (error:any) {
+    message.error(error)
+  }
+}
+
+// 获取版本号
+const getProjectsVersion = async () => {
+  try {
+    const { data } = await apiGetProjectsVersions({id: route.query.id});
+    versionList.value = data
+  } catch (error: any) {
+    console.log("erro:", error)
+  }
+};
+
 onMounted(async () => {
+  await getProjectsVersion()
+  await getList()
   splitDataSource();
   await getContactDetail()
   initBreadCrumb()
