@@ -1,7 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <bread-crumb :routes="breadCrumbInfo" />
-    <DeployVersionInfomation />
+    <DeployVersionInfomation ref="baseInfo" :versionList="versionList" :name="contractInfo.name"/>
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="text-[28px] font-bold mb-[10px]">Deployment Orchestration</div>
       <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automate multi-contract deployment through
@@ -12,7 +12,7 @@
       <div class="grid grid-cols-2 gap-8">
         <!-- left -->
         <div>
-          <DeploymentOrder @selectContractId="selectContractId"></DeploymentOrder>
+          <DeploymentOrder v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"></DeploymentOrder>
         </div>
         <!-- right -->
         <div>
@@ -70,17 +70,21 @@ import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmo
 import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
+import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
 const theme = useThemeStore();
 const value1 = ref<string>('Ethereum/Mainnet');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
-const versionList = ref(["1", "2", "3"]);
+const versionList = ref();
 const selectedId = ref('');
 const route = useRoute()
 const router = useRouter()
 const showWallets = ref();
 // 合约信息对象
-const contractInfo = ref<any>()
+const contractInfo = ref<any>({})
+// 待编排部署的合约
+const contractOrchestration = ref<any>([])
+const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
@@ -117,12 +121,33 @@ const selectContractId = (id: string) => {
   console.log(id + 'id')
 }
 
+// 获取版本号
+const getProjectsVersion = async () => {
+  try {
+    const { data } = await apiGetProjectsVersions({id: route.query.id});
+    versionList.value = data
+  } catch (error: any) {
+    console.log("erro:", error)
+  }
+};
+
+// 获取可编排的合约
+const getProjectsContractName = async () => {
+  try {
+    const { data } = await apiGetProjectsContract({ id: route.query.id, version: baseInfo.value.selectedVersion });
+    contractOrchestration.value = data
+    console.log('获取可编排的合约:',contractOrchestration.value)
+  } catch (error: any) {
+    console.log("erro:", error)
+  }
+};
+
 // 获取合约详情
 const getContactDetail = async () => {
   const res = await apiGetProjectsDetail(route.query.id)
   if (res.code === 200) {
     contractInfo.value = res.data
-    console.log('获取合约详情:', res)
+    console.log('获取合约详情:', res.data)
   }
 }
 
@@ -144,6 +169,8 @@ const connectWallet = () => {
 
 onMounted(async () => {
   await getContactDetail()
+  getProjectsVersion()
+  getProjectsContractName()
   initBreadCrumb()
 })
 

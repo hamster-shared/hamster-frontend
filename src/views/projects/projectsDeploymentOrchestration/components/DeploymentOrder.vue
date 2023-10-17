@@ -54,16 +54,27 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, toRefs, onMounted, nextTick } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 
 const theme = useThemeStore();
   
-const dataList = ref([{ name: 'Contract A', id: '1' }, { name: 'Contract B', id: '2' }, { name: 'Contract C', id: '3' }, { name: 'Contract D', id: '4' }, { name: 'Contract E', id: '5' }]);
+const dataList = ref<any>([]);
 const clickVal = ref<string>();//点击的元素，即最开始要移动的元素（改变位置）
 const moveVal = ref<string>();//移动的元素
 const endVal = ref<string>();//落点的元素
 
+const props = defineProps({
+  contractOrchestration:{
+    type:Array,
+    default:()=>[]
+  }
+})
+
+const { contractOrchestration } = toRefs(props)
+nextTick(()=>{
+  dataList.value = contractOrchestration.value
+})
 
 const selectId = ref();
 const duplicateDataList = ref([]);
@@ -117,7 +128,9 @@ const cancelSkipBtn = (item: any) => {
   dataList.value.push(item)
 }
 
-
+onMounted(()=>{
+  
+})
 </script>
 <style scoped lang="less">
 .main {
