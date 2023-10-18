@@ -4,21 +4,23 @@
     <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
     <div v-if="selectedId">
-      <a-form ref="formRef" :rules="formRules" :model="dynamicValidateForm" layout="vertical">
-        <a-form-item :name="dynamicValidateForm.param1" label="param1">
-          <a-select v-model:value="dynamicValidateForm.param1" @change="changeParams" style="width: 45%;margin-right:5%"
-            placeholder="Select project contract" :options="paramList.map(item => ({ value: item }))">
-          </a-select>
-          <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
-          <a-select v-model:value="dynamicValidateForm.address" @change="changeParams" style="width: 50%"
-            placeholder="Contract Address" :options="paramList.map(item => ({ value: item }))">
-          </a-select>
-        </a-form-item>
-        <a-form-item label="param2" name="param2">
-          <a-input v-model:value="dynamicValidateForm.param2" placeholder="Please enter a value for string" allow-clear />
-        </a-form-item>
-        <a-form-item label="param3" name="param3">
-          <a-input v-model:value="dynamicValidateForm.param3" placeholder="Please enter a value for unit64" allow-clear />
+      <a-form ref="formRef" :rules="formRules" :model="formData" layout="vertical">
+        <div class="grid grid-cols-2 gap-4">
+          <a-form-item :name="formData.param1" label="param1" :rules="[{ required: true }]" >
+            <a-select v-model:value="formData.param1" 
+              placeholder="Select project contract" :options="paramList">
+            </a-select>
+          </a-form-item>
+          <a-form-item class="form-noLabel" :name="formData.address" :rules="[{ required: true }]">
+            <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
+            <a-select v-if="formData.param1 == 1" v-model:value="formData.address" 
+              placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.id, label:item.name }))">
+            </a-select>
+            <a-input v-else v-model:value="formData.address" placeholder="Please input address" allowClear />
+          </a-form-item>  
+        </div>
+        <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" v-for="(item, key) in inputData" :key="key">
+          <a-input v-model:value="formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
         </a-form-item>
       </a-form>
     </div>
@@ -31,26 +33,23 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, toRefs } from "vue";
-import type { FormInstance } from 'ant-design-vue';
-const formRef = ref<FormInstance>();
-const dynamicValidateForm = reactive({
-  param1: '',
-  address: '',
-  param2: '',
-  param3: '',
-});
 
 const props = defineProps({
   selectedId: String,
+  inputData: Array as any,
+  formData: Object as any,
+  contractOrchestration:{
+    type:Array as any,
+    default:()=>[]
+  }
 });
 
-const { selectedId } = toRefs(props);
+const { selectedId, inputData, formData, contractOrchestration } = toRefs(props);
 
-const paramList = ref(['1', '2', '3'])
-
-const labelColData = reactive({
-  labelCol: { span: 3, offset: 12 }
-})
+const paramList = ref([
+  {label: 'Select project contract', value: 1},
+  {label: 'Manual input', value: 2},
+])
 
 const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
@@ -61,9 +60,6 @@ const formRules = computed(() => {
   };
 });
 
-const changeParams = () => {
-
-}
 </script>
 
 <style scoped lang="less"></style>
