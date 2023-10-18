@@ -2,9 +2,9 @@ export interface Chain{
     category: string,
     id: string,
     name: string,
-    rpcUrl: string | undefined,
+    rpcUrl: string,
     symbol: string | undefined,
-    blockExplorerUrl: string | undefined
+    blockExplorerUrl: string
 }
 
 export interface ChainCategory {
@@ -19,7 +19,7 @@ export const ChainList: Chain[] = [
         name: "Ethereum Mainnet",
         rpcUrl: "https://rpc.ankr.com/eth",
         symbol: "ETH",
-        blockExplorerUrl: undefined
+        blockExplorerUrl: "https://etherscan.io/"
     },
     {
         category: "Ethereum",
@@ -27,7 +27,7 @@ export const ChainList: Chain[] = [
         name: "Goerli",
         rpcUrl: "https://rpc.ankr.com/eth_goerli",
         symbol: "ETH",
-        blockExplorerUrl: undefined
+        blockExplorerUrl: "https://goerli.etherscan.io"
     },
     {
         category: "Ethereum",
@@ -35,7 +35,7 @@ export const ChainList: Chain[] = [
         name: "Sepolia",
         rpcUrl: "https://rpc.sepolia.org",
         symbol: "ETH",
-        blockExplorerUrl: undefined
+        blockExplorerUrl: "https://sepolia.etherscan.io"
     },
     {
         category: "Ethereum",
@@ -43,7 +43,7 @@ export const ChainList: Chain[] = [
         name: "Hamster",
         rpcUrl: "https://rpc-moonbeam.hamster.newtouch.com",
         symbol: "HM",
-        blockExplorerUrl: undefined
+        blockExplorerUrl: ""
     },
     {
         category: "Polygon",
@@ -79,27 +79,27 @@ export const ChainList: Chain[] = [
     },
     {
         category: "BNB Smart Chain",
-        id: "0x15E0",
+        id: "0x15e0",
         name: "Greenfield Mekong Testnet",
         rpcUrl: "https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org",
         symbol: "tBNB",
-        blockExplorerUrl: "https://greenfieldscan.com/",
+        blockExplorerUrl: "https://greenfieldscan.com",
     },
     {
         category: "BNB Smart Chain",
-        id: "0x15EB",
+        id: "0x15eb",
         name: "opBNB Testnet",
         rpcUrl: "https://opbnb-testnet-rpc.bnbchain.org",
         symbol: "tBNB",
-        blockExplorerUrl: "http://testnet.opbnbscan.com/",
+        blockExplorerUrl: "http://testnet.opbnbscan.com",
     },
     {
         category: "BNB Smart Chain",
-        id: "0xCC",
+        id: "0xcc",
         name: "opBNB Mainnet",
         rpcUrl: "http://opbnbscan.com/",
         symbol: "BNB",
-        blockExplorerUrl: "http://opbnbscan.com/",
+        blockExplorerUrl: "http://opbnbscan.com",
     },
     {
         category: "Arbitrum",

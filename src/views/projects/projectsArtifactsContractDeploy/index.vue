@@ -436,20 +436,20 @@ const addToChain = (chainId: string) => {
     method: "wallet_addEthereumChain",
     params: [
       {
-        chainId: chain.id,
-        chainName: chain.name,
-        rpcUrls: [chain.rpcUrl],
-        nativeCurrency: {
-          name: chain.symbol,
-          symbol: chain.symbol,
-            decimals: 18
-        },
-          blockExplorerUrls: [chain.blockExplorerUrl]
+        "chainId": chain.id,
+        "chainName": chain.name,
+        "rpcUrls": [chain.rpcUrl],
+        // "blockExplorerUrls":  [chain.blockExplorerUrl],
+        "nativeCurrency": {
+          "name": chain.symbol,
+          "symbol": chain.symbol,
+            "decimals": 18
+        }
       },
     ],
   }).then((res: any) => {
     message.info('successfully added')
-    // console.log(res)
+    console.log(res)
   }).catch((err: any) => {
     console.log(err.code, 'code')
     if (err.code === 4001) {
@@ -457,6 +457,7 @@ const addToChain = (chainId: string) => {
     } else {
       message.info('faild')
     }
+    console.log(err)
   }).finally(() => {
     loading.value = false;
     message.success('success')
@@ -509,7 +510,6 @@ const handleAptosNetwork = () => {
 // aptos petra
 const deploy = () => {
   aptosWallet.connect("Petra").then(async () => {
-    // debugger
     petraAddress.value = aptosWallet.account.address
     console.log('petra connected', aptosWallet.network, formState.network)
     aptosNetwork.value = aptosWallet.network.name;
