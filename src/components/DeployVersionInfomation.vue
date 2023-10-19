@@ -8,25 +8,28 @@
     </div>
     <div class="mt-[32px] mb-[20px]">Contract Version</div>
     <a-select ref="select" v-model:value="selectedVersion" style="width: 50%"
-      :options="versionList.map(item => ({ value: item }))">
+      :options="versionList.map(item => ({ value: item }))" @select="getSourceInfo">
     </a-select>
     <div class="text-[16px] font-bold mt-[30px] mb-[20px]">Source Info</div>
     <div class="text-[14px]">
       <img src="@/assets/images/link.png" class="h-[17px] mr-[10px] hidden dark:inline-block" />
       <img src="@/assets/images/link-white.png" class="h-[17px] mr-[10px] dark:hidden" />
-      https://github.com/hamster-shared/hamster.git/main
+      {{info.url}}
     </div>
     <div class="mt-[10px] text-[14px]">
       <img src="@/assets/images/info.png" class="h-[17px] mr-[10px] hidden dark:inline-block" />
       <img src="@/assets/images/info-white.png" class="h-[17px] mr-[10px] dark:hidden" />
-      3f433f6 | commit on Nov 3, 2022 | upgrade go version
+      {{info.codeInfo}}
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, toRefs } from "vue";
+import { ref, toRefs, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { apiSourceInfo } from '@/apis/contractOrchestrationDeploy'
+import { message } from "ant-design-vue";
 const selectedVersion = ref<string>('1');
 const props = defineProps({
   versionList:{
@@ -36,14 +39,33 @@ const props = defineProps({
   name:{
     type:String,
     defalut:''
+  },
+  id:{
+    type:String,
+    default:''
   }
 })
-const { versionList, name } = toRefs(props)
-const changeChecked = (val: any) => {
-  console.log(val, 'switch')
-}
+const { versionList, name, id } = toRefs(props)
+const route = useRoute()
+const info = ref<any>({})
+
 defineExpose({
   selectedVersion,
+})
+
+// 获取头部信息
+const getSourceInfo = async()=>{
+  try {
+    const res = await apiSourceInfo(route.query.id, selectedVersion.value)
+    console.log('获取头部信息:',res)
+    info.value = res.data
+  } catch (error:any) {
+    message.error(error)
+  }
+}
+
+onMounted(()=>{
+  getSourceInfo()
 })
 
 </script>
