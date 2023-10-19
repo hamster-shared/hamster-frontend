@@ -7,7 +7,7 @@
       </template>
       <div>
         <a-form class="modal-form" :model="formData" ref="formRef" :rules="formRules" layout="vertical">
-          <a-form-item name="Contract A.init">
+          <!-- <a-form-item name="Contract A.init"> -->
             <div class="text-[18px] text-[#151210] font-bold mt-[32px] mb-[20px]">Contract A.init</div>
             <a-input-group>
               <a-row :gutter="8" v-for="item in formData.secretArr" class="mt-[5px]">
@@ -23,8 +23,8 @@
                 </a-col>
               </a-row>
             </a-input-group>
-          </a-form-item>
-          <div class="text-center">
+          <!-- </a-form-item> -->
+          <div class="text-center mt-[32px]">
             <a-button class="add-btn" @click="addSecret">Add Param</a-button>
             <a-button class="done-btn" @click="doneSecret">Done</a-button>
           </div>
