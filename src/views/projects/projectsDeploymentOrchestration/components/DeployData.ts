@@ -10,7 +10,7 @@ export interface DeployRecord {
 }
 
 export interface DeployStep {
-  Contract: ContractInfo,
+  contract: ContractInfo,
   steps: Step[]
   status: string
   step: number
@@ -22,11 +22,11 @@ export interface ContractInfo {
   proxy: boolean,
 }
 export interface Step {
-  contractName: string
+  contractName?: string
   type: StepActionType, //
   method: string
   params: string[]
   status: string, //PENDDING,SUCCESS,FAIL
-  transactionHash: string,
-  value: string
+  transactionHash?: string,
+  value?: string
 }

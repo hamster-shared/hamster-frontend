@@ -141,7 +141,7 @@ const moreContractMethod = () => {
     
   }
 }
-
+//选择合同
 const changeMethodName = (val: any, methodKey: number) => {
   
   methodList[methodKey].formData.methodType = '';
@@ -155,7 +155,7 @@ const changeMethodName = (val: any, methodKey: number) => {
     });
   }
 }
-
+//选择function类型
 const changeMethodType = (val: any, methodKey: number) => {
   methodList[methodKey].formData = Object.assign({}, methodList[methodKey].formData, methodMap.value.get(methodList[methodKey].formData.methodName).formList[val]);
   console.log("methodList:::",methodList);

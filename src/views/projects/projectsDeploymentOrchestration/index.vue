@@ -76,6 +76,8 @@ import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
 import { apiSaveSingleContractInfo } from "@/apis/contractOrchestrationDeploy";
+import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
+import { message } from 'ant-design-vue';
 
 const theme = useThemeStore();
 const value1 = ref<string>('Ethereum/Mainnet');
@@ -94,18 +96,20 @@ const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
+const methodMap = new Map();
+const contractMap = new Map();
 const disabledSave = ref(true);
 const contractRef = ref();
-const methodMap = new Map();
 const paramFormData = ref({});
 const paramInputData = ref<any>([]); //记录合同Contract Parameters字段
 const methodFormList = ref<any>({});
 const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
 const methodFunctionData = ref<any>([]);
-
+const originalArrange = ref<DeployRecord>(); //参数值数据格式整理
 
 const changeChecked = (val: any) => {
   console.log(val, 'switch')
+  console.log("checked:::",checked.value);
 }
 
 const changeContractVersion = (val: any) => {
@@ -169,15 +173,14 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
     }
   }) 
   methodFunctionData.value.sort(); //排序
+  //记录整理得数据
   if (!methodMap.get(mapKey)) {
     methodMap.set(mapKey, {
-      formList: methodFormList.value,
-      inputData: methodInputData.value,
-      functionData: methodFunctionData.value
+      formList: methodFormList.value, //记录表单字段
+      inputData: methodInputData.value, //记录表单标签
+      functionData: methodFunctionData.value //记录function 类型
     });
   }
-
-  console.log("methodMap::",methodMap);
 }
 
 const emptyMethodData = () => {
@@ -189,36 +192,128 @@ const emptyMethodData = () => {
 const setDisabledSave = (val: boolean) => {
   disabledSave.value = val;
 }
+//设置address得值
+const setAddressValue = (param1: number, address: string) => {
+  let addressVal = '';
+  if (param1 == 1) { //Select project contract
+    if (address) {
+      addressVal = '$'+contractMap.get(address) + '.address';
+    }
+  } else { //Manual input
+    addressVal = address;
+  }
+  return addressVal;
+}
+//Contract Parameters
+const setContractParams = () => {
+  let params = [];
+  //设置address得值
+  let addVal = setAddressValue(paramFormData.value.param1, paramFormData.value.address);
+  params.push(addVal);
+  //按照顺序获取字段值
+  paramInputData.value.map((item: any) => {
+    params.push(paramFormData.value[item.name]);
+  });
+  return {
+    type: checked.value ? PROXY_CONSTRUCTOR  : CONSTRUCTOR,
+    method: "",//都是空串
+    params: params,
+    status: "PENDDING",//所有pendding
+  };
+}
+//拆分自定义字段值
+const setCustomParams = (customParams: string) => {
+  let custParam: any = {};
+  let custStr = customParams.split('\n');
+  custStr.forEach((element: any) => {
+    if (element) {
+      let paramStr: any = element.split(': ');
+      custParam[paramStr[0]] = paramStr[1];
+    }
+  });
+    
+  return custParam;
+}
+//Invoke Contract Method
+const setInvokeContractMethod = () => {
+  let methodStep: any = [];
+  let methodList = contractRef.value.methodList;
+  methodList.map((item: any) => {
+    let params = [];
+    //设置address得值
+    let addVal = setAddressValue(item.formData.param1, item.formData.address);
+    params.push(addVal);
+    //获取字段列表
+    let inputList = methodMap.get(item.formData.methodName).inputData[item.formData.methodType];
+    //按照顺序获取字段值
+    inputList.map((item_input: any) => {
+      params.push(item.formData[item_input.name]);
+    });
+    //拆分自定义字段值
+    let custParam = setCustomParams(item.formData.customParams);
+    methodStep.push({
+      contractName: contractMap.get(item.formData.methodName),
+      type: FUNCTION,
+      method: item.formData.methodType,
+      params: params,
+      value: JSON.stringify(custParam),//用户自定义输入
+      status: "PENDDING", //所有pendding
+    });
+  });
+  return methodStep;
+}
 //设置合同数据
 const setContractInfo = () => {
-  console.log("paramFormData:::", paramFormData.value);
-  console.log("paramInputData:::", paramInputData.value);
-  console.log("methodList:::", contractRef.value.methodList)
-  console.log("contractOrchestration:::",contractOrchestration.value);
-
-  let params = [];
-  paramInputData.value.map((item: any) => {
-    
+  //合同名称
+  contractOrchestration.value.map((item: any) => {
+    if (!contractMap.get(item.id)) {
+      contractMap.set(item.id, item.name);
+    }
   });
+
+  //Contract Parameters
+  let contractParams = setContractParams();
+
+  //Invoke Contract Method
+  let contractMehtod = setInvokeContractMethod();
+
+  let stepParam = [contractParams, ...contractMehtod];
+  //数据格式整合
+  let deployStep = {
+    contract: {
+      name: contractMap.get(selectedId.value),
+      address: '',
+      proxyAddress: '',
+      proxy: checked.value
+    },
+    steps: stepParam,
+    status: 'PENDDING',
+    step: 0
+  };
+  originalArrange.value = {
+    deployStep: [deployStep],
+    step: 0,
+  }
 }
 //单个合同数据保存
 const saveSingleContractInfo = async () => {
   //设置合同数据
   setContractInfo();
+  console.log("originalArrange.value::",originalArrange.value);
 
-  // let param = {
-  //   projectId: route.query.id,
-  //   contractId: selectedId.value,
-  //   contractName: '',
-  //   version: baseInfo.value.selectedVersion,
-  //   originalArrange: ''
-  // }
-  // try {
-  //   const { data } = await apiSaveSingleContractInfo(route.query.id, param);
-  //   versionList.value = data
-  // } catch (error: any) {
-  //   console.log("erro:", error)
-  // }
+  let param = {
+    projectId: route.query.id,
+    contractId: selectedId.value,
+    contractName: contractMap.get(selectedId.value),
+    version: baseInfo.value.selectedVersion,
+    originalArrange: JSON.stringify(originalArrange.value)
+  }
+  try {
+    const res = await apiSaveSingleContractInfo(route.query.id, param);
+    message.success(res.message);
+  } catch (error: any) {
+    console.log("erro:", error)
+  }
 }
 
 // 获取版本号
