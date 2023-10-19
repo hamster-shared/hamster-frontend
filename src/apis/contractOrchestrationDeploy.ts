@@ -103,3 +103,11 @@ export function apiListByIdAndVersion(id:string,version:string) {
         method: "get",
     })
 }
+
+// 获取版本和source info
+export function apiSourceInfo(id:string) {
+    return httpRequest({
+        url: `/api/projects/${id}/version/info`,
+        method: "get",
+    })
+}

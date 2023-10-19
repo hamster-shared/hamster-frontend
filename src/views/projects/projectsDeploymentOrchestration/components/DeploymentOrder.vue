@@ -6,7 +6,7 @@
       cards up
       and down. The
       just confirm to quickly
-      start the deploymnet, whic is convenient and fast.</div>
+      start the deploymnet, which is convenient and fast.</div>
   </div>
 
   <div class="main" :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
