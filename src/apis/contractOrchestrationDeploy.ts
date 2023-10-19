@@ -97,15 +97,15 @@ export function apiSaveContractDeployInfo(id:string,params:deployInfoParams) {
 // 通过项目id和版本获取合约构建物列表
 export function apiListByIdAndVersion(id:string,version:string) {
     return httpRequest({
-        url: `/api/projects/${id}/contract/${version}`,
+        url: `/api/projects/${id}/arrange/deploy/contract/${version}`,
         method: "get",
     })
 }
 
 // 获取版本和source info
-export function apiSourceInfo(id:string) {
+export function apiSourceInfo(id:string, version:string) {
     return httpRequest({
-        url: `/api/projects/${id}/version/info`,
+        url: `/api/projects/${id}/code/info/${version}`,
         method: "get",
     })
 }

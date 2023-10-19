@@ -3,7 +3,7 @@
     <bread-crumb :routes="breadCrumbInfo" />
     <!-- 详情 -->
 
-    <DeployVersionInfomation :name="contractInfo.name"/>
+    <DeployVersionInfomation :name="contractInfo.name" :versionList="versionList" />
     <DeploymentDetails></DeploymentDetails>
   </div>
 </template>
@@ -16,12 +16,14 @@ import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import DeploymentDetails from './components/DeploymentDetails.vue';
 import { apiGetProjectsDetail } from '@/apis/projects'
+import { apiGetProjectsVersions } from "@/apis/workFlows";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const route = useRoute()
 const router = useRouter()
 // 合约信息对象
 const contractInfo = ref<any>({})
+const versionList = ref();
 
 // 导航栏
 const initBreadCrumb = ()=>{
@@ -54,9 +56,20 @@ const getContactDetail = async()=>{
   }
 }
 
+// 获取版本号
+const getProjectsVersion = async () => {
+  try {
+    const { data } = await apiGetProjectsVersions({id: route.query.id});
+    versionList.value = data
+  } catch (error: any) {
+    console.log("erro:", error)
+  }
+};
+
 onMounted(async () => {
   await getContactDetail()
   initBreadCrumb()
+  getProjectsVersion()
 })
 </script>
 
