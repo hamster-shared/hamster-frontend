@@ -1,10 +1,12 @@
 <template>
   <div class="mb-[30px]">
     <div class="text-[24px] font-bold">Invoke Contract Method</div>
-    <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
+    <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
       own init method or other contracts' methods
     </div>
-    <div v-if="selectedId && showMethod" class="border border-solid border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] rounded-[12px] p-[20px]">
+    <div v-if="selectedId && showMethod" 
+      v-for="(methodItem, methodKey) in methodList" :key="methodKey"
+      class="mt-[20px] border border-solid border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] rounded-[12px] p-[20px]">
       <div class="flex justify-between mb-[20px]">
         <div class="text-[21px] font-bold">Contract Method</div>
         <div>
@@ -18,40 +20,40 @@
           </a-popover>
         </div>
       </div>
-      <a-form ref="formRef" :rules="formRules" :model="formData" layout="vertical">
+      <a-form ref="formRef" :rules="formRules" :model="methodItem.formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
           <a-form-item name="methodName" label="Method Name">
-            <a-select v-model:value="formData.methodName"  
-              placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.id, label:item.name }))">
+            <a-select v-model:value="methodItem.formData.methodName" @change="changeMethodName($event, methodKey)" 
+              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.id, label:item.name }))">
             </a-select>
           </a-form-item>
           <a-form-item class="form-noLabel" name="methodType" :rules="[{ required: true }]">
-            <a-select v-model:value="formData.methodType" @change="changeParams"
-              placeholder="Contract method Type" :options="functionData.map(item => ({ value: item }))">
+            <a-select v-model:value="methodItem.formData.methodType" @change="changeMethodType($event, methodKey)"
+              placeholder="Contract method Type" :options="methodMap.get(methodItem.formData.methodName).functionData.map((item: any) => ({ value: item }))">
             </a-select>
           </a-form-item>  
         </div>
-        <div v-if="formData.methodType">
+        <div v-if="methodItem.formData.methodType">
           <div class="grid grid-cols-2 gap-4">
-            <a-form-item :name="formData.param1" label="param1" :rules="[{ required: true }]" >
-              <a-select v-model:value="formData.param1" 
+            <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
+              <a-select v-model:value="methodItem.formData.param1" 
                 placeholder="Select project contract" :options="paramList">
               </a-select>
             </a-form-item>
-            <a-form-item class="form-noLabel" :name="formData.address" :rules="[{ required: true }]">
+            <a-form-item class="form-noLabel" name="address" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
-              <a-select v-if="formData.param1 == 1" v-model:value="formData.address"  
-                placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.id, label:item.name }))">
+              <a-select v-if="methodItem.formData.param1 == 1" v-model:value="methodItem.formData.address"  
+                placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.id, label:item.name }))">
               </a-select>
-              <a-input v-else v-model:value="formData.address" placeholder="Please input address" allowClear />
+              <a-input v-else v-model:value="methodItem.formData.address" placeholder="Please input address" allowClear />
             </a-form-item>  
           </div>
-          <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" v-for="(item, key) in inputData" :key="key">
-            <a-input v-model:value="formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
+          <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
+            <a-input v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
           </a-form-item>
           <a-form-item label="Custom Params" name="Custom Params">
-            <span class="custom-edit" @click="editCustom(dynamicValidateForm.customParams)">Edit</span>
-            <a-textarea v-model:value="dynamicValidateForm.customParams" :rows="4" placeholder="please inter a value" />
+            <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
+            <a-textarea v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
           </a-form-item>
         </div>
       </a-form>
@@ -62,36 +64,46 @@
       <label class="cursor-pointer">Add More Contract Methods</label>
     </div>
   </div>
-  <CustomParamsmodal :visible="visible" @showContract="visible = false" @doneSecret="doneSecret" />
+  <CustomParamsmodal :visible="visible" :customKey="customKey" @showContract="visible = false" @doneSecret="doneSecret" />
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, toRefs } from "vue";
+import YAML from "yaml";
 import CustomParamsmodal from "./CustomParamsmodal.vue";
 import type { FormInstance } from 'ant-design-vue';
 
 const props = defineProps({
   selectedId: String,
-  inputData: Array as any,
-  functionData: Array as any,
-  formList: Array as any,
+  methodMap:{
+    type: Map as any,
+    required: true,
+  },
   contractOrchestration:{
     type:Array as any,
     default:()=>[]
   }
 });
 
-const { selectedId, inputData, formList, contractOrchestration } = toRefs(props);
+const { selectedId, methodMap, contractOrchestration } = toRefs(props);
+const emits = defineEmits(['setAbiInfo', 'setDisabledSave']);
 
+const visible = ref(false);
+const customKey = ref(0);
+const showMethod = ref(false);
 const formRef = ref<FormInstance>();
-const formData = reactive({
+const formDataDemo = reactive<any>({
   methodName: selectedId?.value,
   methodType: '',
   param1: 1,
-  address: ''
-});
-const visible = ref(false);
-const showMethod = ref(false);
+  address: '',
+  customParams: '',
+}); 
+const methodList = reactive<any>([
+  {
+    formData: formDataDemo
+  }
+]);
 
 
 const paramList = ref([
@@ -103,18 +115,50 @@ const paramList = ref([
 const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
   return {
-    param1: [requiredRule('')],
-    param2: [requiredRule('')],
-    param3: [requiredRule('')],
+    methodType1: [requiredRule('')],
+    // param2: [requiredRule('')],
+    // param3: [requiredRule('')],
   };
 });
 
 const moreContractMethod = () => {
-  showMethod.value = true;
+  if (selectedId?.value) {
+    if (showMethod.value) {
+      methodList.push({
+        formData: {
+          methodName: selectedId?.value,
+          methodType: '',
+          param1: 1,
+          address: '',
+          customParams: '',
+        }
+      });
+    } else {
+      methodList[methodList.length-1].formData.methodName = selectedId?.value
+      showMethod.value = true;
+    }
+    emits('setDisabledSave', false);
+    
+  }
 }
 
-const changeParams = (val:any) => {
-  Object.assign(formData, formList.value[val]);
+const changeMethodName = (val: any, methodKey: number) => {
+  
+  methodList[methodKey].formData.methodType = '';
+  methodList[methodKey].formData.address = '';
+  methodList[methodKey].formData.customParams = '';
+  if (!methodMap.value.get(val)) {
+    contractOrchestration.value.forEach((element: any) => {
+      if (element.id === val) {
+        emits('setAbiInfo', element.abiInfo, val, 'method');
+      }
+    });
+  }
+}
+
+const changeMethodType = (val: any, methodKey: number) => {
+  methodList[methodKey].formData = Object.assign({}, methodList[methodKey].formData, methodMap.value.get(methodList[methodKey].formData.methodName).formList[val]);
+  console.log("methodList:::",methodList);
 }
 
 const deleteBtn = () => {
@@ -129,14 +173,18 @@ const doneSecret = (val: any) => {
   val.forEach((e: any) => {
     str += `${e.secretName}: ${e.secretValue}\n`
   });
-  dynamicValidateForm.customParams = str;
+  methodList[customKey.value].formData.customParams = str;
   console.log('有值了：' + val)
 }
-const editCustom = (val: string) => {
+const editCustom = (val: string, methodKey: number) => {
   visible.value = true;
+  customKey.value = methodKey;
 }
 
 
+defineExpose({
+  methodList,
+})
 
 </script>
 

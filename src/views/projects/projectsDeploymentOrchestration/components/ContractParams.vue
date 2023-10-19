@@ -6,12 +6,12 @@
     <div v-if="selectedId">
       <a-form ref="formRef" :rules="formRules" :model="formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
-          <a-form-item :name="formData.param1" label="param1" :rules="[{ required: true }]" >
+          <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
             <a-select v-model:value="formData.param1" 
               placeholder="Select project contract" :options="paramList">
             </a-select>
           </a-form-item>
-          <a-form-item class="form-noLabel" :name="formData.address" :rules="[{ required: true }]">
+          <a-form-item class="form-noLabel" name="address" :rules="[{ required: true }]">
             <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
             <a-select v-if="formData.param1 == 1" v-model:value="formData.address" 
               placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.id, label:item.name }))">

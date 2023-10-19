@@ -17,7 +17,7 @@
         <!-- right -->
         <div>
           <ContractParams :contractOrchestration="contractOrchestration" :selectedId="selectedId" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
-          <InvokeContract :contractOrchestration="contractOrchestration" :selectedId="selectedId" :inputData="methodInputData" :formList="methodFormData" :functionData="methodFunctionData"></InvokeContract>
+          <InvokeContract ref="contractRef" :contractOrchestration="contractOrchestration" :selectedId="selectedId" :methodMap="methodMap" @setAbiInfo="setAbiInfo" @setDisabledSave="setDisabledSave"></InvokeContract>
           <div>
             <div class="flex justify-between mt-[30px]">
               <div class="text-[24px] font-bold">Proxy Contract</div>
@@ -28,6 +28,9 @@
               post-deployment,
               including its
               own init method or other contracts' methods</div>
+          </div>
+          <div class="text-right">
+            <a-button :disabled="disabledSave" @click="saveSingleContractInfo" class="w-[140px]">Save</a-button>
           </div>
         </div>
       </div>
@@ -72,6 +75,7 @@ import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiSaveSingleContractInfo } from "@/apis/contractOrchestrationDeploy";
 
 const theme = useThemeStore();
 const value1 = ref<string>('Ethereum/Mainnet');
@@ -90,10 +94,12 @@ const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
-// const argsMap = new Map();
+const disabledSave = ref(true);
+const contractRef = ref();
+const methodMap = new Map();
 const paramFormData = ref({});
 const paramInputData = ref<any>([]); //记录合同Contract Parameters字段
-const methodFormData = ref<any>({});
+const methodFormList = ref<any>({});
 const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
 const methodFunctionData = ref<any>([]);
 
@@ -126,12 +132,19 @@ const initBreadCrumb = () => {
 
 const selectContractId = (id: string, abiInfo: any) => {
   selectedId.value = id;
-  const abiInfoData = YAML.parse(abiInfo);
-  methodInputData.value = [];
-  paramInputData.value = [];
+  setAbiInfo(abiInfo, id, 'all');
+}
+
+//设置abiInfo数据格式
+const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
+  if (setType !== 'method') {
+    paramInputData.value = [];
+  }
+  emptyMethodData();
+  let abiInfoData = YAML.parse(abiInfo);
+  
   abiInfoData.map((item: any) => {
-      console.log("item::",item);
-    if (item.type === 'constructor') {
+    if (item.type === 'constructor' && setType !== 'method') {
       let param:any = {param1: 1,address: ''};
       if (item.inputs.length > 0) {
         paramInputData.value = item.inputs;
@@ -141,22 +154,71 @@ const selectContractId = (id: string, abiInfo: any) => {
       }
       paramFormData.value = param;
     } else if (item.type === 'function') {
-      let param:any = {methodName:selectedId.value,methodType: '',param1: 1,address: ''};
-      if (item.inputs.length > 0) {
-        methodFunctionData.value.push(item.name);
-        methodInputData.value[item.name] = item.inputs;
-        item.inputs.forEach((it: any) => {
-          param[it.name] = "";
-        })
-        methodFormData.value[item.name] = param;
+      // let param:any = {methodName:selectedId.value,methodType: '',param1: 1,address: ''};
+      if (!methodMap.get(mapKey)) {
+        let param: any = {};
+        if (item.inputs.length > 0) {
+          methodFunctionData.value.push(item.name);
+          methodInputData.value[item.name] = item.inputs;
+          item.inputs.forEach((it: any) => {
+            param[it.name] = "";
+          })
+          methodFormList.value[item.name] = param;
+        }
       }
     }
   }) 
-  methodFunctionData.value.sort();
-  
-  console.log("methodFormData::",methodFormData.value);
-  console.log("methodInputData::",methodInputData.value);
-  console.log("methodFunctionData::",methodFunctionData.value);
+  methodFunctionData.value.sort(); //排序
+  if (!methodMap.get(mapKey)) {
+    methodMap.set(mapKey, {
+      formList: methodFormList.value,
+      inputData: methodInputData.value,
+      functionData: methodFunctionData.value
+    });
+  }
+
+  console.log("methodMap::",methodMap);
+}
+
+const emptyMethodData = () => {
+  methodInputData.value = [];
+  methodFunctionData.value = [];
+  methodFormList.val = {};
+}
+//设置save按钮
+const setDisabledSave = (val: boolean) => {
+  disabledSave.value = val;
+}
+//设置合同数据
+const setContractInfo = () => {
+  console.log("paramFormData:::", paramFormData.value);
+  console.log("paramInputData:::", paramInputData.value);
+  console.log("methodList:::", contractRef.value.methodList)
+  console.log("contractOrchestration:::",contractOrchestration.value);
+
+  let params = [];
+  paramInputData.value.map((item: any) => {
+    
+  });
+}
+//单个合同数据保存
+const saveSingleContractInfo = async () => {
+  //设置合同数据
+  setContractInfo();
+
+  // let param = {
+  //   projectId: route.query.id,
+  //   contractId: selectedId.value,
+  //   contractName: '',
+  //   version: baseInfo.value.selectedVersion,
+  //   originalArrange: ''
+  // }
+  // try {
+  //   const { data } = await apiSaveSingleContractInfo(route.query.id, param);
+  //   versionList.value = data
+  // } catch (error: any) {
+  //   console.log("erro:", error)
+  // }
 }
 
 // 获取版本号
