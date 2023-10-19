@@ -102,7 +102,7 @@ const dragend = (item: any): void => {
 const selectContractId = (item: any) => {
   selectId.value = item.id;
   console.log(item, '选中')
-  emit('selectContractId', selectId.value)
+  emit('selectContractId', selectId.value, item.abiInfo)
 }
 
 

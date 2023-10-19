@@ -16,8 +16,8 @@
         </div>
         <!-- right -->
         <div>
-          <ContractParams :selectedId="selectedId"></ContractParams>
-          <InvokeContract></InvokeContract>
+          <ContractParams :contractOrchestration="contractOrchestration" :selectedId="selectedId" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
+          <InvokeContract :contractOrchestration="contractOrchestration" :selectedId="selectedId" :inputData="methodInputData" :formList="methodFormData" :functionData="methodFunctionData"></InvokeContract>
           <div>
             <div class="flex justify-between mt-[30px]">
               <div class="text-[24px] font-bold">Proxy Contract</div>
@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
+import YAML from "yaml";
 import { useRoute, useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import BreadCrumb from "@/components/BreadCrumb.vue";
@@ -70,7 +71,8 @@ import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmo
 import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
-import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
+
 const theme = useThemeStore();
 const value1 = ref<string>('Ethereum/Mainnet');
 const checked = ref<boolean>(false);
@@ -88,6 +90,12 @@ const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
+// const argsMap = new Map();
+const paramFormData = ref({});
+const paramInputData = ref<any>([]); //记录合同Contract Parameters字段
+const methodFormData = ref<any>({});
+const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
+const methodFunctionData = ref<any>([]);
 
 
 const changeChecked = (val: any) => {
@@ -116,9 +124,39 @@ const initBreadCrumb = () => {
   ]
 }
 
-const selectContractId = (id: string) => {
+const selectContractId = (id: string, abiInfo: any) => {
   selectedId.value = id;
-  console.log(id + 'id')
+  const abiInfoData = YAML.parse(abiInfo);
+  methodInputData.value = [];
+  paramInputData.value = [];
+  abiInfoData.map((item: any) => {
+      console.log("item::",item);
+    if (item.type === 'constructor') {
+      let param:any = {param1: 1,address: ''};
+      if (item.inputs.length > 0) {
+        paramInputData.value = item.inputs;
+        item.inputs.forEach((it: any) => {
+          param[it.name] = "";
+        })
+      }
+      paramFormData.value = param;
+    } else if (item.type === 'function') {
+      let param:any = {methodName:selectedId.value,methodType: '',param1: 1,address: ''};
+      if (item.inputs.length > 0) {
+        methodFunctionData.value.push(item.name);
+        methodInputData.value[item.name] = item.inputs;
+        item.inputs.forEach((it: any) => {
+          param[it.name] = "";
+        })
+        methodFormData.value[item.name] = param;
+      }
+    }
+  }) 
+  methodFunctionData.value.sort();
+  
+  console.log("methodFormData::",methodFormData.value);
+  console.log("methodInputData::",methodInputData.value);
+  console.log("methodFunctionData::",methodFunctionData.value);
 }
 
 // 获取版本号
@@ -136,7 +174,7 @@ const getProjectsContractName = async () => {
   try {
     const { data } = await apiGetProjectsContract({ id: route.query.id, version: baseInfo.value.selectedVersion });
     contractOrchestration.value = data
-    console.log('获取可编排的合约:',contractOrchestration.value)
+    console.log('获取可编排的合约:', contractOrchestration.value)
   } catch (error: any) {
     console.log("erro:", error)
   }
