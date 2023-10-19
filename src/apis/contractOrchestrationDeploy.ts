@@ -20,14 +20,12 @@ interface updateExecuteParams {
     arrangeProcessData: string, //执行数据json
 }
 
-interface deployInfoParams extends projectParmams{
+interface SingleContractInfo {
+    projectId: string,
     contractId: number,
-    network: string,
-    address: string,
-    declareTxHash: string,
-    deployTxHash: string,
-    status: string,
-    abiInfo: string,
+    contractName: string,
+    version: string,
+    originalArrange: any
 }
 
 // interface pageList {
@@ -108,6 +106,32 @@ export function apiListByIdAndVersion(id:string,version:string) {
 export function apiSourceInfo(id:string) {
     return httpRequest({
         url: `/api/projects/${id}/version/info`,
+        method: "get",
+    })
+}
+
+// 根据合约部署ID获取合约部署信息和sourceInfo
+export function apiGetSourceInfoById(id:string, contractDeployId:string) {
+    return httpRequest({
+        url: `/api/projects/${id}/contract/deploy/${contractDeployId}`,
+        method: "get",
+    })
+}
+
+// 接口文档：https://apifox.com/apidoc/shared-c5a10723-3373-4ab9-b7ad-99d26f2c12d9/api-118072011
+// 保存单个合约编排信息
+export function apiSaveSingleContractInfo(id:string, params:SingleContractInfo) {
+    return httpRequest({
+        url: `/api/projects/${id}/arrange/cache`,
+        data: params,
+        method: "post",
+    })
+}
+
+// 获取单个合约的最新编排信息
+export function apiGetSingleContractInfo(id:string, projectId:string, contractId:number, contractName:string, version:string) {
+    return httpRequest({
+        url: `/api/projects/${id}/arrange/contract/name?projectId=${projectId}&contractId=${contractId}&contractName=${contractName}&version=${version}`,
         method: "get",
     })
 }

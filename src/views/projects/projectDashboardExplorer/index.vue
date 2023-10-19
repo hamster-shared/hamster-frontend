@@ -1,12 +1,12 @@
 <template>
   <div>
     <BreadCrumb :routes="breadCrumbInfo" />
-    <ContractBase></ContractBase>
+    <ContractBase v-if="baseInfo.address" :baseInfo="baseInfo"></ContractBase>
     <div class="bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px] mt-[32px]">
       <div class="text-[24px] font-bold mb-[32px]">Contract Explorer</div>
 
-      <ContractList v-if="frameType" :abiInfo="abiInfo" :contractAddress="contractAddress" :frameType="frameType"
-        @checkContract="checkContract" :canisterId="contractAddress">
+      <ContractList v-if="frameType && false" :abiInfo="abiInfo" :contractAddress="contractAddress" :frameType="contractInfo.frameType"
+        @checkContract="checkContract" :canisterId="canisterId">
       </ContractList>
     </div>
   </div>
@@ -20,6 +20,8 @@ import ContractBase from './components/ContractBase.vue';
 import ContractList from '@/views/projects/projectsContractsDetails/components/ContractList.vue';
 import { apiGetProjectsDetail } from "@/apis/projects";
 import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiGetSourceInfoById } from '@/apis/contractOrchestrationDeploy'
+import { message } from "ant-design-vue";
 
 const breadCrumbInfo = ref<any>([]);
 const contractDeployDetail = reactive({});
@@ -29,10 +31,14 @@ const contractName = ref('');
 const frameType = ref(1);
 const contractAddress = ref('');
 const abiInfo = ref('');
-const versionData = ref([]);
-const singleContractId = route.query.singleContractId
+// 罐应用那边合约调用需要的数据
+const canisterId = ref('')
+const id:any = route.query.id
+const contractDeployId:any = route.query.contractDeployId
 // 合约信息对象
-const contractInfo = ref<any>()
+const contractInfo = ref<any>({})
+// 页面头部数据
+const baseInfo = ref<any>({})
 
 const checkContract = (name: string) => {
   contractName.value = name
@@ -42,7 +48,7 @@ const getContractDeployDetail = async () => {
   const queryJson = {
     // id: route.query.singleContractId,
     id: '65a141e7-95c6-4229-850d-e3c38b405d09',
-    version: '1',
+    version: route.query.version,
   }
   const { data } = await apiGetContractDeployDetail(queryJson)
   // Object.assign(contractDeployDetail, data);
@@ -60,15 +66,21 @@ const getContractDeployDetail = async () => {
 
 }
 
-const getVersion = async () => {
-  const { data } = await apiGetProjectsVersions({ id: '65a141e7-95c6-4229-850d-e3c38b405d09' });
-  Object.assign(versionData, data)
+// apiGetSourceInfoById
+const getDetailInfo = async()=>{
+  try {
+    const res = await apiGetSourceInfoById(id, contractDeployId)
+    console.log('获取页面所有信息：',res)
+    baseInfo.value = res.data
+  } catch (error:any) {
+    message.error(error)
+  }
 }
 
 const initBreadCrumb = ()=>{
   // 导航栏
   breadCrumbInfo.value = [
-  {
+    {
       breadcrumbName: 'Projects',
       path: '/projects'
     },
@@ -97,13 +109,14 @@ const getContactDetail = async()=>{
 }
 
 onMounted(async () => {
+  getDetailInfo()
   await getContactDetail()
   initBreadCrumb()
 })
 
 onBeforeMount(async () => {
-  getVersion();
-  await getContractDeployDetail()
+  // getVersion();
+  // await getContractDeployDetail()
 })
 </script>
 

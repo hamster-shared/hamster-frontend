@@ -3,7 +3,7 @@
     <bread-crumb :routes="breadCrumbInfo" />
     <!-- 详情 -->
 
-    <DeployVersionInfomation />
+    <DeployVersionInfomation :name="contractInfo.name"/>
     <DeploymentDetails></DeploymentDetails>
   </div>
 </template>
@@ -17,10 +17,11 @@ import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import DeploymentDetails from './components/DeploymentDetails.vue';
 import { apiGetProjectsDetail } from '@/apis/projects'
 const theme = useThemeStore();
-const breadCrumbInfo = ref<any>([]);const route = useRoute()
+const breadCrumbInfo = ref<any>([]);
+const route = useRoute()
 const router = useRouter()
 // 合约信息对象
-const contractInfo = ref<any>()
+const contractInfo = ref<any>({})
 
 // 导航栏
 const initBreadCrumb = ()=>{

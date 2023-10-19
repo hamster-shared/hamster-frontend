@@ -19,7 +19,7 @@
 
           <template v-if="column.key === 'action'">
             <!-- 单个合约id -->
-            <a-button type="link" @click="goExplorer(record.contractId)">Explorer</a-button>
+            <a-button type="link" @click="goExplorer(record.id, record.projectId)">Explorer</a-button>
           </template>
         </template>
       </a-table>
@@ -54,14 +54,15 @@ const changeContractVersion = (val: any) => {
 
 const columns = ref([{
   title: 'Contract',
-  dataIndex: 'contract',
-  key: 'contract',
+  dataIndex: 'contractName',
+  key: 'contractName',
 },
 {
   title: 'Version',
   dataIndex: 'version',
   key: 'version',
   customRender: ({ text }) => `#${text}`,
+  align: 'center'
 },
 {
   title: 'Network',
@@ -76,14 +77,15 @@ const columns = ref([{
 },
 {
   title: 'Timestamp',
-  dataIndex: 'deployTime',
-  key: 'deployTime',
+  dataIndex: 'deployTimeFormat',
+  key: 'deployTimeFormat',
 },
 {
   title: 'Action',
   dataIndex: 'action',
   key: 'action',
-},])
+  align: 'center'
+}])
 
 
 const dataSource = ref<any>([])
@@ -98,9 +100,9 @@ const splitDataSource = () => {
 }
 
 
-const goExplorer = (id: string) => {
+const goExplorer = (id: string, projectId:string) => {
   console.log(id)
-  router.push(`/projects/projectDashboardExplorer?id=${route.query.id}&singleContractId=${id}`)
+  router.push(`/projects/projectDashboardExplorer?id=${projectId}&contractDeployId=${id}`)
 }
 
 const initBreadCrumb = ()=>{
