@@ -174,7 +174,12 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
   if (setType !== 'method') {
     paramInputData.value = [];
   }
-  emptyMethodData();
+  if (!methodMap.get(mapKey)) {
+    methodInputData.value = [];
+    methodFunctionData.value = [];
+    methodFormList.val = {};
+  }
+  
   let abiInfoData = YAML.parse(abiInfo);
   
   abiInfoData.map((item: any) => {
@@ -191,13 +196,9 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
     inputData: methodInputData.value, //记录表单标签
     functionData: methodFunctionData.value //记录function 类型
   });
+  console.log("methodMap:",methodMap);
 }
-//清空默认值
-const emptyMethodData = () => {
-  methodInputData.value = [];
-  methodFunctionData.value = [];
-  methodFormList.val = {};
-}
+
 //设置Contract Parameters字段
 const setConstructorParams = (item:any) => {
   let param: any = { param1: 1, address: '' };
