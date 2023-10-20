@@ -69,6 +69,11 @@ const clickVal = ref<string>();//点击的元素，即最开始要移动的元�
 const moveVal = ref<string>();//移动的元素
 const endVal = ref<string>();//落点的元素
 
+const selectId = ref();
+const duplicateDataList = ref<any>([]);
+
+const emit = defineEmits(['selectContractId'])
+
 const props = defineProps({
   contractOrchestration:{
     type:Array,
@@ -77,18 +82,18 @@ const props = defineProps({
   version:{
     type:String,
     default:''
+  },
+  noUseContract:{
+    type:Array,
+    default:()=>[]
   }
 })
 
-const { contractOrchestration, version } = toRefs(props)
+const { contractOrchestration, version, noUseContract } = toRefs(props)
 nextTick(()=>{
   dataList.value = contractOrchestration.value
+  duplicateDataList.value = noUseContract.value || []
 })
-
-const selectId = ref();
-const duplicateDataList = ref<any>([]);
-
-const emit = defineEmits(['selectContractId'])
 
 
 const dragstart = (item: any): void => {
@@ -139,9 +144,9 @@ const getUseAndNotContractArr = async()=>{
   const useContract = dataList.value.map((item:any)=>{
     return item.name
   })
-  const noUseContract = duplicateDataList.value.map((item:any)=>{
+  const noUseContract = duplicateDataList?.value?.map((item:any)=>{
     return item.name
-  })
+  }) || []
   const params = {
     projectId: id,
     version: version.value,
