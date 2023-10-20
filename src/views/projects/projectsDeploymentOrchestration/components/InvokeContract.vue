@@ -12,7 +12,7 @@
         <div>
           <a-popover trigger="hover" placement="left">
             <template #content>
-              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="deleteBtn">Delete</div>
+              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="deleteBtn(methodKey)">Delete</div>
               <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="addCustomParamsBtn">Add Custom Params
               </div>
             </template>
@@ -148,7 +148,8 @@ const changeMethodType = (val: any, methodKey: number) => {
   console.log("methodList:::",methodList.value);
 }
 
-const deleteBtn = () => {
+const deleteBtn = (methodKey: number) => {
+  methodList.value.splice(methodKey, 1)
 }
 const addCustomParamsBtn = () => {
   visible.value = true;
