@@ -99,11 +99,7 @@ const formDataDemo = reactive<any>({
   address: '',
   customParams: '',
 }); 
-const methodList = ref<any>([
-  {
-    formData: formDataDemo
-  }
-]); 
+const methodList = ref<any>([]); 
 
 
 const paramList = ref([
@@ -122,24 +118,14 @@ const formRules = computed(() => {
 });
 
 const moreContractMethod = () => {
+  let formDemo = Object.assign({}, formDataDemo);
   if (selectedName?.value) {
-    if (showMethod.value) {
-      methodList.value.push({
-        formData: {
-          methodName: selectedName?.value,
-          methodType: '',
-          param1: 1,
-          address: '',
-          customParams: '',
-        }
-      });
-    } else {
-      // methodList[methodList.length-1].formData.methodName = selectedName?.value
-      console.log("methodList::::::::",methodList.value);
+    methodList.value.push({formData:formDemo});
+    methodList.value[methodList.value.length-1].formData.methodName = selectedName?.value
+    if (!showMethod.value) {
       showMethod.value = true;
     }
     emits('setDisabledSave', false);
-    
   }
 }
 //选择合同
