@@ -75,9 +75,10 @@ import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiSaveSingleContractInfo } from "@/apis/contractOrchestrationDeploy";
+import { apiSaveSingleContractInfo, apiGetSingleContractInfo } from "@/apis/contractOrchestrationDeploy";
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';
+import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
 
 const theme = useThemeStore();
 const value1 = ref<string>('Ethereum/Mainnet');
@@ -106,6 +107,7 @@ const methodFormList = ref<any>({});
 const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
 const methodFunctionData = ref<any>([]);
 const originalArrange = ref<DeployRecord>(); //参数值数据格式整理
+const contractSingileInfo = ref<any>({});
 
 const changeChecked = (val: any) => {
   console.log(val, 'switch')
@@ -133,10 +135,22 @@ const initBreadCrumb = () => {
     },
   ]
 }
-
+//选择合约
 const selectContractId = (id: string, abiInfo: any) => {
   selectedId.value = id;
+  //获取单个合约的最新编排信息
+  getSingleContractInfo();
+  //设置abliInfo数据
   setAbiInfo(abiInfo, id, 'all');
+}
+
+//拆分保存的合约信息
+const setSingleContractArrange = () => {
+  console.log("Object.keys(contractSingileInfo.value).length:",Object.keys(contractSingileInfo.value).length);
+  if (Object.keys(contractSingileInfo.value).length > 0) {
+    let originalArrange = JSON.parse(contractSingileInfo.value.originalArrange);
+    console.log("originalArrange::",originalArrange);
+  }
 }
 
 //设置abiInfo数据格式
@@ -223,7 +237,7 @@ const setContractParams = () => {
 }
 //拆分自定义字段值
 const setCustomParams = (customParams: string) => {
-  let custParam: any = {};
+  let custParam: any = {}; //按照{key:value}格式整合数据
   let custStr = customParams.split('\n');
   custStr.forEach((element: any) => {
     if (element) {
@@ -251,6 +265,7 @@ const setInvokeContractMethod = () => {
     });
     //拆分自定义字段值
     let custParam = setCustomParams(item.formData.customParams);
+    //整合step数据格式
     methodStep.push({
       contractName: contractMap.get(item.formData.methodName),
       type: FUNCTION,
@@ -264,12 +279,6 @@ const setInvokeContractMethod = () => {
 }
 //设置合同数据
 const setContractInfo = () => {
-  //合同名称
-  contractOrchestration.value.map((item: any) => {
-    if (!contractMap.get(item.id)) {
-      contractMap.set(item.id, item.name);
-    }
-  });
 
   //Contract Parameters
   let contractParams = setContractParams();
@@ -316,6 +325,28 @@ const saveSingleContractInfo = async () => {
   }
 }
 
+// 获取单个合约的最新编排信息  
+const getSingleContractInfo = async () => {
+  contractSingileInfo.value = {}; //清空合同信息
+  try {
+    let param = {
+      id: route.query.id,
+      projectId: route.query.id,
+      contractId: selectedId.value,
+      contractName: contractMap.get(selectedId.value),
+      version: baseInfo.value.selectedVersion
+    }
+    const { data } = await apiGetSingleContractInfo(param.id, param.projectId, param.contractId, param.contractName, param.version);
+    contractSingileInfo.value = data;
+    console.log("单个合约信息：", contractSingileInfo.value);
+    
+    //拆分保存的合约信息
+    setSingleContractArrange();
+  } catch (error: any) {
+    console.log("erro:", error)
+  }
+};
+
 // 获取版本号
 const getProjectsVersion = async () => {
   try {
@@ -332,6 +363,13 @@ const getProjectsContractName = async () => {
     const { data } = await apiGetProjectsContract({ id: route.query.id, version: baseInfo.value.selectedVersion });
     contractOrchestration.value = data
     console.log('获取可编排的合约:', contractOrchestration.value)
+    
+    //合同名称
+    contractOrchestration.value.map((item: any) => {
+      if (!contractMap.get(item.id)) {
+        contractMap.set(item.id, item.name);
+      }
+    });
   } catch (error: any) {
     console.log("erro:", error)
   }
