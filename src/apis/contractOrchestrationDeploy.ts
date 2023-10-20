@@ -144,3 +144,11 @@ export function apiSaveLeftInfo(id: string, params: any) {
     method: "post",
   })
 }
+
+// 通过项目id和版本获取待编排的合约列表
+export function apiWaitContractList(id: string, version: string) {
+  return httpRequest({
+    url: `/api/projects/${id}/arrange/contract/${version}`,
+    method: "get",
+  })
+}

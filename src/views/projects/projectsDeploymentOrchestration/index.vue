@@ -13,7 +13,7 @@
         <!-- left -->
         <div>
           <DeploymentOrder v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
-          :version="baseInfo.selectedVersion">
+          :version="baseInfo.selectedVersion" :noUseContract="noUseContract">
           </DeploymentOrder>
         </div>
         <!-- right -->
@@ -77,7 +77,7 @@ import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiSaveSingleContractInfo, apiGetSingleContractInfo } from "@/apis/contractOrchestrationDeploy";
+import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList } from "@/apis/contractOrchestrationDeploy";
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
@@ -96,6 +96,8 @@ const showWallets = ref();
 const contractInfo = ref<any>({})
 // 待编排部署的合约
 const contractOrchestration = ref<any>([])
+// 不编排合约列表
+const noUseContract = ref<any>([])
 const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
@@ -452,8 +454,9 @@ const getProjectsVersion = async () => {
 // 获取可编排的合约
 const getProjectsContractName = async () => {
   try {
-    const { data } = await apiGetProjectsContract({ id: route.query.id, version: baseInfo.value.selectedVersion });
-    contractOrchestration.value = data
+    const { data } = await apiWaitContractList(route.query.id, baseInfo.value.selectedVersion );
+    contractOrchestration.value = data.useContract
+    noUseContract.value = data.noUseContract
     console.log('获取可编排的合约:', contractOrchestration.value)
   } catch (error: any) {
     console.log("erro:", error)
