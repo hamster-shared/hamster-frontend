@@ -52,7 +52,7 @@
             v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
             <a-input v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
           </a-form-item>
-          <a-form-item label="Custom Params" name="Custom Params">
+          <a-form-item v-if="methodItem.formData.customParams" label="Custom Params" name="Custom Params">
             <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
             <a-textarea v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
           </a-form-item>
@@ -97,7 +97,7 @@ const formDataDemo = reactive<any>({
   methodType: '',
   param1: 1,
   address: '',
-  customParams: '',
+  customParams: '', //不默认添加
 }); 
 const methodList = ref<any>([]); 
 
