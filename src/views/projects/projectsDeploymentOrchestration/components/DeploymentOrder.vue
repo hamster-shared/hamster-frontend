@@ -55,10 +55,14 @@
 </template>
 <script setup lang="ts">
 import { ref, toRefs, onMounted, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import { v4 as uuidv4 } from 'uuid';
+import { apiSaveLeftInfo } from '@/apis/contractOrchestrationDeploy'
 
 const theme = useThemeStore();
+const route = useRoute()
+const id:any = route.query.id
   
 const dataList = ref<any>([]);
 const clickVal = ref<string>();//点击的元素，即最开始要移动的元素（改变位置）
@@ -69,10 +73,14 @@ const props = defineProps({
   contractOrchestration:{
     type:Array,
     default:()=>[]
+  },
+  version:{
+    type:String,
+    default:''
   }
 })
 
-const { contractOrchestration } = toRefs(props)
+const { contractOrchestration, version } = toRefs(props)
 nextTick(()=>{
   dataList.value = contractOrchestration.value
 })
@@ -97,6 +105,7 @@ const dragend = (item: any): void => {
   let addIndex = dataList.value.indexOf(moveObj)     //要移动后的位置
   dataList.value.splice(index, 1);//先删掉移动的那个元素，返回改变数组
   dataList.value.splice(addIndex, 0, item);//把删掉的元素再插入到对应的位置
+  getUseAndNotContractArr()
 }
 
 
@@ -112,6 +121,7 @@ const deployBtn = (item: any) => {
   let index = dataList.value.indexOf(item)
   dataList.value.splice(index, 1);
   duplicateDataList.value.push(item);
+  getUseAndNotContractArr()
 }
 
 // copy 一份
@@ -121,6 +131,24 @@ const duplicateBtn = (item: any) => {
   const flag = uuidv4();
   en.name = en.name+`(${flag.slice(0,8)})`
   dataList.value.push(en)
+  getUseAndNotContractArr()
+}
+
+// 保存页面的顺序到后端
+const getUseAndNotContractArr = async()=>{
+  const useContract = dataList.value.map((item:any)=>{
+    return item.name
+  })
+  const noUseContract = duplicateDataList.value.map((item:any)=>{
+    return item.name
+  })
+  const params = {
+    projectId: id,
+    version: version.value,
+    useContract,
+    noUseContract
+  }
+  await apiSaveLeftInfo(id, params)
 }
 
 
@@ -130,6 +158,7 @@ const cancelSkipBtn = (item: any) => {
 
   console.log(duplicateDataList, '00')
   dataList.value.push(item)
+  getUseAndNotContractArr()
 }
 
 onMounted(()=>{

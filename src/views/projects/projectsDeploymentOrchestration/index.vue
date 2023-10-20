@@ -12,7 +12,9 @@
       <div class="grid grid-cols-2 gap-8">
         <!-- left -->
         <div>
-          <DeploymentOrder v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"></DeploymentOrder>
+          <DeploymentOrder v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
+          :version="baseInfo.selectedVersion">
+          </DeploymentOrder>
         </div>
         <!-- right -->
         <div>
