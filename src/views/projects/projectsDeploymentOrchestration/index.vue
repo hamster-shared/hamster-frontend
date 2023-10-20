@@ -155,11 +155,8 @@ const selectContractId = async (id: string, abiInfo: any) => {
 
 //拆分保存的合约信息
 const setSingleContractArrange = () => {
-  console.log("Object.keys(contractSingileInfo.value).length:",Object.keys(contractSingileInfo.value).length);
-  if (Object.keys(contractSingileInfo.value).length > 0) {
-    let originalArrange = JSON.parse(contractSingileInfo.value.originalArrange);
-    console.log("originalArrange::", originalArrange);
-    originalArrange.deployStep.forEach((element:any) => {
+  if (contractSingileInfo.value != null && Object.keys(contractSingileInfo.value).length > 0) {
+    contractSingileInfo.value.deployStep.forEach((element:any) => {
       checked.value = element.contract.proxy; //Proxy Contract
       element.steps.forEach((item: any, key: any) => {
         if (key === 0) { //Contract Parameters
@@ -169,8 +166,6 @@ const setSingleContractArrange = () => {
         }
       });
     });
-    console.log("paramFormValue::", paramFormValue.value);
-    console.log("methodFormValue::", methodFormValue.value);
   }
 }
 
@@ -196,7 +191,6 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
     inputData: methodInputData.value, //记录表单标签
     functionData: methodFunctionData.value //记录function 类型
   });
-  console.log("methodMap::", methodMap);
 }
 //清空默认值
 const emptyMethodData = () => {
@@ -248,7 +242,7 @@ const setFunctionParams = (item: any, mapKey: any) => {
 // Invoke Contract Method字段赋值
 const setFunctionParamsValue = () => {
   if (methodFormValue.value.length > 0) {
-    contractRef.value.methodList2 = [];
+    contractRef.value.methodList = [];
     methodFormValue.value.forEach((item: any) => {
       //保存的合同，字段没有进行整理
       if (!methodMap.get(item.contractName)) { 
@@ -288,10 +282,9 @@ const setFunctionParamsValue = () => {
       inputs.forEach((it: any, k: any) => {
         param[it.name] = item.params[k+1];
       })
-      contractRef.value.methodList2.push({formData: param});  
+      contractRef.value.methodList.push({formData: param});  
     });
-    // contractRef.value.showMethod = true;
-    console.log("contractRef.value.methodList2::",contractRef.value.methodList2);
+    contractRef.value.showMethod = true;
   }
 }
 
@@ -405,7 +398,7 @@ const saveSingleContractInfo = async () => {
 
   let param = {
     projectId: route.query.id,
-    contractId: selectedId.value,
+    contractId: Number(selectedId.value),
     contractName: selectedName.value,
     version: baseInfo.value.selectedVersion,
     originalArrange: JSON.stringify(originalArrange.value)
@@ -425,16 +418,23 @@ const getSingleContractInfo = async () => {
     let param = {
       id: route.query.id,
       projectId: route.query.id,
-      contractId: selectedId.value,
+      contractId: Number(selectedId.value),
       contractName: selectedName.value,
       version: baseInfo.value.selectedVersion
     }
     const { data } = await apiGetSingleContractInfo(param.id, param.projectId, param.contractId, param.contractName, param.version);
-    contractSingileInfo.value = data;
+    if (data != null && data != "") {
+      contractSingileInfo.value = JSON.parse(data);
+      //拆分保存的合约信息
+      setSingleContractArrange();
+    } else {
+      methodFormValue.value = [];
+      paramFormValue.value = [];
+      contractRef.value.methodList = [];
+    }
+    
     console.log("单个合约信息：", contractSingileInfo.value);
     
-    //拆分保存的合约信息
-    setSingleContractArrange();
   } catch (error: any) {
     console.log("erro:", error)
   }
