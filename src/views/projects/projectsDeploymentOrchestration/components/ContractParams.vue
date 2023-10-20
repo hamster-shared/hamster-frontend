@@ -3,7 +3,7 @@
     <div class="text-[24px] font-bold">Contract Parameters</div>
     <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
-    <div v-if="selectedId">
+    <div v-if="selectedName">
       <a-form ref="formRef" :rules="formRules" :model="formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
           <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
@@ -14,7 +14,7 @@
           <a-form-item class="form-noLabel" name="address" :rules="[{ required: true }]">
             <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
             <a-select v-if="formData.param1 == 1" v-model:value="formData.address" 
-              placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.id, label:item.name }))">
+              placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.name, label:item.name }))">
             </a-select>
             <a-input v-else v-model:value="formData.address" placeholder="Please input address" allowClear />
           </a-form-item>  
@@ -35,7 +35,7 @@
 import { ref, reactive, computed, toRefs } from "vue";
 
 const props = defineProps({
-  selectedId: String,
+  selectedName: String,
   inputData: Array as any,
   formData: Object as any,
   contractOrchestration:{
@@ -44,7 +44,7 @@ const props = defineProps({
   }
 });
 
-const { selectedId, inputData, formData, contractOrchestration } = toRefs(props);
+const { selectedName, inputData, formData, contractOrchestration } = toRefs(props);
 
 const paramList = ref([
   {label: 'Select project contract', value: 1},

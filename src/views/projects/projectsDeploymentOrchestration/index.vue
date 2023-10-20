@@ -16,8 +16,8 @@
         </div>
         <!-- right -->
         <div>
-          <ContractParams :contractOrchestration="contractOrchestration" :selectedId="selectedId" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
-          <InvokeContract ref="contractRef" :contractOrchestration="contractOrchestration" :selectedId="selectedId" :methodMap="methodMap" @setAbiInfo="setAbiInfo" @setDisabledSave="setDisabledSave"></InvokeContract>
+          <ContractParams :contractOrchestration="contractOrchestration" :selectedName="selectedName" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
+          <InvokeContract ref="contractRef" :contractOrchestration="contractOrchestration" :selectedName="selectedName" :methodMap="methodMap" @setAbiInfo="setAbiInfo" @setDisabledSave="setDisabledSave"></InvokeContract>
           <div>
             <div class="flex justify-between mt-[30px]">
               <div class="text-[24px] font-bold">Proxy Contract</div>
@@ -85,7 +85,8 @@ const value1 = ref<string>('Ethereum/Mainnet');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
 const versionList = ref();
-const selectedId = ref('');
+const selectedId = ref(''); //选中的合同id
+const selectedName = ref(''); //选中的合同name
 const route = useRoute()
 const router = useRouter()
 const showWallets = ref();
@@ -98,11 +99,12 @@ const baseInfo = ref()
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
 const methodMap = new Map();
-const contractMap = new Map();
 const disabledSave = ref(true);
 const contractRef = ref();
-const paramFormData = ref({});
+const paramFormValue = ref<any>([]); //记录Contract Parameters表单值
+const paramFormData = ref<any>({});
 const paramInputData = ref<any>([]); //记录合同Contract Parameters字段
+const methodFormValue = ref<any>([]); //记录Invoke Contract Method表单值
 const methodFormList = ref<any>({});
 const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
 const methodFunctionData = ref<any>([]);
@@ -136,12 +138,15 @@ const initBreadCrumb = () => {
   ]
 }
 //选择合约
-const selectContractId = (id: string, abiInfo: any) => {
-  selectedId.value = id.slice(0,id.indexOf('$'));
+const selectContractId = async (id: string, abiInfo: any) => {
+  selectedId.value = id.slice(0, id.indexOf('$'));
+  selectedName.value = id.slice(id.indexOf('$')+1);
   //获取单个合约的最新编排信息
-  getSingleContractInfo();
+  await getSingleContractInfo();
   //设置abliInfo数据
-  setAbiInfo(abiInfo, id, 'all');
+  setAbiInfo(abiInfo, selectedName.value, 'all');
+  //Invoke Contract Method字段赋值
+  setFunctionParamsValue(); 
 }
 
 //拆分保存的合约信息
@@ -149,7 +154,19 @@ const setSingleContractArrange = () => {
   console.log("Object.keys(contractSingileInfo.value).length:",Object.keys(contractSingileInfo.value).length);
   if (Object.keys(contractSingileInfo.value).length > 0) {
     let originalArrange = JSON.parse(contractSingileInfo.value.originalArrange);
-    console.log("originalArrange::",originalArrange);
+    console.log("originalArrange::", originalArrange);
+    originalArrange.deployStep.forEach((element:any) => {
+      checked.value = element.contract.proxy; //Proxy Contract
+      element.steps.forEach((item: any, key: any) => {
+        if (key === 0) { //Contract Parameters
+          paramFormValue.value = item.params;
+        } else {
+          methodFormValue.value.push(item);
+        }
+      });
+    });
+    console.log("paramFormValue::", paramFormValue.value);
+    console.log("methodFormValue::", methodFormValue.value);
   }
 }
 
@@ -163,45 +180,117 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
   
   abiInfoData.map((item: any) => {
     if (item.type === 'constructor' && setType !== 'method') {
-      let param:any = {param1: 1,address: ''};
-      if (item.inputs.length > 0) {
-        paramInputData.value = item.inputs;
-        item.inputs.forEach((it: any) => {
-          param[it.name] = "";
-        })
-      }
-      paramFormData.value = param;
+      setConstructorParams(item);
     } else if (item.type === 'function') {
-      // let param:any = {methodName:selectedId.value,methodType: '',param1: 1,address: ''};
-      if (!methodMap.get(mapKey)) {
-        let param: any = {};
-        if (item.inputs.length > 0) {
-          methodFunctionData.value.push(item.name);
-          methodInputData.value[item.name] = item.inputs;
-          item.inputs.forEach((it: any) => {
-            param[it.name] = "";
-          })
-          methodFormList.value[item.name] = param;
-        }
-      }
+      setFunctionParams(item, mapKey);
     }
   }) 
   methodFunctionData.value.sort(); //排序
   //记录整理得数据
-  if (!methodMap.get(mapKey)) {
-    methodMap.set(mapKey, {
-      formList: methodFormList.value, //记录表单字段
-      inputData: methodInputData.value, //记录表单标签
-      functionData: methodFunctionData.value //记录function 类型
-    });
-  }
+  methodMap.set(mapKey, {
+    formList: methodFormList.value, //记录表单字段
+    inputData: methodInputData.value, //记录表单标签
+    functionData: methodFunctionData.value //记录function 类型
+  });
+  console.log("methodMap::", methodMap);
 }
-
+//清空默认值
 const emptyMethodData = () => {
   methodInputData.value = [];
   methodFunctionData.value = [];
   methodFormList.val = {};
 }
+//设置Contract Parameters字段
+const setConstructorParams = (item:any) => {
+  let param: any = { param1: 1, address: '' };
+  //给address赋值
+  if (paramFormValue.value.length > 0) {
+    let addressVal = paramFormValue.value[0];
+    if (addressVal.indexOf('$') !== -1) {
+      param.param1 = 1;
+      param.address = addressVal.slice(1, addressVal.indexOf('.'));
+    } else {
+      param.param1 = 2;
+      param.address = addressVal;
+    }
+  }
+  //获取inputs字段
+  if (item.inputs.length > 0) {
+    paramInputData.value = item.inputs;
+    item.inputs.forEach((it: any, k: any) => {
+      if (paramFormValue.value.length > 0) {
+        param[it.name] = paramFormValue.value[k+1]; //给字段赋值
+      } else {
+        param[it.name] = "";
+      }
+    })
+  }
+  paramFormData.value = param;
+}
+//设置Invoke Contract Method字段
+const setFunctionParams = (item: any, mapKey: any) => {
+  if (!methodMap.get(mapKey)) {
+    let param: any = {};
+    if (item.inputs.length > 0) {
+      methodFunctionData.value.push(item.name);
+      methodInputData.value[item.name] = item.inputs;
+      item.inputs.forEach((it: any, k: any) => {
+        param[it.name] = "";
+      })
+      methodFormList.value[item.name] = param;
+    }
+  }
+}
+// Invoke Contract Method字段赋值
+const setFunctionParamsValue = () => {
+  if (methodFormValue.value.length > 0) {
+    contractRef.value.methodList2 = [];
+    methodFormValue.value.forEach((item: any) => {
+      //保存的合同，字段没有进行整理
+      if (!methodMap.get(item.contractName)) { 
+        contractOrchestration.value.forEach((element: any) => {
+          if (element.name === item.contractName) {
+            setAbiInfo(element.abiInfo, item.contractName, 'method');
+          }
+        });
+      }
+      //初始化字段值
+      let param: any = {
+        methodName: item.contractName,
+        methodType: item.method,
+        param1: 1,
+        address: '',
+        customParams: '',
+      };
+      
+      //给自定义字段赋值
+      let custObj = JSON.parse(item.value);
+      let str = '';
+      Object.keys(custObj).forEach(key => {
+        str += `${key}: ${custObj[key]}\n`;
+      })
+      param.customParams = str;
+      //给address赋值
+      let addressVal = item.params[0];
+      if (addressVal.indexOf('$') !== -1) {
+        param.param1 = 1;
+        param.address = addressVal.slice(1, addressVal.indexOf('.'));
+      } else {
+        param.param1 = 2;
+        param.address = addressVal;
+      }
+      //获取inputs字段
+      let inputs = methodMap.get(item.contractName).inputData[item.method];
+      inputs.forEach((it: any, k: any) => {
+        param[it.name] = item.params[k+1];
+      })
+      contractRef.value.methodList2.push({formData: param});  
+    });
+    // contractRef.value.showMethod = true;
+    console.log("contractRef.value.methodList2::",contractRef.value.methodList2);
+  }
+}
+
 //设置save按钮
 const setDisabledSave = (val: boolean) => {
   disabledSave.value = val;
@@ -211,7 +300,7 @@ const setAddressValue = (param1: number, address: string) => {
   let addressVal = '';
   if (param1 == 1) { //Select project contract
     if (address) {
-      addressVal = '$'+contractMap.get(address) + '.address';
+      addressVal = '$'+ address + '.address';
     }
   } else { //Manual input
     addressVal = address;
@@ -267,7 +356,7 @@ const setInvokeContractMethod = () => {
     let custParam = setCustomParams(item.formData.customParams);
     //整合step数据格式
     methodStep.push({
-      contractName: contractMap.get(item.formData.methodName),
+      contractName: item.formData.methodName,
       type: FUNCTION,
       method: item.formData.methodType,
       params: params,
@@ -290,7 +379,7 @@ const setContractInfo = () => {
   //数据格式整合
   let deployStep = {
     contract: {
-      name: contractMap.get(selectedId.value),
+      name: selectedName.value,
       address: '',
       proxyAddress: '',
       proxy: checked.value
@@ -313,7 +402,7 @@ const saveSingleContractInfo = async () => {
   let param = {
     projectId: route.query.id,
     contractId: selectedId.value,
-    contractName: contractMap.get(selectedId.value),
+    contractName: selectedName.value,
     version: baseInfo.value.selectedVersion,
     originalArrange: JSON.stringify(originalArrange.value)
   }
@@ -333,7 +422,7 @@ const getSingleContractInfo = async () => {
       id: route.query.id,
       projectId: route.query.id,
       contractId: selectedId.value,
-      contractName: contractMap.get(selectedId.value),
+      contractName: selectedName.value,
       version: baseInfo.value.selectedVersion
     }
     const { data } = await apiGetSingleContractInfo(param.id, param.projectId, param.contractId, param.contractName, param.version);
@@ -363,13 +452,6 @@ const getProjectsContractName = async () => {
     const { data } = await apiGetProjectsContract({ id: route.query.id, version: baseInfo.value.selectedVersion });
     contractOrchestration.value = data
     console.log('获取可编排的合约:', contractOrchestration.value)
-    
-    //合同名称
-    contractOrchestration.value.map((item: any) => {
-      if (!contractMap.get(item.id)) {
-        contractMap.set(item.id, item.name);
-      }
-    });
   } catch (error: any) {
     console.log("erro:", error)
   }

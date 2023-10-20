@@ -4,7 +4,7 @@
     <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automatically call contract methods post-deployment, including its
       own init method or other contracts' methods
     </div>
-    <div v-if="selectedId && showMethod" 
+    <div v-if="selectedName && showMethod" 
       v-for="(methodItem, methodKey) in methodList" :key="methodKey"
       class="mt-[20px] border border-solid border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] rounded-[12px] p-[20px]">
       <div class="flex justify-between mb-[20px]">
@@ -24,7 +24,7 @@
         <div class="grid grid-cols-2 gap-4">
           <a-form-item name="methodName" label="Method Name">
             <a-select v-model:value="methodItem.formData.methodName" @change="changeMethodName($event, methodKey)" 
-              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.id, label:item.name }))">
+              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name }))">
             </a-select>
           </a-form-item>
           <a-form-item class="form-noLabel" name="methodType" :rules="[{ required: true }]">
@@ -43,12 +43,13 @@
             <a-form-item class="form-noLabel" name="address" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
               <a-select v-if="methodItem.formData.param1 == 1" v-model:value="methodItem.formData.address"  
-                placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.id, label:item.name }))">
+                placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name }))">
               </a-select>
               <a-input v-else v-model:value="methodItem.formData.address" placeholder="Please input address" allowClear />
             </a-form-item>  
           </div>
-          <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
+          <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" 
+            v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
             <a-input v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
           </a-form-item>
           <a-form-item label="Custom Params" name="Custom Params">
@@ -68,13 +69,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, toRefs } from "vue";
-import YAML from "yaml";
+import { ref, reactive, computed, toRefs, onMounted } from "vue";
 import CustomParamsmodal from "./CustomParamsmodal.vue";
 import type { FormInstance } from 'ant-design-vue';
 
 const props = defineProps({
-  selectedId: String,
+  selectedName: String,
   methodMap:{
     type: Map as any,
     required: true,
@@ -85,7 +85,7 @@ const props = defineProps({
   }
 });
 
-const { selectedId, methodMap, contractOrchestration } = toRefs(props);
+const { selectedName, methodMap, contractOrchestration } = toRefs(props);
 const emits = defineEmits(['setAbiInfo', 'setDisabledSave']);
 
 const visible = ref(false);
@@ -93,17 +93,17 @@ const customKey = ref(0);
 const showMethod = ref(false);
 const formRef = ref<FormInstance>();
 const formDataDemo = reactive<any>({
-  methodName: selectedId?.value,
+  methodName: selectedName?.value,
   methodType: '',
   param1: 1,
   address: '',
   customParams: '',
 }); 
-const methodList = reactive<any>([
+const methodList = ref<any>([
   {
     formData: formDataDemo
   }
-]);
+]); 
 
 
 const paramList = ref([
@@ -122,11 +122,11 @@ const formRules = computed(() => {
 });
 
 const moreContractMethod = () => {
-  if (selectedId?.value) {
+  if (selectedName?.value) {
     if (showMethod.value) {
-      methodList.push({
+      methodList.value.push({
         formData: {
-          methodName: selectedId?.value,
+          methodName: selectedName?.value,
           methodType: '',
           param1: 1,
           address: '',
@@ -134,7 +134,8 @@ const moreContractMethod = () => {
         }
       });
     } else {
-      methodList[methodList.length-1].formData.methodName = selectedId?.value
+      // methodList[methodList.length-1].formData.methodName = selectedName?.value
+      console.log("methodList::::::::",methodList.value);
       showMethod.value = true;
     }
     emits('setDisabledSave', false);
@@ -144,12 +145,12 @@ const moreContractMethod = () => {
 //选择合同
 const changeMethodName = (val: any, methodKey: number) => {
   
-  methodList[methodKey].formData.methodType = '';
-  methodList[methodKey].formData.address = '';
-  methodList[methodKey].formData.customParams = '';
+  methodList.value[methodKey].formData.methodType = '';
+  methodList.value[methodKey].formData.address = '';
+  methodList.value[methodKey].formData.customParams = '';
   if (!methodMap.value.get(val)) {
     contractOrchestration.value.forEach((element: any) => {
-      if (element.id === val) {
+      if (element.name === val) {
         emits('setAbiInfo', element.abiInfo, val, 'method');
       }
     });
@@ -157,8 +158,8 @@ const changeMethodName = (val: any, methodKey: number) => {
 }
 //选择function类型
 const changeMethodType = (val: any, methodKey: number) => {
-  methodList[methodKey].formData = Object.assign({}, methodList[methodKey].formData, methodMap.value.get(methodList[methodKey].formData.methodName).formList[val]);
-  console.log("methodList:::",methodList);
+  methodList.value[methodKey].formData = Object.assign({}, methodList.value[methodKey].formData, methodMap.value.get(methodList.value[methodKey].formData.methodName).formList[val]);
+  console.log("methodList:::",methodList.value);
 }
 
 const deleteBtn = () => {
@@ -173,7 +174,7 @@ const doneSecret = (val: any) => {
   val.forEach((e: any) => {
     str += `${e.secretName}: ${e.secretValue}\n`
   });
-  methodList[customKey.value].formData.customParams = str;
+  methodList.value[customKey.value].formData.customParams = str;
   console.log('有值了：' + val)
 }
 const editCustom = (val: string, methodKey: number) => {
@@ -181,9 +182,13 @@ const editCustom = (val: string, methodKey: number) => {
   customKey.value = methodKey;
 }
 
+onMounted(() => {
+  console.log("methodList:",methodList.value.length,methodList.value);
+});
 
 defineExpose({
   methodList,
+  showMethod,
 })
 
 </script>
