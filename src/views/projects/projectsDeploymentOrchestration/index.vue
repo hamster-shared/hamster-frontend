@@ -135,7 +135,7 @@ const initBreadCrumb = () => {
 }
 
 const selectContractId = (id: string, abiInfo: any) => {
-  selectedId.value = id;
+  selectedId.value = id.slice(0,id.indexOf('$'));
   setAbiInfo(abiInfo, id, 'all');
 }
 
