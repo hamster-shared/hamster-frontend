@@ -135,3 +135,12 @@ export function apiGetSingleContractInfo(id: string, projectId: string, contract
     method: "get",
   })
 }
+
+// 保存合约名编排信息
+export function apiSaveLeftInfo(id: string, params: any) {
+  return httpRequest({
+    url: `/api/projects/${id}/arrange/name`,
+    data: params,
+    method: "post",
+  })
+}
