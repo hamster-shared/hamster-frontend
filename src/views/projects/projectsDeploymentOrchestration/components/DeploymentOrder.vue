@@ -92,7 +92,7 @@ const props = defineProps({
 const { contractOrchestration, version, noUseContract } = toRefs(props)
 nextTick(()=>{
   dataList.value = contractOrchestration.value
-  duplicateDataList.value = noUseContract.value || []
+  duplicateDataList.value = noUseContract.value
 })
 
 
@@ -141,9 +141,9 @@ const duplicateBtn = (item: any) => {
 
 // 保存页面的顺序到后端
 const getUseAndNotContractArr = async()=>{
-  const useContract = dataList.value.map((item:any)=>{
+  const useContract = dataList?.value?.map((item:any)=>{
     return item.name
-  })
+  }) || []
   const noUseContract = duplicateDataList?.value?.map((item:any)=>{
     return item.name
   }) || []

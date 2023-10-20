@@ -12,7 +12,7 @@
       <div class="grid grid-cols-2 gap-8">
         <!-- left -->
         <div>
-          <DeploymentOrder v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
+          <DeploymentOrder v-if="contractOrchestration.length || noUseContract.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
           :version="baseInfo.selectedVersion" :noUseContract="noUseContract">
           </DeploymentOrder>
         </div>
@@ -454,8 +454,8 @@ const getProjectsVersion = async () => {
 const getProjectsContractName = async () => {
   try {
     const { data } = await apiWaitContractList(route.query.id, baseInfo.value.selectedVersion );
-    contractOrchestration.value = data.useContract
-    noUseContract.value = data.noUseContract
+    contractOrchestration.value = data.useContract || []
+    noUseContract.value = data.noUseContract || []
     console.log('获取可编排的合约:', contractOrchestration.value)
   } catch (error: any) {
     console.log("erro:", error)
