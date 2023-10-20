@@ -10,8 +10,8 @@
   </div>
 
   <div class="main" :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <div class="flex justify-between item" :class="selectId == item.id ? 'selected' : ''"
-      v-for="(item, index) in dataList" :key="item.id" draggable="true" @click="selectContractId(item)"
+    <div class="flex justify-between item" :class="selectId == (item.id+'$'+item.name) ? 'selected' : ''"
+      v-for="(item, index) in dataList" :key="item.name" draggable="true" @click="selectContractId(item)"
       @dragstart="dragstart(item)" @dragenter="dragenter(item)" @dragend="dragend(item)">
       <div class="font-bold">
         <span class=" bg-[#E2B578] text-[#FFFFFF] px-[8px] py-[2px] rounded-[2px] mr-[20px]">{{ index + 1
@@ -35,7 +35,7 @@
     Skipped Contract Deployment
   </div>
   <div class="main mb-[10px]">
-    <div class="flex justify-between item" v-for="(item, index) in duplicateDataList" :key="item.id"
+    <div class="flex justify-between item" v-for="(item, index) in duplicateDataList" :key="item.name"
       @click="selectContractId(item)">
       <div class="font-bold">
         <span class="bg-[#E2B578] text-[#FFFFFF] px-[12px] py-[2px] rounded-[2px] mr-[20px] opacity-30"></span>
@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import { ref, toRefs, onMounted, nextTick } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
+import { v4 as uuidv4 } from 'uuid';
 
 const theme = useThemeStore();
   
@@ -77,7 +78,7 @@ nextTick(()=>{
 })
 
 const selectId = ref();
-const duplicateDataList = ref([]);
+const duplicateDataList = ref<any>([]);
 
 const emit = defineEmits(['selectContractId'])
 
@@ -100,7 +101,7 @@ const dragend = (item: any): void => {
 
 
 const selectContractId = (item: any) => {
-  selectId.value = item.id;
+  selectId.value = item.id+'$'+item.name;
   console.log(item, '选中')
   emit('selectContractId', selectId.value, item.abiInfo)
 }
@@ -115,8 +116,11 @@ const deployBtn = (item: any) => {
 
 // copy 一份
 const duplicateBtn = (item: any) => {
-  let index = dataList.value.indexOf(item)
-  dataList.value.push(item)
+  const en:any = {}
+  Object.assign(en,item)
+  const flag = uuidv4();
+  en.name = en.name+`(${flag.slice(0,8)})`
+  dataList.value.push(en)
 }
 
 

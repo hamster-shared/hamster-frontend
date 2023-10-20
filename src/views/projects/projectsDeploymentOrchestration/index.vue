@@ -137,7 +137,7 @@ const initBreadCrumb = () => {
 }
 //选择合约
 const selectContractId = (id: string, abiInfo: any) => {
-  selectedId.value = id;
+  selectedId.value = id.slice(0,id.indexOf('$'));
   //获取单个合约的最新编排信息
   getSingleContractInfo();
   //设置abliInfo数据
