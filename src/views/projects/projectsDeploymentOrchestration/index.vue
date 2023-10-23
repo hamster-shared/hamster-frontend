@@ -37,19 +37,21 @@
         </div>
       </div>
       <!-- line -->
-      <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
-      <div>
-        <div class="text-[24px] font-bold">Network / Chain</div>
-        <div class="mt-[10px] mb-[20px]">Select a network to deploy this contract on. We recommend starting with a
-          testent
-        </div>
-        <div class="flex justify-between">
-          <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
-            :options="networkListData.map(item => ({ value: item.name }))">
-          </a-select>
-          <div>
-            <a-button @click="connectWallet">Connect Wallet</a-button>
-            <a-button @click="deployManyContract">Deploy Now</a-button>
+      <div v-if="!showFooter">
+        <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
+        <div>
+          <div class="text-[24px] font-bold">Network / Chain</div>
+          <div class="mt-[10px] mb-[20px]">Select a network to deploy this contract on. We recommend starting with a
+            testent
+          </div>
+          <div class="flex justify-between">
+            <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
+              :options="networkListData.map(item => ({ value: item.name }))">
+            </a-select>
+            <div>
+              <a-button @click="connectWallet">Connect Wallet</a-button>
+              <a-button @click="deployManyContract">Deploy Now</a-button>
+            </div>
           </div>
         </div>
       </div>
@@ -99,6 +101,8 @@ const contractOrchestration = ref<any>([])
 // 不编排合约列表
 const noUseContract = ref<any>([])
 const baseInfo = ref()
+// 控制底部钱包部署按钮的显示
+const showFooter = route.query.fromDetailSetting || ''
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
