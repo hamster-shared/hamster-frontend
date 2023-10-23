@@ -4,23 +4,23 @@
     <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
     <div v-if="selectedName">
-      <a-form ref="formRef" :rules="formRules" :model="formData" layout="vertical">
+      <a-form ref="formContractRef" :rules="formRules" :model="formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
           <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
-            <a-select v-model:value="formData.param1" 
+            <a-select @change="checkFiledChange" v-model:value="formData.param1" 
               placeholder="Select project contract" :options="paramList">
             </a-select>
           </a-form-item>
           <a-form-item class="form-noLabel" name="address" :rules="[{ required: true }]">
             <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
-            <a-select v-if="formData.param1 == 1" v-model:value="formData.address" 
+            <a-select v-if="formData.param1 == 1" v-model:value="formData.address" @change="checkFiledChange"
               placeholder="Contract Address" :options="contractOrchestration.map(item => ({ value: item.name, label:item.name }))">
             </a-select>
-            <a-input v-else v-model:value="formData.address" placeholder="Please input address" allowClear />
+            <a-input v-else @change="checkFiledChange" v-model:value="formData.address" placeholder="Please input address" allowClear />
           </a-form-item>  
         </div>
         <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" v-for="(item, key) in inputData" :key="key">
-          <a-input v-model:value="formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
+          <a-input @change="checkFiledChange" v-model:value="formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
         </a-form-item>
       </a-form>
     </div>
@@ -46,19 +46,30 @@ const props = defineProps({
 
 const { selectedName, inputData, formData, contractOrchestration } = toRefs(props);
 
+const formContractRef = ref();
 const paramList = ref([
   {label: 'Select project contract', value: 1},
   {label: 'Manual input', value: 2},
 ])
+const isChange = ref(false);
 
 const formRules = computed(() => {
-  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
-  return {
-    param1: [requiredRule('')],
-    param2: [requiredRule('')],
-    param3: [requiredRule('')],
-  };
+  // const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+  // return {
+  //   param1: [requiredRule('')],
+  //   param2: [requiredRule('')],
+  //   param3: [requiredRule('')],
+  // };
 });
+
+const checkFiledChange = (val:any) => {
+  isChange.value = true;
+}
+
+defineExpose({
+  formContractRef,
+  isChange,
+})
 
 </script>
 
