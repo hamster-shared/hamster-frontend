@@ -80,7 +80,7 @@ export function apiGetExecuteInfoById(id: string, executeId: string) {
 // 根据项目ID和版本获取部署的合约列表 ----> 产品说暂不支持分页
 export function apiGetExecuteInfoList(id: string, version: string) {
   return httpRequest({
-    url: `/api/projects/${id}/arrange/contract/${version}`,
+    url: `/api/projects/${id}/arrange/deploy/contract/${version}`,
     method: "get",
   })
 }

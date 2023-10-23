@@ -39,7 +39,7 @@ import { apiGetExecuteInfoList } from '@/apis/contractOrchestrationDeploy'
 import { apiGetProjectsVersions } from "@/apis/workFlows";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
-const versionvValue = ref('1')
+const versionvValue = ref<string>('')
 const versionList = ref<any>([]);
 const route = useRoute()
 const router = useRouter()
@@ -49,6 +49,7 @@ const contractInfo = ref<any>()
 
 const changeContractVersion = (val: any) => {
   console.log('当前版本：' + val)
+  getList()
 }
 
 
@@ -92,7 +93,7 @@ const dataSource = ref<any>([])
 
 
 const splitDataSource = () => {
-  dataSource.value.map((item: any) => {
+  dataSource.value?.map((item: any) => {
     if (item.address) {
       item.contractAddressMinData = item.address.substring(0, 6) + "..." + item.address.substring(item.address.length - 4)
     }
@@ -147,6 +148,7 @@ const getProjectsVersion = async () => {
   try {
     const { data } = await apiGetProjectsVersions({id: route.query.id});
     versionList.value = data
+    versionvValue.value = versionList.value[0]
   } catch (error: any) {
     console.log("erro:", error)
   }

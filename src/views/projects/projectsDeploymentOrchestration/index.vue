@@ -37,23 +37,25 @@
         </div>
       </div>
       <!-- line -->
-      <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
-      <div>
-        <div class="text-[24px] font-bold">Network / Chain</div>
-        <div class="mt-[10px] mb-[20px]">Select a network to deploy this contract on. We recommend starting with a
-          testent
-        </div>
-        <div class="flex justify-between">
-          <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
-            :options="networkListData.map(item => ({ value: item.name }))">
-          </a-select>
-          <div class="flex">
-            <div v-if="isConnectedWallet" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
-              <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
-              <label class="text-[#E2B578] dark:text-[#FFFFFF]">{{ getPonitStr(walletAccount,6,4) }}</label>
+      <div v-if="!showFooter">
+        <div class="h-[1px] my-[32px] border border-solid dark:border-[#434343] border-[#EBEBEB]"></div>
+        <div>
+          <div class="text-[24px] font-bold">Network / Chain</div>
+          <div class="mt-[10px] mb-[20px]">Select a network to deploy this contract on. We recommend starting with a
+            testent
+          </div>
+          <div class="flex justify-between">
+            <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
+              :options="networkListData.map(item => ({ value: item.name }))">
+            </a-select>
+            <div class="flex">
+              <div v-if="isConnectedWallet" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
+                <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
+                <label class="text-[#E2B578] dark:text-[#FFFFFF]">{{ getPonitStr(walletAccount,6,4) }}</label>
+              </div>
+              <a-button v-if="!isConnectedWallet" class="mr-[24px]" @click="connectWallet">Connect Wallet</a-button>
+              <a-button :disabled="!isConnectedWallet" @click="deployManyContract">Deploy Now</a-button>
             </div>
-            <a-button v-if="!isConnectedWallet" class="mr-[24px]" @click="connectWallet">Connect Wallet</a-button>
-            <a-button :disabled="!isConnectedWallet" @click="deployManyContract">Deploy Now</a-button>
           </div>
         </div>
       </div>
@@ -109,6 +111,8 @@ const contractOrchestration = ref<any>([])
 // 不编排合约列表
 const noUseContract = ref<any>([])
 const baseInfo = ref()
+// 控制底部钱包部署按钮的显示
+const showFooter = route.query.fromDetailSetting || ''
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
