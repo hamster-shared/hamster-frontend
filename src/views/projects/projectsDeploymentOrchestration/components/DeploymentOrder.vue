@@ -115,9 +115,9 @@ const dragend = (item: any): void => {
 
 
 const selectContractId = (item: any) => {
-  selectId.value = item.id+'$'+item.name;
+  // selectId.value = item.id+'$'+item.name;
   console.log(item, '选中')
-  emit('selectContractId', selectId.value, item.abiInfo)
+  emit('selectContractId', item.id+'$'+item.name, item.abiInfo)
 }
 
 
@@ -168,6 +168,10 @@ const cancelSkipBtn = (item: any) => {
 
 onMounted(()=>{
   
+})
+
+defineExpose({
+  selectId,
 })
 </script>
 <style scoped lang="less">

@@ -12,13 +12,13 @@
       <div class="grid grid-cols-2 gap-8">
         <!-- left -->
         <div>
-          <DeploymentOrder v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
+          <DeploymentOrder ref="deploymentRef" v-if="contractOrchestration.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
           :version="baseInfo.selectedVersion" :noUseContract="noUseContract">
           </DeploymentOrder>
         </div>
         <!-- right -->
         <div>
-          <ContractParams :contractOrchestration="contractOrchestration" :selectedName="selectedName" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
+          <ContractParams ref="paramsRef" :contractOrchestration="contractOrchestration" :selectedName="selectedName" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
           <InvokeContract ref="contractRef" :contractOrchestration="contractOrchestration" :selectedName="selectedName" :methodMap="methodMap" @setAbiInfo="setAbiInfo" @setDisabledSave="setDisabledSave"></InvokeContract>
           <div>
             <div class="flex justify-between mt-[30px]">
@@ -59,6 +59,7 @@
   <!-- <CustomParamsmodal /> -->
   <!-- <DeploymentOrchestrationmodal /> -->
   <!-- <Wallets ref="showWallets"></Wallets> -->
+  <saveModal :visibleSave="visibleSave" @handleCancel="handleCancelModal" @handleSave="handleSaveModal"></saveModal>
 </template>
 
 <script setup lang="ts">
@@ -70,6 +71,7 @@ import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import ContractParams from './components/ContractParams.vue';
 import InvokeContract from './components/InvokeContract.vue';
+import saveModal from './components/saveModal.vue';
 import UsingWalltModal from "./components/UsingWalltModal.vue";
 import CustomParamsmodal from "./components/CustomParamsmodal.vue";
 import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmodal.vue";
@@ -102,8 +104,14 @@ const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
+const isChange = ref(false);
+const tempSelectId = ref('');
+const tempAbiInfo = ref('');
+const deploymentRef = ref();
+const visibleSave = ref(false);
 const methodMap = new Map();
 const disabledSave = ref(true);
+const paramsRef = ref();
 const contractRef = ref();
 const paramFormValue = ref<any>([]); //记录Contract Parameters表单值
 const paramFormData = ref<any>({});
@@ -116,8 +124,7 @@ const originalArrange = ref<DeployRecord>(); //参数值数据格式整理
 const contractSingileInfo = ref<any>({});
 
 const changeChecked = (val: any) => {
-  console.log(val, 'switch')
-  console.log("checked:::",checked.value);
+  isChange.value = true;
 }
 
 const changeContractVersion = (val: any) => {
@@ -141,8 +148,32 @@ const initBreadCrumb = () => {
     },
   ]
 }
+const handleSaveModal = () => {
+  setSaveParamsValue();
+  saveSingleContractInfo();
+}
+const handleCancelModal = () => {
+  setSaveParamsValue();
+  selectContractId(tempSelectId.value, tempAbiInfo.value);
+}
+//设置save参数值
+const setSaveParamsValue = () => {
+  visibleSave.value = false;
+  paramsRef.value.isChange = false;
+  contractRef.value.isChange = false;
+  isChange.value = false;
+}
 //选择合约
 const selectContractId = async (id: string, abiInfo: any) => {
+  tempSelectId.value = id;
+  tempAbiInfo.value = abiInfo;
+  if (paramsRef.value.isChange || contractRef.value.isChange || isChange.value) {
+    visibleSave.value = true;
+    return false;
+  } else {
+    deploymentRef.value.selectId = id;
+  }
+
   selectedId.value = id.slice(0, id.indexOf('$'));
   selectedName.value = id.slice(id.indexOf('$')+1);
   //获取单个合约的最新编排信息
@@ -151,11 +182,23 @@ const selectContractId = async (id: string, abiInfo: any) => {
   setAbiInfo(abiInfo, selectedName.value, 'all');
   //Invoke Contract Method字段赋值
   setFunctionParamsValue(); 
+  //Contract Parameters 清空字段验证 
+  await paramsRef.value.formContractRef.clearValidate();
+  //Invoke Contract Method 清空字段验证
+  //获取子组件的表单ref值
+  let invokeChild = contractRef.value.formInvokeRef;
+  if (invokeChild != undefined) {
+    for (let i = 0; i < invokeChild.length; i++){
+      await invokeChild[i].clearValidate();
+    }
+  }
+  disabledSave.value = false;
 }
 
 //拆分保存的合约信息
 const setSingleContractArrange = () => {
   if (contractSingileInfo.value != null && Object.keys(contractSingileInfo.value).length > 0) {
+    emptyFormValue();
     contractSingileInfo.value.deployStep.forEach((element:any) => {
       checked.value = element.contract.proxy; //Proxy Contract
       element.steps.forEach((item: any, key: any) => {
@@ -243,7 +286,6 @@ const setFunctionParams = (item: any, mapKey: any) => {
 // Invoke Contract Method字段赋值
 const setFunctionParamsValue = () => {
   if (methodFormValue.value.length > 0) {
-    contractRef.value.methodList = [];
     methodFormValue.value.forEach((item: any) => {
       //保存的合同，字段没有进行整理
       if (!methodMap.get(item.contractName)) { 
@@ -286,6 +328,8 @@ const setFunctionParamsValue = () => {
       contractRef.value.methodList.push({formData: param});  
     });
     contractRef.value.showMethod = true;
+
+    console.log("mothodList::",contractRef.value.methodList);
   }
 }
 
@@ -391,8 +435,25 @@ const setContractInfo = () => {
     step: 0,
   }
 }
+//验证Invoke Contract Method表单
+const checkContractForm = async () => {
+  
+  //Contract Parameters 字段非空验证
+  await paramsRef.value.formContractRef.validate();
+  //Invoke Contract Method 字段非空验证
+  //获取子组件的表单ref值
+  let invokeChild = contractRef.value.formInvokeRef;
+  if (invokeChild != undefined) {
+    for (let i = 0; i < invokeChild.length; i++){
+      await invokeChild[i].validate();
+    }
+  }
+}
 //单个合同数据保存
 const saveSingleContractInfo = async () => {
+  //字段非空验证
+  await checkContractForm();
+ 
   //设置合同数据
   setContractInfo();
   console.log("originalArrange.value::",originalArrange.value);
@@ -429,9 +490,7 @@ const getSingleContractInfo = async () => {
       //拆分保存的合约信息
       setSingleContractArrange();
     } else {
-      methodFormValue.value = [];
-      paramFormValue.value = [];
-      contractRef.value.methodList = [];
+      emptyFormValue();
     }
     
     console.log("单个合约信息：", contractSingileInfo.value);
@@ -440,6 +499,12 @@ const getSingleContractInfo = async () => {
     console.log("erro:", error)
   }
 };
+
+const emptyFormValue = () => {
+  methodFormValue.value = [];
+  paramFormValue.value = [];
+  contractRef.value.methodList = [];
+}
 
 // 获取版本号
 const getProjectsVersion = async () => {
