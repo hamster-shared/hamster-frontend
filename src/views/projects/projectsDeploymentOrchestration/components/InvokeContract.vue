@@ -52,11 +52,11 @@
             v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
             <a-input @change="checkFiledChange" v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
           </a-form-item>
-          <a-form-item v-if="methodItem.formData.customParams" label="Custom Params" name="customParams" :rules="[{ required: true }]">
-            <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
-            <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
-          </a-form-item>
         </div>
+        <a-form-item v-if="methodItem.formData.customParams" label="Custom Params" name="customParams" :rules="[{ required: true }]">
+          <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
+          <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
+        </a-form-item>
       </a-form>
     </div>
     <div @click="moreContractMethod" 
@@ -123,9 +123,9 @@ const checkFiledChange = () => {
 }
 
 const moreContractMethod = () => {
-  checkFiledChange();
-  let formDemo = Object.assign({}, formDataDemo);
   if (selectedName?.value) {
+    checkFiledChange();
+    let formDemo = Object.assign({}, formDataDemo);
     methodList.value.push({formData:formDemo});
     methodList.value[methodList.value.length-1].formData.methodName = selectedName?.value
     if (!showMethod.value) {

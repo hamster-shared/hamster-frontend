@@ -47,9 +47,13 @@
           <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
             :options="networkListData.map(item => ({ value: item.name }))">
           </a-select>
-          <div>
-            <a-button @click="connectWallet">Connect Wallet</a-button>
-            <a-button @click="deployManyContract">Deploy Now</a-button>
+          <div class="flex">
+            <div v-if="isConnectedWallet" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
+              <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
+              <label class="text-[#E2B578] dark:text-[#FFFFFF]">{{ getPonitStr(walletAccount,6,4) }}</label>
+            </div>
+            <a-button v-if="!isConnectedWallet" class="mr-[24px]" @click="connectWallet">Connect Wallet</a-button>
+            <a-button :disabled="!isConnectedWallet" @click="deployManyContract">Deploy Now</a-button>
           </div>
         </div>
       </div>
@@ -58,15 +62,17 @@
   <!-- <UsingWalltModal /> -->
   <!-- <CustomParamsmodal /> -->
   <!-- <DeploymentOrchestrationmodal /> -->
-  <!-- <Wallets ref="showWallets"></Wallets> -->
+  <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
   <saveModal :visibleSave="visibleSave" @handleCancel="handleCancelModal" @handleSave="handleSaveModal"></saveModal>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import YAML from "yaml";
 import { useRoute, useRouter } from 'vue-router';
+import{ getPonitStr } from "@/utils/tool";
 import { useThemeStore } from "@/stores/useTheme";
+import { useWalletAddress } from "@/stores/useWalletAddress";
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import ContractParams from './components/ContractParams.vue';
@@ -85,6 +91,8 @@ import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
 
 const theme = useThemeStore();
+const walletAddress = useWalletAddress()
+
 const value1 = ref<string>('Ethereum/Mainnet');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
@@ -104,6 +112,8 @@ const baseInfo = ref()
 
 const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
 
+const walletAccount = ref("");
+const isConnectedWallet = ref(false);
 const isChange = ref(false);
 const tempSelectId = ref('');
 const tempAbiInfo = ref('');
@@ -545,13 +555,24 @@ const deployManyContract = async () => {
 
 
 const connectWallet = () => {
-  // const walletAccount = window.localStorage.getItem("walletAccount");
-  // if (walletAccount === undefined || walletAccount === null) {
-  //   showWallets.value?.onClickConnect();
-  // } else{
-  // 
-  // }
+  showWallets.value?.onClickConnect();
 }
+
+const setWalletBtn = (val: boolean) => {
+  isConnectedWallet.value = val;
+}
+
+watch(
+  () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
+  (oldValue, newV) => {
+    if (oldValue) {
+      isConnectedWallet.value = true;
+      walletAccount.value = oldValue;
+    } else {
+      isConnectedWallet.value = false
+    }
+  }, { deep: true, immediate: true }
+);
 
 onMounted(async () => {
   await getContactDetail()
