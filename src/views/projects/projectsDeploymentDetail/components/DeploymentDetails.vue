@@ -36,13 +36,41 @@
                   <div class="collapse-content-title">Block:</div>
                   <div>9577367</div>
                 </div>
+                <div class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title">TimeStamp:</div>
+                  <div>Aug-25-2023 08:40:48 AM +UTC</div>
+                </div>
+                <div class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title">From:</div>
+                  <div>0xBb2286A9Fc63Ee0931F0F8977b01131B492E310a
+                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
+                  </div>
+                </div>
+                <div class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title">To:</div>
+                  <div>0x78e80400713ee90a0bf4d52aaa9e4c9b8df699d4
+                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
+                  </div>
+                </div>
+                <div class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title">Value:</div>
+                  <div>0 ETH ($ 0.00)</div>
+                </div>
+                <div class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title">Tansaction Fee::</div>
+                  <div>0.0007650435 ETH</div>
+                </div>
+                <div class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title">Gas Price::</div>
+                  <div>1.5 Gwei</div>
+                </div>
               </div>
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer">View on block explorer</div>
             </div>
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">NO Data</div>
           </div>
         </a-collapse-panel>
-      </a-collapse>
+    </a-collapse>
   </div>
   <DeploymentOrchestrationmodal v-if="showOrchestrationInfo"/>
 </template>

@@ -30,7 +30,7 @@ import { ref, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiSourceInfo } from '@/apis/contractOrchestrationDeploy'
 import { message } from "ant-design-vue";
-const selectedVersion = ref<string>('1');
+const selectedVersion = ref<string>('');
 const props = defineProps({
   versionList:{
     type:Array,
@@ -65,6 +65,9 @@ const getSourceInfo = async()=>{
 }
 
 onMounted(()=>{
+  // 版本号倒序，默认取数组第一项
+  selectedVersion.value = versionList.value[0]
+  console.log('版本号倒序，默认取数组第一项:',selectedVersion.value)
   getSourceInfo()
 })
 

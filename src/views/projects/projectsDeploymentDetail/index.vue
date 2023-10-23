@@ -3,7 +3,7 @@
     <bread-crumb :routes="breadCrumbInfo" />
     <!-- 详情 -->
 
-    <DeployVersionInfomation :name="contractInfo.name" :versionList="versionList" />
+    <DeployVersionInfomation v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
     <DeploymentDetails></DeploymentDetails>
   </div>
 </template>
@@ -23,7 +23,7 @@ const route = useRoute()
 const router = useRouter()
 // 合约信息对象
 const contractInfo = ref<any>({})
-const versionList = ref();
+const versionList = ref([]);
 
 // 导航栏
 const initBreadCrumb = ()=>{

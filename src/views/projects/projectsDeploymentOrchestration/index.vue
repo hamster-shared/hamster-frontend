@@ -1,7 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <bread-crumb :routes="breadCrumbInfo" />
-    <DeployVersionInfomation ref="baseInfo" :versionList="versionList" :name="contractInfo.name" />
+    <DeployVersionInfomation v-if="versionList.length" ref="baseInfo" :versionList="versionList" :name="contractInfo.name" />
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="text-[28px] font-bold mb-[10px]">Deployment Orchestration</div>
       <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Automate multi-contract deployment through
@@ -86,7 +86,7 @@ const theme = useThemeStore();
 const value1 = ref<string>('Ethereum/Mainnet');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
-const versionList = ref();
+const versionList = ref([]);
 const selectedId = ref(''); //选中的合同id
 const selectedName = ref(''); //选中的合同name
 const route = useRoute()
@@ -490,7 +490,7 @@ const connectWallet = () => {
 
 onMounted(async () => {
   await getContactDetail()
-  getProjectsVersion()
+  await getProjectsVersion()
   getProjectsContractName()
   initBreadCrumb()
 })
