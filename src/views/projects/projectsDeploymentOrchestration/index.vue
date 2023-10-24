@@ -49,11 +49,11 @@
               :options="networkListData.map((item:any, key: any) => ({label:item.chainName, value: key }))">
             </a-select>
             <div class="flex">
-              <div v-if="isConnectedWallet" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
+              <div v-if="networkLogo" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
                 <img v-if="networkLogo" :src="networkLogo" class="h-[20px] mr-2" />
                 <label class="text-[#E2B578] dark:text-[#FFFFFF]">{{ getPonitStr(walletAccount,6,4) }}</label>
               </div>
-              <a-button v-if="!isConnectedWallet" class="mr-[24px]" @click="connectWallet">Connect Wallet</a-button>
+              <a-button v-if="!networkLogo" class="mr-[24px]" @click="connectWallet">Connect Wallet</a-button>
               <a-button :disabled="!networkLogo" @click="deployManyContract">Deploy Now</a-button>
             </div>
           </div>
