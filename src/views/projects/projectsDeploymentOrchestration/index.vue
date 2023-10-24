@@ -83,7 +83,7 @@ import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList } from "@/apis/contractOrchestrationDeploy";
+import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList, apiArrangeDeployList } from "@/apis/contractOrchestrationDeploy";
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
@@ -601,6 +601,12 @@ const getEVMNetwork = async()=>{
   console.log('getEVMNetwork:',res)
 }
 
+// 获取已经编排过的合约列表
+const getArrangeDeployList = async()=>{
+  const res = await apiArrangeDeployList(route.query.id, baseInfo.value.selectedVersion)
+  console.log('获取已经编排过的合约列表:',res)
+}
+
 onMounted(async () => {
   await getContactDetail()
   await getProjectsVersion()
@@ -614,6 +620,7 @@ onMounted(async () => {
     }
   }else{
     await getEVMNetwork()
+    await getArrangeDeployList()
   }
 })
 

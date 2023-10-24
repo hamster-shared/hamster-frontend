@@ -152,3 +152,11 @@ export function apiWaitContractList(id: string, version: string) {
     method: "get",
   })
 }
+
+// 获取编排参数列表
+export function apiArrangeDeployList(id: string, version: string) {
+  return httpRequest({
+    url: `/api/projects/${id}/arrange/data/${version}`,
+    method: "get",
+  })
+}
