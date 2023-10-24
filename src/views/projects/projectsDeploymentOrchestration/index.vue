@@ -534,7 +534,7 @@ const getProjectsVersion = async () => {
 const getProjectsContractName = async () => {
   try {
     const { data } = await apiWaitContractList(route.query.id, baseInfo.value.selectedVersion );
-    contractOrchestration.value = data.useContract || []
+    contractOrchestration.value = data.useContract || [];
     noUseContract.value = data.noUseContract || []
     console.log('获取可编排的合约:', contractOrchestration.value)
   } catch (error: any) {
@@ -586,8 +586,15 @@ watch(
 onMounted(async () => {
   await getContactDetail()
   await getProjectsVersion()
-  getProjectsContractName()
+  await getProjectsContractName()
   initBreadCrumb()
+
+  if (showFooter) { // Deploy Setting 默认选中第一个数据
+    if (contractOrchestration.value.length > 0) {
+      let itemVal = contractOrchestration.value[0];
+      selectContractId(itemVal.id+'$'+itemVal.name, itemVal.abiInfo)
+    }
+  }
 })
 
 </script>
