@@ -552,9 +552,14 @@ const getContactDetail = async () => {
 }
 
 const deployManyContract = async () => {
-  // 部署调用代码
+  const walletAccount = window.localStorage.getItem("walletAccount");
+  if (walletAccount === undefined || walletAccount === null) {
+    connectWallet()
+  } else { 
+    // 部署调用代码
 
-  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
+    router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
+  }
 }
 
 
