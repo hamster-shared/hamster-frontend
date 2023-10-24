@@ -46,15 +46,15 @@
           </div>
           <div class="flex justify-between">
             <a-select ref="select" v-model:value="selectNetwork" style="width: 50%" @change="changeNetwork"
-              :options="networkListData.map(item => ({ value: item.chainName }))">
+              :options="networkListData.map((item:any, key: any) => ({label:item.chainName, value: key }))">
             </a-select>
             <div class="flex">
               <div v-if="isConnectedWallet" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
-                <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
+                <img v-if="networkLogo" :src="networkLogo" class="h-[20px] mr-2" />
                 <label class="text-[#E2B578] dark:text-[#FFFFFF]">{{ getPonitStr(walletAccount,6,4) }}</label>
               </div>
               <a-button v-if="!isConnectedWallet" class="mr-[24px]" @click="connectWallet">Connect Wallet</a-button>
-              <a-button :disabled="!isConnectedWallet" @click="deployManyContract">Deploy Now</a-button>
+              <a-button :disabled="!networkLogo" @click="deployManyContract">Deploy Now</a-button>
             </div>
           </div>
         </div>
@@ -115,6 +115,7 @@ const showFooter = route.query.fromDetailSetting || ''
 const visibleNumber = ref(false)
 
 const networkListData = ref<any>([])
+const networkLogo = ref('');
 
 const walletAccount = ref("");
 const isConnectedWallet = ref(false);
@@ -140,10 +141,15 @@ const contractSingileInfo = ref<any>({});
 const changeChecked = (val: any) => {
   isChange.value = true;
 }
-
 const changeNetwork = (val: any) => {
-  console.log('changeNetwork:')
-  // switchToChain()
+  let item = networkListData.value[val];
+  const walletAccount = window.localStorage.getItem("walletAccount");
+  if (walletAccount === undefined || walletAccount === null) {
+    connectWallet();
+  } else {
+    switchToChain(item.chainId, item.chainName, item.rpcUrl, item.symbol, item.decimals);
+  }
+  networkLogo.value = item.logo;
 }
 
 // 导航栏
@@ -558,20 +564,14 @@ const closeDeployContractsNumberModal = ()=>{
 
 // 开始调用小狐狸进行部署合约
 const goDeploy = ()=>{
+  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
 
 }
 
 const deployManyContract = async () => {
   // debugger
-  const walletAccount = window.localStorage.getItem("walletAccount");
-  if (walletAccount === undefined || walletAccount === null) {
-    connectWallet()
-  } else { 
-    // 部署调用代码
-    visibleNumber.value = true
-    return
-    router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
-  }
+  // 部署调用代码
+  visibleNumber.value = true
 }
 
 
