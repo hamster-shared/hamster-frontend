@@ -170,7 +170,7 @@ const initBreadCrumb = () => {
   ]
 }
 const handleSaveModal = () => {
-  setSaveParamsValue();
+  // setSaveParamsValue();
   saveSingleContractInfo();
 }
 const handleCancelModal = () => {
@@ -491,6 +491,8 @@ const saveSingleContractInfo = async () => {
     message.success(res.message);
   } catch (error: any) {
     console.log("erro:", error)
+  } finally {
+    setSaveParamsValue()
   }
 }
 
