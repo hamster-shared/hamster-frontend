@@ -52,6 +52,11 @@ const projectsRoute = [
             name: "FilecoinDetail",
             component: () => import('@/views/projects/FilecoinDetail/index.vue'),
           },
+          {
+            path: "/projects/templates/solana/details",
+            name: "SolanaDetail",
+            component: () => import('@/views/projects/SolanaDetail/index.vue'),
+          },
         ]
       },
       {
