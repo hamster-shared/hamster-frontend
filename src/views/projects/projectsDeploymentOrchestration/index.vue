@@ -45,8 +45,8 @@
             testent
           </div>
           <div class="flex justify-between">
-            <a-select ref="select" v-model:value="value1" style="width: 50%" @change="changeContractVersion"
-              :options="networkListData.map(item => ({ value: item.name }))">
+            <a-select ref="select" v-model:value="selectNetwork" style="width: 50%" @change="changeContractVersion"
+              :options="networkListData.map(item => ({ value: item.chainName }))">
             </a-select>
             <div class="flex">
               <div v-if="isConnectedWallet" class="mr-[24px] bg-[#E2B578] rounded-[8px] leading-[43px] px-[15px]">
@@ -91,11 +91,12 @@ import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractLis
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
+import { apiEvmNetwork } from '@/apis/network'
 
 const theme = useThemeStore();
 const walletAddress = useWalletAddress()
 
-const value1 = ref<string>('Ethereum/Mainnet');
+const selectNetwork = ref<string>('');
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
 const versionList = ref([]);
@@ -114,7 +115,7 @@ const baseInfo = ref()
 // 控制底部钱包部署按钮的显示
 const showFooter = route.query.fromDetailSetting || ''
 
-const networkListData = ref([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
+const networkListData = ref<any>([])
 
 const walletAccount = ref("");
 const isConnectedWallet = ref(false);
@@ -583,6 +584,12 @@ watch(
   }, { deep: true, immediate: true }
 );
 
+const getEVMNetwork = async()=>{
+  const res = await apiEvmNetwork()
+  networkListData.value = res.data
+  console.log('getEVMNetwork:',res)
+}
+
 onMounted(async () => {
   await getContactDetail()
   await getProjectsVersion()
@@ -594,6 +601,8 @@ onMounted(async () => {
       let itemVal = contractOrchestration.value[0];
       selectContractId(itemVal.id+'$'+itemVal.name, itemVal.abiInfo)
     }
+  }else{
+    await getEVMNetwork()
   }
 })
 
