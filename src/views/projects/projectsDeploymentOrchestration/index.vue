@@ -45,7 +45,7 @@
             testent
           </div>
           <div class="flex justify-between">
-            <a-select ref="select" v-model:value="selectNetwork" style="width: 50%" @change="changeContractVersion"
+            <a-select ref="select" v-model:value="selectNetwork" style="width: 50%" @change="changeNetwork"
               :options="networkListData.map(item => ({ value: item.chainName }))">
             </a-select>
             <div class="flex">
@@ -61,9 +61,7 @@
       </div>
     </div>
   </div>
-  <!-- <UsingWalltModal /> -->
-  <!-- <CustomParamsmodal /> -->
-  <!-- <DeploymentOrchestrationmodal /> -->
+  <UsingWalltModal :visibleNumber="visibleNumber" :number="5" @closeDeployContractsNumberModal="closeDeployContractsNumberModal" @goDeploy="goDeploy"/>
   <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
   <saveModal :visibleSave="visibleSave" @handleCancel="handleCancelModal" @handleSave="handleSaveModal"></saveModal>
 </template>
@@ -81,8 +79,6 @@ import ContractParams from './components/ContractParams.vue';
 import InvokeContract from './components/InvokeContract.vue';
 import saveModal from './components/saveModal.vue';
 import UsingWalltModal from "./components/UsingWalltModal.vue";
-import CustomParamsmodal from "./components/CustomParamsmodal.vue";
-import DeploymentOrchestrationmodal from "./components/DeploymentOrchestrationmodal.vue";
 import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
@@ -92,6 +88,7 @@ import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./
 import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
 import { apiEvmNetwork } from '@/apis/network'
+import { switchToChain } from '@/utils/changeNetwork'
 
 const theme = useThemeStore();
 const walletAddress = useWalletAddress()
@@ -114,6 +111,8 @@ const noUseContract = ref<any>([])
 const baseInfo = ref()
 // 控制底部钱包部署按钮的显示
 const showFooter = route.query.fromDetailSetting || ''
+// 用于显示部署条数的提醒弹框
+const visibleNumber = ref(false)
 
 const networkListData = ref<any>([])
 
@@ -142,8 +141,9 @@ const changeChecked = (val: any) => {
   isChange.value = true;
 }
 
-const changeContractVersion = (val: any) => {
-  console.log(val, 'version')
+const changeNetwork = (val: any) => {
+  console.log('changeNetwork:')
+  // switchToChain()
 }
 
 // 导航栏
@@ -552,13 +552,24 @@ const getContactDetail = async () => {
   }
 }
 
+const closeDeployContractsNumberModal = ()=>{
+  visibleNumber.value = false
+}
+
+// 开始调用小狐狸进行部署合约
+const goDeploy = ()=>{
+
+}
+
 const deployManyContract = async () => {
+  // debugger
   const walletAccount = window.localStorage.getItem("walletAccount");
   if (walletAccount === undefined || walletAccount === null) {
     connectWallet()
   } else { 
     // 部署调用代码
-
+    visibleNumber.value = true
+    return
     router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
   }
 }
