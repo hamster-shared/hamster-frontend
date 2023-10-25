@@ -568,9 +568,9 @@ const closeDeployContractsNumberModal = ()=>{
 
 // 执行部署引擎
 const goDeploy = ()=>{
-  // 部署调用代码，引擎执行完成之后跳转url
+  // deployArrange.value 引擎需要用到的大JSON字符串
 
-
+  // 引擎执行完成后进行跳转
   router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}`)
 }
 
