@@ -49,6 +49,8 @@ const { versionList, name, id } = toRefs(props)
 const route = useRoute()
 const info = ref<any>({})
 
+const emit = defineEmits(['getProjectsContractName'])
+
 defineExpose({
   selectedVersion,
 })
@@ -59,6 +61,7 @@ const getSourceInfo = async()=>{
     const res = await apiSourceInfo(route.query.id, selectedVersion.value)
     console.log('获取头部信息:',res)
     info.value = res.data
+    emit('getProjectsContractName')
   } catch (error:any) {
     message.error(error)
   }
