@@ -49,7 +49,7 @@
           <img src="@/assets/icons/copy.svg" />
           copy</span>
       </div>
-      <a-textarea class="dark:text-white text-[121211]" placeholder="" disabled :rows="4" v-model:value="hashValue"
+      <a-textarea class="dark:text-white text-[121211] break-word break-all whitespace-normal" placeholder="" disabled :rows="4" v-model:value="hashValue"
         :class="theme.themeValue === 'dark' ? 'dark-css' : ''" ref="textareaRef" />
     </div>
   </a-form>
