@@ -16,11 +16,17 @@ import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import DeploymentDetails from './components/DeploymentDetails.vue';
 import { apiGetProjectsDetail } from '@/apis/projects'
-import { apiGetProjectsVersions } from "@/apis/workFlows";
+import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import { apiGetExecuteInfoById } from "@/apis/contractOrchestrationDeploy"
+import type {DeployRecord} from "@/views/projects/projectsDeploymentOrchestration/components/DeployData";
+import NewEngine, {formatContractList} from "@/views/projects/projectsDeploymentOrchestration/components/utils/engine";
+import {ethers} from "ethers";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const route = useRoute()
 const router = useRouter()
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const newEngine = new NewEngine(provider)
 // 合约信息对象
 const contractInfo = ref<any>({})
 const versionList = ref([]);
@@ -70,13 +76,31 @@ const getProjectsVersion = async () => {
 
 // exec deploy
 const execDeploy = async () => {
-
+  const executeId = route.query.executeId
+  const projectId = route.query.id
+  const res = await apiGetExecuteInfoById(projectId,executeId)
+  if (res.code === 200) {
+    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+    const execStatus = execJson.deployStep.some(item => item.status === "RUNNING" || item.status === "PENDING")
+    if (execStatus) {
+      const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+      const contractMap = formatContractList(data)
+      let deployParams = {
+        projectId:projectId,
+        execId: executeId,
+        version: route.query.version,
+        network: res.data.network
+      }
+      newEngine.start(contractMap,execJson,deployParams)
+    }
+  }
 }
 
 onMounted(async () => {
   await getContactDetail()
   initBreadCrumb()
-  await getProjectsVersion() 
+  await getProjectsVersion()
+  await execDeploy()
 })
 
 watchEffect(() => {

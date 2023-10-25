@@ -56,8 +56,8 @@ export default class NewEngine {
                 if (step.transactionHash != "" || step.transactionHash != undefined) {
                     const receipt = await getTransaction(step.transactionHash)
                     if (receipt.status == 0 || receipt.status == undefined ) {
-                        step.status = "FAIL"
-                        deployStep.status = "FAIL"
+                        step.status = "FAILED"
+                        deployStep.status = "FAILED"
                         this.isRunning = false
                         // save exec status
                         await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
@@ -92,8 +92,8 @@ export default class NewEngine {
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 }catch (e) {
-                    step.status = "FAIL"
-                    deployStep.status = "FAIL"
+                    step.status = "FAILED"
+                    deployStep.status = "FAILED"
                     this.isRunning = false
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
@@ -124,8 +124,8 @@ export default class NewEngine {
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     console.log("FUNCTION function is success")
                 }catch (e) {
-                    step.status = "FAIL"
-                    deployStep.status = "FAIL"
+                    step.status = "FAILED"
+                    deployStep.status = "FAILED"
                     this.isRunning = false
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
@@ -146,8 +146,8 @@ export default class NewEngine {
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     console.log("FUNCTION function is success")
                 }catch (e){
-                    step.status = "FAIL"
-                    deployStep.status = "FAIL"
+                    step.status = "FAILED"
+                    deployStep.status = "FAILED"
                     this.isRunning = false
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
@@ -166,8 +166,8 @@ export default class NewEngine {
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 }catch (e){
                     console.log(e)
-                    step.status = "FAIL"
-                    deployStep.status = "FAIL"
+                    step.status = "FAILED"
+                    deployStep.status = "FAILED"
                     this.isRunning = false
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
