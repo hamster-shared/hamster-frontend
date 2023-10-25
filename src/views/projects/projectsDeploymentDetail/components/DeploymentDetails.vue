@@ -18,7 +18,7 @@
         <a-collapse-panel v-for="item in deploymentList" :key="item.id" :header="item.name" @click="">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]">Redeploy</div>
+              <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]" @click="reDeploy">Redeploy</div>
               <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" />
               <div class="w-[60px]">{{ item.status }}</div>
             </div>
@@ -132,6 +132,11 @@ const getOriginalArrangeList = async () => {
     orchestrationInfo.value = res.data;
   }
   console.log("123orchestrationInfo.value:",orchestrationInfo.value);
+}
+
+// 重新部署，执行引擎
+const reDeploy = ()=>{
+
 }
 
 watch(
