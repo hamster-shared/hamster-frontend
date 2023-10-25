@@ -72,15 +72,24 @@
         </a-collapse-panel>
     </a-collapse>
   </div>
-  <DeploymentOrchestrationmodal v-if="showOrchestrationInfo"/>
+  <DeploymentOrchestrationmodal v-if="orchestrationInfo" :orchestrationInfo="orchestrationInfo" :showVisible="showOrchestrationInfo" @hideVisible="hideOrchestrationInfo" />
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
+import { apiWaitContractList } from '@/apis/contractOrchestrationDeploy';
+
+const props = defineProps({
+  version:{
+    type:String,
+    default:''
+  }
+})
+const { version } = toRefs(props)
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
@@ -88,6 +97,7 @@ const route = useRoute()
 const router = useRouter()
 // 展示部署信息弹框
 const showOrchestrationInfo = ref(false)
+const orchestrationInfo = ref<any>();
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -110,6 +120,32 @@ const goPage = (val:string)=>{
     // router.push(`/projects/projectsDeploySeting?id=${route.query.id}`)
   }
 }
+//隐藏弹框
+const hideOrchestrationInfo = () => {
+  showOrchestrationInfo.value = false;
+}
+// 获取原始编排参数
+const getOriginalArrangeList = async () => {
+  const res = await apiWaitContractList(route.query.id, version.value);
+  console.log("获取原始编排参数:", res);
+  if (res.code == 200) {
+    orchestrationInfo.value = res.data;
+  }
+  console.log("123orchestrationInfo.value:",orchestrationInfo.value);
+}
+
+watch(
+  () => props.version,
+  async (value) => {
+    // 获取当前版本下的编排数据
+    await getOriginalArrangeList();
+  }, { deep: true, immediate: true }
+);
+
+onMounted(async () => {
+  // 获取原始编排参数
+  // await getOriginalArrange();
+});
 </script>
 <style scoped lang="less">
 
