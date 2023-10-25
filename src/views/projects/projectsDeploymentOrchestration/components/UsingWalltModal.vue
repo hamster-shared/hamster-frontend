@@ -15,7 +15,7 @@
         <div class="text-[21px] text-[#73706E]">Your wallet will prompt to sign these transactions.</div>
         <div class="mt-[32px]">
           <a-button class="cancel-btn" @click="close">Cancel</a-button>
-          <a-button class="next-btn" @click="clickNext">Next</a-button>
+          <a-button :disabled="!number" class="next-btn" @click="clickNext">Next</a-button>
         </div>
       </div>
 

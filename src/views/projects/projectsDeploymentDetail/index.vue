@@ -3,13 +3,13 @@
     <bread-crumb :routes="breadCrumbInfo" />
     <!-- 详情 -->
 
-    <DeployVersionInfomation v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
-    <DeploymentDetails></DeploymentDetails>
+    <DeployVersionInfomation ref="versionRef" v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
+    <DeploymentDetails v-if="version" :version="version"></DeploymentDetails>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watchEffect } from 'vue';
+import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import BreadCrumb from "@/components/BreadCrumb.vue";
@@ -24,6 +24,8 @@ const router = useRouter()
 // 合约信息对象
 const contractInfo = ref<any>({})
 const versionList = ref([]);
+const versionRef = ref();
+const version = ref('');
 
 // 导航栏
 const initBreadCrumb = ()=>{
@@ -74,8 +76,16 @@ const execDeploy = async () => {
 onMounted(async () => {
   await getContactDetail()
   initBreadCrumb()
-  getProjectsVersion()
+  await getProjectsVersion() 
 })
+
+watchEffect(() => {
+  if (versionRef.value != undefined) {
+    console.log('versionRef.value.selectedVersion:', versionRef.value.selectedVersion);
+
+    version.value = versionRef.value.selectedVersion;
+  }
+});
 </script>
 
 <style lang="less" scoped></style>
