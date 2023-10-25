@@ -617,15 +617,19 @@ const getArrangeDeployList = async()=>{
   console.log('获取已经编排过的合约列表:', res)
   if (res.code == 200) {
     let deployStep: any = [];
+    let number = 0;
     res.data.forEach((item: any) => {
       if (item != '') {
         let strList = JSON.parse(item);
         strList.deployStep.forEach((sub: any) => {
           deployStep.push(sub);
         });
+        number++;
+      } else {
+        deployStep.push({})
       }
     });
-    numberValue.value = deployStep.length;
+    numberValue.value = number;
     deployArrange.value = {
       deployStep: deployStep,
       step: 0,
