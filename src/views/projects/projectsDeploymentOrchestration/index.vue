@@ -566,10 +566,12 @@ const closeDeployContractsNumberModal = ()=>{
   visibleNumber.value = false
 }
 
-// 开始调用小狐狸进行部署合约
+// 执行部署引擎
 const goDeploy = ()=>{
-  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}`)
+  // 部署调用代码，引擎执行完成之后跳转url
 
+
+  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}`)
 }
 
 const deployManyContract = async () => {
