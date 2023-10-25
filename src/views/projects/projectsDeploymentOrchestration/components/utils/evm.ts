@@ -2,7 +2,7 @@ import {ContractFactory, ethers, Signer} from "ethers";
 import type {ContractInterface} from "@ethersproject/contracts/src.ts";
 import type {BytesLike} from "@ethersproject/bytes";
 import {getContractAddress} from "ethers/lib/utils";
-import {ERC1967_ABI, ERC1967_BYTECODE, JSON_PRC} from "./types";
+import {ERC1967_ABI, ERC1967_BYTECODE, JSON_PRC} from "../DeployData";
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { Buffer } from 'buffer';
