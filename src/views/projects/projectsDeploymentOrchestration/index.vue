@@ -61,7 +61,7 @@
       </div>
     </div>
   </div>
-  <UsingWalltModal :visibleNumber="visibleNumber" :number="5" @closeDeployContractsNumberModal="closeDeployContractsNumberModal" @goDeploy="goDeploy"/>
+  <UsingWalltModal :visibleNumber="visibleNumber" :number="numberValue" @closeDeployContractsNumberModal="closeDeployContractsNumberModal" @goDeploy="goDeploy"/>
   <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
   <saveModal :visibleSave="visibleSave" @handleCancel="handleCancelModal" @handleSave="handleSaveModal"></saveModal>
 </template>
@@ -83,7 +83,7 @@ import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList, apiArrangeDeployList } from "@/apis/contractOrchestrationDeploy";
+import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList, apiArrangeDeployList, apiSaveOrchestrationInfo } from "@/apis/contractOrchestrationDeploy";
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
@@ -113,6 +113,7 @@ const baseInfo = ref()
 const showFooter = route.query.fromDetailSetting || ''
 // 用于显示部署条数的提醒弹框
 const visibleNumber = ref(false)
+const numberValue = ref(0)
 
 const networkListData = ref<any>([])
 const networkLogo = ref('');
@@ -137,6 +138,7 @@ const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
 const methodFunctionData = ref<any>([]);
 const originalArrange = ref<DeployRecord>(); //参数值数据格式整理
 const contractSingileInfo = ref<any>({});
+const deployArrange = ref<DeployRecord>(); // deploy now整理数据
 
 const changeChecked = (val: any) => {
   isChange.value = true;
@@ -571,7 +573,11 @@ const goDeploy = ()=>{
 }
 
 const deployManyContract = async () => {
-  // debugger
+  // 获取已经编排过的合约列表
+  await getArrangeDeployList();
+  // 保存编排信息
+  await saveOrchestrationInfo();
+  
   // 部署调用代码
   visibleNumber.value = true
 }
@@ -606,7 +612,34 @@ const getEVMNetwork = async()=>{
 // 获取已经编排过的合约列表
 const getArrangeDeployList = async()=>{
   const res = await apiArrangeDeployList(route.query.id, baseInfo.value.selectedVersion)
-  console.log('获取已经编排过的合约列表:',res)
+  console.log('获取已经编排过的合约列表:', res)
+  if (res.code == 200) {
+    let deployStep: any = [];
+    res.data.forEach((item: any) => {
+      if (item != '') {
+        let strList = JSON.parse(item);
+        strList.deployStep.forEach((sub: any) => {
+          deployStep.push(sub);
+        });
+      }
+    });
+    numberValue.value = deployStep.length;
+    deployArrange.value = {
+      deployStep: deployStep,
+      step: 0,
+    }
+    console.log("deployArrange::",deployArrange.value);
+  }
+}
+
+const saveOrchestrationInfo = async () => {
+  let param = {
+    projectId: route.query.id,
+    version: baseInfo.value.selectedVersion,
+    originalArrange: JSON.stringify(deployArrange.value),
+  }
+  const res = await apiSaveOrchestrationInfo(route.query.id, param);
+  console.log("saveOrchestrationInfo::",res);
 }
 
 onMounted(async () => {
@@ -622,7 +655,6 @@ onMounted(async () => {
     }
   }else{
     await getEVMNetwork()
-    await getArrangeDeployList()
   }
 })
 
