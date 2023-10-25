@@ -160,3 +160,11 @@ export function apiArrangeDeployList(id: string, version: string) {
     method: "get",
   })
 }
+
+// 获取原始编排参数
+export function apiGetOriginalArrange(id: string, version: string) {
+  return httpRequest({
+    url: `/api/projects/${id}/original/arrange/data/${version}`,
+    method: "get",
+  })
+}
