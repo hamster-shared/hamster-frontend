@@ -2,7 +2,26 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
     <div class="flex justify-between items-center">
       <bread-crumb :routes="breadCrumbInfo"/>
+      <div>
+        <a-button  type="primary" class="ml-4" :loading="createTemplateLoading" @click="showModal">{{
+            createTemplate
+          }}</a-button>
+      </div>
     </div>
+
+    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible"
+             title="Create by template" @cancel="handleCancel">
+
+      <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
+        <a-form-item label="Project Name" name="name">
+          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+        </a-form-item>
+      </a-form>
+      <span class="text-sm">Great project names are short and memorable.</span>
+      <div class="mt-8 text-center">
+        <a-button id="create-project-btn" type="primary" :loading="createProjectLoading" @click="handleOk">Done</a-button>
+      </div>
+    </a-modal>
 
     <div class="bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] mt-[32px] p-[32px]">
       <div class="flex">
@@ -66,12 +85,8 @@
           </div>
         </div>
       </a-tab-pane>
-      <a-tab-pane key="1" tab="Events" >
-        <div class="flex">
-          <NoData />
-        </div>
-      </a-tab-pane>
-    <a-tab-pane key="2" tab="Sources" >
+
+    <a-tab-pane key="1" tab="Sources" >
 
 
       <div class="flex" :style="editHeight">
@@ -95,10 +110,12 @@ import BreadCrumb from "@/components/BreadCrumb.vue";
 import IDlJson from "./idl_token.json";
 // import SOl from "./helloWorld.sol";
 
-import {computed, onMounted, ref, shallowRef,watch} from "vue";
+import {computed, onMounted, reactive, ref, shallowRef, watch} from "vue";
 import NoData from "@/components/NoData.vue";
 import CodeEditor from "@/components/CodeEditor.vue";
 import axios from "axios";
+import {apiAddProjects, apiDupProjectName} from "@/apis/projects";
+import {message} from "ant-design-vue";
 
 
 const theme = useThemeStore()
@@ -109,9 +126,22 @@ const current = ref(0)
 const currentRd = ref(0)
 const type = ref("tx");
 
+const userInfo = localStorage.getItem('userInfo');
 const IDL = shallowRef(null);
 const txList = shallowRef([]);
 const rdList = shallowRef([]);
+const createTemplateLoading = ref(false);
+const createTemplate = ref('Create by Template')
+const createProjectVisible = ref(false)
+const createProjectLoading = ref(false)
+const formRef = ref();
+const formData = reactive({
+  name: '',
+});
+
+
+const tokenMatemaskWallet = ref()
+
 const content = ref();
 const editHeight = ref("height: 220px");
 
@@ -122,10 +152,56 @@ onMounted(async () => {
     IDL.value = IDlJson.instructions;
   // content.value = SOl;
   getSol()
+  tokenFrom()
   NewList()
   setNewArr()
 
 })
+
+const tokenFrom = ()=>{
+  tokenMatemaskWallet.value = localStorage.getItem('token')?.startsWith('0x')
+  console.log('bool',tokenMatemaskWallet.value)
+}
+
+const handleCancel = () => {
+  createProjectLoading.value = false
+  createTemplateLoading.value = false;
+  createTemplate.value = 'Create by Template'
+  // formRef.value.resetFields()
+}
+
+
+let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
+const formRules = computed(() => {
+
+  const checkDupName = async () => {
+    try {
+      //校验仓库名称是否存在
+      const params = {
+        owner: JSON.parse(userInfo)?.username,
+        name: formData.name,
+      }
+      // console.log('formdataName:', params)
+      const res = await apiDupProjectName(params);
+      if (formData.name && !reg.test(formData.name)) {
+        return Promise.reject("Please enter correct name");
+      } else if (res.data === false) {
+        return Promise.reject("Project Name duplication");
+      } else {
+        return Promise.resolve()
+      }
+    } catch (error) {
+      console.log("erro:", error)
+      return Promise.reject("Project Name check failure");
+    }
+  }
+
+  const requiredRule = (message) => ({ required: true, trigger: 'change', message });
+
+  return {
+    name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
+  };
+});
 
 const setCodeHeight = (content) => {
   let codeIndex = content.split('\n').length;
@@ -142,6 +218,54 @@ const getSol = () =>{
 
         }
       });
+}
+
+const handleOk = async () => {
+  await formRef.value.validate();
+  createProjectLoading.value = true;
+  createTemplateLoading.value = true;
+  createTemplate.value = 'Create by...'
+  createProject()
+}
+
+
+
+const createProject = async () => {
+  // try {
+  //   const userInfo = localStorage.getItem('userInfo');
+  //   const createProjectTemp = localStorage.getItem('createProjectTemp');
+  //   const params = {
+  //     name: formData.name,
+  //     type: JSON.parse(createProjectTemp)?.type - 0,
+  //     templateOwner: templatesDetail.value.author,
+  //     frameType: JSON.parse(createProjectTemp)?.frameType - 0,
+  //     deployType: JSON.parse(createProjectTemp)?.deployType - 0,
+  //     repoOwner: JSON.parse(userInfo)?.username,
+  //     templateRepo: templatesDetail.value.repositoryName,
+  //     userId: JSON.parse(userInfo)?.id,
+  //     templateUrl: templatesDetail.value.repositoryUrl,
+  //     labelDisplay: templatesDetail.value.labelDisplay,
+  //     gistId: templatesDetail.value.gistId,
+  //     defaultFile: templatesDetail.value.defaultFile,
+  //   }
+  //   if (projectType.value == '2') {
+  //     params.frameType = templatesDetail.value.templateType - 0;
+  //   }
+  //   const res = await apiAddProjects(params);
+  //   message.success(res.message);
+  //
+  //   window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
+  //   router.push(`/projects/integrated/${res.data}`);
+  // } catch (error: any) {
+  //   console.log("error:", error)
+  //   message.error(error.response.data.message);
+  // } finally {
+  //   createProjectLoading.value = false
+  // }
+}
+
+const showModal = async () => {
+  createProjectVisible.value = true
 }
 
 
