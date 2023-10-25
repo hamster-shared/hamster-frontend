@@ -66,6 +66,11 @@ const getProjectsVersion = async () => {
   }
 };
 
+// exec deploy
+const execDeploy = async () => {
+
+}
+
 onMounted(async () => {
   await getContactDetail()
   initBreadCrumb()

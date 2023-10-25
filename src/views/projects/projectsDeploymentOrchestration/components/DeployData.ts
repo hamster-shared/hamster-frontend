@@ -1,3 +1,4 @@
+import type {ContractInterface} from "@ethersproject/contracts/src.ts";
 export type StepActionType = string
 export const CONSTRUCTOR: StepActionType = "constructor"
 export const FUNCTION: StepActionType = "function"
@@ -29,4 +30,16 @@ export interface Step {
   status: string, //PENDDING,SUCCESS,FAIL
   transactionHash?: string,
   value?: string
+}
+
+export interface ContractBuild {
+  id: number
+  abi: ContractInterface
+  bytecode: string
+}
+export interface DeployParams {
+  projectId:string
+  execId: number
+  version:string
+  network:string
 }
