@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import YAML from "yaml";
 import { useRoute, useRouter } from 'vue-router';
 import{ getPonitStr } from "@/utils/tool";
@@ -82,7 +82,7 @@ import UsingWalltModal from "./components/UsingWalltModal.vue";
 import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
-import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
+import { apiGetProjectsVersions } from "@/apis/workFlows";
 import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList, apiArrangeDeployList, apiSaveOrchestrationInfo, apiSaveExecuteInfo } from "@/apis/contractOrchestrationDeploy";
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';

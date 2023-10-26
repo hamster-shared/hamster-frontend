@@ -5,7 +5,7 @@
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="hideVisible" />
       </template>
-      <div v-if="orchestrationInfo.useContract" v-for="(item, index) in orchestrationInfo.useContract" :key="index">
+      <div v-if="orchestrationInfo.useContract.length" v-for="(item, index) in orchestrationInfo.useContract" :key="index">
         <div class="flex items-center">
           <span class="text-[14px] font-bold text-[#ffffff] bg-[#E2B578] py-[2px] px-[7px] rounded-[4px] mr-[20px]">
             {{ index + 1 }}
@@ -40,7 +40,7 @@
           </div>
         </div>
       </div>
-      <div v-if="orchestrationInfo.noUseContract">
+      <div v-if="orchestrationInfo.noUseContract.length">
         <div class="h-[1px] border border-solid border-[#EBEBEB] mb-[20px]"></div>
         <div class="text-[21px] text-[#151210] font-bold mb-[20px]">Skipped Contract Deployment</div>
         <div v-for="(item, index) in orchestrationInfo.noUseContract" :key="index" class="mb-[20px] flex items-center">
@@ -72,26 +72,11 @@ const props = defineProps({
 const { orchestrationInfo,showVisible } = toRefs(props)
 const emit = defineEmits(["hideVisible"])
 
-const list = ref([{ name: "Contract A", contractParameters: ['params1', 'params2', 'params3'] },
-{ name: "Contract B", contractParameters: ['params1', 'params2', 'params3'], proxyContractRequired: true },
-{ name: "Contract C", contractParameters: ['params1', 'params2', 'params3'], invokeContractMethod: ['0', '9'] }]);
-
-const skippedContractDeploymentList = ref(['Contract D', 'Contract E'])
-
-console.log(skippedContractDeploymentList.value.length, 'ppp')
-
 const hideVisible = () => {
   emit('hideVisible');
 }
 
-const setOrchestrationInfo = () => {
-
-}
-
 onMounted(() => {
-  if (orchestrationInfo.value) {
-    
-  }
   console.log("orchestrationInfo.value:",orchestrationInfo.value);
 });
 </script>

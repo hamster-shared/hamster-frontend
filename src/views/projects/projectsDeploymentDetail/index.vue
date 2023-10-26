@@ -9,9 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useThemeStore } from "@/stores/useTheme";
+import { onMounted, ref, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import DeploymentDetails from './components/DeploymentDetails.vue';
@@ -22,10 +21,8 @@ import type {DeployRecord} from "@/views/projects/projectsDeploymentOrchestratio
 import NewEngine, {formatContractList} from "@/views/projects/projectsDeploymentOrchestration/components/utils/engine";
 import {ethers} from "ethers";
 import {apiGetNetworkByName} from "@/apis/network";
-const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const route = useRoute()
-const router = useRouter()
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const newEngine = new NewEngine(provider)
 // 合约信息对象
@@ -45,10 +42,6 @@ const initBreadCrumb = ()=>{
       breadcrumbName: contractInfo.value.name,
       path: `/projects/${contractInfo.value.id}/details/${contractInfo.value.type}`
     },
-    // {
-    //   breadcrumbName: 'Deploy',
-    //   path: ''
-    // },
     {
       breadcrumbName: 'Deployment Details',
       path: ''
