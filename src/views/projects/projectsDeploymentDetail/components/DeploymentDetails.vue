@@ -31,7 +31,7 @@
                 <div class="flex items-center">
                   <div class="collapse-content-title">Transaction Hash:</div>
                   <div>{{ item.transactionInfo.transactionHash }}
-                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
+                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.transactionHash)"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
@@ -45,13 +45,13 @@
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">From:</div>
                   <div>{{ item.transactionInfo.from }}
-                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
+                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.from)"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">To:</div>
                   <div>{{ item.transactionInfo.to }}
-                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
+                    <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.to)"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
