@@ -83,7 +83,7 @@ import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
 import { apiGetProjectsDetail } from '@/apis/projects'
 import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList, apiArrangeDeployList, apiSaveOrchestrationInfo } from "@/apis/contractOrchestrationDeploy";
+import { apiSaveSingleContractInfo, apiGetSingleContractInfo, apiWaitContractList, apiArrangeDeployList, apiSaveOrchestrationInfo, apiSaveExecuteInfo } from "@/apis/contractOrchestrationDeploy";
 import { PROXY_CONSTRUCTOR, type DeployRecord , CONSTRUCTOR, FUNCTION } from "./components/DeployData";
 import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
@@ -94,6 +94,7 @@ const theme = useThemeStore();
 const walletAddress = useWalletAddress()
 
 const selectNetwork = ref<string>('');
+const selectNetworkName = ref<string>(''); //记录选中的网络的name
 const checked = ref<boolean>(false);
 const breadCrumbInfo = ref<any>([]);
 const versionList = ref([]);
@@ -139,12 +140,14 @@ const methodFunctionData = ref<any>([]);
 const originalArrange = ref<DeployRecord>(); //参数值数据格式整理
 const contractSingileInfo = ref<any>({});
 const deployArrange = ref<DeployRecord>(); // deploy now整理数据
+const executeId = ref(''); // 记录执行id
 
 const changeChecked = (val: any) => {
   isChange.value = true;
 }
 const changeNetwork = (val: any) => {
   let item = networkListData.value[val];
+  selectNetworkName.value = item.chainName;
   const walletAccount = window.localStorage.getItem("walletAccount");
   if (walletAccount === undefined || walletAccount === null) {
     connectWallet();
@@ -571,7 +574,7 @@ const goDeploy = ()=>{
   // deployArrange.value 引擎需要用到的大JSON字符串
 
   // 引擎执行完成后进行跳转
-  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}`)
+  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}&executeId=${executeId.value}&selectNetworkName=${selectNetworkName.value}`)
 }
 
 const deployManyContract = async () => {
@@ -637,7 +640,7 @@ const getArrangeDeployList = async()=>{
     console.log("deployArrange::",deployArrange.value);
   }
 }
-
+//保存编排信息
 const saveOrchestrationInfo = async () => {
   let param = {
     projectId: route.query.id,
@@ -645,7 +648,24 @@ const saveOrchestrationInfo = async () => {
     originalArrange: JSON.stringify(deployArrange.value),
   }
   const res = await apiSaveOrchestrationInfo(route.query.id, param);
-  console.log("saveOrchestrationInfo::",res);
+  console.log("saveOrchestrationInfo::", res);
+  if (res.code == 200) {
+    saveExecuteInfo(res.data);
+  }
+}
+// 保存编排执行信息
+const saveExecuteInfo = async (fkArrangeId: any) => {
+  let param = {
+    projectId: route.query.id,
+    version: baseInfo.value.selectedVersion,
+    fkArrangeId: fkArrangeId,
+    network: selectNetworkName.value,
+    arrangeProcessData: JSON.stringify(deployArrange.value),
+  }
+  const res = await apiSaveExecuteInfo(route.query.id, param);
+  if (res.code == 200) {
+    executeId.value = res.data;
+  }
 }
 
 onMounted(async () => {

@@ -12,10 +12,11 @@
     </div>
     <div class="my-[24px] py-[16px] px-[32px] border border-solid border-[#E2B578] rounded-[12px] bg-[rgba(226,181,120,0.1)]">
       <svg-icon name="tips" size="26" class="svg-color mr-2" />
-      The following contracts will be deployed on the Ethereum/Goerli
+      The following contracts will be deployed on the {{ $route.query.selectNetworkName }}
     </div>
-    <a-collapse v-model:activeKey="activeKey">
-        <a-collapse-panel v-for="item in deploymentList" :key="item.id" :header="item.name" @click="">
+    <div v-if="Object.keys(executeArrange).length > 0" v-for="(item,index) in executeArrange.deployStep" :key="index">
+      <a-collapse v-model:activeKey="activeKey" v-if="Object.keys(item).length > 0">
+        <a-collapse-panel :header="item.contract.name" @click="">
           <template #extra>
             <div class="flex items-center">
               <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]">Redeploy</div>
@@ -70,7 +71,8 @@
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">NO Data</div>
           </div>
         </a-collapse-panel>
-    </a-collapse>
+      </a-collapse>
+    </div>
   </div>
   <DeploymentOrchestrationmodal v-if="orchestrationInfo" :orchestrationInfo="orchestrationInfo" :showVisible="showOrchestrationInfo" @hideVisible="hideOrchestrationInfo" />
 </template>
@@ -81,7 +83,7 @@ import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
-import { apiWaitContractList } from '@/apis/contractOrchestrationDeploy';
+import { apiWaitContractList, apiGetExecuteInfoById } from '@/apis/contractOrchestrationDeploy';
 
 const props = defineProps({
   version:{
@@ -98,6 +100,8 @@ const router = useRouter()
 // 展示部署信息弹框
 const showOrchestrationInfo = ref(false)
 const orchestrationInfo = ref<any>();
+//获取执行信息 
+const executeArrange = ref<any>({});
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -124,6 +128,15 @@ const goPage = (val:string)=>{
 const hideOrchestrationInfo = () => {
   showOrchestrationInfo.value = false;
 }
+// 根据执行id获取执行信息 
+const getExecuteInfoById = async () => {
+  const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
+  console.log("根据执行id获取执行信息:", res);
+  if (res.code == 200) {
+    executeArrange.value = JSON.parse(res.data.arrangeProcessData);
+  }
+  console.log("executeArrange.value:::",executeArrange.value);
+}
 // 获取原始编排参数
 const getOriginalArrangeList = async () => {
   const res = await apiWaitContractList(route.query.id, version.value);
@@ -143,8 +156,8 @@ watch(
 );
 
 onMounted(async () => {
-  // 获取原始编排参数
-  // await getOriginalArrange();
+  // 根据执行id获取执行信息
+  await getExecuteInfoById();
 });
 </script>
 <style scoped lang="less">
