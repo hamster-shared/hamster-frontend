@@ -574,7 +574,7 @@ const goDeploy = ()=>{
   // deployArrange.value 引擎需要用到的大JSON字符串
 
   // 引擎执行完成后进行跳转
-  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}&executeId=${executeId.value}&selectNetworkName=${selectNetworkName.value}`)
+  router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}&executeId=${executeId.value}`)
 }
 
 const deployManyContract = async () => {

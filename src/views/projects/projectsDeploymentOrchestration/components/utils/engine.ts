@@ -54,7 +54,7 @@ export default class NewEngine {
             }
             if (step.status == "RUNNING") {
                 if (step.transactionHash != "" || step.transactionHash != undefined) {
-                    const receipt = await getTransaction(step.transactionHash)
+                    const receipt = await getTransaction(step.transactionHash,deployParams.rpcUrl)
                     if (receipt.status == 0 || receipt.status == undefined ) {
                         step.status = "FAILED"
                         deployStep.status = "FAILED"

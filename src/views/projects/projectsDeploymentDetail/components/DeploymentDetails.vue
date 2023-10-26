@@ -12,14 +12,14 @@
     </div>
     <div class="my-[24px] py-[16px] px-[32px] border border-solid border-[#E2B578] rounded-[12px] bg-[rgba(226,181,120,0.1)]">
       <svg-icon name="tips" size="26" class="svg-color mr-2" />
-      The following contracts will be deployed on the {{ networkName }}
+      The following contracts will be deployed on the {{ network }}
     </div>
     <div v-if="executeArrange.length > 0">
       <a-collapse v-model:activeKey="activeKey">
-        <a-collapse-panel  v-for="(item,index) in executeArrange" :key="index" :header="item.name" @click="">
+        <a-collapse-panel  v-for="(item,index) in executeArrange" :key="index" :header="item.name" @click="getTransactionInfoByHash(item.transactionHash, index)">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]" @click="reDeploy">Redeploy</div>
+              <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">Redeploy</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
               <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2" />
               <div>{{ item.status }}</div>
@@ -27,7 +27,7 @@
           </template>
           <div class="bg-[#F6F6F6] dark:bg-[#191816]">
             <div v-if="Object.keys(item.transactionInfo).length > 0" class="p-[20px] flex justify-between">
-              <div>
+              <div>{{ item.transactionInfo.index }}
                 <div class="flex items-center">
                   <div class="collapse-content-title">Transaction Hash:</div>
                   <div>{{ item.transactionInfo.transactionHash }}
@@ -63,7 +63,7 @@
                   <div>{{ item.transactionInfo.transactionFee }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
-                  <div class="collapse-content-title">Gas Price::</div>
+                  <div class="collapse-content-title">Gas Price:</div>
                   <div>{{ item.transactionInfo.gasPrice }}</div>
                 </div>
               </div>
@@ -81,7 +81,6 @@
 import { onMounted, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import{ copyToClipboard } from "@/utils/tool";
-import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
 import { apiWaitContractList, apiGetExecuteInfoById, apiGetNetworkByName } from '@/apis/contractOrchestrationDeploy';
@@ -96,7 +95,6 @@ const props = defineProps({
 const emit = defineEmits(["execStop", "reDeploy"])
 const { version } = toRefs(props)
 
-const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const route = useRoute()
 const router = useRouter()
@@ -105,24 +103,19 @@ const showOrchestrationInfo = ref(false)
 const orchestrationInfo = ref<any>();
 //获取执行信息 
 const executeArrange = ref<any>([]);
-// 网络名称
-const networkName = ref('')
 // 跳转第三方网址base url
 const blockExplorerUrl = ref('')
 // 点击单个列表查询信息所需的参数
 const rpcUrl = ref('')
 const symbol = ref('')
+// 网络名称
+const network = ref('');
 
-const activeKey = ref(['1']);
+const activeKey = ref<any>([]);
 const actionVal = ref('All Action')
 const actionOptions = ref([
   {label: 'View Dashboard', value: 'Dashboard'},
   {label: 'View Setting', value: 'Setting'},
-]);
-const deploymentList = ref<any>([
-  {name: 'Contract A',id:'1',status:'Success',content: '123'},
-  {name: 'Contract B',id:'2',status:'Failed',content: '123'},
-  {name: 'Contract C',id:'3',status:'Wait'},
 ]);
 
 const goPage = (val:string)=>{
@@ -131,7 +124,6 @@ const goPage = (val:string)=>{
     router.push(`/projects/projectsDashboard?id=${route.query.id}`)
   }else{
     showOrchestrationInfo.value = true
-    // router.push(`/projects/projectsDeploySeting?id=${route.query.id}`)
   }
 }
 //隐藏弹框
@@ -143,34 +135,30 @@ const getExecuteInfoById = async () => {
   const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
   console.log("根据执行id获取执行信息:", res);
   if (res.code == 200) {
+    network.value = res.data.network;
     setExecuteInfoList(JSON.parse(res.data.arrangeProcessData));
-    networkName.value = res.data.network
   }
 }
 //设置执行信息数据
 const setExecuteInfoList = (arrangeData:any) => {
-  arrangeData.deployStep.forEach(async (ele: any) => {
+  arrangeData.deployStep.forEach((ele: any) => {
     if (Object.keys(ele).length > 0) {
       let proxy = ele.contract.proxy ? ' proxy' : '';
       let params = {
         name: ele.contract.name + proxy ,
         status: ele.status,
+        transactionHash: ele.contract.transactionHash || '',
         transactionInfo: {},
-      }
-      if (ele.contract.transactionHash) {
-        params.transactionInfo = await getTransactionInfo(ele.contract.transactionHash);
       }
       executeArrange.value.push(params);
       //遍历steps数组
-      ele.steps.forEach(async (item: any) => {
+      ele.steps.forEach((item: any) => {
         if (item.type == "function") {  
           params = {
             name: item.contractName + '.' + item.method,
             status: item.status,
+            transactionHash: item.transactionHash || '',
             transactionInfo: {},
-          }
-          if (item.transactionHash) {
-            params.transactionInfo = await getTransactionInfo(item.transactionHash);
           }
           executeArrange.value.push(params);
         }
@@ -178,6 +166,13 @@ const setExecuteInfoList = (arrangeData:any) => {
     }
   });
   console.log("executeArrange::",executeArrange.value);
+}
+
+// 获取单个合约的执行信息
+const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
+  if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
+    executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash,rpcUrl.value,symbol.value);
+  }
 }
 // 获取原始编排参数
 const getOriginalArrangeList = async () => {
@@ -191,7 +186,7 @@ const getOriginalArrangeList = async () => {
 
 // 通过网络名称获取网络信息
 const getNetworkByName = async()=>{
-  const res = await apiGetNetworkByName(networkName.value)
+  const res = await apiGetNetworkByName(network.value)
   console.log('通过网络名称获取网络信息:',res)
   blockExplorerUrl.value = res.data.blockExplorerUrl
   rpcUrl.value = res.data.rpcUrl

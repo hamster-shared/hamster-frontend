@@ -21,6 +21,7 @@ import { apiGetExecuteInfoById } from "@/apis/contractOrchestrationDeploy"
 import type {DeployRecord} from "@/views/projects/projectsDeploymentOrchestration/components/DeployData";
 import NewEngine, {formatContractList} from "@/views/projects/projectsDeploymentOrchestration/components/utils/engine";
 import {ethers} from "ethers";
+import {apiGetNetworkByName} from "@/apis/network";
 const theme = useThemeStore();
 const breadCrumbInfo = ref<any>([]);
 const route = useRoute()
@@ -85,11 +86,13 @@ const execDeploy = async () => {
     if (execStatus) {
       const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
       const contractMap = formatContractList(data)
+      const networkData = await apiGetNetworkByName(res.data.network)
       let deployParams = {
         projectId:projectId,
         execId: executeId,
         version: route.query.version,
-        network: res.data.network
+        network: res.data.network,
+        rpcUrl: networkData.data.rpcUrl
       }
       newEngine.start(contractMap,execJson,deployParams)
     }
@@ -109,11 +112,13 @@ const reDeploy = async () => {
     let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
     const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
     const contractMap = formatContractList(data)
+    const networkData = await apiGetNetworkByName(res.data.network)
     let deployParams = {
       projectId:projectId,
       execId: executeId,
       version: route.query.version,
-      network: res.data.network
+      network: res.data.network,
+      rpcUrl: networkData.data.rpcUrl
     }
     newEngine.start(contractMap,execJson,deployParams)
   }
