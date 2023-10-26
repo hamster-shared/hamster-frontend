@@ -332,7 +332,7 @@ const evmDeployFunction = () => {
           }).catch((err: any) => {
             console.log(err, '调用失败err')
             // message.error('调用失败')
-            submitErrorInfo.value = '调用失败';
+            submitErrorInfo.value = 'Invoke functions failed';
             hashValue.value = 'No Data';
           }).finally(() => {
             isSend.value = false;
@@ -389,7 +389,7 @@ const evmDeployFunction = () => {
     console.log('errorInfo:' + errorInfo)
     isSend.value = false;
     // message.error('调用失败')
-    submitErrorInfo.value = '调用失败';
+    submitErrorInfo.value = 'Invoke functions failed';
   }
 }
 const aptosSendAbiFn = async () => {
