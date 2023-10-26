@@ -78,7 +78,7 @@
   <DeploymentOrchestrationmodal v-if="orchestrationInfo" :orchestrationInfo="orchestrationInfo" :showVisible="showOrchestrationInfo" @hideVisible="hideOrchestrationInfo" />
 </template>
 <script setup lang="ts">
-import { onMounted, ref, toRefs, watch } from 'vue';
+import { onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import{ copyToClipboard } from "@/utils/tool";
 import { useThemeStore } from "@/stores/useTheme";
@@ -110,6 +110,8 @@ const rpcUrl = ref('')
 const symbol = ref('')
 // 网络名称
 const network = ref('');
+const timer = ref(); //轮询定时器
+const timeStop = ref(false);
 
 const activeKey = ref<any>([]);
 const actionVal = ref('All Action')
@@ -136,13 +138,24 @@ const getExecuteInfoById = async () => {
   console.log("根据执行id获取执行信息:", res);
   if (res.code == 200) {
     network.value = res.data.network;
+    //设置执行信息数据
     setExecuteInfoList(JSON.parse(res.data.arrangeProcessData));
+    //判断是否轮询
+    if (timeStop.value) {
+      clearTimeout(timer.value); //停止轮询
+    } else {
+      timer.value = setTimeout(() => {
+        getExecuteInfoById();
+    }, 1000)
+    }
   }
 }
 //设置执行信息数据
-const setExecuteInfoList = (arrangeData:any) => {
+const setExecuteInfoList = (arrangeData: any) => {
+  executeArrange.value.length = 0;
   arrangeData.deployStep.forEach((ele: any) => {
     if (Object.keys(ele).length > 0) {
+      setTimerByStatus(ele.status);
       let proxy = ele.contract.proxy ? ' proxy' : '';
       let params = {
         name: ele.contract.name + proxy ,
@@ -154,6 +167,7 @@ const setExecuteInfoList = (arrangeData:any) => {
       //遍历steps数组
       ele.steps.forEach((item: any) => {
         if (item.type == "function") {  
+          setTimerByStatus(item.status);
           params = {
             name: item.contractName + '.' + item.method,
             status: item.status,
@@ -166,6 +180,17 @@ const setExecuteInfoList = (arrangeData:any) => {
     }
   });
   console.log("executeArrange::",executeArrange.value);
+}
+// 判断是否继续轮询
+const setTimerByStatus = (status: any) => {
+  if (!timeStop.value) {
+    //有一条数据的状态是 stop 或 failed 则停止轮询
+    if (status == 'STOP' || status == 'FAILED') {
+      timeStop.value = true; //停止轮询
+    } else if (status == 'PENDDING' || status == 'RUNNING') {
+      timeStop.value = false; //继续轮询
+    }
+  }
 }
 
 // 获取单个合约的执行信息
@@ -221,6 +246,10 @@ onMounted(async () => {
   await getExecuteInfoById();
   await getNetworkByName()
 });
+
+onUnmounted(() => {
+  clearTimeout(timer.value);
+})
 </script>
 <style scoped lang="less">
 
