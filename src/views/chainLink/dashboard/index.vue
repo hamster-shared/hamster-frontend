@@ -5,7 +5,7 @@
       <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue">
         <a-menu-item v-for="item in menuRouterList" :key="item.name" :disabled="item.meta.isTag">
           <router-link
-            :to="((item.name === 'RPC' && !isRpcDefault) || (item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
+            :to="((item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
             <div>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
               <span class="text-[16px] mr-[10px]">{{ item.name }}</span>

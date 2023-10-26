@@ -47,6 +47,11 @@ export default ({ mode }: ConfigEnv) => defineConfig({
   },
   server: {
     proxy: {
+      "/api/v2/zan": {
+        target:
+            "http://127.0.0.1:9898",
+        changeOrigin: true, //是否跨域
+      },
       "/api": {
         target:
           loadEnv(mode, process.cwd()).VITE_BASE_API,
@@ -62,6 +67,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/nodeService/, ""),
       },
+
       "/socket.io": {
         // VUE_APP_BASE_RUL = 'ws://172.16.31.68:9898/socket.io'
         target:

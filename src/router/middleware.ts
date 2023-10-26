@@ -1,4 +1,4 @@
-const chainlinkRoute = [
+const middlewareRoute = [
   {
     path: "/middleware/dashboard",
     redirect: "/middleware/dashboard",
@@ -32,7 +32,23 @@ const chainlinkRoute = [
           {
             path: "/middleware/dashboard/RPC",
             name: "RPC",
-            component: () => import('@/views/chainLink/rpc/index.vue'),
+            component: () => import('@/views/middleware/rpc/index.vue'),
+            meta: {
+              sidebarMap: ['RPC'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/rpc/zan/auth",
+            name: "zanAuth",
+            component: () => import('@/views/middleware/rpc/zanAuth.vue'),
+            meta: {
+              sidebarMap: ['RPC'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/rpc/zan/apiKeyDetail/:apiKeyId",
+            name: "zanApiKeyDetail",
+            component: () => import('@/views/middleware/rpc/apiKeyDetail.vue'),
             meta: {
               sidebarMap: ['RPC'],
             }
@@ -72,10 +88,10 @@ const chainlinkRoute = [
             }
           },
           {
-            path: "/middleware/dashboard/node/detail",
-            name: "nodeDetail",
-            component: () => import('@/views/chainLink/Node/nodeDetail.vue'),
-          },
+            path: "/middleware/dashboard/node/detail",
+            name: "nodeDetail",
+            component: () => import('@/views/chainLink/Node/nodeDetail.vue'),
+          },
         ]
       },
       {
@@ -202,4 +218,4 @@ const chainlinkRoute = [
     ]
   }
 ]
-export default chainlinkRoute
+export default middlewareRoute
