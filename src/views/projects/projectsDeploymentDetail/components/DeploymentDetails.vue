@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <div class="font-bold text-[24px]">Deployment Details</div>
       <div>
-        <a-button type="primary" ghost>Stop</a-button>
+        <a-button type="primary" ghost @click="stop">Stop</a-button>
         <!-- <a-button type="primary" class="mx-[24px]">View Dashboard</a-button> -->
         <a-select ref="select" v-model:value="actionVal" class="w-[140px] !ml-[24px]"
           :options="actionOptions" @select="goPage(actionVal)">
@@ -19,7 +19,7 @@
         <a-collapse-panel :header="item.contract.name" @click="">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]">Redeploy</div>
+              <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]" @click="reDeploy">Redeploy</div>
               <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" />
               <div class="w-[60px]">{{ item.status }}</div>
             </div>
@@ -91,6 +91,7 @@ const props = defineProps({
     default:''
   }
 })
+const emit = defineEmits(["execStop", "reDeploy"])
 const { version } = toRefs(props)
 
 const { getImageURL } = useAssets();
@@ -145,6 +146,16 @@ const getOriginalArrangeList = async () => {
     orchestrationInfo.value = res.data;
   }
   console.log("123orchestrationInfo.value:",orchestrationInfo.value);
+}
+
+// 停止部署，执行引擎
+const stop = ()=>{
+  emit('execStop')
+}
+
+// 重新部署，执行引擎
+const reDeploy = ()=>{
+  emit('reDeploy')
 }
 
 watch(
