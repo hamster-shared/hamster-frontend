@@ -12,57 +12,59 @@
     </div>
     <div class="my-[24px] py-[16px] px-[32px] border border-solid border-[#E2B578] rounded-[12px] bg-[rgba(226,181,120,0.1)]">
       <svg-icon name="tips" size="26" class="svg-color mr-2" />
-      The following contracts will be deployed on the Ethereum/Goerli
+      The following contracts will be deployed on the {{ $route.query.selectNetworkName }}
     </div>
-    <a-collapse v-model:activeKey="activeKey">
-        <a-collapse-panel v-for="item in deploymentList" :key="item.id" :header="item.name" @click="">
+    <div v-if="executeArrange.length > 0">
+      <a-collapse v-model:activeKey="activeKey">
+        <a-collapse-panel  v-for="(item,index) in executeArrange" :key="index" :header="item.name" @click="">
           <template #extra>
             <div class="flex items-center">
               <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]" @click="reDeploy">Redeploy</div>
-              <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" />
-              <div class="w-[60px]">{{ item.status }}</div>
+              <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
+              <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2" />
+              <div>{{ item.status }}</div>
             </div>
           </template>
           <div class="bg-[#F6F6F6] dark:bg-[#191816]">
-            <div v-if="item.content" class="p-[20px] flex justify-between">
+            <div v-if="Object.keys(item.transactionInfo).length > 0" class="p-[20px] flex justify-between">
               <div>
                 <div class="flex items-center">
                   <div class="collapse-content-title">Transaction Hash:</div>
-                  <div>0xce5d907630930b336f1ce6eacbbcc6816906b65d980fa28e6b3f3d8a0c626321
+                  <div>{{ item.transactionInfo.transactionHash }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">Block:</div>
-                  <div>9577367</div>
+                  <div>{{ item.transactionInfo.block }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">TimeStamp:</div>
-                  <div>Aug-25-2023 08:40:48 AM +UTC</div>
+                  <div>{{ item.transactionInfo.timeStamp }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">From:</div>
-                  <div>0xBb2286A9Fc63Ee0931F0F8977b01131B492E310a
+                  <div>{{ item.transactionInfo.from }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">To:</div>
-                  <div>0x78e80400713ee90a0bf4d52aaa9e4c9b8df699d4
+                  <div>{{ item.transactionInfo.to }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard('')"/>
                   </div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">Value:</div>
-                  <div>0 ETH ($ 0.00)</div>
+                  <div>{{ item.transactionInfo.value }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
-                  <div class="collapse-content-title">Tansaction Fee::</div>
-                  <div>0.0007650435 ETH</div>
+                  <div class="collapse-content-title">Tansaction Fee:</div>
+                  <div>{{ item.transactionInfo.transactionFee }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">Gas Price::</div>
-                  <div>1.5 Gwei</div>
+                  <div>{{ item.transactionInfo.gasPrice }}</div>
                 </div>
               </div>
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer">View on block explorer</div>
@@ -70,7 +72,8 @@
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">NO Data</div>
           </div>
         </a-collapse-panel>
-    </a-collapse>
+      </a-collapse>
+    </div>
   </div>
   <DeploymentOrchestrationmodal v-if="orchestrationInfo" :orchestrationInfo="orchestrationInfo" :showVisible="showOrchestrationInfo" @hideVisible="hideOrchestrationInfo" />
 </template>
@@ -81,7 +84,8 @@ import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
-import { apiWaitContractList } from '@/apis/contractOrchestrationDeploy';
+import { apiWaitContractList, apiGetExecuteInfoById } from '@/apis/contractOrchestrationDeploy';
+import { getTransactionInfo } from "@/views/projects/projectsDeploymentOrchestration/components/utils/evm";
 
 const props = defineProps({
   version:{
@@ -99,6 +103,8 @@ const router = useRouter()
 // 展示部署信息弹框
 const showOrchestrationInfo = ref(false)
 const orchestrationInfo = ref<any>();
+//获取执行信息 
+const executeArrange = ref<any>([]);
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -124,6 +130,46 @@ const goPage = (val:string)=>{
 //隐藏弹框
 const hideOrchestrationInfo = () => {
   showOrchestrationInfo.value = false;
+}
+// 根据执行id获取执行信息 
+const getExecuteInfoById = async () => {
+  const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
+  console.log("根据执行id获取执行信息:", res);
+  if (res.code == 200) {
+    setExecuteInfoList(JSON.parse(res.data.arrangeProcessData));
+  }
+}
+//设置执行信息数据
+const setExecuteInfoList = (arrangeData:any) => {
+  arrangeData.deployStep.forEach(async (ele: any) => {
+    if (Object.keys(ele).length > 0) {
+      let proxy = ele.contract.proxy ? ' proxy' : '';
+      let params = {
+        name: ele.contract.name + proxy ,
+        status: ele.status,
+        transactionInfo: {},
+      }
+      if (ele.contract.transactionHash) {
+        params.transactionInfo = await getTransactionInfo(ele.contract.transactionHash);
+      }
+      executeArrange.value.push(params);
+      //遍历steps数组
+      ele.steps.forEach(async (item: any) => {
+        if (item.type == "function") {  
+          params = {
+            name: item.contractName + '.' + item.method,
+            status: item.status,
+            transactionInfo: {},
+          }
+          if (item.transactionHash) {
+            params.transactionInfo = await getTransactionInfo(item.transactionHash);
+          }
+          executeArrange.value.push(params);
+        }
+      });
+    }
+  });
+  console.log("executeArrange::",executeArrange.value);
 }
 // 获取原始编排参数
 const getOriginalArrangeList = async () => {
@@ -154,8 +200,8 @@ watch(
 );
 
 onMounted(async () => {
-  // 获取原始编排参数
-  // await getOriginalArrange();
+  // 根据执行id获取执行信息
+  await getExecuteInfoById();
 });
 </script>
 <style scoped lang="less">
