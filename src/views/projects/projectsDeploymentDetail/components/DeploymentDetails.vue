@@ -89,6 +89,7 @@ const props = defineProps({
     default:''
   }
 })
+const emit = defineEmits(["execStop", "reDeploy"])
 const { version } = toRefs(props)
 
 const { getImageURL } = useAssets();
@@ -136,12 +137,12 @@ const getOriginalArrangeList = async () => {
 
 // 停止部署，执行引擎
 const stop = ()=>{
-
+  emit('execStop')
 }
 
 // 重新部署，执行引擎
 const reDeploy = ()=>{
-
+  emit('reDeploy')
 }
 
 watch(

@@ -4,7 +4,7 @@
     <!-- 详情 -->
 
     <DeployVersionInfomation ref="versionRef" v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
-    <DeploymentDetails v-if="version" :version="version"></DeploymentDetails>
+    <DeploymentDetails v-if="version" :version="version" @execStop="execStop" @reDeploy="reDeploy"></DeploymentDetails>
   </div>
 </template>
 
@@ -95,6 +95,30 @@ const execDeploy = async () => {
     }
   }
 }
+
+//stop exec
+const execStop = () => {
+  newEngine.stop()
+}
+// retry exec contract deploy
+const reDeploy = async () => {
+  const executeId = route.query.executeId
+  const projectId = route.query.id
+  const res = await apiGetExecuteInfoById(projectId,executeId)
+  if (res.code === 200) {
+    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+    const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+    const contractMap = formatContractList(data)
+    let deployParams = {
+      projectId:projectId,
+      execId: executeId,
+      version: route.query.version,
+      network: res.data.network
+    }
+    newEngine.start(contractMap,execJson,deployParams)
+  }
+}
+
 
 onMounted(async () => {
   await getContactDetail()
