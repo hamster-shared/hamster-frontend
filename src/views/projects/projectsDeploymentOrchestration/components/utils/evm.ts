@@ -314,7 +314,7 @@ export async function upgradeProxyContract(provider: ethers.providers.Web3Provid
 
 
 
-export async function getTransactionInfo(transactionHash: string):Promise<TransactionInfo> {
+export async function getTransactionInfo(transactionHash: string,rpcUrl:string,symbol:string):Promise<TransactionInfo> {
     return new Promise<TransactionInfo>(async (resolve, reject) => {
         let transactionInfo:TransactionInfo = {
             transactionHash: '',
@@ -327,12 +327,12 @@ export async function getTransactionInfo(transactionHash: string):Promise<Transa
             gasPrice:''
         }
         transactionInfo.transactionHash = transactionHash;
-        const provider = new ethers.providers.JsonRpcProvider(JSON_PRC)
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
         const transaction = await provider.getTransaction(transactionHash);
         const blockInfo = await provider.getBlock(<number>transaction.blockNumber)
         const date = utcToZonedTime(new Date(blockInfo.timestamp * 1000), 'UTC');
         transactionInfo.timeStamp = format(date, "MMM-dd-yyyy hh:mm:ss a xxx", { timeZone: "UTC" })
-        transactionInfo.value = ethers.utils.formatEther(transaction.value) + "ETH";
+        transactionInfo.value = ethers.utils.formatEther(transaction.value) + symbol;
         transactionInfo.from = transaction.from
         transactionInfo.block = <number>transaction.blockNumber
         transactionInfo.gasPrice = ethers.utils.formatUnits(transaction.gasPrice._hex, 'gwei') + "Gwei"
@@ -341,13 +341,13 @@ export async function getTransactionInfo(transactionHash: string):Promise<Transa
         const gasCost = receipt.gasUsed;
         const gasPriceWei = transaction.gasPrice;
         const transactionFeeWei = gasCost.mul(gasPriceWei._hex);
-        transactionInfo.transactionFee = ethers.utils.formatEther(transactionFeeWei) + "ETH"
+        transactionInfo.transactionFee = ethers.utils.formatEther(transactionFeeWei) + symbol
         resolve(transactionInfo)
     });
 }
 
-export async function getTransaction(transactionHash:string) {
-    const provider = new ethers.providers.JsonRpcProvider(JSON_PRC)
+export async function getTransaction(transactionHash:string,rpcUrl:string) {
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     const receipt = await provider.getTransactionReceipt(transactionHash);
     return receipt
 }

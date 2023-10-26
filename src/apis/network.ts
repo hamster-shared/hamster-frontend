@@ -8,3 +8,10 @@ export function apiEvmNetwork() {
       method: "get",
     })
   }
+
+export function apiGetNetworkByName(networkName:string) {
+    return httpRequest({
+        url: `/api/projects/chain/network/${networkName}`,
+        method: "get",
+    })
+}
