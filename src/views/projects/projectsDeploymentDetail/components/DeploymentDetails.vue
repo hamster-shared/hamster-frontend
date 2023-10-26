@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center">
       <div class="font-bold text-[24px]">Deployment Details</div>
       <div>
-        <a-button type="primary" ghost>Stop</a-button>
+        <a-button type="primary" ghost @click="stop">Stop</a-button>
         <!-- <a-button type="primary" class="mx-[24px]">View Dashboard</a-button> -->
         <a-select ref="select" v-model:value="actionVal" class="w-[140px] !ml-[24px]"
           :options="actionOptions" @select="goPage(actionVal)">
@@ -132,6 +132,11 @@ const getOriginalArrangeList = async () => {
     orchestrationInfo.value = res.data;
   }
   console.log("123orchestrationInfo.value:",orchestrationInfo.value);
+}
+
+// 停止部署，执行引擎
+const stop = ()=>{
+
 }
 
 // 重新部署，执行引擎
