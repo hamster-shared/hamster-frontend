@@ -168,3 +168,11 @@ export function apiGetOriginalArrange(id: string, version: string) {
     method: "get",
   })
 }
+
+// 根据网络名字获取网络信息
+export function apiGetNetworkByName(name: string) {
+  return httpRequest({
+    url: `/api/projects/chain/network/${name}`,
+    method: "get",
+  })
+}

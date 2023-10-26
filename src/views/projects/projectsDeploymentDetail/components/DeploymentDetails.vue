@@ -12,7 +12,7 @@
     </div>
     <div class="my-[24px] py-[16px] px-[32px] border border-solid border-[#E2B578] rounded-[12px] bg-[rgba(226,181,120,0.1)]">
       <svg-icon name="tips" size="26" class="svg-color mr-2" />
-      The following contracts will be deployed on the {{ $route.query.selectNetworkName }}
+      The following contracts will be deployed on the {{ networkName }}
     </div>
     <div v-if="executeArrange.length > 0">
       <a-collapse v-model:activeKey="activeKey">
@@ -67,7 +67,7 @@
                   <div>{{ item.transactionInfo.gasPrice }}</div>
                 </div>
               </div>
-              <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer">View on block explorer</div>
+              <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">NO Data</div>
           </div>
@@ -84,7 +84,7 @@ import{ copyToClipboard } from "@/utils/tool";
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
-import { apiWaitContractList, apiGetExecuteInfoById } from '@/apis/contractOrchestrationDeploy';
+import { apiWaitContractList, apiGetExecuteInfoById, apiGetNetworkByName } from '@/apis/contractOrchestrationDeploy';
 import { getTransactionInfo } from "@/views/projects/projectsDeploymentOrchestration/components/utils/evm";
 
 const props = defineProps({
@@ -105,6 +105,13 @@ const showOrchestrationInfo = ref(false)
 const orchestrationInfo = ref<any>();
 //获取执行信息 
 const executeArrange = ref<any>([]);
+// 网络名称
+const networkName = ref('')
+// 跳转第三方网址base url
+const blockExplorerUrl = ref('')
+// 点击单个列表查询信息所需的参数
+const rpcUrl = ref('')
+const symbol = ref('')
 
 const activeKey = ref(['1']);
 const actionVal = ref('All Action')
@@ -137,6 +144,7 @@ const getExecuteInfoById = async () => {
   console.log("根据执行id获取执行信息:", res);
   if (res.code == 200) {
     setExecuteInfoList(JSON.parse(res.data.arrangeProcessData));
+    networkName.value = res.data.network
   }
 }
 //设置执行信息数据
@@ -181,6 +189,20 @@ const getOriginalArrangeList = async () => {
   console.log("123orchestrationInfo.value:",orchestrationInfo.value);
 }
 
+// 通过网络名称获取网络信息
+const getNetworkByName = async()=>{
+  const res = await apiGetNetworkByName(networkName.value)
+  console.log('通过网络名称获取网络信息:',res)
+  blockExplorerUrl.value = res.data.blockExplorerUrl
+  rpcUrl.value = res.data.rpcUrl
+  symbol.value = res.data.symbol
+}
+
+const goTranscationUrl = (transactionHash:any)=>{
+  // url拼接/tx/0x856c4ac145ffe250e848ba6b7983cecab92224f85133ef477d6888f5179f3d26
+  window.open(`${blockExplorerUrl}/tx/${transactionHash}`)
+}
+
 // 停止部署，执行引擎
 const stop = ()=>{
   emit('execStop')
@@ -202,6 +224,7 @@ watch(
 onMounted(async () => {
   // 根据执行id获取执行信息
   await getExecuteInfoById();
+  await getNetworkByName()
 });
 </script>
 <style scoped lang="less">
