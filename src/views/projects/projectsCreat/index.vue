@@ -133,10 +133,6 @@
             <div v-if="formData.frameType == '6'">
               <FilecoinTemplate @goFilecoinDetail="goNext"></FilecoinTemplate>
             </div>
-            <!-- Solana模板组件 -->
-            <div v-if="formData.frameType == '8'">
-                <SolanaTemplate @goSolanacoinDetail="goNext" />
-            </div>
           </div>
           <div v-if="formData.type === '2'" class="grid grid-cols-2 gap-4">
             <div v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
@@ -197,7 +193,6 @@ import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import ImportGitRepository from './components/ImportGitRepository.vue'
 import FilecoinTemplate from './components/FilecoinTemplate.vue';
-import SolanaTemplate from "./components/SolanaTemplate.vue";
 import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
@@ -266,10 +261,6 @@ const goNext = async () => {
     formData.frameType = '1'
     localStorage.setItem("createFormData", JSON.stringify(formData));
     router.push('/projects/templates/details')
-  }else if(formData.frameType == '8'){
-    formData.frameType = '1'
-    localStorage.setItem("createFormData", JSON.stringify(formData));
-    router.push('/projects/templates/solana/details')
   }else{
     localStorage.setItem("createFormData", JSON.stringify(formData));
     setCreateProjectValue(`/projects/template/${formData.type}`)

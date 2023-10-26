@@ -212,7 +212,7 @@
                   fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
               </div>
             </div>
-            
+
             <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
             <div v-else>
               <div v-if="projectType === '2'">
@@ -223,13 +223,13 @@
               </div>
               <div v-else-if="projectType === '3'">
                 <div class="open-link-css cursor-pointer inline-block"
-                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" 
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
                   v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
                   View Process
                 </div>
                 <!-- polkdot -->
                 <div class="open-link-css cursor-pointer inline-block"
-                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" 
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
                   v-else>
                   View Result
                 </div>
@@ -477,7 +477,7 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
           // }
         } else {
           const { data } = await apiProjectsCheck(id);
-          
+
           setMsgShow(data.workflowId, data.detailId, 'check', 1);
           // message.success(res.message);
           loadView();
@@ -504,7 +504,7 @@ const buildStatusAction = async (id: string, buildData: any) => {
 
 const aptosBuildParams = ref([])
 const goAptosBuild = async (id: string, buildData: any, frameType: string,type:any) => {
-  let needsParams = false 
+  let needsParams = false
   const res = await apiCheckSetAptosBuildParams(id)
   needsParams = res.data.needsParams
   try {
@@ -518,7 +518,7 @@ const goAptosBuild = async (id: string, buildData: any, frameType: string,type:a
         message.info("Executing Now，please wait a moment.");
       } else {
         const { data } = await apiAptosBuild(id)
-    
+
         setMsgShow(data.workflowId, data.detailId, 'build', 2);
 
         loadView();
@@ -528,7 +528,7 @@ const goAptosBuild = async (id: string, buildData: any, frameType: string,type:a
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
-  } 
+  }
 }
 const getIcpBuildInfo = async(id: string, buildData: any)=>{
   const res = await apiIcpAccount(viewInfo.value.id)
@@ -623,7 +623,7 @@ const projectsDeploy = async (id: string, version: string, status: number) => {
       frontCommonDeploy(status)
     }
   }
-  
+
 };
 const projectsOps = async (id: string, recentDeploy: RecentDeployItem, type?:number) => {
   if (projectType?.value === "1") {
@@ -719,7 +719,7 @@ const frontendDeploying = async () => {
       workflowDetailId: viewInfo?.value.recentBuild.id,
     });
     const { data } = await apiProjectsDeploy(params.value);
-    
+
     setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     loadView();
@@ -735,7 +735,7 @@ const hideAptosBuildVisible = () => {
 const aptosBuild = async(id:any)=>{
   try {
     const { data } = await apiAptosBuild(id.value)
-    
+
     setMsgShow(data.workflowId, data.detailId, 'build', 2);
 
     loadView();
@@ -881,7 +881,7 @@ const SaveDFXCon = async(params:string) => {
 }
 @baseColor: #E2B578;
 
-  
+
 .action-button-disabled {
   color: rgba(38, 38, 38, 0.3);
   label{
@@ -908,7 +908,7 @@ html[data-theme='dark'] {
   .disabledCheckCss:hover {
     color: #E0DBD2;
   }
-  
+
   .action-button-disabled {
     color: rgba(255, 255, 255, 0.3);
     label{

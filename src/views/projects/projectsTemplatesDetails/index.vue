@@ -337,7 +337,7 @@ const setModulesList = (exposedFunctions: any) => {
 
         let typeParameters = exposedFunctions[method][func].typeParameters;
         let parameters: any[] = exposedFunctions[method][func].parameters;
-        
+
         let list: any[] = [];
         let typeParamList: any = [];
         typeParameters.forEach((element: any, index: number) => {
@@ -453,14 +453,25 @@ const getContractTemplatesDetail = async () => {
       }})
       ainInfoData.value = [...aptosSendList,...aptosCallList]
     }else{
+
       if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
         ainInfoData.value = YAML.parse(data.abiInfo).abi;
+
       } else {
         ainInfoData.value = YAML.parse(data.abiInfo);
       }
     }
-    if (frameType !== '5' && frameType!=7) {
+
+    if (frameType !== '5' && frameType!=7 && frameType!=8) {
       setAbiInfoData(ainInfoData.value);
+    }else if(frameType == '8'){
+
+      ainInfoData.value = YAML.parse(data.abiInfo).instructions;
+      console.error("==33==",ainInfoData.value[0])
+      sendList.value.push(ainInfoData.value[0])
+      functionList.value = sendList.value[0]?.args;
+      functionName.value = sendList.value[0]?.name;
+
     }else if(frameType == '7'){
       getContractICPMoveInfo(JSON.parse(icpAbi))
     }
@@ -468,7 +479,7 @@ const getContractTemplatesDetail = async () => {
       .get(data.codeSources)
       .then(res => {
         if (res.data) {
-          if (frameType === '5') {
+          if (frameType === '5' ) {
             res.data.forEach((ele: any) => {
               axios
                 .get(ele.download_url)
@@ -497,10 +508,12 @@ const getContractTemplatesDetail = async () => {
 }
 
 const setAbiInfoData = (abiInfoData: any) => {
+
   abiInfoData.forEach((item: any) => {
+
     if (item.type === 'function') {
       // debugger
-      // aptos 的 abi 
+      // aptos 的 abi
       if(frameType==2){
         if(item.isAptosSend){
           sendList.value.push(item)
@@ -542,7 +555,7 @@ const setAbiInfoData = (abiInfoData: any) => {
 }
 
 const setCodeHeight = (content: string) => {
-  let codeIndex = content.split('\n').length; 
+  let codeIndex = content.split('\n').length;
   editHeight.value = 'height: ' + codeIndex * 22 + 'px';
 }
 
