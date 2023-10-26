@@ -54,7 +54,9 @@
       </div>
     </div>
     <div class="text-center mt-[16px]">
-      <a-button class="btn" @click="deployClick" :loading="loading">{{
+      <DeploySolana @Validate="solanaValidata"  v-if="frameType === 8"  />
+
+      <a-button v-else class="btn" @click="deployClick" :loading="loading">{{
           loading ? 'Deploying' : 'Deploy'
         }}</a-button>
     </div>
@@ -118,10 +120,16 @@ import {WalletCore} from '@aptos-labs/wallet-adapter-core'
 import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
 import {sleep} from "@/utils/tool"
 import {type Chain, ChainList, getChain} from "@/utils/chainlist"
+import DeploySolana from "./deploySolana.vue";
+
 
 import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
 import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
+
+import {initWallet} from "solana-wallets-vue";
+import {PhantomWalletAdapter} from "@solana/wallet-adapter-wallets";
+
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
@@ -173,6 +181,20 @@ const breadCrumbInfo = ref<any>([])
 
 // sui
 const suiWallet = new WalletStandardAdapterProvider()
+
+//solana
+
+const initSolana = () =>{
+  const walletOptions = {
+    wallets: [
+      new PhantomWalletAdapter()
+    ],
+    autoConnect: true,
+  };
+  initWallet(walletOptions);
+}
+
+initSolana()
 
 const workflowsDetailsData = ref<any>({})
 
@@ -282,6 +304,7 @@ const deploySuiContract = async (item: any)=> {
   );
 
 
+
   tx.transferObjects([upgradeCap], tx.pure(accountAddress));
   let digest = ""
   try{
@@ -347,6 +370,10 @@ const deploySuiContract = async (item: any)=> {
 
   router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
+
+
+
+
 
 // 查询版本号
 const getVersion = async () => {
@@ -589,6 +616,10 @@ const getAptosAbi = (name:string) => {
   }
   return abi
 }
+
+const solanaValidata = async() =>{
+  await formRef?.value.validateFields();
+}
 const deployClick = async () => {
   // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
@@ -818,6 +849,7 @@ onMounted(async () => {
   await getProjectsDetail();
   await getProjectsContract()
   await judgeOrigin()
+
   let lastDeployChain = localStorage.getItem("lastDeployChain")
   if(lastDeployChain) {
       try {
