@@ -465,16 +465,14 @@ const getContractTemplatesDetail = async () => {
     if (frameType !== '5' && frameType!=7 && frameType!=8) {
       setAbiInfoData(ainInfoData.value);
     }else if(frameType == '8'){
-
       ainInfoData.value = YAML.parse(data.abiInfo).instructions;
-      console.error("==33==",ainInfoData.value[0])
-      sendList.value.push(ainInfoData.value[0])
+      sendList.value=ainInfoData.value;
       functionList.value = sendList.value[0]?.args;
       functionName.value = sendList.value[0]?.name;
 
     }else if(frameType == '7'){
-      getContractICPMoveInfo(JSON.parse(icpAbi))
-    }
+     getContractICPMoveInfo(JSON.parse(icpAbi))
+   }
     axios
       .get(data.codeSources)
       .then(res => {
