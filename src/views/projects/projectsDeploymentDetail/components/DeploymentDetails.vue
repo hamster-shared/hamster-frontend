@@ -20,7 +20,8 @@
           <template #extra>
             <div class="flex items-center">
               <div v-if="item.status === 'Failed'" class="text-[#E2B578] font-semibold mr-[20px]" @click="reDeploy">Redeploy</div>
-              <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" />
+              <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
+              <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2" />
               <div>{{ item.status }}</div>
             </div>
           </template>
