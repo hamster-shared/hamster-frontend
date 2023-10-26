@@ -48,9 +48,9 @@ export default ({ mode }: ConfigEnv) => defineConfig({
   server: {
     proxy: {
       "/api/v2/zan": {
-        target:
-            "http://127.0.0.1:9898",
+        target: "http://61.172.179.6:30301/api/v2/zan",
         changeOrigin: true, //是否跨域
+        rewrite: (path) => path.replace(/^\/api\/v2\/zan/, ""),
       },
       "/api": {
         target:
@@ -63,7 +63,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       },
       "/nodeService": {
         target:
-          "http://34.232.105.81/nodeService",
+          "http://61.172.179.6/nodeService",
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/nodeService/, ""),
       },
