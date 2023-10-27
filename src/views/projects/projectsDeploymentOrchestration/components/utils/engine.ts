@@ -75,7 +75,7 @@ export default class NewEngine {
                     }
                     if (step.type == CONSTRUCTOR || step.type == PROXY_CONSTRUCTOR) {
                         // save contract deploy info
-                        await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,receipt.contractAddress,step.transactionHash)
+                        await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,receipt.contractAddress,step.transactionHash,abi)
                         deployStep.contract.address = receipt.contractAddress
                     }
                     step.status = "SUCCESS"
@@ -96,7 +96,7 @@ export default class NewEngine {
                     const params = this.paramReplace(step.params,deployInfo.deployStep)
                     const deployTransactionResponse= await deployContract(this.provider,abi, bytecode, ...params)
                     // save contract deploy info
-                    await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash)
+                    await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash, abi)
                     deployStep.contract.address = deployTransactionResponse.contractAddress
                     step.transactionHash = deployTransactionResponse.transactionHash
                     step.status = "SUCCESS"
@@ -149,7 +149,7 @@ export default class NewEngine {
                 try {
                     const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params)
                     // save contract deploy info
-                    await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash)
+                    await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash,abi)
                     deployStep.contract.address = deployTransactionResponse.contractAddress
                     step.transactionHash = deployTransactionResponse.transactionHash
                     step.status = "SUCCESS"
@@ -171,7 +171,7 @@ export default class NewEngine {
                     const data = await upgradeProxyContract(this.provider, abi, bytecode,step.method, params,deployStep.Contract.proxyAddress)
                     deployStep.contract.address = data.address
                     // save contract deploy info
-                    await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,data.address,data.transactionData.transactionHash)
+                    await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,data.address,data.transactionData.transactionHash,abi)
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
                     // save exec status
@@ -251,7 +251,7 @@ async function saveDeployExec(projectId:string,execId:number,jsonData:string) {
     await apiUpdateExecuteInfo(projectId,data)
 }
 
-async function saveContractDeployInfo(projectId:string,contractId:number,version:string,network:string,address:string,hash:string) {
+async function saveContractDeployInfo(projectId:string,contractId:number,version:string,network:string,address:string,hash:string,abiInfo:string) {
     let data = {
         contractId: contractId,
         projectId: projectId,
@@ -259,6 +259,7 @@ async function saveContractDeployInfo(projectId:string,contractId:number,version
         network: network,
         address: address,
         deployTxHash: hash,
+        abiInfo:abiInfo
     }
     await apiProjectsContractDeploy(data)
 }
