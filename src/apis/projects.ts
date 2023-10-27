@@ -43,6 +43,7 @@ interface GetProjectsContractDeployParams {
   network: string,
   address: string,
   deployTxHash: string,
+  abiInfo: string
 }
 
 // contract deploying

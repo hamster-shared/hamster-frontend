@@ -33,6 +33,8 @@ import { message } from "ant-design-vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {saveWallet} from "@/apis/login";
+import Web3 from 'web3'
+import { ethers } from 'ethers'
 
 
 const router = useRouter()
@@ -43,6 +45,7 @@ const oauthUrl = ref('https://github.com/login/oauth/authorize');
 const loginBox = () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
   if (JSON.stringify(userInfo) === '{}') {
+    // 登录
     const state = new Date().getTime();
     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
     const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
@@ -52,6 +55,7 @@ const loginBox = () => {
       localStorage.setItem('token', userInfo.token);
       commonJump()
     } else {
+      // install
       const state = new Date().getTime();
       const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
       const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
@@ -75,10 +79,36 @@ const awakeWallet = async()=>{
         saveWallet(account).then()
     }
     const address = accounts[0];
+    const web3 = new Web3(window.ethereum);
     if(address){
       localStorage.setItem('token',address)
       commonJump()
     }
+//      try {
+//        // 请求用户授权连接到 MetaMask
+//       //  await window.ethereum.enable();
+//     // 创建一个要签署的消息
+//     const message = 
+// `thirdweb.com wants you to sign in with your Ethereum account: 
+// ${address} 
+// Please ensure that the domain above matches the URL of the current website.
+
+// Version:1
+// Chain ID:1`;
+//     // 使用 Web3.js 发送请求签名的消息
+//     web3.eth.personal.sign(message, window.ethereum.selectedAddress, (error, signature) => {
+//       if (!error) {
+//         console.log('签名结果：', signature);
+//         // 在这里你可以将签名发送到后端服务器进行验证
+//       } else {
+//         console.error('签名请求失败：', error);
+//       }
+//     });
+//        // 用户已连接，可以使用 web3 进行操作
+//        console.log('已连接到 MetaMask');
+//      } catch (error) {
+//        console.error('用户拒绝连接：', error);
+//      }
     console.log(`Metamask wallet address: ${address}`,accounts);
   } else {
     message.error('Please install MetaMask!')
