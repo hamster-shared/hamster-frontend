@@ -9,6 +9,7 @@ import type { DeployRecord,DeployStep,ContractBuild,DeployParams} from '../Deplo
 import {callContract, deployContract, deployProxyContract, getTransaction, upgradeProxyContract} from "./evm";
 import {apiUpdateExecuteInfo} from "@/apis/contractOrchestrationDeploy";
 import {apiProjectsContractDeploy} from "@/apis/projects";
+import {message} from "ant-design-vue";
 
 
 
@@ -228,6 +229,10 @@ export default class NewEngine {
     }
 
     public stop(): void {
+        if (this.isRunning === false) {
+            message.warning("deployment contract not running")
+            return
+        }
         this.isRunning = false;
         console.log("Workflow has been stopped.");
     }
