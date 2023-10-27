@@ -104,6 +104,7 @@ export default class NewEngine {
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 }catch (e) {
+                    console.error("constructor deploy failed",e)
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
@@ -136,6 +137,7 @@ export default class NewEngine {
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     console.log("FUNCTION function is success")
                 }catch (e) {
+                    console.error("function call failed",e)
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
@@ -158,6 +160,7 @@ export default class NewEngine {
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     console.log("FUNCTION function is success")
                 }catch (e){
+                    console.error("proxy constructor deploy failed",e)
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
@@ -177,7 +180,7 @@ export default class NewEngine {
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 }catch (e){
-                    console.log(e)
+                    console.error("proxy upgrade failed",e)
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
