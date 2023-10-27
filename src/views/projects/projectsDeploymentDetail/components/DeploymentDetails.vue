@@ -71,7 +71,7 @@
             </div>
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">
               <label v-if="!isLoading">NO Data</label>
-              <LoadingOutlined v-if="isLoading"></LoadingOutlined>
+              <LoadingOutlined v-if="isLoading" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
             </div>
           </div>
         </a-collapse-panel>
