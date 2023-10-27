@@ -34,7 +34,7 @@
           </a-form-item>  
         </div>
         <div v-if="methodItem.formData.methodType">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-4" v-if="methodItem.showAddress">
             <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
               <a-select v-model:value="methodItem.formData.param1"  @change="checkFiledChange"
                 placeholder="Select project contract" :options="paramList">
@@ -152,6 +152,7 @@ const changeMethodName = (val: any, methodKey: number) => {
 const changeMethodType = (val: any, methodKey: number) => {
   checkFiledChange();
   methodList.value[methodKey].formData = Object.assign({}, methodList.value[methodKey].formData, methodMap.value.get(methodList.value[methodKey].formData.methodName).formList[val]);
+  methodList.value[methodKey].showAddress = methodMap.value.get(methodList.value[methodKey].formData.methodName).showAddress[val];
   console.log("methodList:::",methodList.value);
 }
 

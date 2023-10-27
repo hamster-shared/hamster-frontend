@@ -5,7 +5,7 @@
     </div>
     <div v-if="selectedName">
       <a-form ref="formContractRef" :rules="formRules" :model="formData" layout="vertical">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-2 gap-4" v-if="showAddress">
           <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
             <a-select @change="checkFiledChange" v-model:value="formData.param1" 
               placeholder="Select project contract" :options="paramList">
@@ -36,6 +36,7 @@ import { ref, reactive, computed, toRefs } from "vue";
 
 const props = defineProps({
   selectedName: String,
+  showAddress: Boolean as any,
   inputData: Array as any,
   formData: Object as any,
   contractOrchestration:{
@@ -44,7 +45,7 @@ const props = defineProps({
   }
 });
 
-const { selectedName, inputData, formData, contractOrchestration } = toRefs(props);
+const { selectedName, inputData, formData, contractOrchestration, showAddress } = toRefs(props);
 
 const formContractRef = ref();
 const paramList = ref([
