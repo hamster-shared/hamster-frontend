@@ -4,7 +4,7 @@
     <!-- 详情 -->
 
     <DeployVersionInfomation ref="versionRef" v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
-    <DeploymentDetails v-if="version" :version="version" @execStop="execStop" @reDeploy="reDeploy"></DeploymentDetails>
+    <DeploymentDetails v-if="version" :version="version" @execStop="execStop"></DeploymentDetails>
   </div>
 </template>
 
@@ -97,25 +97,25 @@ const execStop = () => {
   newEngine.stop()
 }
 // retry exec contract deploy
-const reDeploy = async () => {
-  const executeId = route.query.executeId
-  const projectId = route.query.id
-  const res = await apiGetExecuteInfoById(projectId,executeId)
-  if (res.code === 200) {
-    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
-    const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
-    const contractMap = formatContractList(data)
-    const networkData = await apiGetNetworkByName(res.data.network)
-    let deployParams = {
-      projectId:projectId,
-      execId: executeId,
-      version: route.query.version,
-      network: res.data.network,
-      rpcUrl: networkData.data.rpcUrl
-    }
-    newEngine.start(contractMap,execJson,deployParams)
-  }
-}
+// const reDeploy = async () => {
+//   const executeId = route.query.executeId
+//   const projectId = route.query.id
+//   const res = await apiGetExecuteInfoById(projectId,executeId)
+//   if (res.code === 200) {
+//     let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+//     const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+//     const contractMap = formatContractList(data)
+//     const networkData = await apiGetNetworkByName(res.data.network)
+//     let deployParams = {
+//       projectId:projectId,
+//       execId: executeId,
+//       version: route.query.version,
+//       network: res.data.network,
+//       rpcUrl: networkData.data.rpcUrl
+//     }
+//     newEngine.start(contractMap,execJson,deployParams)
+//   }
+// }
 
 
 onMounted(async () => {

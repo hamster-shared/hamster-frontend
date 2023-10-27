@@ -30,7 +30,7 @@
               <div>{{ item.transactionInfo.index }}
                 <div class="flex items-center">
                   <div class="collapse-content-title">Transaction Hash:</div>
-                  <div>{{ item.transactionInfo.transactionHash }}
+                  <div>{{ getPonitStr(item.transactionInfo.transactionHash,6,4) }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.transactionHash)"/>
                   </div>
                 </div>
@@ -69,7 +69,10 @@
               </div>
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">NO Data</div>
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">
+              <label v-if="!isLoading">NO Data</label>
+              <LoadingOutlined v-if="isLoading"></LoadingOutlined>
+            </div>
           </div>
         </a-collapse-panel>
       </a-collapse>
@@ -80,11 +83,18 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import{ copyToClipboard } from "@/utils/tool";
+import{ copyToClipboard, getPonitStr } from "@/utils/tool";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
 import { apiWaitContractList, apiGetExecuteInfoById, apiGetNetworkByName } from '@/apis/contractOrchestrationDeploy';
 import { getTransactionInfo } from "@/views/projects/projectsDeploymentOrchestration/components/utils/evm";
+import { LoadingOutlined } from '@ant-design/icons-vue';
+import { apiGetProjectsContract } from "@/apis/workFlows";
+import NewEngine, {formatContractList} from "@/views/projects/projectsDeploymentOrchestration/components/utils/engine";
+import type {DeployRecord} from "@/views/projects/projectsDeploymentOrchestration/components/DeployData";
+import {ethers} from "ethers";
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const newEngine = new NewEngine(provider)
 
 const props = defineProps({
   version:{
@@ -112,6 +122,8 @@ const symbol = ref('')
 const network = ref('');
 const timer = ref(); //轮询定时器
 const timeStop = ref(false);
+const statusSucNum = ref(0); //记录status是success的数量
+const isLoading = ref(false);
 
 const activeKey = ref<any>([]);
 const actionVal = ref('All Action')
@@ -152,7 +164,11 @@ const getExecuteInfoById = async () => {
 }
 //设置执行信息数据
 const setExecuteInfoList = (arrangeData: any) => {
+  console.log("arrangeData::",arrangeData);
+  //初始化字段值
   executeArrange.value.length = 0;
+  statusSucNum.value = 0;
+  //遍历数据
   arrangeData.deployStep.forEach((ele: any) => {
     if (Object.keys(ele).length > 0) {
       setTimerByStatus(ele.status);
@@ -160,12 +176,17 @@ const setExecuteInfoList = (arrangeData: any) => {
       let params = {
         name: ele.contract.name + proxy ,
         status: ele.status,
-        transactionHash: ele.contract.transactionHash || '',
+        transactionHash: '',
         transactionInfo: {},
       }
       executeArrange.value.push(params);
       //遍历steps数组
       ele.steps.forEach((item: any) => {
+
+        if (ele.contract.proxy && item.type == 'proxyConstructor' || item.type == 'constructor') {
+          params.transactionHash = item.transactionHash || '';
+        }
+        
         if (item.type == "function") {  
           setTimerByStatus(item.status);
           params = {
@@ -179,6 +200,10 @@ const setExecuteInfoList = (arrangeData: any) => {
       });
     }
   });
+  //所有的状态都是success，终止轮询
+  if (executeArrange.value.length == statusSucNum.value) {
+    timeStop.value = true;
+  }
   console.log("executeArrange::",executeArrange.value);
 }
 // 判断是否继续轮询
@@ -189,6 +214,8 @@ const setTimerByStatus = (status: any) => {
       timeStop.value = true; //停止轮询
     } else if (status == 'PENDING' || status == 'RUNNING') {
       timeStop.value = false; //继续轮询
+    } else if (status == 'SUCCESS') {
+      statusSucNum.value++;
     }
   }
 }
@@ -196,8 +223,11 @@ const setTimerByStatus = (status: any) => {
 // 获取单个合约的执行信息
 const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
-    executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash,rpcUrl.value,symbol.value);
+    isLoading.value = true;
+    executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
+    isLoading.value = false;
   }
+  console.log("executeArrange:",executeArrange.value);
 }
 // 获取原始编排参数
 const getOriginalArrangeList = async () => {
@@ -220,7 +250,7 @@ const getNetworkByName = async()=>{
 
 const goTranscationUrl = (transactionHash:any)=>{
   // url拼接/tx/0x856c4ac145ffe250e848ba6b7983cecab92224f85133ef477d6888f5179f3d26
-  window.open(`${blockExplorerUrl}/tx/${transactionHash}`)
+  window.open(`${blockExplorerUrl.value}/tx/${transactionHash}`)
 }
 
 // 停止部署，执行引擎
@@ -229,8 +259,27 @@ const stop = ()=>{
 }
 
 // 重新部署，执行引擎
-const reDeploy = ()=>{
-  emit('reDeploy')
+const reDeploy = async()=>{
+  // emit('reDeploy')
+  const executeId = route.query.executeId
+  const projectId = route.query.id
+  const res = await apiGetExecuteInfoById(projectId,executeId)
+  if (res.code === 200) {
+    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+    const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+    const contractMap = formatContractList(data)
+    const networkData = await apiGetNetworkByName(res.data.network)
+    let deployParams = {
+      projectId:projectId,
+      execId: executeId,
+      version: route.query.version,
+      network: res.data.network,
+      rpcUrl: networkData.data.rpcUrl
+    }
+    await newEngine.start(contractMap,execJson,deployParams)
+    timeStop.value = false
+    await getExecuteInfoById();
+  }
 }
 
 watch(
