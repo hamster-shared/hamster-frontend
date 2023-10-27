@@ -69,7 +69,10 @@
               </div>
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">NO Data</div>
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">
+              <label v-if="!isLoading">NO Data</label>
+              <LoadingOutlined v-if="isLoading"></LoadingOutlined>
+            </div>
           </div>
         </a-collapse-panel>
       </a-collapse>
@@ -85,7 +88,8 @@ import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
 import { apiWaitContractList, apiGetExecuteInfoById, apiGetNetworkByName } from '@/apis/contractOrchestrationDeploy';
 import { getTransactionInfo } from "@/views/projects/projectsDeploymentOrchestration/components/utils/evm";
-import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import { LoadingOutlined } from '@ant-design/icons-vue';
+import { apiGetProjectsContract } from "@/apis/workFlows";
 import NewEngine, {formatContractList} from "@/views/projects/projectsDeploymentOrchestration/components/utils/engine";
 import type {DeployRecord} from "@/views/projects/projectsDeploymentOrchestration/components/DeployData";
 import {ethers} from "ethers";
@@ -119,6 +123,7 @@ const network = ref('');
 const timer = ref(); //轮询定时器
 const timeStop = ref(false);
 const statusSucNum = ref(0); //记录status是success的数量
+const isLoading = ref(false);
 
 const activeKey = ref<any>([]);
 const actionVal = ref('All Action')
@@ -218,7 +223,9 @@ const setTimerByStatus = (status: any) => {
 // 获取单个合约的执行信息
 const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
-    executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash,rpcUrl.value,symbol.value);
+    isLoading.value = true;
+    executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
+    isLoading.value = false;
   }
   console.log("executeArrange:",executeArrange.value);
 }
