@@ -159,6 +159,7 @@ const getExecuteInfoById = async () => {
 }
 //设置执行信息数据
 const setExecuteInfoList = (arrangeData: any) => {
+  console.log("arrangeData::",arrangeData);
   //初始化字段值
   executeArrange.value.length = 0;
   statusSucNum.value = 0;
@@ -170,12 +171,17 @@ const setExecuteInfoList = (arrangeData: any) => {
       let params = {
         name: ele.contract.name + proxy ,
         status: ele.status,
-        transactionHash: ele.contract.transactionHash || '',
+        transactionHash: '',
         transactionInfo: {},
       }
       executeArrange.value.push(params);
       //遍历steps数组
       ele.steps.forEach((item: any) => {
+
+        if (ele.contract.proxy && item.type == 'proxyConstructor' || item.type == 'constructor') {
+          params.transactionHash = item.transactionHash || '';
+        }
+        
         if (item.type == "function") {  
           setTimerByStatus(item.status);
           params = {
@@ -214,6 +220,7 @@ const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
     executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash,rpcUrl.value,symbol.value);
   }
+  console.log("executeArrange:",executeArrange.value);
 }
 // 获取原始编排参数
 const getOriginalArrangeList = async () => {
