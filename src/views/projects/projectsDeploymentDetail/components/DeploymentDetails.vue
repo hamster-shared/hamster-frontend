@@ -118,6 +118,7 @@ const symbol = ref('')
 const network = ref('');
 const timer = ref(); //轮询定时器
 const timeStop = ref(false);
+const statusSucNum = ref(0); //记录status是success的数量
 
 const activeKey = ref<any>([]);
 const actionVal = ref('All Action')
@@ -158,7 +159,10 @@ const getExecuteInfoById = async () => {
 }
 //设置执行信息数据
 const setExecuteInfoList = (arrangeData: any) => {
+  //初始化字段值
   executeArrange.value.length = 0;
+  statusSucNum.value = 0;
+  //遍历数据
   arrangeData.deployStep.forEach((ele: any) => {
     if (Object.keys(ele).length > 0) {
       setTimerByStatus(ele.status);
@@ -185,6 +189,10 @@ const setExecuteInfoList = (arrangeData: any) => {
       });
     }
   });
+  //所有的状态都是success，终止轮询
+  if (executeArrange.value.length == statusSucNum.value) {
+    timeStop.value = true;
+  }
   console.log("executeArrange::",executeArrange.value);
 }
 // 判断是否继续轮询
@@ -195,6 +203,8 @@ const setTimerByStatus = (status: any) => {
       timeStop.value = true; //停止轮询
     } else if (status == 'PENDING' || status == 'RUNNING') {
       timeStop.value = false; //继续轮询
+    } else if (status == 'SUCCESS') {
+      statusSucNum.value++;
     }
   }
 }
