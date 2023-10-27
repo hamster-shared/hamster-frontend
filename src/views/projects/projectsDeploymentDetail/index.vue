@@ -4,7 +4,7 @@
     <!-- 详情 -->
 
     <DeployVersionInfomation ref="versionRef" v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
-    <DeploymentDetails v-if="version" :version="version" @execStop="execStop" @reDeploy="reDeploy"></DeploymentDetails>
+    <DeploymentDetails v-if="version" :version="version" @execStop="execStop"></DeploymentDetails>
   </div>
 </template>
 
