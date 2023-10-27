@@ -85,6 +85,12 @@ import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
 import { apiWaitContractList, apiGetExecuteInfoById, apiGetNetworkByName } from '@/apis/contractOrchestrationDeploy';
 import { getTransactionInfo } from "@/views/projects/projectsDeploymentOrchestration/components/utils/evm";
+import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import NewEngine, {formatContractList} from "@/views/projects/projectsDeploymentOrchestration/components/utils/engine";
+import type {DeployRecord} from "@/views/projects/projectsDeploymentOrchestration/components/DeployData";
+import {ethers} from "ethers";
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const newEngine = new NewEngine(provider)
 
 const props = defineProps({
   version:{
@@ -229,8 +235,27 @@ const stop = ()=>{
 }
 
 // 重新部署，执行引擎
-const reDeploy = ()=>{
-  emit('reDeploy')
+const reDeploy = async()=>{
+  // emit('reDeploy')
+  const executeId = route.query.executeId
+  const projectId = route.query.id
+  const res = await apiGetExecuteInfoById(projectId,executeId)
+  if (res.code === 200) {
+    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+    const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+    const contractMap = formatContractList(data)
+    const networkData = await apiGetNetworkByName(res.data.network)
+    let deployParams = {
+      projectId:projectId,
+      execId: executeId,
+      version: route.query.version,
+      network: res.data.network,
+      rpcUrl: networkData.data.rpcUrl
+    }
+    await newEngine.start(contractMap,execJson,deployParams)
+    timeStop.value = false
+    await getExecuteInfoById();
+  }
 }
 
 watch(
