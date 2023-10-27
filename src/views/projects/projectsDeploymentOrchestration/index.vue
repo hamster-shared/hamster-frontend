@@ -89,7 +89,6 @@ import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
 import { apiEvmNetwork } from '@/apis/network'
 import { switchToChain } from '@/utils/changeNetwork'
-import { ContractMethodDoesNotExistError } from 'wagmi';
 
 const theme = useThemeStore();
 const walletAddress = useWalletAddress()
