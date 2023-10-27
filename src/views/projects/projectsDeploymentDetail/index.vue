@@ -75,7 +75,7 @@ const execDeploy = async () => {
   const res = await apiGetExecuteInfoById(projectId,executeId)
   if (res.code === 200) {
     let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
-    const execStatus = execJson.deployStep.some(item => item.status === "RUNNING" || item.status === "PENDING")
+    const execStatus = execJson.deployStep.some(item => item && item.status === "RUNNING" || item.status === "PENDDING")
     if (execStatus) {
       const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
       const contractMap = formatContractList(data)

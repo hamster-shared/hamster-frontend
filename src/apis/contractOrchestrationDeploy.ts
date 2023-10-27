@@ -16,7 +16,7 @@ interface executeParams extends projectParmams {
 }
 
 interface updateExecuteParams {
-  id: string, //执行id
+  id: string | number, //执行id
   arrangeProcessData: string, //执行数据json
 }
 
