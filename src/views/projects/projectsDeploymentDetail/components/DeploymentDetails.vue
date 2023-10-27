@@ -187,7 +187,7 @@ const setTimerByStatus = (status: any) => {
     //有一条数据的状态是 stop 或 failed 则停止轮询
     if (status == 'STOP' || status == 'FAILED') {
       timeStop.value = true; //停止轮询
-    } else if (status == 'PENDDING' || status == 'RUNNING') {
+    } else if (status == 'PENDING' || status == 'RUNNING') {
       timeStop.value = false; //继续轮询
     }
   }

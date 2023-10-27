@@ -35,6 +35,16 @@ export default class NewEngine {
             return;
         }
         let deployStep = deployInfo.deployStep[deployInfo.step]
+        if (JSON.stringify(deployStep) === "{}") {
+            if (deployInfo.step < deployInfo.deployStep.length) {
+                deployInfo.step = deployInfo.step + 1
+                deployStep = deployInfo.deployStep[deployInfo.step]
+            } else {
+                throw new Error(`please config contract info `)
+                return
+            }
+        }
+
         if (deployStep.step >= deployStep.steps.length) {
             return;
         }
@@ -66,7 +76,7 @@ export default class NewEngine {
                     if (step.type == CONSTRUCTOR || step.type == PROXY_CONSTRUCTOR) {
                         // save contract deploy info
                         await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,receipt.contractAddress,step.transactionHash)
-                        deployStep.Contract.address = receipt.contractAddress
+                        deployStep.contract.address = receipt.contractAddress
                     }
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
@@ -79,13 +89,15 @@ export default class NewEngine {
             step.status = "RUNNING"
             deployStep.status = "RUNNING"
             await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+            console.info(step.type)
             if(step.type === CONSTRUCTOR){
                 try {
+                    console.info("start deploy contract")
                     const params = this.paramReplace(step.params,deployInfo.deployStep)
                     const deployTransactionResponse= await deployContract(this.provider,abi, bytecode, ...params)
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash)
-                    deployStep.Contract.address = deployTransactionResponse.contractAddress
+                    deployStep.contract.address = deployTransactionResponse.contractAddress
                     step.transactionHash = deployTransactionResponse.transactionHash
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
@@ -103,11 +115,11 @@ export default class NewEngine {
                 console.log(step.method)
                 const params = this.paramReplace(step.params,deployInfo.deployStep)
                 try {
-                    let  contractAddress = deployStep.Contract.address
-                    if (step.contractName != deployStep.Contract.name) {
+                    let  contractAddress = deployStep.contract.address
+                    if (step.contractName != deployStep.contract.name) {
                         const contractInfo = abiMap.get(step.contractName)
                         if(contractInfo === undefined){
-                            throw new Error(`cannot find contract ${deployStep.Contract.name} `)
+                            throw new Error(`cannot find contract ${deployStep.contract.name} `)
                         }
                         abi = contractInfo.abi
                         contractAddress = this.getContractAddress(step.contractName,deployInfo.deployStep)
@@ -138,7 +150,7 @@ export default class NewEngine {
                     const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params)
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash)
-                    deployStep.Contract.address = deployTransactionResponse.contractAddress
+                    deployStep.contract.address = deployTransactionResponse.contractAddress
                     step.transactionHash = deployTransactionResponse.transactionHash
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
@@ -157,7 +169,7 @@ export default class NewEngine {
                 const params = this.paramReplace(step.params,deployInfo.deployStep)
                 try {
                     const data = await upgradeProxyContract(this.provider, abi, bytecode,step.method, params,deployStep.Contract.proxyAddress)
-                    deployStep.Contract.address = data.address
+                    deployStep.contract.address = data.address
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,data.address,data.transactionData.transactionHash)
                     step.status = "SUCCESS"
@@ -190,11 +202,11 @@ export default class NewEngine {
                 if (params[i].startsWith("$")){
                     let contractName = params[i].substring(1).split(".")[0]
                     let attr = params[i].substring(1).split(".")[1]
-                    let deploy = deployInfo.find((t: DeployStep) => contractName.includes(t.contract.name))
+                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && contractName.includes(t.contract.name))
                     if(deploy === undefined){
                         continue
                     }
-                    params[i] = deploy.Contract[attr]
+                    params[i] = deploy.contract[attr]
                 }
             }
         }
@@ -204,8 +216,8 @@ export default class NewEngine {
     getContractAddress(contractName:string,deployInfo:  DeployStep[]) {
         let contractAddress = ""
         for (let deployStep of deployInfo) {
-            if (contractName === deployStep.Contract.name) {
-                contractAddress = deployStep.Contract.address
+            if (contractName === deployStep.contract.name) {
+                contractAddress = deployStep.contract.address
                 break
             }
         }
@@ -233,7 +245,7 @@ export function formatContractList(contractData:any) {
 
 async function saveDeployExec(projectId:string,execId:number,jsonData:string) {
     let data = {
-        id: execId,
+        id: Number(execId),
         arrangeProcessData: jsonData,
     }
     await apiUpdateExecuteInfo(projectId,data)
