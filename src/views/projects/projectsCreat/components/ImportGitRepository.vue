@@ -4,6 +4,7 @@
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
       <span v-if="props.projectType != '3'" class="text-sm open-link-css cursor-pointer" @click="handleImportRepository">Import Third-Party Git Repository ></span>
     </div>
+    <ImportInstall v-if="false"></ImportInstall>
     <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue" placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
 
     <div class="flex justify-between px-6 mb-5 py-7 rounded-xl dark:bg-[#35322E] boxcontainer-shadow" v-for="(item,index) in repositoryData" :key="index">
@@ -162,7 +163,8 @@
   import { ref, reactive, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-  import { apiGetRepository, apiPostRepository } from '@/apis/projects'
+  import { apiGetRepository, apiPostRepository } from '@/apis/projects';
+  import ImportInstall from './ImportInstall.vue';
 
   const props = defineProps(({
     projectType: String

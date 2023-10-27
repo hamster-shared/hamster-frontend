@@ -239,7 +239,6 @@ watch(
   () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
   (oldValue, newV) => {
     if (oldValue) {
-      // console.log(walletAccount.value, 'kkkk')
       isConnectedWallet.value = true;
       walletAccount.value = oldValue?.substring(0, 5) + "..." + oldValue?.substring(oldValue.length - 4);
     } else {

@@ -92,6 +92,31 @@ const projectsRoute = [
         path: "/projects/:workflowsId/frontend-details/:workflowDetailId/:packageId",
         name: "projectsFrontendDetails",
         component: () => import('@/views/projects/projectsFrontendDetails/index.vue'),
+      },
+      {
+        path: "/projects/projectsDeploymentOrchestration",
+        name: "projectsDeploymentOrchestration",
+        component: () => import('@/views/projects/projectsDeploymentOrchestration/index.vue'),
+      },
+      {
+        path: '/projects/projectsDeploymentDetail',
+        name: "projectsDeploymentDetail",
+        component: () => import('@/views/projects/projectsDeploymentDetail/index.vue'),
+      },
+      {
+        path: '/projects/projectsDashboard',
+        name: "projectsDashboard",
+        component: () => import('@/views/projects/projectsDashboard/index.vue'),
+      },
+      {
+        path: '/projects/projectDashboardExplorer',
+        name: "projectDashboardExplorer",
+        component: () => import('@/views/projects/projectDashboardExplorer/index.vue'),
+      },
+      {
+        path: '/projects/projectsDeploySeting',
+        name: "projectsDeploySeting",
+        component: () => import('@/views/projects/projectsDeploySeting/index.vue'),
       }
     ]
   }
