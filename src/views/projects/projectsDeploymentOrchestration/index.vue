@@ -389,7 +389,7 @@ const setContractParams = () => {
     type: checked.value ? PROXY_CONSTRUCTOR  : CONSTRUCTOR,
     method: "",//都是空串
     params: params,
-    status: "PENDDING",//所有pendding
+    status: "PENDING",//所有pendding
   };
 }
 //拆分自定义字段值
@@ -429,7 +429,7 @@ const setInvokeContractMethod = () => {
       method: item.formData.methodType,
       params: params,
       value: JSON.stringify(custParam),//用户自定义输入
-      status: "PENDDING", //所有pendding
+      status: "PENDING", //所有pendding
     });
   });
   return methodStep;
@@ -453,7 +453,7 @@ const setContractInfo = () => {
       proxy: checked.value
     },
     steps: stepParam,
-    status: 'PENDDING',
+    status: 'PENDING',
     step: 0
   };
   originalArrange.value = {

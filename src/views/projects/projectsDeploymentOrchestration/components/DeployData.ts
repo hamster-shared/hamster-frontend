@@ -28,7 +28,7 @@ export interface Step {
   type: StepActionType, //
   method: string
   params: string[]
-  status: string, //PENDDING,SUCCESS,FAIL
+  status: string, //PENDING,SUCCESS,FAIL
   transactionHash?: string,
   value?: string
 }
