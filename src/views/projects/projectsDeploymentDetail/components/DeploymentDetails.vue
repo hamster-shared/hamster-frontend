@@ -30,7 +30,7 @@
               <div>{{ item.transactionInfo.index }}
                 <div class="flex items-center">
                   <div class="collapse-content-title">Transaction Hash:</div>
-                  <div>{{ item.transactionInfo.transactionHash }}
+                  <div>{{ getPonitStr(item.transactionInfo.transactionHash,6,4) }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.transactionHash)"/>
                   </div>
                 </div>
@@ -80,7 +80,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, toRefs, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import{ copyToClipboard } from "@/utils/tool";
+import{ copyToClipboard, getPonitStr } from "@/utils/tool";
 import { useThemeStore } from "@/stores/useTheme";
 import DeploymentOrchestrationmodal from "./DeploymentOrchestrationmodal.vue";
 import { apiWaitContractList, apiGetExecuteInfoById, apiGetNetworkByName } from '@/apis/contractOrchestrationDeploy';
@@ -243,7 +243,7 @@ const getNetworkByName = async()=>{
 
 const goTranscationUrl = (transactionHash:any)=>{
   // url拼接/tx/0x856c4ac145ffe250e848ba6b7983cecab92224f85133ef477d6888f5179f3d26
-  window.open(`${blockExplorerUrl}/tx/${transactionHash}`)
+  window.open(`${blockExplorerUrl.value}/tx/${transactionHash}`)
 }
 
 // 停止部署，执行引擎
