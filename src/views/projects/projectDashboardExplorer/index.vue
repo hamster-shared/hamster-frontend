@@ -19,12 +19,10 @@ import BreadCrumb from "@/components/BreadCrumb.vue";
 import ContractBase from './components/ContractBase.vue';
 import ContractList from '@/views/projects/projectsContractsDetails/components/ContractList.vue';
 import { apiGetProjectsDetail } from "@/apis/projects";
-import { apiGetContractDeployDetail, apiGetProjectsVersions } from "@/apis/workFlows";
 import { apiGetSourceInfoById } from '@/apis/contractOrchestrationDeploy'
 import { message } from "ant-design-vue";
 
 const breadCrumbInfo = ref<any>([]);
-const contractDeployDetail = reactive({});
 
 const route = useRoute()
 const contractName = ref('');
@@ -44,34 +42,13 @@ const checkContract = (name: string) => {
   contractName.value = name
 }
 
-const getContractDeployDetail = async () => {
-  const queryJson = {
-    // id: route.query.singleContractId,
-    id: '65a141e7-95c6-4229-850d-e3c38b405d09',
-    version: route.query.version,
-  }
-  const { data } = await apiGetContractDeployDetail(queryJson)
-  // Object.assign(contractDeployDetail, data);
-  const contractInfo = {};
-  Object.assign(contractInfo, data.contractInfo);
-
-  // console.log(contractInfo, 'contractInfo')
-  for (let key in contractInfo) {
-    abiInfo.value = data.contractInfo[key].abiInfo;
-    contractAddress.value = data.contractInfo[key].deployInfo[0].address;
-  }
-
-  // abiInfo.value = data.contractInfo.ExampleToken.abiInfo;
-  // contractAddress.value = data.contractInfo.ExampleToken.deployInfo[0].address;
-
-}
-
 // apiGetSourceInfoById
 const getDetailInfo = async()=>{
   try {
     const res = await apiGetSourceInfoById(id, contractDeployId)
     console.log('获取页面所有信息：',res)
     baseInfo.value = res.data
+    abiInfo.value = res.data.abiInfo
   } catch (error:any) {
     message.error(error)
   }
