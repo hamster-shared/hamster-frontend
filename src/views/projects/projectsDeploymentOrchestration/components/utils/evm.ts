@@ -329,7 +329,8 @@ export async function getTransactionInfo(transactionHash: string,rpcUrl:string,s
         transactionInfo.transactionHash = transactionHash;
         const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
         const transaction = await provider.getTransaction(transactionHash);
-        const blockInfo = await provider.getBlock(<number>transaction.blockNumber)
+      console.log(transaction);
+      const blockInfo = await provider.getBlock(<number>transaction.blockNumber)
         const date = utcToZonedTime(new Date(blockInfo.timestamp * 1000), 'UTC');
         transactionInfo.timeStamp = format(date, "MMM-dd-yyyy hh:mm:ss a xxx", { timeZone: "UTC" })
         transactionInfo.value = ethers.utils.formatEther(transaction.value) + symbol;
@@ -337,7 +338,11 @@ export async function getTransactionInfo(transactionHash: string,rpcUrl:string,s
         transactionInfo.block = <number>transaction.blockNumber
         transactionInfo.gasPrice = ethers.utils.formatUnits(transaction.gasPrice._hex, 'gwei') + "Gwei"
         const receipt = await provider.getTransactionReceipt(transactionHash);
-        transactionInfo.to = receipt.to
+        if (receipt.to === null) {
+          transactionInfo.to = "[Contract " + receipt.contractAddress + " created]"
+        } else {
+          transactionInfo.to = receipt.to
+        }
         const gasCost = receipt.gasUsed;
         const gasPriceWei = transaction.gasPrice;
         const transactionFeeWei = gasCost.mul(gasPriceWei._hex);
