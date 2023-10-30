@@ -221,7 +221,7 @@ export default class NewEngine {
                 if (params[i].startsWith("$")){
                     let contractName = params[i].substring(1).split(".")[0]
                     let attr = params[i].substring(1).split(".")[1]
-                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && contractName.includes(t.contract.name))
+                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && (t.contract.name === contractName || contractName.includes(t.contract.name)))
                     if(deploy === undefined){
                         continue
                     }
@@ -288,7 +288,7 @@ async function saveContractDeployInfo(projectId:string,contractId:number,version
 }
 
 function getContractInfo(abiMap : Map<string,ContractBuild>,contractName:string) {
-    const foundEntry = Array.from(abiMap).find(([key, value]) => contractName.includes(key));
+    const foundEntry = Array.from(abiMap).find(([key, value]) => key === contractName ||contractName.includes(key));
     if (foundEntry) {
         const [key, value] = foundEntry;
         console.info(contractName)
