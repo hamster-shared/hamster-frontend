@@ -455,6 +455,10 @@ watch(
     }
   }, { deep: true }
 );
+
+defineExpose({
+  submitErrorInfo,
+})
 </script>
 <style lang='less' scoped>
 .btn {
