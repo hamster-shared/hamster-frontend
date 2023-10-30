@@ -39,7 +39,7 @@
           <div class="text-[24px] dark:text-[#FFFFFF] font-bold mb-[32px]">Contract Explorer</div>
           <div class="flex bg-css dark:!border-[#434343]">
             <div class="w-1/3 left-css dark:!border-[#434343] p-[30px]">
-              <div class="flex items-center font-bold mb-4">
+              <div class="flex items-center mb-4 font-bold">
                 <img src="@/assets/icons/send-w.svg" class="h-[20px] dark:hidden mr-[5px]" />
                 <img src="@/assets/icons/send-dark.svg" class="h-[20px] hidden dark:inline-block mr-[5px]" />Modules
               </div>
@@ -51,7 +51,7 @@
               </div>
             </div>
             <div class="w-2/3 p-[30px]">
-              <div class="font-bold mb-6">Functions</div>
+              <div class="mb-6 font-bold">Functions</div>
               <NoData v-if="functionList.length === 0"></NoData>
               <a-collapse class=" dark:!border-[#434343] dark:!shadow-none" v-model:activeKey="collapsectiveKey" v-for="(items, keys) in functionList" :key="keys">
                 <a-collapse-panel :key="String(keys + 1)" :header="items.title" :showArrow="false">
@@ -68,13 +68,13 @@
                     </div>
                     <!-- <div class="dark:bg-[#2B2B2B] bg-[#F6F6F6] text-[#C3C4C7] rounded-[8px] p-[16px] my-4 break-all">{{ val.value }}</div> -->
                   </div>
-                  <div class="text-right mb-4">
+                  <div class="mb-4 text-right">
                     <a-button type="primary" class="w-[100px]" @click="sendFunction(moduleName, items.title)">Send</a-button>
                   </div>
                   <div class="output-css dark:!shadow-none p-[20px] hidden" :id="`div${moduleName}${items.title}`">
                     <div class="flex justify-between mb-[12px]">
                       <span class="font-normal">Output</span>
-                      <span class="open-link-css cursor-pointer" @click="copyInfo(`send${moduleName}${items.title}`, 'id')">
+                      <span class="cursor-pointer open-link-css" @click="copyInfo(`send${moduleName}${items.title}`, 'id')">
                         <img src="@/assets/icons/copy.svg" />Copy
                       </span>
                     </div>

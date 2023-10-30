@@ -35,7 +35,7 @@ export const addToChain = (chainId: string,chainName:string,rpcUrl:string,symbol
     message.success('faild')
     })
 }
-export const switchToChain = async (chainId: string,chainName:string,rpcUrl:string) => {
+export const switchToChain = async (chainId: string,chainName:string,rpcUrl:string,symbol?:string,decimals?:any) => {
   console.log('~~~~~~',chainId,chainName,rpcUrl)
     window.ethereum && window.ethereum.request({
       method: "wallet_switchEthereumChain",
@@ -46,7 +46,7 @@ export const switchToChain = async (chainId: string,chainName:string,rpcUrl:stri
     }).catch((err: any) => {
       if (err.code === 4902) {
         message.info('Please add the network first');
-        addToChain(chainId,chainName,rpcUrl)
+        addToChain(chainId,chainName,rpcUrl,symbol,decimals)
       } else {
         message.error('Faild '+err.message)
       }
