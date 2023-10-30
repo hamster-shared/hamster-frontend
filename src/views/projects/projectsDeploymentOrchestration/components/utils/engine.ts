@@ -288,8 +288,14 @@ async function saveContractDeployInfo(projectId:string,contractId:number,version
 }
 
 function getContractInfo(abiMap : Map<string,ContractBuild>,contractName:string) {
-    const foundEntry = Array.from(abiMap).find(([key, value]) => key === contractName ||contractName.includes(key));
+    const foundEntry = Array.from(abiMap).find(([key, value]) => contractName === key);
     if (foundEntry) {
+        const [key, value] = foundEntry;
+        console.info(contractName)
+        return value
+    }
+    const foundEntry1 = Array.from(abiMap).find(([key, value]) => (contractName.includes(key)));
+    if (foundEntry1) {
         const [key, value] = foundEntry;
         console.info(contractName)
         return value
