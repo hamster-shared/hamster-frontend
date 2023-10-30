@@ -24,7 +24,7 @@
               </div>
             </div>
             <div v-else class="flex mb-[20px]">
-              <div class="mr-[20px] leading-[42px] w-[155px]">
+              <div class="mr-[20px] leading-[42px] w-[160px]">
                 <label v-if="indexStep == 1">Invoke Contract Method: </label>
               </div>
               <div class="border border-solid border-[#EBEBEB] bg-[#F6F6F6] px-[15px] py-[10px] rounded-[8px] max-w-[530px] break-all">
