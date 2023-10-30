@@ -10,6 +10,7 @@ import {callContract, deployContract, deployProxyContract, getTransaction, upgra
 import {apiUpdateExecuteInfo} from "@/apis/contractOrchestrationDeploy";
 import {apiProjectsContractDeploy} from "@/apis/projects";
 import {message} from "ant-design-vue";
+import {apiGetNetworkByName} from "@/apis/network";
 
 
 
@@ -65,7 +66,19 @@ export default class NewEngine {
             }
             if (step.status == "RUNNING") {
                 if (step.transactionHash != "" || step.transactionHash != undefined) {
-                    const receipt = await getTransaction(step.transactionHash,deployParams.rpcUrl)
+                    let network = ""
+                    try {
+                        const networkData = await apiGetNetworkByName(deployParams.network)
+                        network = networkData.data.rpcUrl
+                    } catch (e) {
+                        step.status = "FAILED"
+                        deployStep.status = "FAILED"
+                        this.isRunning = false
+                        // save exec status
+                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                        return
+                    }
+                    const receipt = await getTransaction(step.transactionHash,network)
                     if (receipt.status == 0 || receipt.status == undefined ) {
                         step.status = "FAILED"
                         deployStep.status = "FAILED"

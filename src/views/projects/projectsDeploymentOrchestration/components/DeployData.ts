@@ -43,7 +43,6 @@ export interface DeployParams {
   execId: number
   version:string
   network:string
-  rpcUrl:string
 }
 
 export const ERC1967_ABI = [
