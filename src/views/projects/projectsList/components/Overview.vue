@@ -608,7 +608,12 @@ const getIcpInfo = async(status:number)=>{
 const projectsDeploy = async (id: string, version: string, status: number) => {
   // icp
   if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
-    await getIcpInfo(status)
+    // 前端ic 需要先 build 完成，才能进行部署
+    if (status === 0 || status === 1) {
+      message.info(t('Project not avaliable.'));
+    }else{
+      await getIcpInfo(status)
+    }
   }else{
     if (projectType?.value === '1' && viewInfo.value.frameType !== 7) {
       if (status === 0 || status === 1 || version === "") {

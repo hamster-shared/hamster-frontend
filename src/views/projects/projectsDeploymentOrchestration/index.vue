@@ -609,13 +609,19 @@ const goDeploy = ()=>{
 }
 
 const deployManyContract = async () => {
-  // 获取已经编排过的合约列表
-  await getArrangeDeployList();
-  // 保存编排信息
-  await saveOrchestrationInfo();
-  
-  // 部署调用代码
-  visibleNumber.value = true
+  // 点击部署之前需要判断改动的表单的数据是否保存
+  if (paramsRef.value.isChange || contractRef.value.isChange || isChange.value) {
+    visibleSave.value = true;
+    return false;
+  }else{
+    // 获取已经编排过的合约列表
+    await getArrangeDeployList();
+    // 保存编排信息
+    await saveOrchestrationInfo();
+    
+    // 部署调用代码
+    visibleNumber.value = true
+  }
 }
 
 
