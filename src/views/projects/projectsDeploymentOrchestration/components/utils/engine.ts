@@ -50,7 +50,8 @@ export default class NewEngine {
         if (deployStep.step >= deployStep.steps.length) {
             return;
         }
-        const contractBuild = abiMap.get(deployStep.contract.name)
+        const contractBuild = getContractInfo(abiMap,deployStep.contract.name)
+        // const contractBuild = abiMap.get(deployStep.contract.name)
         if(contractBuild === undefined){
             throw new Error(`cannot find contract ${deployStep.contract.name} `)
         }
@@ -132,9 +133,10 @@ export default class NewEngine {
                 try {
                     let  contractAddress = deployStep.contract.address
                     if (step.contractName != deployStep.contract.name) {
-                        const contractInfo = abiMap.get(step.contractName)
+                        const contractInfo = getContractInfo(abiMap,step.contractName)
+                        // const contractInfo = abiMap.get(step.contractName)
                         if(contractInfo === undefined){
-                            throw new Error(`cannot find contract ${deployStep.contract.name} `)
+                            throw new Error(`function cannot find contract ${deployStep.contract.name} `)
                         }
                         abi = contractInfo.abi
                         contractAddress = this.getContractAddress(step.contractName,deployInfo.deployStep)
@@ -283,4 +285,15 @@ async function saveContractDeployInfo(projectId:string,contractId:number,version
         abiInfo:abiInfo
     }
     await apiProjectsContractDeploy(data)
+}
+
+function getContractInfo(abiMap : Map<string,ContractBuild>,contractName:string) {
+    const foundEntry = Array.from(abiMap).find(([key, value]) => contractName.includes(key));
+    if (foundEntry) {
+        const [key, value] = foundEntry;
+        console.info(contractName)
+        return value
+    } else {
+        return undefined
+    }
 }
