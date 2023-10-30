@@ -79,12 +79,21 @@ export const ChainList: Chain[] = [
     },
     {
         category: "BNB Smart Chain",
+        id: "0x3F9",
+        name: "Greenfield Mainnet",
+        rpcUrl: "https://greenfield-chain.bnbchain.org",
+        symbol: "BNB",
+        blockExplorerUrl: "https://greenfieldscan.com",
+    },
+    {
+        category: "BNB Smart Chain",
         id: "0x15e0",
         name: "Greenfield Mekong Testnet",
         rpcUrl: "https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org",
         symbol: "tBNB",
         blockExplorerUrl: "https://greenfieldscan.com",
     },
+
     {
         category: "BNB Smart Chain",
         id: "0x15eb",
