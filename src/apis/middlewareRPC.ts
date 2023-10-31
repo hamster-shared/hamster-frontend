@@ -1,6 +1,6 @@
 import httpRequest from "@/request";
 
-// 获取是否zan授权数据
+// 用户是否已经进行了zan授权
 export function apiGetZanUserAuthed() {
     return httpRequest({
         url: '/api/v2/zan/account/authed',
@@ -8,7 +8,7 @@ export function apiGetZanUserAuthed() {
     });
 }
 
-// 获取zan授权登录地址
+// 获取zan授权链接接口
 export function apiGetZanAuthUrl() {
     return httpRequest({
         url: '/api/v2/zan/account/auth_url',
@@ -16,6 +16,7 @@ export function apiGetZanAuthUrl() {
     });
 }
 
+// 交换zan的 access_token
 export function apiZanExchangeAccessToken(autoCode: string){
     return httpRequest({
         url: '/api/v2/zan/account/access_token',
@@ -26,6 +27,7 @@ export function apiZanExchangeAccessToken(autoCode: string){
     });
 }
 
+// 套餐信息查询接口
 export function apiZanPlan() {
     return httpRequest({
         url: '/api/v2/zan/node-service/plan',
@@ -33,6 +35,7 @@ export function apiZanPlan() {
     });
 }
 
+// API KEY 分页查询接口
 export function apiZanApiKeyPage(page: number,size: number){
     return httpRequest({
         url: `/api/v2/zan/node-service/api-keys/list?page=${page}&size=${size}`,
@@ -50,7 +53,7 @@ export function apiZanApiKeyCreditCostLast24(){
     })
 }
 
-
+// API KEY credit cost 统计查询接口
 export function apiZanApiKeyCreditCost(apiKey: string){
     return httpRequest({
         url: `/api/v2/zan/node-service/api-keys/stats/credit-cost?apiKeyId=${apiKey}`,
@@ -58,6 +61,7 @@ export function apiZanApiKeyCreditCost(apiKey: string){
     });
 }
 
+// API Key request 统计查询接口
 export function apiZanApiKeyRequestStats(apiKey: string,timeInterval: string, ecosystem: string){
     return httpRequest({
         url: `/api/v2/zan/node-service/api-keys/stats/requests?apiKeyId=${apiKey}&timeInterval=${timeInterval}&ecosystem=${ecosystem}`,
@@ -65,7 +69,7 @@ export function apiZanApiKeyRequestStats(apiKey: string,timeInterval: string, ec
     });
 }
 
-
+// 创建API KEY 接口
 export function apiZanCreateApiKey(name: string){
     return httpRequest({
         url: '/api/v2/zan/node-service/api-keys',
@@ -76,7 +80,7 @@ export function apiZanCreateApiKey(name: string){
     });
 }
 
-
+// API KEY 接口详情
 export function apiZanApiKeyDetail(apiKeyId: string){
     return httpRequest({
         url: `/api/v2/zan/node-service/api-keys/detail?apiKeyId=${apiKeyId}`,
@@ -84,6 +88,7 @@ export function apiZanApiKeyDetail(apiKeyId: string){
     });
 }
 
+// API KEY request activity 统计查询接口
 export function apiZanApiKeyRequestActivityStats(apiKeyId: string,timeInterval: string, ecosystem: string) {
     return httpRequest({
         url: `/api/v2/zan/node-service/api-keys/stats/requests-activity?apiKeyId=${apiKeyId}&timeInterval=${timeInterval}&ecosystem=${ecosystem}`,
@@ -91,13 +96,15 @@ export function apiZanApiKeyRequestActivityStats(apiKeyId: string,timeInterval: 
     });
 }
 
+// API KEY request Origin 统计查询接口
 export function apiZanApiKeyRequestOriginStats(apiKeyId: string,timeInterval: string){
     return httpRequest({
-        url: `/api/v2/zan/node-service/api-keys/stats/request-origin?apiKeyId=${apiKeyId}&timeInterval=${timeInterval}`,
+        url: `/api/v2/zan/node-service/api-keys/stats/requests-origin?apiKeyId=${apiKeyId}&timeInterval=${timeInterval}`,
         method: "get"
     });
 }
 
+// 链生态摘要信息查询接口
 export function apiZanEcosystemsDigest(){
     return httpRequest({
         url: `/api/v2/zan/node-service/ecosystems/digest`,
