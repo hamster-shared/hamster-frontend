@@ -33,24 +33,24 @@
             </a-select>
           </a-form-item>  
         </div>
-        <div v-if="methodItem.formData.methodType">
-          <div class="grid grid-cols-2 gap-4" v-if="methodItem.showAddress">
-            <a-form-item name="param1" label="param1" :rules="[{ required: true }]" >
-              <a-select v-model:value="methodItem.formData.param1"  @change="checkFiledChange"
+        <div v-if="methodItem.formData.methodType" 
+            v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
+          <div class="grid grid-cols-2 gap-4" v-if="item.type == 'address'">
+            <a-form-item :label="item.name" :name="item.name + 'param'" :rules="[{ required: true }]" >
+              <a-select v-model:value="methodItem.formData[item.name + 'param']"  @change="checkFiledChange"
                 placeholder="Select project contract" :options="paramList">
               </a-select>
             </a-form-item>
-            <a-form-item class="form-noLabel" name="address" :rules="[{ required: true }]">
+            <a-form-item class="form-noLabel" :name="item.name" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
-              <a-select @change="checkFiledChange" v-if="methodItem.formData.param1 == 1" v-model:value="methodItem.formData.address"  
-                placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name }))">
+              <a-select @change="checkFiledChange" v-if="methodItem.formData[item.name + 'param'] == 1" v-model:value="methodItem.formData[item.name]"  
+                placeholder="Contract Address" :options="contractOrchestration.map((opItem: any) => ({ value: opItem.name, label:opItem.name }))">
               </a-select>
-              <a-input @change="checkFiledChange" v-else v-model:value="methodItem.formData.address" placeholder="Please input address" allowClear />
+              <a-input @change="checkFiledChange" v-else v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" autoComplete="off" allowClear />
             </a-form-item>  
           </div>
-          <a-form-item :label="item.name" :name="item.name" :rules="[{ required: true }]" 
-            v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
-            <a-input @change="checkFiledChange" v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" allowClear />
+          <a-form-item v-else :label="item.name" :name="item.name" :rules="[{ required: true }]">
+            <a-input @change="checkFiledChange" v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" autoComplete="off" allowClear />
           </a-form-item>
         </div>
         <a-form-item v-if="methodItem.formData.customParams" label="Custom Params" name="customParams" :rules="[{ required: true }]">
@@ -96,8 +96,6 @@ const formInvokeRef = ref();
 const formDataDemo = reactive<any>({
   methodName: selectedName?.value,
   methodType: '',
-  param1: 1,
-  address: '',
   customParams: '', //不默认添加
 }); 
 const methodList = ref<any>([]); 
@@ -152,7 +150,6 @@ const changeMethodName = (val: any, methodKey: number) => {
 const changeMethodType = (val: any, methodKey: number) => {
   checkFiledChange();
   methodList.value[methodKey].formData = Object.assign({}, methodList.value[methodKey].formData, methodMap.value.get(methodList.value[methodKey].formData.methodName).formList[val]);
-  methodList.value[methodKey].showAddress = methodMap.value.get(methodList.value[methodKey].formData.methodName).showAddress[val];
   console.log("methodList:::",methodList.value);
 }
 
