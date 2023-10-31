@@ -296,7 +296,7 @@ function getContractInfo(abiMap : Map<string,ContractBuild>,contractName:string)
     }
     const foundEntry1 = Array.from(abiMap).find(([key, value]) => (contractName.includes(key)));
     if (foundEntry1) {
-        const [key, value] = foundEntry;
+        const [key, value] = foundEntry1;
         console.info(contractName)
         return value
     } else {
