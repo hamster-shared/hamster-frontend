@@ -18,7 +18,7 @@
         </div>
         <!-- right -->
         <div>
-          <ContractParams ref="paramsRef" :contractOrchestration="contractOrchestration" :selectedName="selectedName" :inputData="paramInputData" :formData="paramFormData" :showAddress="paramShowAddress"></ContractParams>
+          <ContractParams ref="paramsRef" :contractOrchestration="contractOrchestration" :selectedName="selectedName" :inputData="paramInputData" :formData="paramFormData"></ContractParams>
           <InvokeContract ref="contractRef" :contractOrchestration="contractOrchestration" :selectedName="selectedName" :methodMap="methodMap" @setAbiInfo="setAbiInfo" @setDisabledSave="setDisabledSave"></InvokeContract>
           <div>
             <div class="flex justify-between mt-[30px]">
@@ -130,11 +130,9 @@ const methodMap = new Map();
 const disabledSave = ref(true);
 const paramsRef = ref();
 const contractRef = ref();
-const paramShowAddress = ref(false); //记录是否显示 param1字段，type:address时显示
 const paramFormValue = ref<any>([]); //记录Contract Parameters表单值
 const paramFormData = ref<any>({});
 const paramInputData = ref<any>([]); //记录合同Contract Parameters字段
-const methodShowAddress = ref<any>({}); //记录是否显示 param1字段，type:address时显示
 const methodFormValue = ref<any>([]); //记录Invoke Contract Method表单值
 const methodFormList = ref<any>({});
 const methodInputData = ref<any>([]); //记录合同Invoke Contract Method字段
@@ -244,7 +242,6 @@ const setSingleContractArrange = () => {
 const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
   if (setType !== 'method') {
     paramInputData.value = [];
-    paramShowAddress.value = false;
   }
   if (!methodMap.get(mapKey)) {
     methodInputData.value = [];
@@ -267,47 +264,30 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
     formList: methodFormList.value, //记录表单字段
     inputData: methodInputData.value, //记录表单标签
     functionData: methodFunctionData.value, //记录function 类型
-    showAddress: methodShowAddress.value, //记录是否显示param1字段
   });
   console.log("methodMap:",methodMap);
 }
-const checkShowAddress = (item: any) => {
-  //获取inputs字段
-  if (item.inputs.length > 0) {
-    paramShowAddress.value = item.inputs.find((it: any) => {
-      return it.type == 'address';
-    })
-  }
-}
 //设置Contract Parameters字段
 const setConstructorParams = (item: any) => {
-  //判断是否显示address字段
-  checkShowAddress(item);
 
-  let param: any = { param1: 1, address: '' };
-  //给address赋值
-  let paramIndex = 0;
-  if (paramShowAddress.value) { //显示 param1 字段
-    if (paramFormValue.value.length > 0) {
-      let addressVal = paramFormValue.value[0];
-      if (addressVal.indexOf('$') !== -1) {
-        param.param1 = 1;
-        param.address = addressVal.slice(1, addressVal.indexOf('.'));
-      } else {
-        param.param1 = 2;
-        param.address = addressVal;
-      }
-    }
-    paramIndex = 1; // 余下的字符赋值，从数组第二个值开始
-  }
+  let param: any = {};
   //获取inputs字段
   if (item.inputs.length > 0) {
     paramInputData.value = item.inputs;
     item.inputs.forEach((it: any, k: any) => {
-      if (paramFormValue.value.length > 0) {
-        param[it.name] = paramFormValue.value[k + paramIndex]; //给字段赋值
+      if (it.type == 'address') { // type:address 的字段显示左右两个字段框
+        if (paramFormValue.value.length > 0) {
+          setTypeAddressVal(paramFormValue.value[k], param, it.name);
+        } else {
+          param[it.name] = '';
+          param[it.name + 'param'] = 1;
+        }
       } else {
-        param[it.name] = "";
+        if (paramFormValue.value.length > 0) {
+          param[it.name] = paramFormValue.value[k]; //给字段赋值
+        } else {
+          param[it.name] = "";
+        }
       }
     })
   }
@@ -317,23 +297,22 @@ const setConstructorParams = (item: any) => {
 const setFunctionParams = (item: any, mapKey: any) => {
   if (!methodMap.get(mapKey)) {
     let param: any = {};
-    let showAddress: any = false;
     if (item.inputs.length > 0) {
       methodFunctionData.value.push(item.name);
       methodInputData.value[item.name] = item.inputs;
       item.inputs.forEach((it: any, k: any) => {
+        param[it.name] = '';
         if (it.type == 'address') {
-          showAddress = true;
+          param[it.name + 'param'] = 1;
         }
-        param[it.name] = "";
       })
-      methodShowAddress.value[item.name] = showAddress;
       methodFormList.value[item.name] = param;
     }
   }
 }
 // Invoke Contract Method字段赋值
 const setFunctionParamsValue = () => {
+  console.log("methodFormValue:",methodFormValue.value);
   if (methodFormValue.value.length > 0) {
     methodFormValue.value.forEach((item: any) => {
       //保存的合同，字段没有进行整理
@@ -348,8 +327,6 @@ const setFunctionParamsValue = () => {
       let param: any = {
         methodName: item.contractName,
         methodType: item.method,
-        param1: 1,
-        address: '',
         customParams: '',
       };
       
@@ -360,29 +337,30 @@ const setFunctionParamsValue = () => {
         str += `${key}: ${custObj[key]}\n`;
       })
       param.customParams = str;
-      //给address赋值
-      let paramIndex = 0;
-      if (methodMap.get(item.contractName).showAddress[item.method]) { //显示param1字段
-        let addressVal = item.params[0];
-        if (addressVal.indexOf('$') !== -1) {
-          param.param1 = 1;
-          param.address = addressVal.slice(1, addressVal.indexOf('.'));
-        } else {
-          param.param1 = 2;
-          param.address = addressVal;
-        }
-        paramIndex = 1; // 余下的字符赋值，从数组第二个值开始
-      } 
       //获取inputs字段
       let inputs = methodMap.get(item.contractName).inputData[item.method];
       inputs.forEach((it: any, k: any) => {
-        param[it.name] = item.params[k + paramIndex];
+        if (it.type == 'address') {
+          setTypeAddressVal(item.params[k], param, it.name);
+        } else {
+          param[it.name] = item.params[k];
+        }
       })
       contractRef.value.methodList.push({formData: param});  
     });
     contractRef.value.showMethod = true;
 
     console.log("mothodList::",contractRef.value.methodList);
+  }
+}
+// 给 type:address 的输入框赋值
+const setTypeAddressVal = (addressVal: any, param: any, paramName: any) => {
+  if (addressVal.indexOf('$') !== -1) {
+    param[paramName + 'param'] = 1;
+    param[paramName] = addressVal.slice(1, addressVal.indexOf('.'));
+  } else {
+    param[paramName + 'param'] = 2;
+    param[paramName] = addressVal;
   }
 }
 
@@ -404,15 +382,15 @@ const setAddressValue = (param1: number, address: string) => {
 }
 //Contract Parameters
 const setContractParams = () => {
-  let params = [];
-  //设置address得值
-  if (paramShowAddress.value) {
-    let addVal = setAddressValue(paramFormData.value.param1, paramFormData.value.address);
-    params.push(addVal);
-  }
+  let params: any = [];
   //按照顺序获取字段值
   paramInputData.value.map((item: any) => {
-    params.push(paramFormData.value[item.name]);
+    if (item.type == 'address') {
+      let addVal = setAddressValue(paramFormData.value[item.name+'param'], paramFormData.value[item.name]);
+      params.push(addVal);
+    } else {
+      params.push(paramFormData.value[item.name]);
+    }
   });
   return {
     type: checked.value ? PROXY_CONSTRUCTOR  : CONSTRUCTOR,
@@ -439,17 +417,17 @@ const setInvokeContractMethod = () => {
   let methodStep: any = [];
   let methodList = contractRef.value.methodList;
   methodList.map((item: any) => {
-    let params = [];
-    //设置address得值
-    if (item.showAddress) {
-      let addVal = setAddressValue(item.formData.param1, item.formData.address);
-      params.push(addVal);
-    }
+    let params: any = [];
     //获取字段列表
     let inputList = methodMap.get(item.formData.methodName).inputData[item.formData.methodType];
     //按照顺序获取字段值
     inputList.map((item_input: any) => {
-      params.push(item.formData[item_input.name]);
+      if (item_input.type == 'address') {
+        let addVal = setAddressValue(item.formData[item_input.name+'param'], item.formData[item_input.name]);
+        params.push(addVal);
+      } else {
+        params.push(item.formData[item_input.name]);
+      }
     });
     //拆分自定义字段值
     let custParam = setCustomParams(item.formData.customParams);
