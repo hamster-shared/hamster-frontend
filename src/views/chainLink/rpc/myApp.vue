@@ -17,10 +17,11 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
+import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import CreateAppModal from './components/CreateAppModal.vue';
 
-
+const router = useRouter()
 const createVisible = ref(false);
 const modalType = ref('create');
 const tableData = ref([{'name':'show'},{'name':'has'}])
@@ -87,7 +88,7 @@ const editApp = (item: any) => {
   createVisible.value = true;
 }
 const viewApp = (item: any) => {
-
+  router.push(`/middleware/dashboard/RPC/myapp/detail?id=${item.id}`)
 }
 const hiddenCreateModal = () => {
   createVisible.value = false;
