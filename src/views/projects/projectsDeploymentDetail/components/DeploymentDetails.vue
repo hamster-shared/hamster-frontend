@@ -21,7 +21,7 @@
             <div class="flex items-center">
               <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">Redeploy</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
-              <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2" />
+              <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2 text-[#fff]" />
               <div>{{ item.status }}</div>
             </div>
           </template>
@@ -70,8 +70,8 @@
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">
-              <label v-if="!isLoading">NO Data</label>
-              <LoadingOutlined v-if="isLoading" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
+              <label v-if="item.transactionHash == ''">NO Data</label>
+              <LoadingOutlined v-else :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
             </div>
           </div>
         </a-collapse-panel>
@@ -123,7 +123,6 @@ const network = ref('');
 const timer = ref(); //轮询定时器
 const timeStop = ref(false);
 const statusSucNum = ref(0); //记录status是success的数量
-const isLoading = ref(false);
 
 const activeKey = ref<any>([]);
 const actionVal = ref('All Action')
@@ -223,11 +222,9 @@ const setTimerByStatus = (status: any) => {
 // 获取单个合约的执行信息
 const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
-    isLoading.value = true;
     executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
-    isLoading.value = false;
   }
-  console.log("executeArrange:",executeArrange.value);
+  console.log("getTransactionInfoByHash executeArrange:",executeArrange.value);
 }
 // 获取原始编排参数
 const getOriginalArrangeList = async () => {

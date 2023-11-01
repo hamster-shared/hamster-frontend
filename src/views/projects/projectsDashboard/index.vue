@@ -12,7 +12,7 @@
           <template v-if="column.key === 'contractAddressMinData'">
             <div>
               <span>{{ record.contractAddressMinData }}</span>
-              <img @click="copyToClipboard(record.contractAddress)" src="@/assets/icons/copy.svg"
+              <img @click="copyToClipboard(record.address)" src="@/assets/icons/copy.svg"
                 class="h-[19px] cursor-pointer ml-[8px]" />
             </div>
           </template>

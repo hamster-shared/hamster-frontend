@@ -10,6 +10,7 @@ import {callContract, deployContract, deployProxyContract, getTransaction, upgra
 import {apiUpdateExecuteInfo} from "@/apis/contractOrchestrationDeploy";
 import {apiProjectsContractDeploy} from "@/apis/projects";
 import {message} from "ant-design-vue";
+import {apiGetNetworkByName} from "@/apis/network";
 
 
 
@@ -49,7 +50,8 @@ export default class NewEngine {
         if (deployStep.step >= deployStep.steps.length) {
             return;
         }
-        const contractBuild = abiMap.get(deployStep.contract.name)
+        const contractBuild = getContractInfo(abiMap,deployStep.contract.name)
+        // const contractBuild = abiMap.get(deployStep.contract.name)
         if(contractBuild === undefined){
             throw new Error(`cannot find contract ${deployStep.contract.name} `)
         }
@@ -65,7 +67,19 @@ export default class NewEngine {
             }
             if (step.status == "RUNNING") {
                 if (step.transactionHash != "" || step.transactionHash != undefined) {
-                    const receipt = await getTransaction(step.transactionHash,deployParams.rpcUrl)
+                    let network = ""
+                    try {
+                        const networkData = await apiGetNetworkByName(deployParams.network)
+                        network = networkData.data.rpcUrl
+                    } catch (e) {
+                        step.status = "FAILED"
+                        deployStep.status = "FAILED"
+                        this.isRunning = false
+                        // save exec status
+                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                        return
+                    }
+                    const receipt = await getTransaction(step.transactionHash,network)
                     if (receipt.status == 0 || receipt.status == undefined ) {
                         step.status = "FAILED"
                         deployStep.status = "FAILED"
@@ -119,9 +133,10 @@ export default class NewEngine {
                 try {
                     let  contractAddress = deployStep.contract.address
                     if (step.contractName != deployStep.contract.name) {
-                        const contractInfo = abiMap.get(step.contractName)
+                        const contractInfo = getContractInfo(abiMap,step.contractName)
+                        // const contractInfo = abiMap.get(step.contractName)
                         if(contractInfo === undefined){
-                            throw new Error(`cannot find contract ${deployStep.contract.name} `)
+                            throw new Error(`function cannot find contract ${deployStep.contract.name} `)
                         }
                         abi = contractInfo.abi
                         contractAddress = this.getContractAddress(step.contractName,deployInfo.deployStep)
@@ -206,7 +221,7 @@ export default class NewEngine {
                 if (params[i].startsWith("$")){
                     let contractName = params[i].substring(1).split(".")[0]
                     let attr = params[i].substring(1).split(".")[1]
-                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && contractName.includes(t.contract.name))
+                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && (t.contract.name === contractName || contractName.includes(t.contract.name)))
                     if(deploy === undefined){
                         continue
                     }
@@ -270,4 +285,21 @@ async function saveContractDeployInfo(projectId:string,contractId:number,version
         abiInfo:abiInfo
     }
     await apiProjectsContractDeploy(data)
+}
+
+function getContractInfo(abiMap : Map<string,ContractBuild>,contractName:string) {
+    const foundEntry = Array.from(abiMap).find(([key, value]) => contractName === key);
+    if (foundEntry) {
+        const [key, value] = foundEntry;
+        console.info(contractName)
+        return value
+    }
+    const foundEntry1 = Array.from(abiMap).find(([key, value]) => (contractName.includes(key)));
+    if (foundEntry1) {
+        const [key, value] = foundEntry1;
+        console.info(contractName)
+        return value
+    } else {
+        return undefined
+    }
 }

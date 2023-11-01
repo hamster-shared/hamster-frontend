@@ -5,7 +5,7 @@
     <div class="bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px] mt-[32px]">
       <div class="text-[24px] font-bold mb-[32px]">Contract Explorer</div>
 
-      <ContractList v-if="frameType && abiInfo.length" :abiInfo="abiInfo" :contractAddress="contractAddress" :frameType="contractInfo.frameType"
+      <ContractList v-if="frameType && abiInfo.length" :abiInfo="abiInfo" :contractAddress="baseInfo.address" :frameType="contractInfo.frameType"
         @checkContract="checkContract" :canisterId="canisterId">
       </ContractList>
     </div>
@@ -27,7 +27,6 @@ const breadCrumbInfo = ref<any>([]);
 const route = useRoute()
 const contractName = ref('');
 const frameType = ref(1);
-const contractAddress = ref('');
 const abiInfo = ref('');
 // 罐应用那边合约调用需要的数据
 const canisterId = ref('')

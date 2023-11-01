@@ -545,7 +545,11 @@ const getIcpBuildInfo = async(id: string, buildData: any)=>{
     const dfxConResult = await apiCheckDfx(viewInfo.value.id)
     // 这里还需要判断是contract 还是 前端项目，弹不同的dfx.json配置框
     if(!dfxConResult.data){
-      showContractDFX.value = true
+      if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
+        showDFX.value = true
+      }else{
+        showContractDFX.value = true
+      }
     }else {
       buildStatusAction(id, buildData)
     }
@@ -553,7 +557,7 @@ const getIcpBuildInfo = async(id: string, buildData: any)=>{
 }
 const projectsBuild = async (id: string, buildData: any, frameType: string,type:any) => {
   console.log('projectsBuild:::', id, buildData, frameType)
-  if(viewInfo.value.type=='1' && frameType=='7'){
+  if((viewInfo.value.type=='1' && frameType=='7')||(viewInfo.value.type=='2' && viewInfo.value.deployType==3)){
     await getIcpBuildInfo(id, buildData)
   } else {
     if (frameType == '2' && type == 1) {
@@ -608,7 +612,12 @@ const getIcpInfo = async(status:number)=>{
 const projectsDeploy = async (id: string, version: string, status: number) => {
   // icp
   if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
-    await getIcpInfo(status)
+    // 前端ic 需要先 build 完成，才能进行部署
+    if (status === 0 || status === 1) {
+      message.info(t('Project not avaliable.'));
+    }else{
+      await getIcpInfo(status)
+    }
   }else{
     if (projectType?.value === '1' && viewInfo.value.frameType !== 7) {
       if (status === 0 || status === 1 || version === "") {
@@ -862,8 +871,9 @@ const SaveDFXCon = async(params:string) => {
   }
   const res = await apiSaveDfx(viewInfo.value.id,data)
   if (res.code == 200) {
-    if (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) {
+    if ((viewInfo.value.type == '1' && viewInfo.value.frameType == 7) ||(viewInfo.value.type=='2' && viewInfo.value.deployType==3)) {
       showContractDFX.value = false;
+      showDFX.value = false;
       buildStatusAction(viewInfo.value.id, viewInfo.value.recentBuild)
     } else {
       showDFX.value = false
