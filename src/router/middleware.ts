@@ -46,6 +46,26 @@ const middlewareRoute = [
             }
           },
           {
+            path: "/middleware/dashboard/Billing",
+            name: "Billing",
+            component: () => import('@/views/chainLink/rpc/Billing.vue'),
+          },
+          {
+            path: "/middleware/dashboard/versionPlan",
+            name: "versionPlan",
+            component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
+          },
+          {
+            path: "/middleware/dashboard/RPC/myapp",
+            name: "myApp",
+            component: () => import('@/views/chainLink/rpc/myApp.vue'),
+          },
+          {
+            path: "/middleware/dashboard/RPC/myapp/detail",
+            name: "Detail",
+            component: () => import('@/views/chainLink/rpc/appDetail.vue'),
+          },
+          {
             path: "/middleware/dashboard/rpc/zan/auth",
             name: "zanAuth",
             component: () => import('@/views/middleware/rpc/zanAuth.vue'),
