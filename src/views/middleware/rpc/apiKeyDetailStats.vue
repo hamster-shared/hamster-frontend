@@ -21,6 +21,11 @@
   </a-card>
   <a-card title="Requests Activity">
       {{requestActivityData}}
+
+      <div>
+          <label>下拉的失败数据：</label>
+          {{requestActivityFailData}}
+      </div>
   </a-card>
   <a-card title="Requests Origin">
       {{requestOriginData}}
@@ -33,7 +38,7 @@
 import {onMounted, ref} from "vue";
 import {
     apiZanApiKeyCreditCost,
-    apiZanApiKeyRequestActivityStats,
+    apiZanApiKeyRequestActivityStats, apiZanApiKeyRequestActivityStatsFail,
     apiZanApiKeyRequestOriginStats,
     apiZanApiKeyRequestStats, apiZanEcosystemsDigest
 } from "@/apis/middlewareRPC"
@@ -48,6 +53,7 @@ const props = defineProps({
 const creditCostData = ref([])
 const requestData = ref([])
 const requestActivityData = ref([])
+const requestActivityFailData = ref([])
 const requestOriginData = ref([])
 
 
@@ -66,6 +72,9 @@ onMounted(()=>{
     })
     apiZanApiKeyRequestActivityStats(props.apiKeyId,"STAT_15_MIN","ethereum").then(res=>{
         requestActivityData.value = res.data
+    })
+    apiZanApiKeyRequestActivityStatsFail(props.apiKeyId,"","ethereum","eth_getBalance").then(res => {
+        requestActivityFailData.value = res.data
     })
     apiZanApiKeyRequestOriginStats(props.apiKeyId,"STAT_15_MIN").then(res => {
         requestOriginData.value = res.data

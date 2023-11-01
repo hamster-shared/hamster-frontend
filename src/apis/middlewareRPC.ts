@@ -96,6 +96,13 @@ export function apiZanApiKeyRequestActivityStats(apiKeyId: string,timeInterval: 
     });
 }
 
+export function apiZanApiKeyRequestActivityStatsFail(apiKeyId: string,timeInterval: string, ecosystem: string,method: string) {
+    return httpRequest({
+        url: `/api/v2/zan/node-service/api-keys/stats/requests-activity/failed?apiKeyId=${apiKeyId}&timeInterval=${timeInterval}&ecosystem=${ecosystem}&method=${method}`,
+        method: "get"
+    });
+}
+
 // API KEY request Origin 统计查询接口
 export function apiZanApiKeyRequestOriginStats(apiKeyId: string,timeInterval: string){
     return httpRequest({
@@ -103,6 +110,8 @@ export function apiZanApiKeyRequestOriginStats(apiKeyId: string,timeInterval: st
         method: "get"
     });
 }
+
+
 
 // 链生态摘要信息查询接口
 export function apiZanEcosystemsDigest(){
