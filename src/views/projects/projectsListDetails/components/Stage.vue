@@ -43,7 +43,7 @@ const props = defineProps<{
 const { stages } = toRefs(props);
 
 onMounted(() => {
-  if (stages.value.length > 8) {
+  if (stages?.value?.length > 8) {
     stages.value = [...stages.value.slice(-8, -1), ...stages.value.slice(-1)];
   }
 });
