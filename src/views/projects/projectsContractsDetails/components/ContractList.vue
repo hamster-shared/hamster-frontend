@@ -130,6 +130,7 @@ const ellipsisFunction = (column: string) => {
 }
 
 const checkContract = async (name: string, val: any, text: string, index: number) => {
+  contractForm.value.submitErrorInfo = "";
   inputs.value = []
   outputs.value = []
   console.log('checkContract', val)

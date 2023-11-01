@@ -12,10 +12,10 @@
             <a-input-group>
               <a-row :gutter="8" v-for="item in formData.secretArr" class="mt-[5px]">
                 <a-col :span="formData.secretArr.length > 1 ? 11 : 12">
-                  <a-input class="modal-input" v-model:value="item.secretName" allow-clear autocomplete="off" />
+                  <a-input class="modal-input" v-model:value="item.secretName" placeholder="Please enter param name" allow-clear autocomplete="off" />
                 </a-col>
                 <a-col :span="formData.secretArr.length > 1 ? 11 : 12">
-                  <a-input class="modal-input" v-model:value="item.secretValue" allow-clear autocomplete="off" />
+                  <a-input class="modal-input" v-model:value="item.secretValue" placeholder="Please enter value" allow-clear autocomplete="off" />
                 </a-col>
                 <a-col :span="2" class="cursor-pointer" v-if="formData.secretArr.length > 1">
                   <label class="text-[18px] text-[#E2B578] leading-[42px] cursor-pointer"
