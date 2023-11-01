@@ -66,7 +66,7 @@ export default class NewEngine {
                 return;
             }
             if (step.status == "RUNNING") {
-                if (step.transactionHash != "" || step.transactionHash != undefined) {
+                if (step.transactionHash != "" && step.transactionHash != undefined) {
                     let network = ""
                     try {
                         const networkData = await apiGetNetworkByName(deployParams.network)
@@ -79,26 +79,35 @@ export default class NewEngine {
                         await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                         return
                     }
-                    const receipt = await getTransaction(step.transactionHash,network)
-                    if (receipt.status == 0 || receipt.status == undefined ) {
-                        step.status = "FAILED"
-                        deployStep.status = "FAILED"
-                        this.isRunning = false
-                        // save exec status
-                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
-                        return
-                    }
-                    if (step.type == CONSTRUCTOR || step.type == PROXY_CONSTRUCTOR) {
-                        // save contract deploy info
-                        await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,receipt.contractAddress,step.transactionHash,abi)
-                        deployStep.contract.address = receipt.contractAddress
-                    }
-                    step.status = "SUCCESS"
-                    deployStep.status = "SUCCESS"
-                    // save exec status
-                    await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
-                    deployStep.step = stepIndexInStep + 1
-                    continue
+                   try {
+                       const receipt = await getTransaction(step.transactionHash,network)
+                       if (receipt.status == 0 || receipt.status == undefined ) {
+                           step.status = "FAILED"
+                           deployStep.status = "FAILED"
+                           this.isRunning = false
+                           // save exec status
+                           await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                           return
+                       }
+                       if (step.type == CONSTRUCTOR || step.type == PROXY_CONSTRUCTOR) {
+                           // save contract deploy info
+                           await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,receipt.contractAddress,step.transactionHash,abi)
+                           deployStep.contract.address = receipt.contractAddress
+                       }
+                       step.status = "SUCCESS"
+                       deployStep.status = "SUCCESS"
+                       // save exec status
+                       await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                       deployStep.step = stepIndexInStep + 1
+                       continue
+                   }catch (e) {
+                       step.status = "FAILED"
+                       deployStep.status = "FAILED"
+                       this.isRunning = false
+                       console.error("get transaction by hash failed:",e)
+                       await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                       return
+                   }
                 }
             }
             step.status = "RUNNING"
