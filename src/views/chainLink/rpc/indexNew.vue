@@ -21,7 +21,7 @@
             API Key
           </a-button>
         </div>
-        <div class="flex justify-center items-center h-[188px] w-[188px] ml-[30px] rounded-[8px] border border-dashed border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816]">
+        <div @click="showCreateModal" class="flex justify-center items-center h-[188px] w-[188px] ml-[30px] rounded-[8px] border border-dashed border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] cursor-pointer">
           <div class="text-center text-[#666666]">
             <svg-icon name="add-icon" size="33" class="dark:text-[#6C6C6C]" />
             <div class="font-normal mt-[20px] dark:text-[#FFFFFF]">Create Now</div>
@@ -36,7 +36,7 @@
         <div class="w-2/3">
           <EchartBar echartsId="CreditCost" :echartsData="[]"></EchartBar>
         </div>
-        <div class="pl-[30px]">
+        <div class="w-1/3 pl-[30px]">
           <div class="flex items-center mb-[40px]">
             <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">Free</div>
             <a-button type="primary" disabled="true">Upgrade</a-button>
@@ -71,25 +71,27 @@
         </div>
         <div class="w-1/3">
           <div class="flex justify-center items-center mt-[20px]">
-            <EchartPie titleText="pie1" echartsId="echartPie1" :echartsData="[]"></EchartPie>
+            <EchartPie titleText="Top 5" echartsId="echartTop5" :echartsData="[]"></EchartPie>
           </div>
           <div  class="flex justify-center items-center">
-            <EchartPie titleText="pie2" echartsId="echartPie2" :echartsData="[]"></EchartPie>
+            <EchartPie titleText="Source" echartsId="echartSource" :echartsData="[]"></EchartPie>
           </div>
           <div  class="flex justify-center items-center">
-            <EchartPie titleText="pie3" echartsId="echartPie3" :echartsData="[]"></EchartPie>
+            <EchartPie titleText="Errors" echartsId="echartErrors" :echartsData="[]"></EchartPie>
           </div>
         </div>
       </div>
       <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div>
     </div>
   </div>
+  <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal"></CreateAppModal>
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import EchartBar from '@/components/EchartBar.vue';
 import EchartPie from '@/components/EchartPie.vue';
 import EchartLine from '@/components/EchartLine.vue';
+import CreateAppModal from './components/CreateAppModal.vue';
 
 const OptionsApp = ref([
   {label: 'All Apps', value: '0'},
@@ -105,6 +107,14 @@ const optionParams = reactive({
   opChain: '0',
   opDay: '1'
 });
+const createVisible = ref(false);
+
+const showCreateModal = () => {
+  createVisible.value = true;
+}
+const hiddenCreateModal = () => {
+  createVisible.value = false;
+}
 </script>
 <style scoped>
 .title{
