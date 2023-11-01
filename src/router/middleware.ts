@@ -51,6 +51,11 @@ const middlewareRoute = [
             component: () => import('@/views/chainLink/rpc/Billing.vue'),
           },
           {
+            path: "/middleware/dashboard/versionPlan",
+            name: "versionPlan",
+            component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
+          },
+          {
             path: "/middleware/dashboard/RPC/myapp",
             name: "myApp",
             component: () => import('@/views/chainLink/rpc/myApp.vue'),
