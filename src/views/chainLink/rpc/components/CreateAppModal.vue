@@ -1,6 +1,9 @@
 <template>
   <a-modal :footer="null" width="760px" centered="true" v-model:visible="createVisible">
-    <div class="text-[24px] text-[#151210] font-bold mb-[32px]">Create App</div>
+    <div class="text-[24px] text-[#151210] font-bold mb-[32px]">
+      <label v-if="modalType == 'create'">Create App</label>
+      <label v-else>Edit App Info</label>
+    </div>
     <template #closeIcon>
       <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="hideVisible" />
     </template>
@@ -20,9 +23,13 @@ import { computed, reactive, ref, toRefs } from 'vue';
 
 const props = defineProps({
   createVisible: Boolean,
+  modalType: {
+    type: String,
+    default: 'create',
+  }
 });
-const { createVisible } = toRefs(props);
-const emits = defineEmits('hiddenCreateModal');
+const { createVisible, modalType } = toRefs(props);
+const emits = defineEmits(['hiddenCreateModal']);
 
 const createLoading = ref(false);
 const formData = reactive({
