@@ -12,11 +12,15 @@
 
     <div>
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
-        <div>
-          <img :src="item.image" class="h-6"/>
-          <span class="ml-2 text-base font-bold align-middle">{{item.fullname}}</span>
+        <div class="flex justify-between items-center mb-[100px]">
+          <div>
+            <img :src="item.image" class="h-[50px] "/>
+            <span class="ml-[20px] text-[21px] font-bold align-middle">{{item.fullname}}</span>
+          </div>
+          <div class="ml-[20px] text-[18px] font-medium">{{ item.nativeToken }}</div>
         </div>
-        <div class="flex justify-between text-sm">
+        <a-button class="w-full !h-[43px]">Start for Free</a-button>
+        <!-- <div class="flex justify-between text-sm">
           <div class="flex flex-col" v-if="parseInt(item.chainID, 16)">
             <span class="inline-block mb-2.5 mt-5">Chain ID</span>
             <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
@@ -31,11 +35,11 @@
           <a-input placeholder="*********" v-model:value="item.httpAddress" disabled="true">
             <template #suffix>
               <img v-if="item.httpAddress" class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
-              <!-- <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span> -->
+              <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span>
             </template>
           </a-input>
         </div>
-        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network,item.userActive)">{{item.userActive ? 'Enter Now':'Get Service Now'}}</a-button>
+        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network,item.userActive)">{{item.userActive ? 'Enter Now':'Get Service Now'}}</a-button> -->
       </div>
     </div>
 
@@ -87,15 +91,18 @@ const handleOpenRpcService = async(chain:string,network:string,userActive:boolea
 
 </script>
 
-<style lang="less" scoped>
+<style scoped>
   .ethereum-container {
+    @apply dark:bg-[#10100F];
     display: inline-block;
-    height: 326px;
-    min-width: 300px;
+    /* // height: 326px; */
+    min-width: 400px;
     padding: 30px;
-    background: rgba(226,181,120,0.1);
+    background: #F3F3F3;
     border-radius: 12px;
-    border: 1px solid #EBEBEB;
     margin: 10px;
+  }
+  .ethereum-container:hover{
+    border: 1px solid #E2B578;
   }
 </style>
