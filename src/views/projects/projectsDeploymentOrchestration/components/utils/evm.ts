@@ -227,7 +227,7 @@ export async function deployContract(provider: ethers.providers.Web3Provider, ab
 export async function callContract(provider: ethers.providers.Web3Provider, abi: ContractInterface, address: string, method: string, value: string, ...params: Array<any>) {
   const signer = provider.getSigner()
   const contract = new ethers.Contract(address, abi, signer);
-  if (value != "") {
+  if (value != "{}") {
     const tx = await contract[method](...params, JSON.parse(value))
     return tx
   }
