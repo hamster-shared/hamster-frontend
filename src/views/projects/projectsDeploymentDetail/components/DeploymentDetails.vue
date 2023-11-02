@@ -184,6 +184,7 @@ const setExecuteInfoList = (arrangeData: any) => {
 
         if (ele.contract.proxy && item.type == 'proxyConstructor' || item.type == 'constructor') {
           params.transactionHash = item.transactionHash || '';
+          params.status = item.status;
         }
         
         if (item.type == "function") {  
