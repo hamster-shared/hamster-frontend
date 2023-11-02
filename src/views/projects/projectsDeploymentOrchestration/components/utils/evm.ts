@@ -229,29 +229,35 @@ export async function callContract(provider: ethers.providers.Web3Provider, abi:
   const contract = new ethers.Contract(address, abi, signer);
   if (value != "") {
     const tx = await contract[method](...params, JSON.parse(value))
-    await tx.wait()
     return tx
   }
   const tx = await contract[method](...params)
-  await tx.wait()
   return tx
 }
 
 
-export async function deployProxyContract(provider: ethers.providers.Web3Provider, abi: ContractInterface, bytecode: BytesLike | { object: string }, initializeMethod: string | "initialize", args: string[]) {
+export async function deployProxyContract(provider: ethers.providers.Web3Provider, abi: ContractInterface, bytecode: BytesLike | { object: string }, initializeMethod: string | "initialize", args: string[],contractAddress:string) {
   const signer = provider.getSigner()
   let factory = new ethers.ContractFactory(abi, bytecode, signer)
-  const contract = await factory.deploy()
-  await contract.deployTransaction.wait();
   if (initializeMethod === "") {
     initializeMethod = "initialize"
   }
-  const fragment = factory.interface.getFunction(initializeMethod)
-  const data = factory.interface.encodeFunctionData(fragment, args)
+  let data = "0x"
+  try {
+    const fragment = factory.interface.getFunction(initializeMethod)
+    data = factory.interface.encodeFunctionData(fragment, args)
+  } catch (e) {
+    if (e instanceof Error) {
+      if (e.message.includes('no matching function')) {
+        data = '0x';
+      }
+    } else {
+      throw e
+    }
+  }
   const ProxyFactory = new ethers.ContractFactory(ERC1967_ABI, ERC1967_BYTECODE, signer)
-  const proxyInstance = await ProxyFactory.deploy(contract.address, data)
+  const proxyInstance = await ProxyFactory.deploy(contractAddress, data)
   const deployTransactionInfo = await proxyInstance.deployTransaction.wait();
-
   const address = getContractAddress({
     from: await factory.signer.getAddress(),
     nonce: proxyInstance.deployTransaction.nonce,

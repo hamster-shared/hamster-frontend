@@ -1,4 +1,4 @@
-import type {ethers} from "ethers";
+import  {ethers} from "ethers";
 import {
     CONSTRUCTOR,
     FUNCTION,
@@ -154,8 +154,23 @@ export default class NewEngine {
                         }
                     }
                     const tx = await callContract(this.provider, abi, contractAddress, step.method,step.value, ...params)
-                    console.log(tx)
-                    step.transactionHash = tx.hash
+                    if (tx.hash == undefined) {
+                        if (ethers.utils.isAddress(tx)) {
+                            step.result = tx
+                        } else if (ethers.utils.isHexString(tx)) {
+                            step.result = tx
+                            console.log('Result is a hex string:', tx);
+                        } else if (!isNaN(tx)) {
+                            const numberResult = parseFloat(tx);
+                            step.result = numberResult
+                            console.log('Result is a number:', numberResult);
+                        } else {
+                            step.result = tx
+                            console.log('Result is a string:', tx);
+                        }
+                    } else {
+                        step.transactionHash = tx.hash
+                    }
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
                     // save exec status
@@ -172,9 +187,21 @@ export default class NewEngine {
                     return
                 }
             } else if(step.type === PROXY_CONSTRUCTOR){
-                const params = this.paramReplace(step.params,deployInfo.deployStep)
+                let params = this.paramReplace(step.params,deployInfo.deployStep)
+                const contractAddress = params[0]
+                if (params.length > 1) {
+                    params = params.slice(1)
+                }
+                const contractInfo = getContractInfo(abiMap,deployStep.contract.name)
+                if(contractInfo === undefined){
+                    throw new Error(`function cannot find contract ${deployStep.contract.name} `)
+                }
                 try {
-                    const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params)
+                    console.info("start deploy proxy contract")
+                    if (contractAddress == null) {
+                        throw new Error("No proxy contract address found")
+                    }
+                    const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params,contractAddress)
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash,abi)
                     deployStep.contract.address = deployTransactionResponse.contractAddress
