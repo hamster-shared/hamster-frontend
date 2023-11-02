@@ -171,9 +171,9 @@ const setExecuteInfoList = (arrangeData: any) => {
   arrangeData.deployStep.forEach((ele: any) => {
     if (Object.keys(ele).length > 0) {
       setTimerByStatus(ele.status);
-      let proxy = ele.contract.proxy ? ' proxy' : '';
+      // let proxy = ele.contract.proxy ? ' proxy' : '';
       let params = {
-        name: ele.contract.name + proxy ,
+        name: ele.contract.name,
         status: ele.status,
         transactionHash: '',
         transactionInfo: {},
