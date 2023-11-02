@@ -229,11 +229,9 @@ export async function callContract(provider: ethers.providers.Web3Provider, abi:
   const contract = new ethers.Contract(address, abi, signer);
   if (value != "") {
     const tx = await contract[method](...params, JSON.parse(value))
-    await tx.wait()
     return tx
   }
   const tx = await contract[method](...params)
-  await tx.wait()
   return tx
 }
 

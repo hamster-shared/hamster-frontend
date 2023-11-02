@@ -1,4 +1,4 @@
-import type {ethers} from "ethers";
+import  {ethers} from "ethers";
 import {
     CONSTRUCTOR,
     FUNCTION,
@@ -153,10 +153,24 @@ export default class NewEngine {
                             throw new Error(`cannot find contract address,contract name is: ${step.contractName} `)
                         }
                     }
-                    console.log(step.method)
                     const tx = await callContract(this.provider, abi, contractAddress, step.method,step.value, ...params)
-                    console.log(tx)
-                    step.transactionHash = tx.hash
+                    if (tx.hash == undefined) {
+                        if (ethers.utils.isAddress(tx)) {
+                            step.result = tx
+                        } else if (ethers.utils.isHexString(tx)) {
+                            step.result = tx
+                            console.log('Result is a hex string:', tx);
+                        } else if (!isNaN(tx)) {
+                            const numberResult = parseFloat(tx);
+                            step.result = numberResult
+                            console.log('Result is a number:', numberResult);
+                        } else {
+                            step.result = tx
+                            console.log('Result is a string:', tx);
+                        }
+                    } else {
+                        step.transactionHash = tx.hash
+                    }
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
                     // save exec status

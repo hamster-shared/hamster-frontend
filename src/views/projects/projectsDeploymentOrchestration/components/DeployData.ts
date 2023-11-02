@@ -30,7 +30,8 @@ export interface Step {
   params: string[]
   status: string, //PENDING,SUCCESS,FAIL
   transactionHash?: string,
-  value?: string
+  value?: string,
+  result?:string | number
 }
 
 export interface ContractBuild {
