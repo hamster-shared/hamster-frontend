@@ -75,6 +75,9 @@ export default class NewEngine {
                         step.status = "FAILED"
                         deployStep.status = "FAILED"
                         this.isRunning = false
+                        if (e instanceof Error){
+                            step.errorInfo = e.message
+                        }
                         // save exec status
                         await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                         return
@@ -104,6 +107,9 @@ export default class NewEngine {
                        step.status = "FAILED"
                        deployStep.status = "FAILED"
                        this.isRunning = false
+                       if (e instanceof Error){
+                           step.errorInfo = e.message
+                       }
                        console.error("get transaction by hash failed:",e)
                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                        return
@@ -132,6 +138,9 @@ export default class NewEngine {
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
+                    if (e instanceof Error){
+                        step.errorInfo = e.message
+                    }
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     return
@@ -181,6 +190,9 @@ export default class NewEngine {
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
+                    if (e instanceof Error){
+                        step.errorInfo = e.message
+                    }
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     console.log(e)
@@ -236,6 +248,9 @@ export default class NewEngine {
                     step.status = "FAILED"
                     deployStep.status = "FAILED"
                     this.isRunning = false
+                    if (e instanceof Error){
+                        step.errorInfo = e.message
+                    }
                     // save exec status
                     await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                     return

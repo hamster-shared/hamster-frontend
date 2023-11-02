@@ -32,6 +32,7 @@ export interface Step {
   transactionHash?: string,
   value?: string,
   result?:string | number
+  errorInfo?:string
 }
 
 export interface ContractBuild {
