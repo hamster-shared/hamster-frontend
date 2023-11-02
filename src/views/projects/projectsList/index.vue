@@ -10,8 +10,8 @@
         </a-input>
       </div>
       <div>
-        <a-button type="primary" ghost class="mr-[24px]">Template Market</a-button>
-        <a-button type="primary" @click="goCreateProject">Add New Project</a-button>
+        <!-- <a-button type="primary" ghost class="mr-[24px]">Template Market</a-button> -->
+        <a-button type="primary" @click="goCreateProject">Create Project</a-button>
       </div>
     </div>
     <ALineService v-if="false" @goCreateProject="goCreateProject"></ALineService>
