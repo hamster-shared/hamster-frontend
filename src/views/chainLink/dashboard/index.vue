@@ -20,9 +20,13 @@
             </template>
             <template #title>{{item.name}}</template>
               <div v-for="child in item.children">
-                <a-menu-item :key="child.name" v-if="child?.meta?.isShow">
-                  <router-link :to="child.path">{{child.name}}</router-link>
-                </a-menu-item>
+                <div v-if="child?.meta?.isShow">
+                  <router-link :to="child.path">
+                    <a-menu-item :key="child.name">
+                      {{child.name}}
+                    </a-menu-item>
+                  </router-link>
+                </div>
               </div>
           </a-sub-menu>
         </div>

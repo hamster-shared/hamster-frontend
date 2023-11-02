@@ -29,6 +29,9 @@
         <a-select class="w-[150px]" v-model:value="activityParam.chain" autocomplete="off" :options="optionChain" ></a-select>
       </div>
     </div>
+    <div>
+      <RequestsActivity></RequestsActivity>
+    </div>
   </div>
   <div class="card-border">
     <div class="flex justify-between items-center">
@@ -48,6 +51,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { optionTime } from './rpcData';
 import EchartBar from '@/components/EchartBar.vue';
 import EchartBarTotal from '@/components/EchartBarTotal.vue';
+import RequestsActivity from './RequestsActivity.vue'
 
 const requestParam = reactive({
   time: '0',
