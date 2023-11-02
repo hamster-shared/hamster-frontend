@@ -184,6 +184,9 @@ export default class NewEngine {
                 }
                 try {
                     console.info("start deploy proxy contract")
+                    if (contractAddress == null) {
+                        throw new Error("No proxy contract address found")
+                    }
                     const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params,contractAddress)
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash,abi)
