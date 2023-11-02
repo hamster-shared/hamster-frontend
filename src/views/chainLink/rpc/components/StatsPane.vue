@@ -1,12 +1,12 @@
 <template>
   <div class="card-border !mt-0">
-    <div class="card-title">Credit Cost(Last 24 hours)</div>
+    <div class="card-title mb-[30px]">Credit Cost(Last 24 hours)</div>
     <div class="h-[300px]">
       <EchartBar echartsId="Requests" :echartsData="[]"></EchartBar>
     </div>
   </div>
   <div class="card-border">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-[30px]">
       <div class="card-title">Requests</div>
       <div>
         <label class="select-title">Time</label>
@@ -20,7 +20,7 @@
     </div>
   </div>
   <div class="card-border">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-[30px]">
       <div class="card-title">Requests activity</div>
       <div>
         <label class="select-title">Time</label>
@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="card-border">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-[30px]">
       <div class="card-title">Requests Origin</div>
       <div>
         <label class="select-title">Time</label>
@@ -81,7 +81,7 @@ onMounted(() => {
   margin-top: 30px;
 }
 .card-title{
-  @apply text-[21px] font-bold pb-[30px];
+  @apply text-[21px] font-bold ;
 }
 .select-title{
   @apply dark:text-[#E0DBD2];
