@@ -59,7 +59,7 @@
 import { ref } from 'vue';
 import { copyToClipboard } from "@/utils/tool";
 
-const activeKey = ref('1');
+const activeKey = ref('2');
 </script>
 <style scoped>
 .ethereum-container {
@@ -92,10 +92,5 @@ const activeKey = ref('1');
 :deep(.ant-tabs .ant-tabs-tab){
   padding: 12px 30px;
 }
-:deep(.ant-tabs-top>.ant-tabs-nav:before){
-  border-color: #434343;
-}
-/* // :deep(.ant-tabs-ink-bar){
-//   width: 32px;
-// } */
+
 </style>
