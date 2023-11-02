@@ -69,9 +69,11 @@
               </div>
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center">
-              <label v-if="item.transactionHash == ''">NO Data</label>
-              <LoadingOutlined v-else :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'py-[0px]':'py-[70px]']">
+              <label v-if="item.result==0 || item.result">{{item.result}}</label>
+              <label v-else-if="item.errorInfo">{{item.errorInfo}}</label>
+              <label v-else-if="!item.transactionHash">NO Data</label>
+              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
             </div>
           </div>
         </a-collapse-panel>
@@ -172,11 +174,13 @@ const setExecuteInfoList = (arrangeData: any) => {
     if (Object.keys(ele).length > 0) {
       setTimerByStatus(ele.status);
       // let proxy = ele.contract.proxy ? ' proxy' : '';
-      let params = {
+      let params:any = {
         name: ele.contract.name,
         status: ele.status,
         transactionHash: '',
         transactionInfo: {},
+        result:ele.result,
+        errorInfo:ele.errorInfo
       }
       executeArrange.value.push(params);
       //遍历steps数组
@@ -194,6 +198,8 @@ const setExecuteInfoList = (arrangeData: any) => {
             status: item.status,
             transactionHash: item.transactionHash || '',
             transactionInfo: {},
+            result:item.result,
+            errorInfo:item.errorInfo
           }
           executeArrange.value.push(params);
         }
@@ -222,6 +228,10 @@ const setTimerByStatus = (status: any) => {
 
 // 获取单个合约的执行信息
 const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
+  // 如果没有hash 不调接口
+  if(!transactionHash){
+    return
+  }
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
     executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
   }

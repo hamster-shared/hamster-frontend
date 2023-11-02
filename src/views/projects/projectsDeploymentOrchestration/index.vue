@@ -646,7 +646,7 @@ const getArrangeDeployList = async()=>{
             let copyData = JSON.parse(JSON.stringify(sub));
             copyData.steps.length = 1; // 只需要copy一条数据
             copyData.steps[0].type = PROXY_CONSTRUCTOR;
-            copyData.steps[0].params = ['$' + sub.contract.name + '.adress', ...sub.steps[0].params];
+            copyData.steps[0].params = ['$' + sub.contract.name + '.address', ...sub.steps[0].params];
             copyData.contract.name += ' proxy'; //修改合同名称
             deployStep.push(copyData);
           }
