@@ -2,9 +2,9 @@
   <div>
     <div class="text-[24px] font-bold mb-[30px]">Billing</div>
     <div class="border border-solid border-[#EBEBEB] rounded-[12px] dark:border-[#434343] p-[30px]">
-      <div class="text-[26px] font-black text-[#E2B578] text-center mt-[20px]">Your Plan</div>
+      <div class="text-[36px] font-black text-[#E2B578] text-center mt-[20px]">Your Plan</div>
       <div class="text-[21px] text-center mb-[50px]">Manage your subscription</div>
-      <div class="grid gap-4 grid-cols-3">
+      <div class="">
         <div class="card-div">
           <div class="card-title">Usage</div>
           <div class="card-content">
@@ -71,9 +71,16 @@
 
 </script>
 <style scoped>
+.card-div{
+  display: inline-block;
+  margin: 10px;
+  min-width: 250px;
+  width: 31%;
+  vertical-align: top;
+  border-radius: 12px;
+}
 .card-div:hover{
   border: 1px solid #E2B578;
-  border-radius: 12px;
 }
 .card-title{
   @apply bg-[#E2B578] h-[50px] leading-[50px] text-center text-[#FFFFFF];
