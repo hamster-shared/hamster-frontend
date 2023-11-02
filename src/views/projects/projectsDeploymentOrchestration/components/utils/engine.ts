@@ -153,6 +153,7 @@ export default class NewEngine {
                             throw new Error(`cannot find contract address,contract name is: ${step.contractName} `)
                         }
                     }
+                    console.log(step.method)
                     const tx = await callContract(this.provider, abi, contractAddress, step.method,step.value, ...params)
                     console.log(tx)
                     step.transactionHash = tx.hash
@@ -172,9 +173,18 @@ export default class NewEngine {
                     return
                 }
             } else if(step.type === PROXY_CONSTRUCTOR){
-                const params = this.paramReplace(step.params,deployInfo.deployStep)
+                let params = this.paramReplace(step.params,deployInfo.deployStep)
+                const contractAddress = params[0]
+                if (params.length > 1) {
+                    params = params.slice(1)
+                }
+                const contractInfo = getContractInfo(abiMap,deployStep.contract.name)
+                if(contractInfo === undefined){
+                    throw new Error(`function cannot find contract ${deployStep.contract.name} `)
+                }
                 try {
-                    const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params)
+                    console.info("start deploy proxy contract")
+                    const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params,contractAddress)
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash,abi)
                     deployStep.contract.address = deployTransactionResponse.contractAddress
