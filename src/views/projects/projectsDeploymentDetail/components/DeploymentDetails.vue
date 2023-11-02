@@ -69,9 +69,9 @@
               </div>
               <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'py-[0px]':'py-[70px]']">
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'!py-[0px] !text-left':'py-[70px]']">
               <label v-if="item.result==0 || item.result">{{item.result}}</label>
-              <label v-else-if="item.errorInfo">{{item.errorInfo}}</label>
+              <label v-else-if="item.errorInfo" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
               <label v-else-if="!item.transactionHash">NO Data</label>
               <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
             </div>
