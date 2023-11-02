@@ -16,10 +16,10 @@
     </div>
     <div v-if="executeArrange.length > 0">
       <a-collapse v-model:activeKey="activeKey">
-        <a-collapse-panel  v-for="(item,index) in executeArrange" :key="index" :header="item.name" @click.stop="getTransactionInfoByHash(item.transactionHash, index)">
+        <a-collapse-panel  v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index)">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">Redeploy</div>
+              <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
               <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2 text-[#fff]" />
               <div>{{ item.status }}</div>
