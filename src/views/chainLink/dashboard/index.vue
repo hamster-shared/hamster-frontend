@@ -2,17 +2,30 @@
   <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
     <div
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue">
-        <a-menu-item v-for="item in menuRouterList" :key="item.name" :disabled="item.meta.isTag">
-          <router-link
-            :to="((item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
-            <div>
+      <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
+        <div v-for="item in menuRouterList">
+          <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
+            <router-link
+              :to="((item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
+              <div>
+                <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
+                <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
+                <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
+              </div>
+            </router-link>
+          </a-menu-item>
+          <a-sub-menu v-else :key="item.path" @titleClick="toChild">
+            <template #icon>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
-              <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
-              <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
-            </div>
-          </router-link>
-        </a-menu-item>
+            </template>
+            <template #title>{{item.name}}</template>
+              <div v-for="child in item.children">
+                <a-menu-item :key="child.name" v-if="child?.meta?.isShow">
+                  <router-link :to="child.path">{{child.name}}</router-link>
+                </a-menu-item>
+              </div>
+          </a-sub-menu>
+        </div>
       </a-menu>
     </div>
     <div class="p-[32px] dashboard-index-right">
@@ -42,7 +55,12 @@ onBeforeMount(() => {
     }
   })
   // console.log(dashboard.children, 'dashboard')
+  console.log(11111111111,menuRouterList.value)
 })
+
+const toChild = ( {key, domEvent })=>{
+  console.log('toChild',key,domEvent)
+}
 
 onMounted(async()=>{
   const rpcRes = await apiGetIfOpenService('rpc');
