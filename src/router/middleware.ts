@@ -42,18 +42,25 @@ const middlewareRoute = [
             name: "RPC",
             component: () => import('@/views/chainLink/rpc/indexNew.vue'),
             meta: {
-              sidebarMap: ['RPC'],
+              // sidebarMap: ['RPC'],
+              isShow: true,
             }
           },
           {
             path: "/middleware/dashboard/Billing",
             name: "Billing",
-            component: () => import('@/views/chainLink/rpc/Billing.vue'),
+            component: () => import('@/views/chainLink/rpc/billing.vue'),
+            meta: {
+              isShow: true,
+            },
           },
           {
             path: "/middleware/dashboard/versionPlan",
             name: "versionPlan",
             component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
+            meta: {
+              isShow: true,
+            },
           },
           {
             path: "/middleware/dashboard/RPC/myapp",
