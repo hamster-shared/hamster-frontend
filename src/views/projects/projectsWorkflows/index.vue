@@ -12,7 +12,7 @@
       <!-- frameType == '1' && queryJson.type === '1',也就是evm 的 check 走统计表格，其它情况走原来的流水线 -->
       <CheckResult v-if="workflowsDetailsData.frameType == 1 && queryJson.type === '1'" :currentName="currentName"></CheckResult>
       <div v-else>
-        <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
+        <CheckReport v-show="queryJson.type === '1' && checkReportData.length" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
         <GasUsageReport :gasUsageReportData="gasUsageReportData"
           v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
