@@ -19,15 +19,22 @@
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
             </template>
             <template #title>{{item.name}}</template>
-              <div v-for="child in item.children">
-                <div v-if="child?.meta?.isShow">
+            <template v-for="child in item.children">
+              <template v-if="child?.meta?.isShow">
+                <a-menu-item :key="child.name" >
+                  <router-link :to="child.path">
+                  <div>{{child.name}}</div>
+                  </router-link>
+                </a-menu-item>
+                <!-- <div v-if="child?.meta?.isShow">
                   <router-link :to="child.path">
                     <a-menu-item :key="child.name">
                       {{child.name}}
                     </a-menu-item>
                   </router-link>
-                </div>
-              </div>
+                </div> -->
+              </template>
+            </template>
           </a-sub-menu>
         </div>
       </a-menu>
@@ -117,9 +124,12 @@ watch(() => router.currentRoute.value,
   border-radius: 12px;
 }
 
-:deep(.ant-menu.ant-menu-dark) {
+:deep(.ant-menu.ant-menu-dark),
+:deep(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
   background-color: #1D1C1A;
-  ;
+}
+:deep(.ant-menu-sub.ant-menu-inline){
+  background-color: #ffffff;
 }
 
 :deep(.ant-menu-vertical>.ant-menu-item) {
@@ -128,7 +138,7 @@ watch(() => router.currentRoute.value,
   margin-bottom: 15px;
 }
 
-:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected) {
+:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected){
   background-color: #FFFAF3;
 
 }

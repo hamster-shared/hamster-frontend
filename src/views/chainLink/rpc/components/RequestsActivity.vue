@@ -63,10 +63,10 @@ const getTableData = () => {
   font-weight: 600;
   font-size: 16px;
 }
-:deep(.ant-table-wrapper .ant-table-container table > thead > tr:first-child th:first-child){
+:deep(.ant-table-expanded-row .ant-table-container table > thead > tr:first-child th:first-child){
   border-top-left-radius: 0px!important;
 }
-:deep(.ant-spin-container .ant-table-container table > thead > tr:first-child th:last-child){
+:deep(.ant-table-expanded-row .ant-table-container table > thead > tr:first-child th:last-child){
   border-top-right-radius: 0px!important;
 }
 :deep(.ant-table-row:last-child .ant-table-cell:first-child),
