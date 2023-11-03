@@ -236,6 +236,7 @@ const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
   }
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
     executeArrange.value[key].transactionInfo = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
+    console.log('根据transactionHash调的接口返回数据：',executeArrange.value[key].transactionInfo)
   }
   console.log("getTransactionInfoByHash executeArrange:",executeArrange.value);
 }

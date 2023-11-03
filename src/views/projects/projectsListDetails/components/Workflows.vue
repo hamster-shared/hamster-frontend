@@ -225,13 +225,17 @@ const getProjectsWorkflows = async () => {
 const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String, record?:any) => {
   // type 1check 2build 3deploy
   if (type == '1') {
-    router.push(`/projects/projectsDeploymentDetail?id=${record.projectId}&version=${record.version}&executeId=${record.executeId}`)
-    // router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
   } else if(type == '2'){
     router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
   } else if(type == '3'){
-    // 区分前端和node
-    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=' + projectType.value);
+    // evm 跳 多链部署详情页
+    if(frameType?.value==1){
+      router.push(`/projects/projectsDeploymentDetail?id=${record.projectId}&version=${record.version}&executeId=${record.executeId}`)
+    }else{
+      // 区分前端和node
+      router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=' + projectType.value);
+    }
   }
 }
 const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
