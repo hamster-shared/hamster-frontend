@@ -6,30 +6,19 @@
       <div class="text-[21px] text-center mb-[50px]">Hamster offers various plans for subscription. Choose the one that suits your needs.</div>
       <div class="">
         <div class="card-div">
-          <div class="card-title">Usage</div>
-          <div class="card-content">
-            <div>
-              <label class="sub-title">Credit:</label>
-              <label class="font-bold">0</label>
-              <label class="font-light"> / 300,000,000</label>
+          <div>
+            <div class="card-title">Free</div>
+            <div class="mb-[30px]">
+              <label class="sub-title">$0</label>
+              <label class="sub-title2"> / mo</label>
             </div>
-            <div class="mt-[20px]">
-              <label class="sub-title">API Keys:</label>
-              <label class="font-bold">1</label>
-              <label class="font-light"> / 3 keys</label>
-            </div>
-          </div>
-        </div>
-        <div class="card-div">
-          <div class="card-title">Free</div>
-          <div class="card-content">
             <div>
               <label class="font-bold">· 300</label>
               <label class="font-light"> million credits/mo</label>
             </div>
             <div class="mt-[20px]">
               <label class="font-bold">· 300</label>
-              <label class="font-light"> credits/s (Rate Limites)</label>
+              <label class="font-light"> credits/s</label>
             </div>
             <div class="mt-[20px]">
               <label class="font-bold">· 3</label>
@@ -38,29 +27,103 @@
             <div class="mt-[20px]">
               <label class="font-bold">· </label>
               <label class="font-light"> Archive data access</label>
+            </div> 
+            <div class="mt-[20px]">
+              <label class="font-bold">· </label>
+              <label class="font-light"> Community Support</label>
             </div>
-            <a-button type="primary" class="!h-[42px] !w-full mt-[50px]">Upgrade</a-button>
+            <a-button type="primary" class="!h-[42px] !w-full mt-[30px]" disabled="true">Start for free</a-button>
+          </div>
+        </div>
+        <div class="card-div relative">
+          <img src="@/assets/images/save15.png" class="absolute top-[8px] right-[6px] h-[31px]" />
+          <div>
+            <div class="card-title">Premium</div>
+            <div class="mb-[30px]">
+              <label class="sub-title">$42</label>
+              <label class="sub-title2"> / mo</label>
+            </div>
+            <div>
+              <label class="font-bold">· 500</label>
+              <label class="font-light"> million credits/mo</label>
+            </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· 700</label>
+              <label class="font-light"> credits/s</label>
+            </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· 10</label>
+              <label class="font-light"> API keys</label>
+            </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· </label>
+              <label class="font-light"> Archive data access</label>
+            </div> 
+            <div class="mt-[20px]">
+              <label class="font-bold">· </label>
+              <label class="font-light"> 24h Response</label>
+            </div>
+            <div class="mt-[30px] text-[14px] text-[#E2B578] bg-[rgba(226,181,120,0.1)] rounded-[8px] h-[43px] leading-[43px] w-full text-center">Coming soon</div>
+          </div>
+        </div>
+        <div class="card-div relative">
+          <img src="@/assets/images/save15.png" class="absolute top-[8px] right-[6px] h-[31px]" />
+          <div>
+            <div class="card-title">Pro</div>
+            <div class="mb-[30px]">
+              <label class="sub-title">$254</label>
+              <label class="sub-title2"> / mo</label>
+            </div>
+            <div>
+              <label class="font-bold">· 300</label>
+              <label class="font-light"> million credits/mo</label>
+            </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· 1800</label>
+              <label class="font-light"> credits/s</label>
+            </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· 30</label>
+              <label class="font-light"> API keys</label>
+            </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· </label>
+              <label class="font-light"> Archive data access</label>
+            </div> 
+            <div class="mt-[20px]">
+              <label class="font-bold">· </label>
+              <label class="font-light"> 18h Response</label>
+            </div>
+            <div class="mt-[30px] text-[14px] text-[#E2B578] bg-[rgba(226,181,120,0.1)] rounded-[8px] h-[43px] leading-[43px] w-full text-center">Coming soon</div>
           </div>
         </div>
         <div class="card-div">
-          <div class="card-title">Billing & Payment</div>
-          <div class="card-content">
+          <div>
+            <div class="card-title">Enterprise</div>
+            <div class="mb-[30px]">
+              <label class="sub-title">Custom</label>
+            </div>
             <div>
-              <label class="sub-title">Price:</label>
-              <label class="font-bold">—</label>
+              <label class="font-bold">· Custom</label>
+              <label class="font-light"> million credits/mo</label>
             </div>
             <div class="mt-[20px]">
-              <label class="sub-title">Periods:</label>
-              <label class="font-bold">—</label>
+              <label class="font-bold">· Custom</label>
+              <label class="font-light"> credits/s</label>
             </div>
             <div class="mt-[20px]">
-              <label class="sub-title">Available until:</label>
-              <label class="font-bold">2023/10/12 00:00:00</label>
+              <label class="font-bold">· Unlimited</label>
+              <label class="font-light"> API keys</label>
             </div>
             <div class="mt-[20px]">
-              <label class="sub-title">Payment Method:</label>
-              <label class="font-bold">—</label>
+              <label class="font-bold">· Custom</label>
+              <label class="font-light"> SLA</label>
             </div>
+            <div class="mt-[20px]">
+              <label class="font-bold">· </label>
+              <label class="font-light"> 18h Response</label>
+            </div>
+            <div class="mt-[30px] text-[14px] text-[#E2B578] bg-[rgba(226,181,120,0.1)] rounded-[8px] h-[43px] leading-[43px] w-full text-center">Coming soon</div>
           </div>
         </div>
       </div>
@@ -72,10 +135,11 @@
 </script>
 <style scoped>
 .card-div{
+  @apply bg-[#F3F3F3] dark:bg-[#10100F] p-[30px] ;
   display: inline-block;
   margin: 10px;
-  min-width: 250px;
-  width: 31%;
+  min-width: 230px;
+  width: 23%;
   vertical-align: top;
   border-radius: 12px;
 }
@@ -83,14 +147,12 @@
   border: 1px solid #E2B578;
 }
 .card-title{
-  @apply bg-[#E2B578] h-[50px] leading-[50px] text-center text-[#FFFFFF];
-  border-radius: 12px 12px 0 0;
-}
-.card-content{
-  @apply bg-[#F3F3F3] dark:bg-[#10100F] p-[30px] h-[300px];
-  border-radius: 0 0 12px 12px;
+  @apply font-black text-[18px] text-[#E2B578] mt-[15px];
 }
 .sub-title{
-  @apply dark:text-[#A0A0A0] text-[#73706E] mr-[10px];
+  @apply text-[30px] font-black;
+}
+.sub-title2{
+  @apply text-[18px] text-[#707070];
 }
 </style>
