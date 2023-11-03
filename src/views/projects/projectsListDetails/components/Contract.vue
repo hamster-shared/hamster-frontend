@@ -281,7 +281,7 @@ const goContractDeploy = async (contractData: any) => {
     frontendDeploying(contractData)
   } else if(frameType?.value === 1){
     // 如果是evm生态走多链部署，其它生态保持原来
-    router.push(`/projects/projectsDeploymentOrchestration?id=${detailId?.value}`)
+    router.push(`/projects/projectsDeploymentOrchestration?id=${detailId?.value}&version=${contractData.version}`)
   } else {
     const path = "/projects/" + detailId.value + "/artifacts-contract/" + contractData.version + "/deploy/" + contractData.name
     router.push(path);
