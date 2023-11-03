@@ -231,7 +231,7 @@ const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: S
   } else if(type == '3'){
     // evm 跳 多链部署详情页
     if(frameType?.value==1){
-      router.push(`/projects/projectsDeploymentDetail?id=${record.projectId}&version=${record.version}&executeId=${record.executeId}`)
+      router.push(`/projects/projectsDeploymentDetail?id=${record.projectId}&version=${record.version}&executeId=${record.id}`)
     }else{
       // 区分前端和node
       router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=' + projectType.value);
