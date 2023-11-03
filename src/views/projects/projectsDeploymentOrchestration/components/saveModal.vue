@@ -5,9 +5,12 @@
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancel" />
       </template>
-      <div>
-        <div class="text-[#000000] text-[24px] pt-[80px] px-[80px] pb-[50px] text-center">You have unsaved content. Please save immediately, otherwise data will be lost.</div>
-        <div class="text-center mt-[32px]">
+      <div class="py-[26px]">
+        <div class="text-center">
+          <img class="w-[100px]" src="@/assets/images/saveModal.png" />
+        </div>
+        <div class="text-[#000000] text-[24px] pt-[10px] px-[80px] pb-[30px] text-center">You have unsaved content. Please save immediately, otherwise data will be lost.</div>
+        <div class="text-center">
             <a-button class="add-btn" @click="handleCancel">Cancel</a-button>
             <a-button class="done-btn" @click="handleSave">Save</a-button>
           </div>
