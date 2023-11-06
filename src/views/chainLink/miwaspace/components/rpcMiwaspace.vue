@@ -82,7 +82,7 @@ const handleOpenRpcService = async(chain:string,network:string,userActive:boolea
       }
       const { data } = await apiPostCustomerOpenService('rpc',params)
       console.log('handleOpenRpcService-data:', data)
-      router.push('/middleware/dashboard/rpc')
+      router.push('/middleware/dashboard/rpc/index')
     } catch(err:any) {
       console.log('handleOpenRpcService-err:', err)
     }

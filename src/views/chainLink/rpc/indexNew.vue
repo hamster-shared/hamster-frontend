@@ -1,5 +1,6 @@
 <template>
   <div>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div class="title">My APPs</div>
     <div class="card-border">
       <div class="flex justify-end items-center text-[#E2B578]">
@@ -90,14 +91,16 @@
   <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal"></CreateAppModal>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import EchartBar from '@/components/EchartBar.vue';
 import EchartPie from '@/components/EchartPie.vue';
 import EchartLine from '@/components/EchartLine.vue';
 import CreateAppModal from './components/CreateAppModal.vue';
+import BreadCrumb from "@/components/BreadCrumb.vue";
 
 const router = useRouter()
+const breadCrumbInfo = ref<any>([])
 
 const OptionsApp = ref([
   {label: 'All Apps', value: '0'},
@@ -135,13 +138,22 @@ const goMyApp = ()=>{
 
 // 跳转 Billing
 const goBilling = ()=>{
-  router.push('/middleware/dashboard/Billing')
+  router.push('/middleware/dashboard/RPC/Billing')
 }
 
 // 跳转 versionPlan
 const goVersionPlan = ()=>{
-  router.push('/middleware/dashboard/versionPlan')
+  router.push('/middleware/dashboard/RPC/versionPlan')
 }
+
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  
+}
+
+onMounted(()=>{
+  judgeOrigin()
+})
 </script>
 <style scoped>
 .title{

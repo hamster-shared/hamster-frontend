@@ -90,7 +90,7 @@ const networkClick = (val: any) => {
 }
 // more 跳转rpc
 const goRPC = ()=>{
-  router.push('/middleware/dashboard/RPC')
+  router.push('/middleware/dashboard/RPC/index')
 }
 
 const oracleClick = () => {

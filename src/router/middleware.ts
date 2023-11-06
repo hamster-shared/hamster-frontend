@@ -38,7 +38,7 @@ const middlewareRoute = [
           //   }
           // },
           {
-            path: "/middleware/dashboard/RPC",
+            path: "/middleware/dashboard/RPC/index",
             name: "RPC",
             component: () => import('@/views/chainLink/rpc/indexNew.vue'),
             meta: {
@@ -47,7 +47,7 @@ const middlewareRoute = [
             }
           },
           {
-            path: "/middleware/dashboard/Billing",
+            path: "/middleware/dashboard/RPC/Billing",
             name: "Billing",
             component: () => import('@/views/chainLink/rpc/billing.vue'),
             meta: {
@@ -55,7 +55,7 @@ const middlewareRoute = [
             },
           },
           {
-            path: "/middleware/dashboard/versionPlan",
+            path: "/middleware/dashboard/RPC/versionPlan",
             name: "versionPlan",
             component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
             meta: {

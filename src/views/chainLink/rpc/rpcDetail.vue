@@ -231,7 +231,7 @@ const judgeOrigin = ()=>{
     jumpPath = '/middleware/miwaspace?key=1'
   }else{
     name = 'Rpc'
-    jumpPath = '/middleware/dashboard/rpc'
+    jumpPath = '/middleware/dashboard/rpc/index'
   }
   breadCrumbInfo.value = [
     {
