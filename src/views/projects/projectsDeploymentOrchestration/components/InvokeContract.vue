@@ -57,7 +57,7 @@
           <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
           <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
         </a-form-item>
-        <CustomParamsmodal :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
+        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
       </a-form>
     </div>
     <div @click="moreContractMethod" 
