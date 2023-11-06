@@ -15,7 +15,7 @@
             <a-form-item class="form-noLabel" :name="item.name" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
               <a-select v-if="formData[item.name+'param'] == 1" v-model:value="formData[item.name]" @change="checkFiledChange"
-                placeholder="Contract Address" :options="contractOrchestration.map((opItem:any) => ({ value: opItem.name, label:opItem.name }))">
+                placeholder="Contract Address" :options="contractOrchestration.map((opItem:any) => ({ value: opItem.name, label:opItem.name.indexOf('(')!='-1' ? opItem.name?.slice(0,opItem.name.indexOf('(')):opItem.name }))">
               </a-select>
               <a-input v-else @change="checkFiledChange" v-model:value="formData[item.name]" :placeholder="'Please input ' + item.type" autoComplete="off" allowClear />
             </a-form-item>  

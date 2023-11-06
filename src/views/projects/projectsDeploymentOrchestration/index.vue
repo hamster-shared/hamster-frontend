@@ -63,7 +63,8 @@
   </div>
   <UsingWalltModal :visibleNumber="visibleNumber" :number="numberValue" @closeDeployContractsNumberModal="closeDeployContractsNumberModal" @goDeploy="goDeploy"/>
   <Wallets ref="showWallets" @setWalletBtn="setWalletBtn"></Wallets>
-  <saveModal :visibleSave="visibleSave" @handleCancel="handleCancelModal" @handleSave="handleSaveModal"></saveModal>
+  <SaveModal :visibleSave="visibleSave" @handleCancel="handleCancelModal" @handleSave="handleSaveModal"></SaveModal>
+  <NoSaveContractModal :visibleNoSave="visibleNoSave" :noSaveContract="noSaveContract" @handleCancel="handleCancelNoSave"></NoSaveContractModal>
 </template>
 
 <script setup lang="ts">
@@ -77,7 +78,8 @@ import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
 import ContractParams from './components/ContractParams.vue';
 import InvokeContract from './components/InvokeContract.vue';
-import saveModal from './components/saveModal.vue';
+import SaveModal from './components/SaveModal.vue';
+import NoSaveContractModal from './components/NoSaveContractModal.vue';
 import UsingWalltModal from "./components/UsingWalltModal.vue";
 import Wallets from "@/components/Wallets.vue";
 import DeploymentOrder from "./components/DeploymentOrder.vue";
@@ -89,6 +91,7 @@ import { message } from 'ant-design-vue';
 import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
 import { apiEvmNetwork } from '@/apis/network'
 import { switchToChain } from '@/utils/changeNetwork'
+import { splitSignature } from 'ethers/lib/utils';
 
 const theme = useThemeStore();
 const walletAddress = useWalletAddress()
@@ -115,6 +118,9 @@ const showFooter = route.query.fromDetailSetting || ''
 // 用于显示部署条数的提醒弹框
 const visibleNumber = ref(false)
 const numberValue = ref(0)
+// 记录未设置保存参数的合约名称
+const noSaveContract = ref<any>([]);
+const visibleNoSave = ref(false);
 
 const networkListData = ref<any>([])
 const networkLogo = ref('');
@@ -173,6 +179,9 @@ const initBreadCrumb = () => {
       path: ''
     },
   ]
+}
+const handleCancelNoSave = () => {
+  visibleNoSave.value = false;
 }
 const handleSaveModal = () => {
   // setSaveParamsValue();
@@ -592,14 +601,22 @@ const deployManyContract = async () => {
   if (paramsRef.value.isChange || contractRef.value.isChange || isChange.value) {
     visibleSave.value = true;
     return false;
-  }else{
+  } else {
+    // 获取可编排的合约
+    await getProjectsContractName();
     // 获取已经编排过的合约列表
     await getArrangeDeployList();
-    // 保存编排信息
-    await saveOrchestrationInfo();
-    
-    // 部署调用代码
-    visibleNumber.value = true
+    // 所有待部署合约都填写并保存配置参数
+    if (noSaveContract.value.length == 0) {
+      // 保存编排信息
+      await saveOrchestrationInfo();
+      
+      // 部署调用代码
+      visibleNumber.value = true
+    } else {
+      // 提示未保存合约内容
+      visibleNoSave.value = true;
+    }
   }
 }
 
@@ -631,7 +648,11 @@ const getEVMNetwork = async()=>{
 }
 
 // 获取已经编排过的合约列表
-const getArrangeDeployList = async()=>{
+const getArrangeDeployList = async () => {
+  noSaveContract.value = contractOrchestration.value?.map((item: any) => {
+    return item.name
+  }) || [];
+  
   const res = await apiArrangeDeployList(route.query.id, baseInfo.value.selectedVersion)
   console.log('获取已经编排过的合约列表:', res)
   if (res.code == 200) {
@@ -650,6 +671,8 @@ const getArrangeDeployList = async()=>{
             copyData.contract.name += ' proxy'; //修改合同名称
             deployStep.push(copyData);
           }
+          // 删除已经设置参数的合同
+          noSaveContract.value.splice(noSaveContract.value.indexOf(sub.contract.name), 1);
         });
         number++;
       } else {
