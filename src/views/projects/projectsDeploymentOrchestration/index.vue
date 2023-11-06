@@ -350,7 +350,7 @@ const setFunctionParamsValue = () => {
       param.customParams = str;
       //获取inputs字段
       let inputs = methodMap.get(item.contractName).inputData[item.method];
-      inputs.forEach((it: any, k: any) => {
+      inputs?.forEach((it: any, k: any) => {
         if (it.type == 'address') {
           setTypeAddressVal(item.params[k], param, it.name);
         } else {
