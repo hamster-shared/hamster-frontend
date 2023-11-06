@@ -69,7 +69,7 @@ const getSourceInfo = async()=>{
 
 onMounted(()=>{
   // 版本号倒序，默认取数组第一项
-  selectedVersion.value = versionList.value[0]
+  selectedVersion.value = route.query?.version || versionList.value[0]
   console.log('版本号倒序，默认取数组第一项:',selectedVersion.value)
   getSourceInfo()
 })

@@ -24,6 +24,7 @@ const middlewareRoute = [
       {
         path: "/middleware/dashboard/RPC",
         name: "RPC",
+        key: 'RPC',
         redirect: "/middleware/dashboard/RPC",
         meta: {
           isShow: true,
@@ -40,26 +41,32 @@ const middlewareRoute = [
           {
             path: "/middleware/dashboard/RPC/home",
             name: "Home",
+            key: 'RPCIndex',
             component: () => import('@/views/chainLink/rpc/indexNew.vue'),
             meta: {
               // sidebarMap: ['RPC'],
               isShow: true,
+              sidebarMap: ['RPC'],
             }
           },
           {
             path: "/middleware/dashboard/RPC/Billing",
             name: "Billing",
+            key: 'RPCBilling',
             component: () => import('@/views/chainLink/rpc/billing.vue'),
             meta: {
               isShow: true,
+              sidebarMap: ['Billing'],
             },
           },
           {
             path: "/middleware/dashboard/RPC/versionPlan",
             name: "versionPlan",
+            key: 'RPCVersionPlan',
             component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
             meta: {
               isShow: true,
+              sidebarMap: ['versionPlan'],
             },
           },
           {
@@ -68,6 +75,7 @@ const middlewareRoute = [
             component: () => import('@/views/chainLink/rpc/myApp.vue'),
             meta: {
               isShow: true,
+              sidebarMap: ['myapp'],
             }
           },
           {
