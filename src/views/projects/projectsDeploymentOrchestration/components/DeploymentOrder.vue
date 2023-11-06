@@ -72,7 +72,7 @@ const endVal = ref<string>();//落点的元素
 const selectId = ref();
 const duplicateDataList = ref<any>([]);
 
-const emit = defineEmits(['selectContractId'])
+const emit = defineEmits(['selectContractId','getProjectsContractName'])
 
 const props = defineProps({
   contractOrchestration:{
@@ -157,13 +157,14 @@ const getUseAndNotContractArr = async()=>{
 }
 
 
-const cancelSkipBtn = (item: any) => {
+const cancelSkipBtn = async(item: any) => {
   let index = duplicateDataList.value.indexOf(item)
   duplicateDataList.value.splice(index, 1);
 
   console.log(duplicateDataList, '00')
   dataList.value.push(item)
-  getUseAndNotContractArr()
+  await getUseAndNotContractArr()
+  emit('getProjectsContractName')
 }
 
 onMounted(()=>{

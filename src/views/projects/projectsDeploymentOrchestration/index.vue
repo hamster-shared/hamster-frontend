@@ -13,7 +13,7 @@
         <!-- left -->
         <div>
           <DeploymentOrder ref="deploymentRef" v-if="contractOrchestration.length || noUseContract.length" @selectContractId="selectContractId" :contractOrchestration="contractOrchestration"
-          :version="baseInfo.selectedVersion" :noUseContract="noUseContract">
+          :version="baseInfo.selectedVersion" :noUseContract="noUseContract" @getProjectsContractName="getProjectsContractName">
           </DeploymentOrder>
         </div>
         <!-- right -->
