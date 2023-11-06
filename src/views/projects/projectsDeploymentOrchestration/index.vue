@@ -610,6 +610,12 @@ const deployManyContract = async () => {
     checkContractParam();
     // 合同没有参数需要设置
     if (noParamsContract.value) {
+      // 保存编排信息
+      deployArrange.value = {
+        deployStep: [],
+        step: 0,
+      }
+      await saveOrchestrationInfo();
       numberValue.value = contractOrchestration.value.length;
       // 部署调用代码
       visibleNumber.value = true
