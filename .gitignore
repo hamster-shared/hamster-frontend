@@ -39,3 +39,6 @@ yarn.lock
 .env.local
 .env.*.local
 node_modules
+/deploy_solana.sh
+/default_solana.conf
+/Dockerfile_solana

@@ -63,3 +63,16 @@ export const fallbackCopyTextToClipboard = async(_items:string) => {
     message.error("copy failed");
   }
 }
+
+// 获取 xx...xx 的格式
+// str:传入的字符串
+// start：取前几个字符
+// end: 取后几个字符
+export const getPonitStr = (str:string, start:number, end:number)=>{
+  const len = start + end
+  if(str.length > len){
+    return str.slice(0,start)+"..."+str.slice(-end)
+  }else{
+    return str
+  }
+}

@@ -9,8 +9,12 @@
           </template>
         </a-input>
       </div>
-      <a-button type="primary" @click="goCreateProject">Create Project</a-button>
+      <div>
+        <!-- <a-button type="primary" ghost class="mr-[24px]">Template Market</a-button> -->
+        <a-button type="primary" @click="goCreateProject">Create Project</a-button>
+      </div>
     </div>
+    <ALineService v-if="false" @goCreateProject="goCreateProject"></ALineService>
     <div class="mt-4">
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
@@ -64,6 +68,7 @@
 import { onMounted, onBeforeUnmount, ref, onBeforeMount } from 'vue';
 import { useRouter } from "vue-router";
 import Overview from "./components/Overview.vue";
+import ALineService from './components/ALineService.vue';
 import NoData from "@/components/NoData.vue"
 import { apiGetProjects } from "@/apis/projects";
 import { useThemeStore } from "@/stores/useTheme";
