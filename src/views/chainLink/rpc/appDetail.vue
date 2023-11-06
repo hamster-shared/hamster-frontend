@@ -1,5 +1,6 @@
 <template>
   <div>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div class="text-[24px] font-bold mb-[30px]">AIShow</div>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="1" tab="Get Started">
@@ -14,11 +15,31 @@
   </div>
   </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import GetStartedPane from './components/GetStartedPane.vue';
 import StatsPane from './components/StatsPane.vue'
+import BreadCrumb from "@/components/BreadCrumb.vue";
 
 const activeKey = ref('2');
+const breadCrumbInfo = ref<any>([])
+
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName: 'My Apps',
+      path: '/middleware/dashboard/RPC/myapp'
+    },
+    {
+      breadcrumbName: 'AI Show',
+      path: ''
+    },
+  ]
+}
+
+onMounted(()=>{
+  judgeOrigin()
+})
 </script>
 <style scoped>
 :deep(.ant-tabs .ant-tabs-tab){

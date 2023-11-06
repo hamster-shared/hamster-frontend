@@ -16,7 +16,7 @@
   <CreateAppModal :modalType="modalType" :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal"></CreateAppModal>
 </template>
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import CreateAppModal from './components/CreateAppModal.vue';
@@ -98,6 +98,10 @@ const createApp = ()=>{
   modalType.value = 'create';
   createVisible.value = true;
 }
+
+onMounted(()=>{
+
+})
 </script>
 <style lang="less">
 </style>

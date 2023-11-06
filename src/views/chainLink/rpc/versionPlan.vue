@@ -142,6 +142,7 @@
   width: 23%;
   vertical-align: top;
   border-radius: 12px;
+  border: 1px solid transparent;
 }
 .card-div:hover{
   border: 1px solid #E2B578;

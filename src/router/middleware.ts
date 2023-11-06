@@ -38,8 +38,8 @@ const middlewareRoute = [
           //   }
           // },
           {
-            path: "/middleware/dashboard/RPC/index",
-            name: "RPC",
+            path: "/middleware/dashboard/RPC/home",
+            name: "Home",
             component: () => import('@/views/chainLink/rpc/indexNew.vue'),
             meta: {
               // sidebarMap: ['RPC'],
@@ -64,8 +64,11 @@ const middlewareRoute = [
           },
           {
             path: "/middleware/dashboard/RPC/myapp",
-            name: "myApp",
+            name: "Apps",
             component: () => import('@/views/chainLink/rpc/myApp.vue'),
+            meta: {
+              isShow: true,
+            }
           },
           {
             path: "/middleware/dashboard/RPC/myapp/detail",
