@@ -121,6 +121,8 @@ const numberValue = ref(0)
 // 记录未设置保存参数的合约名称
 const noSaveContract = ref<any>([]);
 const visibleNoSave = ref(false);
+// 记录合同是否没有参数需要设置
+const noParamsContract = ref(true);
 
 const networkListData = ref<any>([])
 const networkLogo = ref('');
@@ -604,18 +606,27 @@ const deployManyContract = async () => {
   } else {
     // 获取可编排的合约
     await getProjectsContractName();
-    // 获取已经编排过的合约列表
-    await getArrangeDeployList();
-    // 所有待部署合约都填写并保存配置参数
-    if (noSaveContract.value.length == 0) {
-      // 保存编排信息
-      await saveOrchestrationInfo();
-      
+    //判断合约是否需要设置参数
+    checkContractParam();
+    // 合同没有参数需要设置
+    if (noParamsContract.value) {
       // 部署调用代码
       visibleNumber.value = true
     } else {
-      // 提示未保存合约内容
-      visibleNoSave.value = true;
+      // 获取已经编排过的合约列表
+      await getArrangeDeployList();
+      
+      // 所有待部署合约都填写并保存配置参数
+      if (noSaveContract.value.length == 0) {
+        // 保存编排信息
+        await saveOrchestrationInfo();
+        
+        // 部署调用代码
+        visibleNumber.value = true
+      } else {
+        // 提示未保存合约内容
+        visibleNoSave.value = true;
+      }
     }
   }
 }
@@ -646,12 +657,22 @@ const getEVMNetwork = async()=>{
   networkListData.value = res.data
   console.log('getEVMNetwork:',res)
 }
+//判断合约是否需要设置参数
+const checkContractParam = () => {
+
+  noSaveContract.value = contractOrchestration.value?.map((item: any) => {
+    let abiInfoData = YAML.parse(item.abiInfo);
+    abiInfoData.map((abiItem: any) => {
+      if (abiItem.type === 'constructor' && abiItem.inputs.length > 0) {
+        noParamsContract.value = false; // 有 param 需要设置参数
+      }
+    }) 
+    return item.name
+  }) || [];
+}
 
 // 获取已经编排过的合约列表
 const getArrangeDeployList = async () => {
-  noSaveContract.value = contractOrchestration.value?.map((item: any) => {
-    return item.name
-  }) || [];
   
   const res = await apiArrangeDeployList(route.query.id, baseInfo.value.selectedVersion)
   console.log('获取已经编排过的合约列表:', res)
