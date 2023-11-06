@@ -212,7 +212,7 @@ const setExecuteInfoList = (arrangeData: any) => {
   if (executeArrange.value.length == statusSucNum.value) {
     timeStop.value = true;
   }
-  console.log("executeArrange::",executeArrange.value);
+  console.log("executeArrange:::",executeArrange.value);
 }
 // 判断是否继续轮询
 const setTimerByStatus = (status: any) => {
