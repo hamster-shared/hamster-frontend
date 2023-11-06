@@ -2,7 +2,7 @@
   <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
     <div
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
+      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
         <div v-for="item in menuRouterList">
           <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
             <router-link
@@ -14,7 +14,7 @@
               </div>
             </router-link>
           </a-menu-item>
-          <a-sub-menu v-else :key="item.path" @titleClick="toChild">
+          <a-sub-menu v-else :key="item.key" @titleClick="toChild">
             <template #icon>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
             </template>
@@ -26,13 +26,6 @@
                   <div>{{child.name}}</div>
                   </router-link>
                 </a-menu-item>
-                <!-- <div v-if="child?.meta?.isShow">
-                  <router-link :to="child.path">
-                    <a-menu-item :key="child.name">
-                      {{child.name}}
-                    </a-menu-item>
-                  </router-link>
-                </div> -->
               </template>
             </template>
           </a-sub-menu>
@@ -54,7 +47,8 @@ const router = useRouter();
 const menuRouterList = ref<any>([]);
 const selectedKeys = ref<any>(['']);
 const isRpcDefault = ref(false)
-const isOracleDefault = ref(false)
+const isOracleDefault = ref(false);
+const openKeys = ref<any>([]);
 
 // console.log('router', router.options.routes)
 onBeforeMount(() => {
@@ -86,9 +80,10 @@ watch(() => router.currentRoute.value,
       selectedKeys.value = [value.params.type];
     } else {
       selectedKeys.value = value.meta.sidebarMap || [''];
+      if (value.path.indexOf('/middleware/dashboard/RPC') != -1) {
+        openKeys.value = ['RPC'];
+      }
     }
-
-    // console.log(value, 'value')
   }, { deep: true, immediate: true }
 )
 </script>
