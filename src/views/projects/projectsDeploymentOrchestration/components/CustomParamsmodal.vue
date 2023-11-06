@@ -40,9 +40,10 @@ import { ref, reactive, computed, toRefs } from "vue";
 
 const props = defineProps({
   visible: Boolean,
+  methodKey: Number
 });
 
-const { visible } = toRefs(props);
+const { visible, methodKey } = toRefs(props);
 
 const formData = reactive<any>({
   secretArr: [
@@ -93,7 +94,7 @@ const emit = defineEmits(["showContract", "doneSecret"]);
 
 const doneSecret = () => {
   console.log('完成参数设置,调接口吧')
-  emit("doneSecret", formData.secretArr)
+  emit("doneSecret",methodKey?.value, formData.secretArr)
 }
 
 
