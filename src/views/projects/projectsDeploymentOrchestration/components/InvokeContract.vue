@@ -13,7 +13,7 @@
           <a-popover trigger="hover" placement="left">
             <template #content>
               <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="deleteBtn(methodKey)">Delete</div>
-              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="addCustomParamsBtn">Add Custom Params
+              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="addCustomParamsBtn(methodKey)">Add Custom Params
               </div>
             </template>
             <img class="w-[4px] cursor-pointer" src="@/assets/images/diandian.png" />
@@ -57,6 +57,7 @@
           <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
           <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
         </a-form-item>
+        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
       </a-form>
     </div>
     <div @click="moreContractMethod" 
@@ -65,7 +66,6 @@
       <label class="cursor-pointer">Add More Contract Methods</label>
     </div>
   </div>
-  <CustomParamsmodal :visible="visible" :customKey="customKey" @showContract="visible = false" @doneSecret="doneSecret" />
 </template>
 
 <script setup lang="ts">
@@ -89,7 +89,6 @@ const { selectedName, methodMap, contractOrchestration } = toRefs(props);
 const emits = defineEmits(['setAbiInfo', 'setDisabledSave']);
 
 const visible = ref(false);
-const customKey = ref(0);
 const showMethod = ref(false);
 // const formInvokeRef = ref<FormInstance>();
 const formInvokeRef = ref();
@@ -157,27 +156,32 @@ const deleteBtn = (methodKey: number) => {
   checkFiledChange();
   methodList.value.splice(methodKey, 1)
 }
-const addCustomParamsBtn = () => {
-  visible.value = true;
-  console.log('add')
+const addCustomParamsBtn = (methodKey:number) => {
+  methodList.value[methodKey].formData.visible = true;
+  console.log('add',methodList.value[methodKey].formData.visible,methodKey)
 }
-const doneSecret = (val: any) => {
+const doneSecret = (methodKey:number, val:any) => {
   checkFiledChange();
-  visible.value = false;
   let str = '';
   val.forEach((e: any) => {
     str += `${e.secretName}: ${e.secretValue}\n`
   });
-  methodList.value[customKey.value].formData.customParams = str;
+  console.log(methodKey,1111111111111,methodList.value)
+  methodList.value[methodKey].formData.visible = false;
+  methodList.value[methodKey].formData.customParams = str;
   console.log('有值了：' + val)
 }
 const editCustom = (val: string, methodKey: number) => {
-  visible.value = true;
-  customKey.value = methodKey;
+  methodList.value[methodKey].formData.customParams = val
+  methodList.value[methodKey].formData.visible = true;
 }
 
 onMounted(() => {
   console.log("methodList:",methodList.value.length,methodList.value);
+  methodList.value = methodList.value.map((item:any)=>{
+    item.visible = false
+    return item
+  })
 });
 
 defineExpose({

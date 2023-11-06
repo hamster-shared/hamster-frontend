@@ -8,7 +8,7 @@
       <div>
         <a-form class="modal-form" :model="formData" ref="formRef" :rules="formRules" layout="vertical">
           <!-- <a-form-item name="Contract A.init"> -->
-            <div class="text-[18px] text-[#151210] font-bold mt-[32px] mb-[20px]">Contract A.init</div>
+            <div class="text-[18px] text-[#151210] font-bold mt-[32px] mb-[20px]">{{ methodName + '.' + methodType }}</div>
             <a-input-group>
               <a-row :gutter="8" v-for="item in formData.secretArr" class="mt-[5px]">
                 <a-col :span="formData.secretArr.length > 1 ? 11 : 12">
@@ -40,9 +40,12 @@ import { ref, reactive, computed, toRefs } from "vue";
 
 const props = defineProps({
   visible: Boolean,
+  methodKey: Number,
+  methodType: String,
+  methodName: String,
 });
 
-const { visible } = toRefs(props);
+const { visible, methodKey,methodType,methodName  } = toRefs(props);
 
 const formData = reactive<any>({
   secretArr: [
@@ -93,7 +96,7 @@ const emit = defineEmits(["showContract", "doneSecret"]);
 
 const doneSecret = () => {
   console.log('完成参数设置,调接口吧')
-  emit("doneSecret", formData.secretArr)
+  emit("doneSecret",methodKey?.value, formData.secretArr)
 }
 
 
