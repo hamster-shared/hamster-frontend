@@ -46,7 +46,7 @@ const middlewareRoute = [
             meta: {
               // sidebarMap: ['RPC'],
               isShow: true,
-              sidebarMap: ['RPC'],
+              sidebarMap: ['Home'],
             }
           },
           {
@@ -75,7 +75,7 @@ const middlewareRoute = [
             component: () => import('@/views/chainLink/rpc/myApp.vue'),
             meta: {
               isShow: true,
-              sidebarMap: ['myapp'],
+              sidebarMap: ['Apps'],
             }
           },
           {
