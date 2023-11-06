@@ -1,16 +1,20 @@
 <template>
-  <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
-    <template #expandedRowRender>
-      <a-table :columns="innerColumns" :data-source="innerData" :pagination="false">
-      </a-table>
-    </template>
-  </a-table>
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
+    <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
+      <template #expandedRowRender>
+        <a-table :columns="innerColumns" :data-source="innerData" :pagination="false">
+        </a-table>
+      </template>
+    </a-table>
+  </div>
 </template>
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
+import { useThemeStore } from "@/stores/useTheme";
+const theme = useThemeStore();
 
 
-const tableData = ref([{'method':'testhie mehto', 'volume':40, 'failled':5}]);
+const tableData = ref([{key:1,'method':'testhie mehto', 'volume':40, 'failled':5},{key:2,'method':'testhie', 'volume':40, 'failled':5}]);
 const innerData = ref([{'status':405, 'volume':5}]);
 const columns = reactive([
   { title: 'Method', dataIndex: 'method', key: 'method' },
@@ -49,4 +53,36 @@ const getTableData = () => {
 }
 
 </script>
+<style scoped>
+:deep(.ant-table-tbody>tr>td>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table),
+:deep(.ant-table-tbody>tr>td>.ant-table-wrapper:only-child .ant-table){
+  margin: -16px;
+}
+:deep(.ant-table-thead > tr > th){
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 16px;
+}
+:deep(.ant-table-expanded-row .ant-table-container table > thead > tr:first-child th:first-child){
+  border-top-left-radius: 0px!important;
+}
+:deep(.ant-table-expanded-row .ant-table-container table > thead > tr:first-child th:last-child){
+  border-top-right-radius: 0px!important;
+}
+:deep(.ant-table-row:last-child .ant-table-cell:first-child),
+:deep(.ant-table-row:last-child .ant-table-cell:last-child){
+  border-radius: 0px;
+}
+:deep(.ant-table-pagination.ant-pagination){
+  padding: 16px 0;
+  margin: 0px !important;
+  background-color: #F6F6F6;
+  border-radius: 0 0 12px 12px;
+}
+.dark-css{
+  :deep(.ant-table-pagination.ant-pagination){
+    background-color: #363636;
+  }
+}
+</style>
 

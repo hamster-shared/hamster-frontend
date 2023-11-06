@@ -698,12 +698,13 @@ onMounted(async () => {
   await getProjectsContractName()
   initBreadCrumb()
 
-  if (showFooter) { // Deploy Setting 默认选中第一个数据
-    if (contractOrchestration.value.length > 0) {
-      let itemVal = contractOrchestration.value[0];
-      selectContractId(itemVal.id+'$'+itemVal.name, itemVal.abiInfo)
-    }
-  }else{
+  //默认选中第一个数据
+  if (contractOrchestration.value.length > 0) {
+    let itemVal = contractOrchestration.value[0];
+    selectContractId(itemVal.id+'$'+itemVal.name, itemVal.abiInfo)
+  }
+
+  if (!showFooter) {  
     await getEVMNetwork()
   }
 })
