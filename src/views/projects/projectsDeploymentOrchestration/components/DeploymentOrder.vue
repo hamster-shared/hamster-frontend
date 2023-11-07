@@ -127,6 +127,7 @@ const deployBtn = async(item: any) => {
   dataList.value.splice(index, 1);
   duplicateDataList.value.push(item);
   await getUseAndNotContractArr()
+  emit('getProjectsContractName')
 }
 
 // copy 一份
