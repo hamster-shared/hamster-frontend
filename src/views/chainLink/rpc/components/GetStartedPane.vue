@@ -57,6 +57,7 @@ import { copyToClipboard } from "@/utils/tool";
   background: #F3F3F3;
   border-radius: 12px;
   margin: 10px;
+  border: 1px solid transparent;
 }
 .ethereum-container:hover{
   border: 1px solid #E2B578;
