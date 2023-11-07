@@ -489,9 +489,10 @@ const setContractInfo = () => {
 }
 //验证Invoke Contract Method表单
 const checkContractForm = async () => {
-  
-  //Contract Parameters 字段非空验证
-  await paramsRef.value.formContractRef.validate();
+  if (paramsRef.value.formContractRef != undefined){
+    //Contract Parameters 字段非空验证
+    await paramsRef.value.formContractRef.validate();
+  }
   //Invoke Contract Method 字段非空验证
   //获取子组件的表单ref值
   let invokeChild = contractRef.value.formInvokeRef;
