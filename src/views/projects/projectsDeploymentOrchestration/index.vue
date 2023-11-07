@@ -186,7 +186,7 @@ const handleCancelNoSave = () => {
   visibleNoSave.value = false;
 }
 const handleSaveModal = () => {
-  // setSaveParamsValue();
+  visibleSave.value = false;
   saveSingleContractInfo();
 }
 const handleCancelModal = () => {

@@ -148,7 +148,7 @@ const changeMethodName = async(val: any, methodKey: number) => {
   methodList.value[methodKey].formData.customParams = '';
   console.log(222222222222,contractOrchestration.value)
   if (!methodMap.value.get(val)) {
-    const res = await apiGetAbiInfobyId(route.query.id,'','')
+    // const res = await apiGetAbiInfobyId(route.query.id,'','')
     contractOrchestration.value.forEach((element: any) => {
       if (element.name === val) {
         console.log(1231123123123,element.abiInfo)

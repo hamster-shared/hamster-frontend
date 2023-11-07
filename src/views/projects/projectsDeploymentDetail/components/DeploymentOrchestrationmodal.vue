@@ -20,7 +20,7 @@
             <div v-if="indexStep == 0" class="flex mb-[20px]">
               <div class="mr-[20px] leading-[42px] w-[160px]">Contract Parameters: </div>
               <div class="flex border border-solid border-[#EBEBEB] bg-[#F6F6F6] px-[15px] py-[10px] rounded-[8px]">
-                {{ itemStep.params.join(', ') }} 
+                {{ itemStep.params.join(', ') || 'no setting' }} 
               </div>
             </div>
             <div v-else class="flex mb-[20px]">
