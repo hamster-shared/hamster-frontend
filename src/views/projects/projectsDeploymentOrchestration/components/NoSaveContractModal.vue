@@ -15,7 +15,7 @@
           </div>
           <div class="my-[10px]">
             <div class="bg-[#FFF8EC] rounded-[8px] p-[20px] h-[200px] overflow-y-auto">
-              <div class="font-bold" v-for="(item, key) in noSaveContract" :key="key">- {{ item?.indexOf('(')!='-1' ? item?.slice(0,item?.indexOf('(')):item }}</div>
+              <div class="font-bold" v-for="(item, key) in noSaveContract" :key="key">- {{ item }}</div>
             </div>
           </div>
           <div class="mb-[30px]">

@@ -16,7 +16,7 @@
       <div class="font-bold">
         <span class=" bg-[#E2B578] text-[#FFFFFF] px-[8px] py-[2px] rounded-[2px] mr-[20px]">{{ index + 1
         }}</span>
-        <span>{{ item.name.indexOf('(')!='-1' ? item.name?.slice(0,item.name.indexOf('(')):item.name }}</span>
+        <span>{{ item.name }}</span>
       </div>
       <div>
         <a-popover trigger="hover" placement="left">
@@ -134,7 +134,7 @@ const duplicateBtn = (item: any) => {
   const en:any = {}
   Object.assign(en,item)
   const flag = uuidv4();
-  en.name = en.name+`(${flag.slice(0,8)})`
+  en.name = en.name+` copy #${flag.slice(0,8)}`
   dataList.value.push(en)
   getUseAndNotContractArr()
 }
