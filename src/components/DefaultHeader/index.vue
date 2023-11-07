@@ -4,30 +4,29 @@
       <div class="flex items-center cursor-pointer" @click="goHome">
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
-        <!-- <div class="dark:text-[#FFFFFF] font-bold text-[24px] ml-2">HAMSTER</div> -->
       </div>
-      <div @click="goPrjects" :class="{ '!text-[#E2B578]': isProject }"
-        class="dark:text-[#FFFFFF] text-[16px] cursor-pointer ml-12 mr-8">Projects</div>
-      <a-dropdown>
-        <div :class="{ '!text-[#E2B578]': !isProject }" class="dark:text-[#FFFFFF] text-[16px] cursor-pointer" @click.stop>
-          NodeService 
-          <img v-if="isProject" src="@/assets/icons/up-b.svg" class="h-[16px] hidden dark:inline-block up-tran" />
-          <img v-if="isProject" src="@/assets/icons/up.svg" class="h-[16px] dark:hidden up-tran" />
-          <img v-if="!isProject" src="@/assets/icons/up-color.svg" class="h-[16px] up-tran" />
+      <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }"
+        class="header-text-css ml-12 mr-8" id="pro">Projects</div>
+      <a-dropdown v-if="!isShowMiddleware">
+        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }"
+          @click.stop>
+          Middleware
+          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
+          <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
         </div>
         <template #overlay>
           <a-menu>
-            <a-menu-item @click="goRPCs">
-              <img src="@/assets/icons/RPCs.svg" class="h-[24px]" />
-                RPCs
+            <a-menu-item @click="goDashboard">
+              Dashboard
             </a-menu-item>
-            <a-menu-item @click="goApps">
-              <img src="@/assets/icons/Apps.svg" class="h-[24px]" />
-                Apps
+            <a-menu-item @click="goMiwaspace">
+              Miwaspace
             </a-menu-item>
           </a-menu>
         </template>
       </a-dropdown>
+      <div @click="goDoc" 
+        class="header-text-css  ml-12 mr-8">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -42,19 +41,19 @@
           <img src="@/assets/icons/white.svg" class="h-[20px] dark:hidden" />
         </div>
       </div>
+      <selectNetwork></selectNetwork>
       <div>
-        <a-button v-if="!isConnectedWallet" @click="showWallet" class="ml-8" type="primary">Connect Wallet</a-button>
+        <a-button v-if="!isConnectedWallet" @click="showWallet" class="!p-0 ml-8" type="primary">Connect Wallet</a-button>
         <a-dropdown v-if="isConnectedWallet">
           <div class="ml-8 px-3 border border-solid border-[#E2B578] rounded-[8px] flex h-[40px] items-center">
             <img src="@/assets/icons/metamask-icon.svg" class="h-[20px] mr-2" />
             <div class="text-[#E2B578] dark:text-[#FFFFFF]">{{ walletAccount }}</div>
-
           </div>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <a href="javascript:;" @click="visibleDisconnect = true">
-                  <img src="@/assets/icons/disconnect.svg" class="h-[24px]" />
+              <a-menu-item @click="visibleDisconnect = true">
+                <a href="javascript:;" style="color:black;" class="flex items-center">
+                  <img src="@/assets/icons/disconnect.svg" class="h-[16px] mr-2" />
                   Disconnect
                 </a>
               </a-menu-item>
@@ -67,13 +66,24 @@
           <img :src="githubAvatarUrl" class="h-[40px] rounded-full" />
           <template #overlay>
             <a-menu>
-              <div class="text-center px-[16px] py-[8px] h-[40px]">
+              <div class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
+                <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                 <span>Signed in as </span>
-                <span class="text-[#000000] font-bold">{{ username }}</span>
+                <span class="font-bold">{{ username }}</span>
               </div>
               <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
-              <a-menu-item class="text-center ">
-                <div class="text-[#E2B578] py-[4px]" @click="signOut">Sign out</div>
+              <a-menu-item class="">
+                <div class="py-[4px]" @click="handleOrder">
+                  <img src="@/assets/icons/order.svg" class="h-[16px] mr-2" />
+                  Your Orders
+                </div>
+              </a-menu-item>
+              <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
+              <a-menu-item class="">
+                <div class="py-[4px]" @click="signOut">
+                  <img src="@/assets/icons/Sign-Out.svg" class="h-[16px] mr-2" />
+                  Sign out
+                </div>
               </a-menu-item>
             </a-menu>
           </template>
@@ -110,6 +120,7 @@ import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
+import selectNetwork from "./components/selectNetwork.vue";
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
@@ -122,14 +133,21 @@ const visibleDisconnect = ref(false);
 const isConnectedWallet = ref(false);
 const walletAccount = ref("");
 const isProject = ref(true)
+const isOrder = ref(false)
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
 const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
 const username = JSON.parse(userInfo)?.username;
+const isShowMiddleware = ref(false)
 const goHome = () => {
   // router.push("/node-service/RPCs");
-  router.push("/projects");
+  // router.push("/projects");
+  let linkVal = "https://portal.hamster.newtouch.com"
+  if (window.location.href.indexOf('hamsternet.io') !== -1) {
+    linkVal = "https://hamsternet.io";
+  }
+  window.open(linkVal)
   isProject.value = true;
 };
 
@@ -138,30 +156,38 @@ const goPrjects = () => {
   isProject.value = true;
 }
 
-const goApps = () => {
-  const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
-  // 如果 local storage 里没有保存的钱包，直接返回
-  if (connectedWallets == null || connectedWallets === '[]') {
-    showWallet();
-  } else {
-    router.push("/node-service/Apps");
-
-    isProject.value = false;
-  }
+// 跳官网文档
+const goDoc = () => {
+  window.open('https://hamsternet.io/docs/')
 }
-const goRPCs = () => {
-  router.push("/node-service/RPCs");
 
+const goMiwaspace = () => {
+  router.push("/middleware/miwaspace?key=1");
+  isProject.value = false;
+  // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
+  // // 如果 local storage 里没有保存的钱包，直接返回
+  // if (connectedWallets == null || connectedWallets === '[]') {
+  //   showWallet();
+  // } else {
+  //   router.push("/node-service/Apps");
+
+  //   isProject.value = false;
+  // }
+}
+const goDashboard = () => {
+  router.push("/middleware/dashboard");
   isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
-  theme.setTheme(val)
+  // theme.setTheme(val)
   let htmlRoot = document.getElementById('htmlRoot') || null;
   if (val === 'white') {
+    theme.setTheme('light')
     htmlRoot?.setAttribute('data-theme', 'light');
     document.documentElement.classList.remove('dark')
   } else {
+    theme.setTheme('dark')
     htmlRoot?.setAttribute('data-theme', 'dark');
     document.documentElement.classList.add('dark')
   }
@@ -187,26 +213,50 @@ const signOut = () => {
 };
 
 onMounted(() => {
+  // 解决middle刷新页面选中在projects tab下问题
+  if(window.location.href.indexOf('middleware') != -1){
+    isProject.value = false
+  }else if(window.location.href.indexOf('projects') != -1){
+    isProject.value = true
+  }else if(window.location.href.indexOf('orders') != -1){
+    isOrder.value = true
+  }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
   changeTheme(defaultTheme.value);
+  // 针对钱包登录的特殊处理
+  if(localStorage.getItem('token')?.startsWith('0x')){
+    // debugger
+    isShowMiddleware.value = true
+    isConnectedWallet.value = true
+    const walletAddr:any  = localStorage.getItem('token')
+    walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
+  }
 });
 
 watch(
-  () => walletAddress.walletAddress,
-  (value, newV) => {
-    if (value) {
-      // console.log(walletAccount.value, 'kkkk')
-      isConnectedWallet.value = true
-      walletAccount.value = walletAddress.walletAddress?.substring(0, 5) + "..." + walletAddress.walletAddress?.substring(walletAddress.walletAddress.length - 4);
+  () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
+  (oldValue, newV) => {
+    if (oldValue) {
+      isConnectedWallet.value = true;
+      walletAccount.value = oldValue?.substring(0, 5) + "..." + oldValue?.substring(oldValue.length - 4);
+    } else {
+      isConnectedWallet.value = false
     }
   }, { deep: true, immediate: true }
 );
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
+  window.localStorage.removeItem("walletAccount");
+  const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
+  if(isFakeToken){
+    localStorage.removeItem('token')
+    router.push('/login')
+  }
   visibleDisconnect.value = false;
+  isConnectedWallet.value = false
 }
 const showWallet = () => {
   // visibleWallet.value = true;
@@ -214,14 +264,20 @@ const showWallet = () => {
 }
 const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
-  const account = window.localStorage.getItem("walletAccount");
+  // const account = window.localStorage.getItem("walletAccount");
   // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
+}
+const handleOrder = () => {
+  router.push('/orders')
 }
 </script>
 
 <style lang="less" scoped>
 @btnColor: #E2B578;
 
+.header-menu-line{
+  border-bottom: 3px solid #E2B578;
+}
 .default-header {
   position: fixed;
   top: 0;
@@ -281,12 +337,27 @@ const setWalletBtn = (val: boolean) => {
   background: transparent;
 }
 
-.up-tran {
+.up-tran:hover {
   transform: rotate(180deg);
   transition: all .3s, visibility 0s;
 }
 
-:deep(.ant-dropdown-open .up-tran) {
-  transform: rotate(0deg);
+// :deep(.ant-dropdown-open .up-tran) {
+//   transform: rotate(0deg);
+// }
+
+:deep(.ant-select-selector) {
+  color: #ffffff !important;
+}
+
+html[data-theme='dark'] {
+  :deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+    border: 1px solid #EBEBEB;
+  }
+}
+</style>
+<style scoped>
+.header-text-css{
+  @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
 }
 </style>

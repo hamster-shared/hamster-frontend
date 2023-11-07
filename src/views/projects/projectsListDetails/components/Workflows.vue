@@ -17,10 +17,15 @@
             <label v-if="record.type === 2">Contract Build_#{{ record.execNumber }}</label>
             <label v-if="record.type === 3">Contract Deploy_#{{ record.execNumber }}</label>
           </div>
-          <div v-else>
+          <div v-else-if="projectType === '2'">
             <label v-if="record.type === 1">FrontEnd Check_#{{ record.execNumber }}</label>
             <label v-if="record.type === 2">FrontEnd Build_#{{ record.execNumber }}</label>
             <label v-if="record.type === 3">FrontEnd Deploy_#{{ record.execNumber }}</label>
+          </div>
+          <div v-else-if="projectType === '3'">
+            <label v-if="record.type === 1">Node Check_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 2">Node Build_#{{ record.execNumber }}</label>
+            <label v-if="record.type === 3">Node Deploy_#{{ record.execNumber }}</label>
           </div>
         </template>
         <template v-if="column.dataIndex === 'triggerMode'">
@@ -38,12 +43,13 @@
           <div v-else></div>
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <label class="cursor-pointer"
-            @click="goWorkflowsDetail(record.type, record.id, record.detailId)">Details</label>
-          <label v-if="record.status === 1" class="text-[#E2B578] ml-2 cursor-pointer"
+          <label class="cursor-pointer open-link-css hover:text-[#E4C08F] active:text-[#CE9C58]"
+            @click="goWorkflowsDetail(record.type, record.id, record.detailId, record)">Details</label>
+          <label v-if="record.status === 1" class=" text-[#FF8A5B] hover:text-[#EBA183] active:text-[#EA7D51] ml-2 cursor-pointer"
             @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
-          <label v-if="record.status !== 1" @click="deleteWorkflow(record.id, record.detailId)"
-            class="text-[#FF4A4A] ml-2 cursor-pointer">Delete</label>
+            <!-- evm没有删除 -->
+          <label v-if="record.status !== 1 && frameType != 1" @click="deleteWorkflow(record.id, record.detailId)"
+            class="text-[#F52222] hover:text-[#EE6A6A] active:text-[#CF2C2C] ml-2 cursor-pointer ">Delete</label>
         </template>
       </template>
     </a-table>
@@ -58,7 +64,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount, reactive, ref, toRefs } from "vue";
+import { computed, onMounted, onBeforeUnmount, reactive, ref, toRefs, watch } from "vue";
 import { useRouter } from "vue-router";
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
 import { useThemeStore } from "@/stores/useTheme";
@@ -75,18 +81,21 @@ const router = useRouter();
 const props = defineProps({
   detailId: String,
   projectType: String,
+  frameType: Number,
 });
-const { detailId, projectType } = toRefs(props);
+const { detailId, projectType, frameType } = toRefs(props);
 
 const timer = ref();
 const loading = ref(false);
 const statusList = reactive(["Notrun", "Running", "Fail", "Success", "Stop"]);
-const actionList = reactive([
+// const actionList = reactive([]);
+const actionList = ref([
   { label: "All Action", value: "0" },
   { label: "Check", value: "1" },
   { label: "Build", value: "2" },
   { label: "Deploy", value: "3" }
 ]);
+
 const action = ref("0");
 const workflowList = ref([]);
 const delWorkflowModal = ref(false);
@@ -122,7 +131,7 @@ const tableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'stageInfo',
-    width: '200px'
+    width: '220px'
   },
   {
     title: 'Time',
@@ -156,19 +165,18 @@ const pagination = reactive({
     pagination.current = current;
     pagination.pageSize = pagesize;
     // getApps();
+    getProjectsWorkflows()
   },
   onChange: (current: number) => {
     // 切换分页时的回调，
     pagination.current = current;
     // getApps();
+    getProjectsWorkflows()
   },
   // showTotal: total => `总数：${total}人`, // 可以展示总数
 });
 
 onMounted(() => {
-  if (projectType?.value === '1') {
-    actionList.length = 3;
-  }
   getProjectsWorkflows();
 })
 
@@ -200,7 +208,7 @@ const getProjectsWorkflows = async () => {
       }
     });
     if (isRunning.value === true) {
-      
+
       timer.value = setTimeout(() => {
         //需要定时执行的代码
         getProjectsWorkflows();
@@ -214,8 +222,21 @@ const getProjectsWorkflows = async () => {
     // loading.value = false;
   }
 };
-const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String) => {
-  router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
+const goWorkflowsDetail = (type: String, workflowId: String, workflowDetailId: String, record?:any) => {
+  // type 1check 2build 3deploy
+  if (type == '1') {
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value);
+  } else if(type == '2'){
+    router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?isBuild=1');
+  } else if(type == '3'){
+    // evm 跳 多链部署详情页
+    if(frameType?.value==1){
+      router.push(`/projects/projectsDeploymentDetail?id=${record.projectId}&version=${record.version}&executeId=${record.id}`)
+    }else{
+      // 区分前端和node
+      router.push("/projects/" + detailId.value + "/" + workflowId + "/workflows/" + workflowDetailId + "/" + type + "/" + projectType?.value + '?type=' + projectType.value);
+    }
+  }
 }
 const deleteWorkflow = (workflowId: string, workflowDetailId: string) => {
   delWorkflowId.value = workflowId;
@@ -246,12 +267,37 @@ const stopWorkflow = async (projectId: String, workflowId: number, detailId: num
     const data = await apiProjectsWorkflowsStop(params);
     message.success(data.message);
   } catch (error: any) {
-    console.log("error:", error)
+    // console.log("error:", error)
     message.error(error.response.data.message);
   } finally {
     visibleModal.value = false;
   }
-
 }
+
+// watch(() => props.frameType,
+//   (value) => {
+//     if (props.projectType === '1') {
+//       if (value === 4) {
+//         actionList.value = [
+//           { label: "All Action", value: "0" },
+//           { label: "Build", value: "2" },
+//         ]
+//       } else {
+//         actionList.value = [
+//           { label: "All Action", value: "0" },
+//           { label: "Check", value: "1" },
+//           { label: "Build", value: "2" },
+//         ]
+//       }
+//     } else {
+//       actionList.value = [
+//         { label: "All Action", value: "0" },
+//         { label: "Check", value: "1" },
+//         { label: "Build", value: "2" },
+//         { label: "Deploy", value: "3" }
+//       ]
+//     }
+//   }
+// )
 
 </script>

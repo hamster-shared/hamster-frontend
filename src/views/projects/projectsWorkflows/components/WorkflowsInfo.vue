@@ -6,8 +6,9 @@
           <div class="process-detail-title">{{ $t('workFlows.codeRepository') }}</div>
           <div class="truncate process-detail-info">{{ workflowsDetailsData.repositoryUrl }}</div>
           <div class="process-detail-info">
-            <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
-            <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" />
+            <!-- <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
+            <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" /> -->
+            <svg-icon name="white-link" size="16" class="mr-[8px]" />
             <span class="align-middle">main</span>
           </div>
         </div>
@@ -15,8 +16,14 @@
       <a-col :span="8">
         <div class="process-detail-item">
           <div class="process-detail-title">{{ title + ' Result' }}</div>
-          <div class="process-detail-info">{{ $t(`workFlows.${StatusEnum[workflowsDetailsData.status] }`) }}</div>
-          <div class="process-detail-info error-info" v-show="title === 'Check'">
+          <div class="process-detail-info">
+            <div v-if="props.checkType != ''">{{ props.checkType }}</div>
+            <div v-else>{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
+          </div>
+          <div v-if="workflowsDetailsData.status == 2 && (type == '2' || props.frameType == 7) && deployType == '3'" class="process-detail-info">
+            Insufficient cycle, <a href="javascript:;" @click="openBuyCycles">buy cycles</a>
+          </div>
+          <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
             {{ workflowsDetailsData.errorNumber + ' issues found' }}
           </div>
         </div>
@@ -33,23 +40,46 @@
       </a-col>
     </a-row>
   </div>
-</template>duration
+  <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
+</template>
 <script lang='ts' setup>
 import { fromNowexecutionTime, formatDurationTime } from "@/utils/time/dateUtils.js";
-const props = defineProps({
-  title: String,
-  inRunning: Boolean,
-  workflowsDetailsData: { type: Object }
-});
+import { WorkflowStatusEnum } from "@/enums/statusEnum";
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import BuyCycles from "@/views/projects/projectsListDetails/components/BuyCycles.vue"
 
-const enum StatusEnum {
-  "nonExecution",
-  "running",
-  "failed",
-  "passed",
-  "stop",
+const route = useRoute()
+// icp
+const type = route.params.projectType
+const deployType = route.params.type
+const showBuyCycle = ref(false)
+
+interface WorkflowsDetailsData {
+  repositoryUrl: string,
+  status: number,
+  startTime: string,
+  errorNumber: number,
+  duration: string,
 }
 
+const props = defineProps<{
+  checkType: string
+  title: String,
+  inRunning: Boolean,
+  workflowsDetailsData: WorkflowsDetailsData,
+  frameType: Number
+}>()
+
+// const props = defineProps({
+//   title: String,
+//   inRunning: Boolean,
+//   workflowsDetailsData: { type: Object }
+// });
+
+const openBuyCycles = ()=>{
+  showBuyCycle.value = true
+}
 
 </script>
 <style lang='less' scoped>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>contracts iCON</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="(B)Miwaspace-Node" transform="translate(-1201.000000, -808.000000)">
+            <g id="编组-3备份" transform="translate(1171.000000, 524.000000)">
+                <g id="contracts-iCON" transform="translate(30.000000, 284.000000)">
+                    <polygon id="路径" points="0 0 24 0 24 24 0 24"></polygon>
+                    <polyline id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="8 7 11 10 8 13"></polyline>
+                    <line x1="13" y1="13" x2="16" y2="13" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></line>
+                    <path d="M11.7773515,4 C12.9795614,4 15.3871109,4 19,4 C20.1045695,4 21,4.8954305 21,6 L21,18 C21,19.1045695 20.1045695,20 19,20 L5,20 C3.8954305,20 3,19.1045695 3,18 C3,14.6625781 3,12.1595117 3,10.4908008" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(12.000000, 12.000000) rotate(-180.000000) translate(-12.000000, -12.000000) "></path>
+                    <path d="M18.0001183,22.9996223 L21.3501183,19.7156223 C21.765151,19.312882 21.9997904,18.7594948 22.0007349,18.1811775 C22.0016736,17.6028601 21.7688374,17.0487119 21.3551183,16.6446223 C20.486166,15.7948128 19.0983234,15.7921515 18.2261183,16.6386223 L18.0021183,16.8586223 L17.7791183,16.6386223 C16.9102897,15.7894618 15.5231982,15.7868011 14.6511183,16.6326223 C14.235954,17.0352274 14.001134,17.5885385 14,18.166856 C13.9988742,18.7451735 14.2315303,19.2993979 14.6451183,19.7036223 L18.0001183,22.9996223 L18.0001183,22.9996223 Z" id="路径" stroke="#E2B578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -30,3 +30,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ignore package lock
+package-lock.json
+yarn.lock
+
+# local env files
+.env.local
+.env.*.local
+node_modules
+/deploy_solana.sh
+/default_solana.conf
+/Dockerfile_solana

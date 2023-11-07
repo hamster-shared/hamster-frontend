@@ -10,7 +10,7 @@ declare module 'axios' {
 const service = axios.create({
   // baseURL: "/api", // 所有的请求地址前缀部分
   baseURL: "/",
-  timeout: 60000, // 请求超时时间毫秒
+  timeout: 180000, // 请求超时时间毫秒
   headers: {
     // 设置后端需要的传参类型
     "Content-Type": "application/json",
@@ -50,9 +50,10 @@ service.interceptors.response.use(
     return dataAxios;
   },
   function (error: any) {
-    if(error.response.status === 401) {
+    if (error.response.status === 401) {
       localStorage.setItem('token', '');
-      window.location.href='/login';
+      localStorage.removeItem('userInfo')
+      window.location.href = '/login';
     }
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么

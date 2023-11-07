@@ -8,13 +8,13 @@
       <br />
       you can query the status in StackNet through the following transaction hash.
     </div>
-    <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" name="userForm" :label-col="{ span: 0 }"
+    <a-form ref="modalFormRef" class="modal-form modalFormRef col-span-3 mb-[16px]" name="userForm" :label-col="{ span: 0 }"
       :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item>
         <div class="text-[#151210] mb-[12px]">Transaction Hash</div>
-        <a-input v-model:value="deployTxHash" :placeholder="'Getting now，please wait a moment...'" disabled>
+        <a-input class="modal-input" v-model:value="deployTxHash" :placeholder="'Getting now，please wait a moment...'" disabled>
           <template #suffix>
-            <span class="text-[#E2B578] font-bold cursor-pointer" @click="queryDeploy">Query</span>
+            <span class="open-link-css font-bold cursor-pointer" @click="queryDeploy">Query</span>
           </template>
         </a-input>
       </a-form-item>
@@ -27,7 +27,7 @@
   </a-modal>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, toRefs, watch } from "vue";
+import { ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -57,26 +57,6 @@ const emits = defineEmits(['cancelModal'])
 const cancelModal = () => {
   emits("cancelModal", false);
 }
-
-// watch(() => props.hasDeclareHash,
-//   // hasDeployHash
-//   (val) => {
-//     if (val) {
-//       const hashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || {};
-//       hash.value = hashData[props.projectsId]?.declareHash;
-//     }
-//   }, { deep: true, immediate: false })
-
-// watch(() => props.hasDeployHash,
-//   // hasDeployHash
-//   (val) => {
-//     if (val) {
-//       console.log(val, 'Deploying')
-//       hashTitle.value = 'Deploying';
-//       const hashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || {};
-//       hash.value = hashData[props.projectsId]?.deployHash;
-//     }
-//   }, { deep: true, immediate: false })
 </script>
 <style lang="less" scoped>
 .ant-btn {

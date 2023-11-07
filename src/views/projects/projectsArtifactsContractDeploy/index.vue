@@ -1,35 +1,29 @@
 <template>
-  <Breadcrumb :currentName="projectName" :isClick="loading">
-    <template v-slot:tags>
-      <span
-        class="dark:text-white text-[#151210] text-[14px] px-[16px] py-[6px] ml-[16px] border border-solid border-[#EBEBEB] rounded-[32px]">Contract</span>
-    </template>
-  </Breadcrumb>
+  <bread-crumb :routes="breadCrumbInfo"/>
   <div
-    class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
+      class="artifactsDeploy dark:bg-[#1D1C1A] bg-[#FFFFFF] dark:text-white text-[#121211]  p-[32px] rounded-[12px] mt-[24px]">
     <div class="grid grid-cols-5 gap-4">
       <a-form class="dark:text-white text-[#121211] col-span-3" ref="formRef" :model="formState" name="basic"
-        :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
+              :label-col="{ span: 0 }" :wrapper-col="{ span: 18 }" autocomplete="off" noStyle>
         <div class="text-[16px] font-bold mb-[16px]">Contract</div>
         <a-form-item class="" name="version" :rules="[{ required: true, message: 'Please input your Version!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Version</div>
           <a-select v-model:value="formState.version" style="width: 100%" placeholder="请选择" @change="changeVersion">
             <a-select-option :value="item" v-for="item in versionData" :key="item">{{
-              item
-            }}</a-select-option>
+                item
+              }}</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item name="nameData" class="name-item"
-          :rules="[{ required: true, message: 'Please input your Name!' }]">
+        <a-form-item name="nameData" class="name-item" :rules="[{ required: true, message: 'Please input your Name!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Name</div>
           <a-checkbox-group class="dark:text-white text-[#121211] w-full"
-            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
-            name="checkboxgroup">
+                            :class="theme.themeValue === 'dark' ? 'dark-css' : ''" v-model:value="formState.nameData"
+                            name="checkboxgroup">
             <div v-for="(val, index) in projectsContractData" :key="val.id"
-              class="w-full flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px] mb-[16px]">
+                 class="w-full flex justify-between border border-solid dark:border-[#434343] border-[#EFEFEF] rounded-[8px] px-[12px] py-[9px] mb-[16px]">
               <a-checkbox :value="val" :disabled="val.hasModalFormData">{{ val.name }}</a-checkbox>
               <img src="@/assets/icons/cname.svg" class="cursor-pointer" v-show="val.hasArgument"
-                @click="selectAargumentName(val, index)" />
+                   @click="selectAargumentName(val, index)" />
             </div>
           </a-checkbox-group>
 
@@ -39,16 +33,16 @@
         <div class="text-[16px] font-bold mb-[16px]">Network / Chain</div>
         <a-form-item name="chain" :rules="[{ required: true, message: 'Please input your Chain!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Chain</div>
-          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select">
+          <a-select v-model:value="formState.chain" style="width: 100%" placeholder="Please select" @change="changeChain">
             <a-select-option :value="item" v-for="item in chainData" :key="item">{{
-              item
-            }}</a-select-option>
+                item
+              }}</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item name="network" :rules="[{ required: true, message: 'Please input your Network!' }]">
           <div class="dark:text-white text-[#121211] mb-[12px]">Network</div>
           <a-select v-model:value="formState.network" style="width: 100%" placeholder="Please select"
-            @change="changeNetwork">
+                    @change="changeNetwork">
             <a-select-option :value="item.id" v-for="item in networkData" :key="item.id">
               {{ item.name }}
             </a-select-option>
@@ -61,11 +55,11 @@
     </div>
     <div class="text-center mt-[16px]">
       <a-button class="btn" @click="deployClick" :loading="loading">{{
-        loading? 'Deploying': 'Deploy'
-      }}</a-button>
+          loading ? 'Deploying' : 'Deploy'
+        }}</a-button>
     </div>
     <!-- <div>
-      <a-button @click="getDeployHashById">test deploy</a-button>
+      <a-button @click="deployContract">test deploy</a-button>
     </div> -->
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
@@ -76,10 +70,10 @@
       <img class="" src="@/assets/icons/closeIcon.svg" />
     </template>
     <a-form ref="modalFormRef" class="modalFormRef col-span-3 mb-[16px]" :model="testData" name="userForm"
-      :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
+            :label-col="{ span: 0 }" :wrapper-col="{ span: 24 }" autocomplete="off" noStyle>
       <a-form-item class="mb-[32px]" :name="item.name" :rules="[{ required: true }]" v-for="(item, _) in abiInputData">
         <div class="text-[#151210] mb-[12px]">{{ item.name }}</div>
-        <a-input v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
+        <a-input class="modal-input" v-model:value="testData[item.name]" :placeholder="'Please input ' + item.name" allowClear />
       </a-form-item>
     </a-form>
     <div class="text-center">
@@ -87,40 +81,60 @@
     </div>
   </a-modal>
 
+  <a-modal v-model:visible="aptosNetworkVisible" title="Operation Warning" :footer="null"
+           class="modalFormRef col-span-3 mb-[16px]" autocomplete="off" noStyle>
+    <template #closeIcon>
+      <img class="" src="@/assets/icons/closeIcon.svg" />
+    </template>
+    <p style="margin-bottom: 0;">The selected network is inconsistent with the network selected in the wallet plugin. </p>
+    <p>To complete the transaction deployment properly, please switch to the desired network in the wallet plugin.</p>
+    <div class="text-center">
+      <a-button class="done-btn" style="margin-top: 15px;" @click="handleAptosNetwork">Done</a-button>
+    </div>
+  </a-modal>
+
 
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="cancelStarkNetModal">
   </starkNetModal>
-
-
 </template>
 <script lang='ts' setup>
-import { reactive, ref, onMounted } from "vue";
-import type { FormInstance } from 'ant-design-vue';
-import { message } from "ant-design-vue";
-import { useRouter } from "vue-router";
+import {onMounted, reactive, ref} from "vue";
+import type {FormInstance} from 'ant-design-vue';
+import {message} from "ant-design-vue";
+import {useRoute, useRouter} from "vue-router";
 import * as ethers from "ethers";
 import YAML from "yaml";
-import Breadcrumb from "../components/Breadcrumb.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 import SelectWallet from "./components/SelectWallet.vue";
 import Wallets from "@/components/Wallets.vue";
-import starkNetModal from "../components/starkNetModal.vue";
-import { useThemeStore } from "@/stores/useTheme";
-import { useI18n } from 'vue-i18n';
-import { apiGetProjectsContract, apiGetProjectsVersions } from "@/apis/workFlows";
-import { apiProjectsContractDeploy, apiGetProjectsDetail, apiContractDeployId } from "@/apis/projects";
-import { Provider, Account, Contract, ec } from "starknet";
+import {useThemeStore} from "@/stores/useTheme";
+import {useDeployAddressStore} from "@/stores/useDeployAddress";
+import {useI18n} from 'vue-i18n';
+import {apiGetProjectsContract, apiGetProjectsVersions} from "@/apis/workFlows";
+import {apiGetProjectsDetail, apiProjectsContractDeploy, apiProjectsContractDeploying} from "@/apis/projects";
+import {connect} from "@argent/get-starknet";
+import {PetraWallet} from "petra-plugin-wallet-adapter";
+import {WalletCore} from '@aptos-labs/wallet-adapter-core'
+import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
+import {sleep} from "@/utils/tool"
+import {type Chain, ChainList, getChain} from "@/utils/chainlist"
+
+import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
+
+import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
 
 const formRef = ref<FormInstance>();
 const modalFormRef = ref<FormInstance>();
 const theme = useThemeStore();
+const deployAddress = useDeployAddressStore();
 const router = useRouter();
+const route = useRoute()
 const { t } = useI18n()
 
 const frameType = ref(1);
 const argsMap = new Map();
 const deployTxHash = ref('');
 const starknetHashData = reactive({});
-// const starknetHashData = reactive(JSON.parse(localStorage.getItem('starknetHashData'))) || reactive({});
 const testData = ref({});
 const queryParams = reactive({
   id: router.currentRoute.value.params?.id,
@@ -135,11 +149,33 @@ const selectedIndex = ref(0);
 const selectId = ref();
 const showWallets = ref();
 const versionData = reactive([]);
-const chainData = reactive(['Ethereum']);
-const networkData = reactive([{ name: 'Testnet/Goerli', id: '5' }, { name: 'mainnet', id: '1' }]);
-const projectsContractData = reactive([]);
+const chainData = reactive<any>([]);
+const networkData = ref<any>([{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }])
+const projectsContractData = reactive<any>([]);
 const projectName = ref('');
 const abiInputData = ref([]);
+const chainName = ref('');
+const rpcUrl = ref('');
+const currencySymbol = ref('');
+
+// aptos
+const arr = [new PetraWallet()]
+const aptosWallet: any = new WalletCore(arr)
+const petraAddress = ref('')
+const petraMv = ref<any>([])
+const petraBsc = ref<any>([])
+const aptosContractId = ref<any>([])
+const aptosNetwork = ref('')
+const aptosNetworkVisible = ref(false)
+const abiFn = ref<any>()
+
+const breadCrumbInfo = ref<any>([])
+
+// sui
+const suiWallet = new WalletStandardAdapterProvider()
+
+const workflowsDetailsData = ref<any>({})
+
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -153,6 +189,165 @@ const starknetVisible = ref(false);
 const hasDeclareHash = ref(false);
 const hasDeployHash = ref(false);
 
+const starkWareData = reactive({});
+
+const connectWallet = async () => {
+  const windowStarknet = await connect({
+    include: ["argentX"],
+  })
+  await windowStarknet?.enable({ starknetVersion: "v4" })
+  return windowStarknet
+}
+
+const deployContract = async (item: any) => {
+  loading.value = true;
+  try {
+    // const classHash = '0x399998c787e0a063c3ac1d2abac084dcbe09954e3b156d53a8c43a02aa27d35';
+    // const walletData = await connectWallet();
+    const response = await starkWareData.account.deploy({
+      classHash: item.byteCode,
+      constructorCalldata: []
+    })
+    setProjectsContractDeploy('', response.contract_address[0], item.id,response.transaction_hash)
+
+    const receiptResponsePromise = await starkWareData.account.waitForTransaction(response.transaction_hash, undefined, ['ACCEPTED_ON_L2'])
+    deployAddress.setDeployAddress(starkWareData)
+    localStorage.setItem('deployAddressData', JSON.stringify(starkWareData))
+    if (receiptResponsePromise.status === 'ACCEPTED_ON_L2') {
+      // contract_address.value = response.contract_address[0]
+      router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+    } else {
+      loading.value = false
+    }
+  } catch (err: any) {
+    loading.value = false
+    console.log('err:', err)
+  }
+};
+
+const deploySuiContract = async (item: any)=> {
+
+  loading.value = true
+  console.log('deploy sui')
+
+  const wallets = suiWallet.get()
+  if(wallets.length === 0){
+    message.error(t('common.operateFail'));
+    loading.value = false
+    return
+  }
+
+  const wallet = wallets[0]
+  try {
+    await wallet.connect()
+  }catch (e) {
+    message.error("refuse connect wallet")
+    loading.value = false
+    return
+  }
+  console.log(wallet)
+
+  let accountAddress = ""
+  let network = ""
+  try {
+    const accounts = await wallet.getAccounts()
+    if( accounts.length === 0 ){
+      message.error("get wallet accounts fail")
+      loading.value = false
+      return
+    }
+    accountAddress = accounts[0].address
+    network = accounts[0].chains[0]
+    console.log("network: ",network)
+
+    if (network !== formState.network){
+      message.error("selected network does not match Sui wallet ")
+      loading.value = false
+      return
+    }
+  }catch (e) {
+    message.error("get wallet accounts fail")
+    loading.value = false
+    return
+  }
+
+  const compiledModulesAndDeps = JSON.parse(item.byteCode)
+  console.log(compiledModulesAndDeps)
+  const tx = new TransactionBlock();
+  const [upgradeCap] = tx.publish(
+      compiledModulesAndDeps.modules.map((m: any) => Array.from(fromB64(m))),
+      compiledModulesAndDeps.dependencies.map((addr: any) =>
+          normalizeSuiObjectId(addr),
+      ),
+  );
+
+
+  tx.transferObjects([upgradeCap], tx.pure(accountAddress));
+  let digest = ""
+  try{
+    console.log('submit tx')
+    const result = await wallet.signAndExecuteTransactionBlock({ transactionBlock: tx });
+    console.log('submit tx result: ', result)
+    digest = result.digest
+  }catch (e) {
+    loading.value = false
+    return
+  }
+  console.log('submit tx success')
+
+  message.loading("submit tx success, checking transaction ... ")
+
+
+  let rpc = undefined
+
+  // get deployed module address
+  if (network === 'sui:devnet'){
+    rpc  = new JsonRpcProvider()
+  }else{
+    rpc = new JsonRpcProvider(testnetConnection)
+  }
+
+
+  let txn = undefined
+  for (let i = 0 ;i< 30; i++){
+    await sleep(1000)
+    try{
+      txn = await rpc.getTransactionBlock({
+        digest: digest,
+        // only fetch the effects field
+        options: {showEffects: true, showObjectChanges: true},
+      })
+
+      break
+    }catch (e){
+
+    }
+  }
+
+  if (txn === undefined){
+    message.error("unable to check transaction")
+    return
+  }
+
+  console.log("checkTransaction result: ",txn)
+  if( txn != undefined && txn.objectChanges != undefined){
+    const publishChange = txn.objectChanges.find(t => {
+      return t.type === 'published'
+    })
+    if (publishChange === undefined){
+      message.error("cannot get deployed module address")
+      return
+    }
+
+    await setProjectsContractDeploy('',publishChange.packageId,item.id,digest)
+
+  }
+
+  loading.value = false
+
+  router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+}
+
 // 查询版本号
 const getVersion = async () => {
   const { data } = await apiGetProjectsVersions({ id: queryParams.id });
@@ -162,15 +357,18 @@ const getVersion = async () => {
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
+    console.log(item);
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
-    if (typeof (item) === 'object') {
-      item.abiInfoData = [YAML.parse(item.abiInfo)];
-    } else {
-      item.abiInfoData = YAML.parse(item.abiInfo);
+    item.abiInfoData = YAML.parse(item.abiInfo);
+    petraMv.value.push(item.aptosMv);
+    petraBsc.value.push(item.byteCode)
+    aptosContractId.value.push(item.id)
+    // aptos abi不走之前的那一套
+    if (frameType.value !== 2 && frameType.value !== 5) {
+      setAbiInfo(item);
     }
-    setAbiInfo(item);
   })
   Object.assign(projectsContractData, data)
 }
@@ -183,20 +381,21 @@ const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contra
   const provider = new ethers.providers.Web3Provider(ethereum);
   const accounts = await provider.send('eth_requestAccounts', []);
   const factory = new ethers.ContractFactory(
-    abi,
-    bytecode,
-    provider.getSigner()
+      abi,
+      bytecode,
+      provider.getSigner()
   );
   try {
     let value = argsMapData || {}
     const contract = await factory.deploy(...Object.values(value));
+    setProjectsContractDeployIng(ethereum.chainId,contract.address, contractId, contract.deployTransaction.hash).then(() => {})
     await contract.deployed();
-    // console.log(contract, 'contract')
-    return setProjectsContractDeploy(ethereum.chinaId, contract.address, contractId)
+    return setProjectsContractDeploy(ethereum.chainId, contract.address, contractId,contract.deployTransaction.hash)
   } catch (errorInfo) {
     // 失败的处理
-    // console.log(errorInfo, 'errorInfo')
     message.error(t('common.operateFail'));
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -205,144 +404,226 @@ const cancelStarkNetModal = () => {
   hasDeclareHash.value = false;
 }
 
-const contractStarkNetFactory = (item: any) => {
+const switchToChain = async (chainId: string) => {
   loading.value = true;
-  starknetVisible.value = true;
-  setProjectsStarkNetDeploy(item);
-}
-
-const setProjectsStarkNetDeploy = async (item: any) => {
-  const network: any = networkData.find(item => { return item.id === formState.network });
-  const queryJson = {
-    contractId: item.id,
-    id: queryParams.id,
-    projectId: queryParams.id,
-    version: formState.version,
-    network: network.name,
-  }
-
-  try {
-    const { data } = await apiProjectsContractDeploy(queryJson)
-    getDeployHashById(data)
-  } catch (err: any) {
-    loading.value = false;
-    starknetVisible.value = false;
-    console.log('err:', err)
-  }
-};
-
-
-const getDeployHashById = async (id: number) => {
-  loading.value = true;
-  starknetVisible.value = true;
-  try {
-    const { data } = await apiContractDeployId(queryParams.id, 33);
-    // console.log(data, 'data')
-    deployTxHash.value = data.deployTxHash;
-    starknetHashData[queryParams.id] = { 'deployTxHash': data.deployTxHash, deploySuccess: false };
-    localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
-
-    const networkItem: any = networkData.find(item => { return item.id === formState.network });
-    const provider = new Provider({ sequencer: { network: networkItem.newokName } });
-    const privateKey0 = "0xe3e70682c2094cac629f6fbed82c0710";
-    const account0Address = "0x598525353e7d05617e2db032c36e855aea177e007979595d9f467c89c24c2d5";
-    const starkKeyPair0 = ec.getKeyPair(privateKey0);
-    const account0 = new Account(provider, account0Address, starkKeyPair0);
-
-    const txReceipt = await account0.waitForTransaction(data.deployTxHash, undefined, [
-      'ACCEPTED_ON_L2',
-    ]);
-    const deployResponse = await parseUDCEvent(txReceipt);
-    console.log(deployResponse, 'deployResponse')
-    if (deployResponse) {
-      starknetHashData[queryParams.id] = { 'deployTxHash': data.deployTxHash, deploySuccess: true };
-    } else {
-      starknetHashData[queryParams.id] = { 'deployTxHash': data.deployTxHash, deploySuccess: false };
-    }
-    localStorage.setItem('starknetHashData', JSON.stringify(starknetHashData))
-
-
-  } catch (err: any) {
-    loading.value = false;
-    starknetVisible.value = false;
-    console.log('err:', err)
-  } finally {
-    loading.value = false;
-    starknetVisible.value = false;
-  }
-}
-
-const parseUDCEvent = (txReceipt: any) => {
-  if (!txReceipt.events) {
-    throw new Error('UDC emited event is empty');
-  }
-  const address = '0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf'
-  const event = txReceipt.events.find(
-    (it: any) => cleanHex(it.from_address) === cleanHex(address)
-  ) || {
-    data: [],
-  };
-  return {
-    transaction_hash: txReceipt.transaction_hash,
-    contract_address: event.data[0],
-    address: event.data[0],
-    deployer: event.data[1],
-    unique: event.data[2],
-    classHash: event.data[3],
-    calldata_len: event.data[4],
-    calldata: event.data.slice(5, 5 + parseInt(event.data[4], 16)),
-    salt: event.data[event.data.length - 1],
-  };
-}
-
-const cleanHex = (hex: string) => {
-  hex.toLowerCase().replace(/^(0x)0+/, '$1')
-}
-
-const switchToChain = (chainId: string) => {
   window.ethereum && window.ethereum.request({
     method: "wallet_switchEthereumChain",
-    params: [{ chainId: `0x${chainId}` }],
+    params: [{ chainId: chainId }],
   }).then((res: any) => {
-    message.success('success')
-    console.info(res, '成功')
+    loading.value = false;
+    message.success('success');
+    // console.info(res, '成功')
   }).catch((err: any) => {
-    message.success('faild')
-    console.info(err, 'err')
+    loading.value = false
+    if (err.code === 4902) {
+      message.info('Please add the network first');
+      addToChain(chainId)
+    } else {
+      message.error('faild')
+    }
   })
 }
 
-const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number) => {
-  const network: any = networkData.find(item => { return item.id === formState.network })
+const addToChain = (chainId: string) => {
+
+    let chain = getChain(chainId)
+    if(chain === undefined ){
+        message.error(`cannot add chain: ${chainId}`)
+        return
+    }
+
+  window.ethereum && window.ethereum.request({
+    method: "wallet_addEthereumChain",
+    params: [
+      {
+        "chainId": chain.id,
+        "chainName": chain.name,
+        "rpcUrls": [chain.rpcUrl],
+        // "blockExplorerUrls":  [chain.blockExplorerUrl],
+        "nativeCurrency": {
+          "name": chain.symbol,
+          "symbol": chain.symbol,
+            "decimals": 18
+        }
+      },
+    ],
+  }).then((res: any) => {
+    message.info('successfully added')
+    console.log(res)
+  }).catch((err: any) => {
+    console.log(err.code, 'code')
+    if (err.code === 4001) {
+      message.info('Cancel adding a network')
+    } else {
+      message.info('faild')
+    }
+    console.log(err)
+  }).finally(() => {
+    loading.value = false;
+    message.success('success')
+  }).catch((err: any) => {
+    message.success('faild')
+  })
+}
+
+const setProjectsContractDeployIng = async (chainId: string, address: string, contractId: number,deployTxHash: string) => {
+
+    let chain = getChain(chainId)
+    if(chain == undefined ){
+        console.error(`cannot get chain ${chainId}`)
+        return
+    }
+
+    const param = {
+        contractId: contractId,
+        projectId: queryParams.id,
+        version: formState.version,
+        network: chain.name,
+        address: address,
+        deployTxHash: deployTxHash,
+        rpcUrl: chain.rpcUrl
+    }
+    const { data } = await apiProjectsContractDeploying(param)
+    return data
+}
+
+const setProjectsContractDeploy = async (chinaId: string, address: string, contractId: number,deployTxHash: string) => {
+  const network: any = networkData.value.find(item => { return item.id === formState.network })
   const queryJson = {
-    id: queryParams.id,
-    contractId: contractId,
-    projectId: queryParams.id,
-    version: formState.version,
-    network: network.name,
-    address: address,
+      id: queryParams.id,
+      contractId: contractId,
+      projectId: queryParams.id,
+      version: formState.version,
+      network: network.name,
+      address: address,
+      deployTxHash: deployTxHash
   }
   const { data } = await apiProjectsContractDeploy(queryJson)
   return data
 }
 
+// aptos 的网络切换
+const handleAptosNetwork = () => {
+  aptosNetworkVisible.value = false
+}
+
+// aptos petra
+const deploy = () => {
+  aptosWallet.connect("Petra").then(async () => {
+    petraAddress.value = aptosWallet.account.address
+    console.log('petra connected', aptosWallet.network, formState.network)
+    aptosNetwork.value = aptosWallet.network.name;
+    // aptos 的network处理
+    if (aptosNetwork.value != formState.network) {
+      aptosNetworkVisible.value = true
+    } else {
+      const codeSerializer = new BCS.Serializer()
+      let modules = []
+      if (petraMv.value.length > 0) {
+        for (const valueKey in petraMv.value) {
+          let data = new TxnBuilderTypes.Module(
+              new HexString(
+                  // eslint-disable-next-line max-len
+                  petraMv.value[valueKey],
+              ).toUint8Array(),
+          )
+          modules.push(data)
+        }
+      }
+      BCS.serializeVector(modules, codeSerializer)
+      const payload: any = new TxnBuilderTypes.TransactionPayloadEntryFunction(
+          TxnBuilderTypes.EntryFunction.natural(
+              "0x1::code",
+              "publish_package_txn",
+              [],
+              [BCS.bcsSerializeBytes(new HexString(petraBsc.value[0]).toUint8Array()), codeSerializer.getBytes()],
+          ),
+      );
+      await aptosWallet.signAndSubmitTransaction(payload).then(async (tx: any) => {
+        console.log('send:', tx)
+        // NODE_URL 应该根据网络动态切换
+        const NODE_URL = `https://fullnode.${aptosNetwork.value}.aptoslabs.com`;
+        const petraClient = new AptosClient(NODE_URL);
+        const getaAbiRes: any = await petraClient.getTransactionByHash(tx.hash)
+        console.log('getaAbiRes', getaAbiRes)
+        // abiFn.value = getaAbiRes?.changes && getaAbiRes?.changes[0]?.data?.abi
+        abiFn.value = getaAbiRes
+      })
+      for (const payloadKey in aptosContractId.value) {
+        console.log(projectsContractData[payloadKey]);
+        console.log(aptosContractId.value[payloadKey]);
+        const queryJson: any = {
+          id: queryParams.id,
+          contractId: aptosContractId.value[payloadKey],
+          projectId: queryParams.id,
+          version: formState.version,
+          network: formState.network,
+          address: petraAddress.value,
+        }
+        const abi = getAptosAbi(projectsContractData[payloadKey].name)
+        if (abi) {
+          queryJson.abiInfo = JSON.stringify(abi) //aptos 独有的参数
+        }
+        const result = await apiProjectsContractDeploy(queryJson)
+        if (parseInt(payloadKey) == aptosContractId.value.length -1 ) {
+          if (result.code === 200 && frameType.value === 2) {
+            router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
+          }
+        }
+      }
+    }
+
+  }).catch((error: any) => {
+    console.log('petra failed', error)
+  })
+}
+const getAptosAbi = (name:string) => {
+  let abi = ''
+  if (abiFn.value?.changes.length> 0) {
+    for (const changesKey in abiFn.value?.changes) {
+      if (name == abiFn.value?.changes[changesKey]?.data?.abi?.name) {
+        abi = abiFn.value?.changes[changesKey]?.data?.abi
+        break
+      }
+    }
+  }
+  return abi
+}
 const deployClick = async () => {
+  // frameType 1.evm 2.aptos 3.ton 4.starknet,5: sui
   if (frameType.value === 4) {
     try {
       const values = await formRef?.value.validateFields();
       projectsContractData.map((item: any) => {
-        contractStarkNetFactory(item)
+        deployContract(item)
       })
     } catch (err: any) {
       // 表单校验
       console.log('Failed:', err);
     }
+  } else if (frameType.value === 2) { //aptos
+    try {
+      await formRef?.value.validateFields();
+      deploy()
+    } catch (error: any) {
+      console.log('aptos error', error)
+    }
+  }else if (frameType.value === 5){ // sui
+    try {
+      await formRef?.value.validateFields();
+      projectsContractData.map((item: any) => {
+        deploySuiContract(item)
+      })
 
+    } catch (error: any) {
+      console.log('aptos error', error)
+    }
   } else {
     // 有值说明已连接钱包
-    const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
-    if (isWalletAccount == null || isWalletAccount === '[]') {
-      // visible.value = true
+    // const isWalletAccount = window.localStorage.getItem("alreadyConnectedWallets");
+    // if (isWalletAccount == null || isWalletAccount === '[]') {
+    const walletAccount = window.localStorage.getItem("walletAccount");
+    if(walletAccount === undefined || walletAccount === null){
       showWallets.value?.onClickConnect();
       // setWalletBtn(true)
     } else {
@@ -352,7 +633,7 @@ const deployClick = async () => {
         // const modalValues = await modalFormRef?.value.validateFields();
         const { nameData } = formState;
         const { ethereum } = window;
-        const network = `0x${formState.network}`
+        const network = formState.network
         if (ethereum.chainId !== network) {
           switchToChain(formState.network)
         } else {
@@ -362,9 +643,12 @@ const deployClick = async () => {
       } catch (errorInfo) {
         // 表单校验
         console.log('Failed:', errorInfo);
+        loading.value = false;
       }
     }
   }
+
+  localStorage.setItem("lastDeployChain",JSON.stringify({"frameType": frameType.value,"chain": formState.chain, "network": formState.network}))
 }
 
 
@@ -385,6 +669,7 @@ const setContractFactory = async (nameData: any) => {
 }
 
 const setAbiInfo = (selectItem: any) => {
+  // console.log(selectItem, 'kk')
   const constructorData = selectItem.abiInfoData.find((item: any) => { return item.type === 'constructor' })
   if (constructorData && constructorData.inputs.length > 0) {
     selectItem.hasArgument = true;
@@ -433,8 +718,40 @@ const cancelModal = (val: boolean) => {
 }
 
 const changeNetwork = (val: any) => {
-  console.log(val, 'val')
+  const data = networkData.value.find((item: any) => { return item.id === val });
+  chainName.value = data.networkName;
+  rpcUrl.value = data.url;
+  currencySymbol.value = currencySymbol;
+  console.log('chainName:',chainName.value)
+  console.log('rpcUrl:', rpcUrl.value)
 };
+
+const changeChain = (val: string) => {
+  formState.network = undefined;
+
+  // ethereum category
+  if(frameType.value === 1) {
+      networkData.value = ChainList.filter((t: Chain) => {
+          return t.category === val
+      })
+  }
+
+  // sui
+  if(frameType.value === 5 && val === 'Sui'){
+      networkData.value = [{
+          name: 'Devnet',
+          id: 'sui:devnet',
+          url: 'https://explorer-rpc.devnet.sui.io/',
+          networkName: 'Devnet'
+      },{
+          name: 'Testnet',
+          id: 'sui:testnet',
+          url: 'https://explorer-rpc.testnet.sui.io/',
+          networkName: 'Testnet'
+      }]
+  }
+
+}
 
 const changeVersion = (val: string) => {
   queryParams.version = val
@@ -444,22 +761,76 @@ const changeVersion = (val: string) => {
 const getProjectsDetail = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryParams.id);
+    Object.assign(workflowsDetailsData,data)
     frameType.value = data.frameType;
-    if (frameType.value === 4) {
-      Object.assign(chainData, ['SratkWare'])
-      Object.assign(networkData, [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }])
-
+    switch (frameType.value) {
+      case 1:
+        Object.assign(chainData, ['Ethereum', 'Scroll', 'Polygon', 'BNB Smart Chain','Arbitrum','IRIShub','Filecoin','Linea','Base','Conflux','ZetaChain'])
+        // { name: 'Hamster Dev', id: '501' }
+        networkData.value = [{ name: 'Ethereum/Mainnet', id: '1' }, { name: 'Ethereum/Goerli', id: '5' }, { name: 'Ethereum/Sepolia', id: 'aa36a7' }]
+        break;
+      case 2:
+        // id 是胡扯的方便存储和使用，没有找到具体的和钱包网络名称的映射关系
+        Object.assign(chainData, ['Aptos'])
+        networkData.value = [{ name: 'Mainnet', id: 'Mainnet' }, { name: 'Testnet', id: 'Testnet' }, { name: 'Devnet', id: 'Devnet' }]
+        break;
+      case 3:
+        break;
+      case 4:
+        Object.assign(chainData, ['Starknet'])
+        networkData.value = [{ name: 'Mainnet', id: '1', networkName: 'mainnet-alpha' }, { name: 'Testnet', id: '2', networkName: 'goerli-alpha' }, { name: 'Testnet2', id: '3', networkName: 'goerli-alpha-2' }]
+        const data = await connectWallet();
+        Object.assign(starkWareData, data)
+        break;
+      case 5:
+        Object.assign(chainData, ['Sui'])
+        networkData.value= [{name: 'Devnet', id: 'devnet', networkName: 'Devnet'},{name: 'Testnet',id:'testnet',networkName: 'Testnet'}]
+        break;
+      default: break;
     }
   } catch (err: any) {
 
   }
 }
 
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  localStorage.setItem('deplayPath',route.fullPath)
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:'Deploy',
+      path:''
+    },
+  ]
+}
 onMounted(async () => {
+  localStorage.removeItem('deplayPath')
   projectName.value = localStorage.getItem("projectName") || '';
   getVersion()
   await getProjectsDetail();
   await getProjectsContract()
+  await judgeOrigin()
+  let lastDeployChain = localStorage.getItem("lastDeployChain")
+  if(lastDeployChain) {
+      try {
+          let json = JSON.parse(lastDeployChain)
+          if (frameType.value === json.frameType) {
+              formState.chain = json.chain
+              changeChain(json.chain)
+              formState.network = json.network
+          }
+      } catch (e) {
+          console.error(e)
+      }
+  }
 })
 
 </script>

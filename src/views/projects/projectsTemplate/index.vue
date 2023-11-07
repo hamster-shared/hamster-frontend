@@ -1,30 +1,19 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <div class="mb-[32px] flex items-center">
-      <div class="text-[24px] font-bold cursor-pointer flex items-center" @click="goBack">
-        <img src="@/assets/icons/back-white.svg" class="h-[24px] dark:hidden mr-2" />
-        <img src="@/assets/icons/back-dark.svg" class="h-[24px] hidden dark:inline-block mr-2" />
-        back
-      </div>
-      <div class="ml-4">
-        <img src="@/assets/icons/Line-white.svg" class="h-[16px] dark:hidden" />
-        <img src="@/assets/icons/Line-dark.svg" class="h-[16px] hidden dark:inline-block" />
-      </div>
-      <div class="ml-4 text-[24px] font-bold">Select template</div>
-    </div>
+    <bread-crumb :routes="breadCrumbInfo"/>
 
-    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2'">
+    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2' || params.type === '3'">
     </FrontendTemplate>
     <div v-if="params.type === '1'">
       <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
         <div v-for="(items, index) in templatesCategory" :key="index">
-          <div v-if="items.templatesList !== null" class="text-[24px] font-bold" :class="{ 'mt-[32px]': index != 0 }">{{
+          <div v-if="items.templatesList !== null" class="text-[24px] font-bold">{{
             items.name
           }}</div>
           <div v-if="items.templatesList !== null" class="text-[#73706E] dark:text-[#E0DBD2] mb-[16px]">{{
             items.description
           }}</div>
-          <div class="grid grid-cols-3 gap-4">
+          <div v-if="items.templatesList !== null" class="grid grid-cols-3 gap-4" :class="{ 'mb-[32px]': index < templatesCategory.length - 1 }">
             <div v-for="(item, index2) in items.templatesList" :key="index2"
               class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer"
               @click="goDetail(item.id)">
@@ -40,6 +29,8 @@
                   <img src="@/assets/icons/audi-white.svg" class="h-[20px] dark:hidden" />
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
+                  <!-- Middleware Button -->
+                  <button class="chainlink" v-if="item.labelDisplay">{{item.labelDisplay}}</button>
                 </div>
               </div>
             </div>
@@ -50,7 +41,7 @@
         </div>
       </div>
 
-      <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
+      <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]" v-if="frameTypeInfo == '1'">
         <div class="text-[24px] font-bold mb-[16px]">
           Didn't find what you're looking for?<br />
           Choose standard contract to build your own!
@@ -63,16 +54,16 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> 
   </div>
 </template>
 <script lang='ts' setup>
 import { onMounted, reactive, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import NoData from "@/components/NoData.vue";
 import { apiTemplatesCategory, apiTemplatesCategoryById } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import FrontendTemplate from "./components/FrontendTemplate.vue";
+import BreadCrumb from "@/components/BreadCrumb.vue";
 const theme = useThemeStore()
 const { params } = useRoute();
 
@@ -89,24 +80,43 @@ const templateBuild = reactive([
   { name: "ERC721", description: "real estate, voting rights, or collectibles,", },
   { name: "ERC1155", description: "Create a fungibility-agnostic and gas-efficient token contract.", },
 ]);
+const breadCrumbInfo = ref<any>([])
 
 onMounted(() => {
   getTemplatesCategory();
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Create Project',
+      path:'/projects/create'
+    },
+    {
+      breadcrumbName:'Template',
+      path:''
+    },
+  ]
 })
 
+const frameTypeInfo = ref()
 const getTemplatesCategory = async () => {
   try {
     const { data } = await apiTemplatesCategory(params.type);
     templatesCategory.value = data;
     const createFormData: any = JSON.parse(localStorage.getItem('createFormData')) || {};
     const frameType = createFormData.type === '2' ? 0 : createFormData.frameType;
+    let deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
+    // 特殊处理node的模板
+    if(params.type==='3'){
+      deployType = '2'
+    }
+    frameTypeInfo.value = frameType
     templatesCategory.value.forEach(async (element, index) => {
-      const { data } = await apiTemplatesCategoryById(element.id, frameType);
+      const { data } = await apiTemplatesCategoryById(element.id, frameType, deployType);
 
       templatesCategory.value[index]['templatesList'] = data;
     });
   } catch (error: any) {
     console.log("erro:", error)
+    
   } finally {
     // loading.value = false;
   }
@@ -121,6 +131,7 @@ const goStandard = (name: string) => {
 const goBack = () => {
   router.back();
 }
+
 </script>
 <style lang='less' scoped>
 .white-css .border-box {
@@ -138,5 +149,12 @@ const goBack = () => {
   white-space: nowrap;
   /*文本不自动换行*/
   overflow: hidden;
+}
+.chainlink{
+  margin-left: 10px;
+  border: none;
+  border-radius: 10px;
+  background:#E2B578;
+  color: #fff;
 }
 </style>

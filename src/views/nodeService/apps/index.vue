@@ -29,7 +29,7 @@
           {{ dayjs( record.DaysOnHamster).diff(new Date(),'day') > 1 ? 'Days' : 'Day' }}
         </template>
         <template v-if="column.dataIndex === 'action'">
-          <div class="text-[#E2B578] cursor-pointer" @click="showView(record)">View API Key</div>
+          <div class="open-link-css cursor-pointer" @click="showView(record)">View API Key</div>
         </template>
       </template>
     </a-table>
@@ -37,9 +37,9 @@
   <CreateApp :isApps="true" :showCreate="showCreate" @setShowCreate="showCreate=false" @getApps="getApps" @setPage="setPage" />
   <a-modal v-model:visible="visibleView" :footer="null" :closable="false" width="600px">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Connent to Hamster</div>
-    <a-form :model="appInfo" layout="vertical">
+    <a-form class="modal-form" :model="appInfo" layout="vertical">
       <a-form-item label="API KEY" name="api_key" >
-        <a-input disabled="true" v-model:value="appInfo.api_key">
+        <a-input class="modal-input" disabled="true" v-model:value="appInfo.api_key">
           <template #suffix>
             <img @click="copyInfo(appInfo.api_key)"
               src="@/assets/icons/copy.svg"
@@ -49,7 +49,7 @@
         </a-input>
       </a-form-item>
       <a-form-item label="HTTPS" name="http_link" >
-        <a-input disabled="true" v-model:value="appInfo.http_link">
+        <a-input class="modal-input" disabled="true" v-model:value="appInfo.http_link">
           <template #suffix>
             <img @click="copyInfo(appInfo.http_link)"
               src="@/assets/icons/copy.svg"
@@ -59,7 +59,7 @@
         </a-input>
       </a-form-item>
       <a-form-item label="WEBSOCKETS" name="websocket_link" >
-        <a-input disabled="true" v-model:value="appInfo.websocket_link">
+        <a-input class="modal-input" disabled="true" v-model:value="appInfo.websocket_link">
           <template #suffix>
             <img @click="copyInfo(appInfo.websocket_link)"
               src="@/assets/icons/copy.svg"
@@ -333,7 +333,7 @@ const setCodeHeight = (codeList: any[]) => {
 :deep(.ant-input-affix-wrapper-disabled){
   background-color: transparent;
   border-color: #EBEBEB;
-  color: #BBBAB9;
+  // color: #BBBAB9;
 }
 :deep(.ant-btn-primary){
   width: 120px;

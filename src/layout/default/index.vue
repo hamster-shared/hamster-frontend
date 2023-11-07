@@ -64,3 +64,36 @@ const layoutClass = computed(() => {
   border: 1px solid transparent;
 }
 </style>
+<style lang="less">
+
+.open-link-css{
+  color: #E2B578;
+  .svg-icon {
+    color: #E2B578;
+  }
+  &:hover{
+    color: #E4C08F;
+    .svg-icon {
+      color: #E4C08F;
+    }
+  }
+  &:active{
+    color: #CE9C58;
+    .svg-icon {
+      color: #CE9C58;
+    }
+  }
+}
+
+.dfx-css{
+  background: rgba(226,181,120,0.1);
+  border-radius: 0px 8px 0px 8px;
+  color: #E2B578;
+  font-size: 12px;
+  line-height: 24px;
+  width: 66px;
+  height: 24px;
+  text-align: center;
+}
+
+</style>

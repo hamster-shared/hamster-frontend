@@ -1,46 +1,59 @@
 <template>
   <div class="dark:text-white text-[#121211]">
     <div class="flex justify-between mb-[24px]">
-      <Breadcrumb :currentName="currentName" :isClick="false"></Breadcrumb>
+      <Breadcrumb :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" :frameType="workflowsDetailsData.frameType"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
-      <!-- contract -->
-      <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="checkReportData"></CheckReport>
-      <ContractList v-show="queryJson.type === '2'" :contractListData="contractListData"></ContractList>
+      <!-- frameType == '1' && queryJson.type === '1',也就是evm 的 check 走统计表格，其它情况走原来的流水线 -->
+      <CheckResult v-if="workflowsDetailsData.frameType == 1 && queryJson.type === '1'" :currentName="currentName"></CheckResult>
+      <div v-else>
+        <CheckReport v-if="queryJson.type === '1' && checkReportData.length" :projectType="queryJson.projectType"
+          :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
+        <GasUsageReport :gasUsageReportData="gasUsageReportData"
+          v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
+        <ContractList v-if="queryJson.type === '2' && workflowsDetailsData.frameType != 0" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
+      </div>
     </div>
     <div v-else>
       <CheckReport v-show="queryJson.type === '1'" :projectType="queryJson.projectType"
-        :checkReportData="frontendReportData"></CheckReport>
-      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"></ArtifactList>
-      <Deployment v-show="queryJson.type === '3'" :packageInfo="packageInfo"
-        :workflowsDetailsData="workflowsDetailsData"></Deployment>
+        :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
+      <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
+        :deployType="workflowsDetailsData.deployType"></ArtifactList>
+      <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type" :projectType="queryJson.projectType">
+      </Deployment>
     </div>
+    <!-- 只有合约的 icp 才在deploy详情页展示 罐列表 -->
+    <Canisters v-if="queryJson.type === '3' && workflowsDetailsData.frameType == 7" :detailId="id" ></Canisters>
+    <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { apiGetProjectsDetail, apiProjectsWorkflowsStop } from "@/apis/projects";
 import { apiGetWorkflowsDetail, apiGetWorkFlowsContract, apiGetWorkFlowsReport, apiGetDetailFrontendReport, apiGetPackagesList, apiGetDeployInfo } from "@/apis/workFlows";
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n'
 import YAML from "yaml";
-import Breadcrumb from '../components/Breadcrumb.vue';
+import Breadcrumb from '@/components/BreadCrumb.vue';
 import WorkflowsInfo from './components/WorkflowsInfo.vue';
 import WorkflowsProcess from './components/WorkflowsProcess.vue';
 import CheckReport from './components/CheckReport.vue';
 import ContractList from './components/ContractList.vue';
 import ArtifactList from './components/ArtifactList.vue';
 import Deployment from './components/Deployment.vue';
+import GasUsageReport from './components/GasUsageReport.vue';
+import AiAnalysis from './components/AiAnalysis.vue';
+import CheckResult from './components/CheckResult.vue'
+import Canisters from '../projectsListDetails/components/Canisters.vue'
 
 const { t } = useI18n()
-const { params } = useRoute();
+const { params,query } = useRoute();
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -48,12 +61,15 @@ const queryJson = reactive({
   type: params.type,
   projectType: params.projectType,
 })
-
+const nodeType = query.type
 const detailTimer = ref();
 const title = ref('');
 const currentName = ref('');
 const inRunning = ref(true);
 const processData = ref([]);
+const openAiInfo = ref({})
+
+const gasUsageReportData = reactive([])
 const frontendReportData = reactive([]);
 const checkReportData = reactive([]);
 const contractListData = reactive([]);
@@ -68,7 +84,19 @@ const workflowsDetailsData = reactive({
   workflowsId: params.workflowsId,
   packageId: 0,
   execNumber: 0,
+  frameType: 0,
+  deployType: 0,
+  checkStatus: 0,
+  name:'',
+  type:0,
+  id:0
 });
+const breadCrumbInfo = ref<any>([])
+const id:any = params.id
+
+const isShowAiAnalysis = computed(() => {
+  return [5, 4, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
+})
 
 const getWorkflowsDetails = async () => {
   const { data } = await apiGetWorkflowsDetail(queryJson)
@@ -89,11 +117,13 @@ const getWorkflowsDetails = async () => {
   } else {
     clearTimeout(detailTimer.value);
     loadInfo();
+    getProjectsDetailData();
   }
 }
 
 const loadInfo = () => {
-  if (queryJson.projectType === '2') {
+  // 前端和Polkdot都走package接口
+  if (queryJson.projectType === '2' || queryJson.projectType === '3') {
     queryJson.type === '1' ? getDetailFrontendReport() : getWorkflowPackage();
   } else {
     queryJson.type === '1' ? getCheckReport() : getContractList();
@@ -108,21 +138,54 @@ const getContractList = async () => {
 const getCheckReport = async () => {
   let issue = 0;
   const list: any = []
+  const listGas: any = [];
   const { data } = await apiGetWorkFlowsReport(queryJson);
-  data.map((item: any) => {
-    if (item.checkTool !== 'sol-profiler' && item.checkTool !== '') {
-      list.push(item)
+  data?.map((item: any) => {
+    if (item.checkTool !== 'sol-profiler' && item.checkTool.toLowerCase() !== 'openai' && item.checkTool !== '' && item.checkTool !== 'MetaTrust (OSA)' && item.checkTool != 'MetaTrust (SA)' && item.checkTool != 'AI') {
+      if (item.checkTool === 'eth-gas-reporter') {
+        listGas.push(item);
+      } else {
+        list.push(item)
+      }
     }
   })
+  // evm的错误统计
+  if(workflowsDetailsData.frameType==1 && data?.length){
+    for(let i=0;i<data.length;i++){
+      issue += data[i].issues
+    }
+  }else{
+    issue = yamlData(listGas, issue, "gasUsage");
+    issue = yamlData(list, issue, "report");
+  }
 
-  list.map((item: any) => {
-    item.reportFileData = YAML.parse(item.reportFile);
-    item.reportFileData.map((val: any) => {
-      issue += val.issue
-    })
+  data?.filter((item: any) => {
+    if (item.checkTool == 'OpenAI' || item.checkTool == 'AI') {
+      openAiInfo.value = item
+    }
   })
+  Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
+}
+
+const yamlData = (list: any[], issue: number, dataType: string) => {
+  if (list.length > 0) {
+    list.map((item: any) => {
+        item.reportFileData = YAML.parse(item.reportFile);
+        item.reportFileData?.map((val: any, index: number) => {
+          if (dataType === "gasUsage") {
+            if (index === 0) {
+              issue += val.issue
+            }
+          } else {
+            issue += val.issue
+          }
+        })
+        item.errorNumber = issue;
+    })
+  } 
+  return issue;
 }
 
 const getDetailFrontendReport = async () => {
@@ -133,9 +196,9 @@ const getDetailFrontendReport = async () => {
       workflowDetailId: queryJson.workflowDetailId,
     }
     const { data } = await apiGetDetailFrontendReport(params);
-    data.map((item: any) => {
+    data?.map((item: any) => {
       item.reportFileData = YAML.parse(item.reportFile);
-      item.reportFileData.map((val: any) => {
+      item.reportFileData?.map((val: any) => {
         issue += val.issue
       })
     })
@@ -143,7 +206,7 @@ const getDetailFrontendReport = async () => {
     workflowsDetailsData.errorNumber = issue;
     Object.assign(frontendReportData, data)
 
-    console.log(frontendReportData, 'frontendReportData')
+    // console.log(frontendReportData, 'frontendReportData')
 
   } catch (error: any) {
     console.log("erro:", error)
@@ -156,14 +219,15 @@ const getWorkflowPackage = async () => {
       workflowsId: queryJson.workflowsId,
       workflowDetailId: queryJson.workflowDetailId,
     }
-    if (queryJson.type === '2') {
+    // debugger
+    // 前端和Polkdot都走package接口
+    if ( query.type!='3' && (queryJson.type === '2' || queryJson.projectType === '3')) {
       const { data } = await apiGetPackagesList(params);
       Object.assign(artifactListData, data)
     } else {
       const { data } = await apiGetDeployInfo(params);
       Object.assign(packageInfo, data)
     }
-
   } catch (error: any) {
     console.log("erro:", error)
   }
@@ -185,7 +249,9 @@ const stopBtn = async () => {
 const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId })
+    // console.log("data project:", data);
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status,name:data.name,id:data.id,type:data.type })
+    localStorage.setItem('frameType',data.frameType)
   } catch (err: any) {
     console.info(err)
   }
@@ -195,7 +261,7 @@ const getProjectsDetailData = async () => {
 const setCurrentName = () => {
   if (queryJson.projectType === '1') {
     // projectType === '1' === contract
-    title.value = queryJson.type === '1' ? 'Check' : 'Build';
+    title.value = queryJson.type === '1' ? 'Check' : queryJson.type === '2' ? 'Build' : 'Deploy';
     currentName.value = `Contract ${title.value}_#${workflowsDetailsData.execNumber}`
   } else {
     // projectType === '2' === frontend
@@ -206,16 +272,34 @@ const setCurrentName = () => {
     } else {
       title.value = 'Deploy'
     }
-    currentName.value = `Frontend ${title.value}_#${workflowsDetailsData.execNumber}`
+    // 区分node和前端项目
+    const name = queryJson.projectType === '3' ? 'Node' : 'Frontend'
+    currentName.value = `${name} ${title.value}_#${workflowsDetailsData.execNumber}`
   }
 }
-
-onMounted(() => {
-  getWorkflowsDetails();
-  getProjectsDetailData();
-  loadInfo();
+// 判断跳转来源
+const judgeOrigin = ()=>{
+  breadCrumbInfo.value = [
+    {
+      breadcrumbName:'Projects',
+      path:'/projects'
+    },
+    {
+      breadcrumbName:workflowsDetailsData.name,
+      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+    },
+    {
+      breadcrumbName:currentName.value,
+      path:''
+    },
+  ]
+}
+onMounted(async() => {
+  await getWorkflowsDetails();
+  await getProjectsDetailData();
+  await loadInfo();
+  judgeOrigin()
 })
-
 
 onUnmounted(() => {
   clearTimeout(detailTimer.value);

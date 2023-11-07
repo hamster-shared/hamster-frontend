@@ -50,8 +50,8 @@
   <CreateApp :isRPCs="isRPCs" :showCreate="showCreate" :defaultChain="defaultChain" :defaultNetwork="defaultNetwork" @setShowCreate="showCreate=false" />
   
   <div class="fixed w-screen h-screen z-10 left-0 top-0" v-show="showGuide">
-    <img src="@/assets/images/nodeservice-guide.jpg" class="h-full w-full dark:hidden" />
-    <img src="@/assets/images/nodeservice-guide-dark.jpg" class="h-full w-full hidden dark:inline-block" />
+    <img src="@/assets/images/nodeservice-guide.jpg" class=" w-full dark:hidden" />
+    <img src="@/assets/images/nodeservice-guide-dark.jpg" class=" w-full hidden dark:inline-block" />
     <div class="absolute bottom-[30%] flex justify-center w-full">
       <img class="h-[42px] w-[42px] cursor-pointer" @click="closeGuide" src="@/assets/icons/close-guide.svg" />
     </div>

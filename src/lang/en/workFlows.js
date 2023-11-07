@@ -18,9 +18,9 @@ export default {
   nonExecution: "Waiting for execution",
   running: "Running",
   failed: "Failed",
-  passed: "Successful",
+  success: "Successful",
   ready: "Ready",
   stop: "Stop",
-  workflowStopped: 'Workflow Stopped',
+  workflowStopped: 'The operation has completed, can not be stopped.',
   copySuccess: "copy success",
 };

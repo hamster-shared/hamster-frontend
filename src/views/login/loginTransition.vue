@@ -11,7 +11,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin, apiInstall } from "@/apis/login";
+import { apiLogin, apiInstall,apiGetUser} from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
@@ -41,9 +41,7 @@ const installGitHub = async () => {
   try {
     const { data } = await apiInstall(code.value);
     localStorage.setItem('token', data);
-    console.log(localStorage.getItem('token'), 'token1');
     window.close();
-    console.log(localStorage.getItem('token'), 'token2')
     window.opener.location.reload();
   } catch (err: any) {
     window.close();
@@ -53,11 +51,9 @@ const installGitHub = async () => {
   }
 }
 
-
-
 onMounted(async () => {
   if (localStorage.getItem('token')) {
-    if (localStorage.getItem('firstState') === "0") {
+    if (localStorage.getItem('firstState') === "0" && false) {
       //第一次登录
       router.push('/welcome')
     } else {
@@ -70,15 +66,20 @@ onMounted(async () => {
       if (code.value) {
         await login()
       }
-
       const state = new Date().getTime();
-      const oauthUrl = ref('https://github.com/apps/hamster-test/installations/new');
+      const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
       const url = `${oauthUrl.value}?state=${state}`;
       const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
     } else {
-      code.value = router.currentRoute.value.query?.code || '';
-      if (code.value) {
-        installGitHub()
+      if (userInfo.token) {
+        localStorage.setItem('token', userInfo.token);
+        window.close();
+        window.opener.location.reload();
+      } else {
+        code.value = router.currentRoute.value.query?.code || '';
+        if (code.value) {
+          installGitHub()
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div class="flex" v-if="frameType != 7">
     <div>
       <a-select @change="changeContract" v-model:value="contract"
         :options="contractList.map(item => ({ value: item }))">
@@ -23,7 +23,7 @@
       <template v-if="column.dataIndex === 'network'">
         <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
           :key="indexF" :class="{ 'ml-2': indexF !== 0 }"
-          class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item }}</label>
+          class="text-[#E2B578] border border-solid rounded-[32px] border-[#E2B578] px-3 py-1">{{ item?.slice(item?.indexOf('/')+1) }}</label>
         <label v-else-if="record.status === 1">Deploying</label>
         <label v-else>-</label>
       </template>
@@ -31,7 +31,7 @@
         <!-- <label class="cursor-pointer" v-if="record.network.String !== ''"
           @click="goContractDetail(record.version)">Details</label> -->
         <label class="dark:text-[#E0DBD2] text-[#151210] ml-2 cursor-pointer hoverColor"
-          @click="goContractDeploy(record.name, record.version)">Deploy</label>
+          @click="goContractDeploy(record)">Deploy</label>
         <a-tooltip placement="bottomRight" trigger="click" overlayClassName="contract-tooltip">
           <template #title>
             <div class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer hoverColor" @click="downloadAbi(record)">
@@ -53,23 +53,30 @@
 
   <starkNetModal :starknetVisible="starknetVisible" :deployTxHash="deployTxHash" @cancelModal="starknetVisible = false">
   </starkNetModal>
+  <CustomMsg :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam"></CustomMsg>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, toRefs } from 'vue';
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
+import { message } from 'ant-design-vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
+import CustomMsg from '@/components/CustomMsg.vue';
 import {
   apiGetProjectsContract,
   apiProjectsContractName,
   apiProjectsContractNetwork,
   apiProjectsVersion,
+  apiProjectsDeploy
 } from "@/apis/projects";
 import starkNetModal from "@/views/projects/components/starkNetModal.vue";
 const router = useRouter();
+const route = useRoute()
 const props = defineProps({
   detailId: String,
+  frameType: Number,
+  name:String
 });
-const { detailId } = toRefs(props);
+const { detailId, frameType, name } = toRefs(props);
 
 const contractList = ref(["All Contract"]);
 const contract = ref("All Contract");
@@ -84,7 +91,17 @@ const starknetHashData = JSON.parse(localStorage.getItem('starknetHashData')) ||
 // console.log(starknetHashData, 'starknetHashData')
 const deployTxHash = starknetHashData[props.detailId]?.deployTxHash || '';
 
-const contractTableColumns = computed<any[]>(() => [
+const showMsg = ref(false);
+const msgType = ref("");
+const msgParam = ref({
+  id: detailId.value,
+  workflowsId: 0,
+  workflowDetailId: 0,
+  projectType: 0,
+  operateType: 1,
+});
+
+const contractTableColumns = ref( [
   {
     title: 'Contract',
     dataIndex: 'name',
@@ -98,6 +115,13 @@ const contractTableColumns = computed<any[]>(() => [
     align: 'center',
     ellipsis: 'fixed',
     key: 'version',
+  },
+  {
+    title: 'Branch',
+    dataIndex: 'branch',
+    align: 'center',
+    ellipsis: 'fixed',
+    key: 'branch',
   },
   {
     title: 'Network',
@@ -148,6 +172,13 @@ const contractPagination = reactive({
 });
 
 onMounted(() => {
+  
+  if (frameType?.value === 7) {
+    contractTableColumns.value = contractTableColumns.value.filter(item => item.dataIndex !== 'network')
+  } else {
+    contractTableColumns.value = contractTableColumns.value.filter(item => item.dataIndex !== 'branch')
+  }
+
   getProjectsContract();
   getProjectsContractName();
   getProjectsContractNetwork();
@@ -184,8 +215,11 @@ const getProjectsContract = async () => {
 const getProjectsVersion = async () => {
   try {
     const { data } = await apiProjectsVersion(detailId.value.toString());
+    const items = data.filter(function (val: any) {
+        return val && val.trim(); 
+    })
     versionList.value.length = 1;
-    versionList.value = versionList.value.concat(data);
+    versionList.value = versionList.value.concat(items);
 
   } catch (error: any) {
     console.log("erro:", error)
@@ -196,9 +230,11 @@ const getProjectsVersion = async () => {
 const getProjectsContractNetwork = async () => {
   try {
     const { data } = await apiProjectsContractNetwork(detailId.value.toString());
+    const items = data.filter(function (val: any) {
+        return val && val.trim(); 
+    })
     networkList.value.length = 1;
-    networkList.value = networkList.value.concat(data);
-
+    networkList.value = networkList.value.concat(items);
   } catch (error: any) {
     console.log("erro:", error)
   } finally {
@@ -209,8 +245,11 @@ const getProjectsContractNetwork = async () => {
 const getProjectsContractName = async () => {
   try {
     const { data } = await apiProjectsContractName(detailId.value.toString());
+    const items = data.filter(function (val: any) {
+        return val && val.trim(); 
+    })
     contractList.value.length = 1;
-    contractList.value = contractList.value.concat(data);
+    contractList.value = contractList.value.concat(items);
 
   } catch (error: any) {
     console.log("erro:", error)
@@ -220,22 +259,63 @@ const getProjectsContractName = async () => {
 };
 
 const downloadAbi = (val: any) => {
-  const str = val.abiInfo;
-  const url = `data:,${str}`;
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${val.name}.json`;
-  a.click();
-  a.remove();
+  if (frameType?.value === 5) { //sui
+    message.info("Sorry, Sui contract currently does not support ABI file download.");
+  } else {
+    const str = val.abiInfo;
+    const url = `data:,${str}`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${val.name}.json`;
+    a.click();
+    a.remove();
+  }
 };
 
 const goContractDetail = async (version: String) => {
   router.push("/projects/" + detailId.value + "/contracts-details/" + version);
 };
 
-const goContractDeploy = async (contract: String, version: String) => {
-  router.push("/projects/" + detailId.value + "/artifacts-contract/" + version + "/deploy/" + contract);
+const goContractDeploy = async (contractData: any) => {
+  if (frameType?.value === 7) { 
+    frontendDeploying(contractData)
+  } else if(frameType?.value === 1){
+    // 如果是evm生态走多链部署，其它生态保持原来
+    router.push(`/projects/projectsDeploymentOrchestration?id=${detailId?.value}&version=${contractData.version}`)
+  } else {
+    const path = "/projects/" + detailId.value + "/artifacts-contract/" + contractData.version + "/deploy/" + contractData.name
+    router.push(path);
+  }
 };
+const frontendDeploying = async (contractData: any) => {
+  try {
+    const params = ref({
+      id: contractData.projectId,
+      workflowsId: contractData.workflowId,
+      workflowDetailId: contractData.workflowDetailId,
+    });
+    const { data } = await apiProjectsDeploy(params.value);
+    
+    setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
+
+    // loadView();
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  }
+}
+
+const setMsgShow = (workflowId: any, detailId: any, msgTypeVal: string, operateTypeVal: any) => {
+  msgParam.value.workflowsId = workflowId;
+  msgParam.value.workflowDetailId = detailId;
+  msgParam.value.operateType = operateTypeVal;
+  msgType.value = msgTypeVal;
+  showMsg.value = true;
+  setTimeout(function () {
+    showMsg.value = false;
+  }, 3000)
+
+}
 
 defineExpose({
   getProjectsContract

@@ -5,12 +5,14 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import { useOnboard } from '@web3-onboard/vue'
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import walletTitle from '@/assets/icons/logo-white.svg'
+import { useContractApi } from '@/stores/chainlink';
+import {saveWallet} from '@/apis/login'
 
 const walletAddress = useWalletAddress()
 
 const { connectingWallet, connectedWallet, connectWallet, disconnectWallet } = useOnboard()
 const emit = defineEmits(["setWalletBtn"]);
-
+const contractApi = useContractApi()
 const injected = injectedModule()
 let walletStates: WalletState[]
 
@@ -31,14 +33,14 @@ const onboard = Onboard({
     recommendedInjectedWallets: [
       { name: 'MetaMask', url: 'https://metamask.io/' },
       { name: 'WalletConnect', url: 'https://walletconnect.com/' },
-      { name: 'imToken', url: 'https://www.token.im/'},
+      { name: 'imToken', url: 'https://www.token.im/' },
       { name: 'Math Wallet', url: 'https://www.mathwallet.org/' },
       { name: 'Trust Wallet', url: 'https://trustwallet.com/' },
       { name: 'Huobi Wallet', url: 'https://www.huobi.com/' },
-    ]
+    ],
   },
   connect: {
-    showSidebar: false, 
+    showSidebar: false,
   },
   notify: {
     desktop: {
@@ -111,6 +113,7 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
   }
 }
 
+
 onBeforeMount(async () => {
   // 进入页面即要求连接钱包
   const walletStatesOrNull = await autoConnectSavedWallet()
@@ -132,6 +135,11 @@ const onClickConnect = async () => {
   }
   if (walletStates[0]) {
     setWalletAccount(walletStates[0]);
+    // 后端保存钱包地址
+
+    for(let account of walletStates[0].accounts){
+      saveWallet(account.address).then(() => {})
+    }
   }
 }
 
@@ -154,7 +162,16 @@ const onClickDisconnect = async () => {
   }
 }
 
-
+watch(() => connectedWallet.value, (newVal, oldVal) => {
+  if (newVal && newVal !== oldVal) {
+    console.info("start init")
+    const provider = newVal.provider;
+    const network = newVal.chains[0].id;
+    const address = newVal.accounts[0].address;
+    console.log('~~~~~~~~',provider,1111,network,2222,address)
+    contractApi.initContractApi(provider, network, address);
+  }
+}, { deep: true, immediate: true });
 //暴露子组件的方法或者数据
 defineExpose({ onClickConnect, onClickDisconnect })
 </script>
