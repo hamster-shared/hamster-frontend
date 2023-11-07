@@ -27,7 +27,7 @@ const breadCrumbInfo = ref<any>([])
 const judgeOrigin = ()=>{
   breadCrumbInfo.value = [
     {
-      breadcrumbName: 'My Apps',
+      breadcrumbName: 'Apps',
       path: '/middleware/dashboard/RPC/myapp'
     },
     {
