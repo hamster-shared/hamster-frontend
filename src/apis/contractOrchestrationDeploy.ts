@@ -176,3 +176,11 @@ export function apiGetNetworkByName(name: string) {
     method: "get",
   })
 }
+
+// 获取单个合约的构建信息
+export function apiGetAbiInfobyId(id: string, contractId:string, name:string) {
+  return httpRequest({
+    url: `/api/projects/${id}/contract/info?id=${contractId}&name=${name}`,
+    method: "get",
+  })
+}
