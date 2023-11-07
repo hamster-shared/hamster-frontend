@@ -186,7 +186,7 @@ const handleCancelNoSave = () => {
   visibleNoSave.value = false;
 }
 const handleSaveModal = () => {
-  // setSaveParamsValue();
+  visibleSave.value = false;
   saveSingleContractInfo();
 }
 const handleCancelModal = () => {
@@ -269,13 +269,16 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
       setFunctionParams(item, mapKey);
     }
   }) 
-  methodFunctionData.value.sort(); //排序
-  //记录整理得数据
-  methodMap.set(mapKey, {
-    formList: methodFormList.value, //记录表单字段
-    inputData: methodInputData.value, //记录表单标签
-    functionData: methodFunctionData.value, //记录function 类型
-  });
+  // 已经保存过的合同数据，不重复保存
+  if (!methodMap.get(mapKey)) {
+    methodFunctionData.value.sort(); //排序
+    //记录整理得数据
+    methodMap.set(mapKey, {
+      formList: methodFormList.value, //记录表单字段
+      inputData: methodInputData.value, //记录表单标签
+      functionData: methodFunctionData.value, //记录function 类型
+    });
+  }
   console.log("methodMap:",methodMap);
 }
 //设置Contract Parameters字段
@@ -608,20 +611,16 @@ const deployManyContract = async () => {
     await getProjectsContractName();
     //判断合约是否需要设置参数
     checkContractParam();
+    // 获取已经编排过的合约列表
+    await getArrangeDeployList();
     // 合同没有参数需要设置
     if (noParamsContract.value) {
       // 保存编排信息
-      deployArrange.value = {
-        deployStep: [],
-        step: 0,
-      }
       await saveOrchestrationInfo();
       numberValue.value = contractOrchestration.value.length;
       // 部署调用代码
       visibleNumber.value = true
     } else {
-      // 获取已经编排过的合约列表
-      await getArrangeDeployList();
       
       // 所有待部署合约都填写并保存配置参数
       if (noSaveContract.value.length == 0) {
@@ -703,10 +702,32 @@ const getArrangeDeployList = async () => {
           noSaveContract.value.splice(noSaveContract.value.indexOf(sub.contract.name), 1);
         });
         number++;
-      } else {
+      } else if(!noParamsContract.value){
         deployStep.push({})
       }
     });
+    console.log("noSaveContract:",noSaveContract.value);
+    // 不需要设置合同参数的合同，对数组进行默认赋值
+    if (noParamsContract.value) {
+      noSaveContract.value.forEach((item: any) => {
+        deployStep.push({
+          contract: {
+            name: item,
+            address: '',
+            proxyAddress: '',
+            proxy: false,
+          },
+          steps: [{
+            type: CONSTRUCTOR,
+            method: "",//都是空串
+            params: [],
+            status: "PENDING",
+          }],
+          status: 'PENDING',
+          step: 0
+        })
+      });
+    }
     numberValue.value = number;
     deployArrange.value = {
       deployStep: deployStep,

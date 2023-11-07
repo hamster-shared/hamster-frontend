@@ -22,8 +22,8 @@
       </div>
       <a-form ref="formInvokeRef" :rules="formRules" :model="methodItem.formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
-          <a-form-item name="methodName" label="Method Name" :rules="[{ required: true }]">
-            <a-select v-model:value="methodItem.formData.methodName" @change="changeMethodName($event, methodKey)" 
+          <a-form-item name="methodName" label="Method Name1111" :rules="[{ required: true }]">
+            <a-select v-model:value="methodItem.formData.methodName" @select="changeMethodName($event, methodKey)" 
               placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name.indexOf('(')!='-1' ? item.name?.slice(0,item.name.indexOf('(')):item.name }))">
             </a-select>
           </a-form-item>
@@ -70,8 +70,11 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, toRefs, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import CustomParamsmodal from "./CustomParamsmodal.vue";
-import type { FormInstance } from 'ant-design-vue';
+import { apiGetAbiInfobyId } from '@/apis/contractOrchestrationDeploy'
+
+const route:any = useRoute()
 
 const props = defineProps({
   selectedName: String,
@@ -86,6 +89,7 @@ const props = defineProps({
 });
 
 const { selectedName, methodMap, contractOrchestration } = toRefs(props);
+console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',methodMap.value)
 const emits = defineEmits(['setAbiInfo', 'setDisabledSave']);
 
 const visible = ref(false);
@@ -132,14 +136,22 @@ const moreContractMethod = () => {
   }
 }
 //选择合同
-const changeMethodName = (val: any, methodKey: number) => {
+const changeMethodName = async(val: any, methodKey: number) => {
+  // console.log(1111111111111111,val,contractOrchestration.value)
+  // let a = contractOrchestration.value.filter((item:any)=>{
+  //   return item.name==val;
+  // })
+  // console.log(a[0].id,'选择合同:')
   checkFiledChange();
   methodList.value[methodKey].formData.methodType = '';
   methodList.value[methodKey].formData.address = '';
   methodList.value[methodKey].formData.customParams = '';
+  console.log(222222222222,contractOrchestration.value)
   if (!methodMap.value.get(val)) {
+    // const res = await apiGetAbiInfobyId(route.query.id,'','')
     contractOrchestration.value.forEach((element: any) => {
       if (element.name === val) {
+        console.log(1231123123123,element.abiInfo)
         emits('setAbiInfo', element.abiInfo, val, 'method');
       }
     });
