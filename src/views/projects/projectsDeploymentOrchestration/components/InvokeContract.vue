@@ -13,7 +13,7 @@
           <a-popover trigger="hover" placement="left">
             <template #content>
               <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="deleteBtn(methodKey)">Delete</div>
-              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="addCustomParamsBtn">Add Custom Params
+              <div class=" cursor-pointer mb-[8px] hover:text-[#E2B578]" @click="addCustomParamsBtn(methodKey)">Add Custom Params
               </div>
             </template>
             <img class="w-[4px] cursor-pointer" src="@/assets/images/diandian.png" />
@@ -22,8 +22,8 @@
       </div>
       <a-form ref="formInvokeRef" :rules="formRules" :model="methodItem.formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
-          <a-form-item name="methodName" label="Method Name" :rules="[{ required: true }]">
-            <a-select v-model:value="methodItem.formData.methodName" @change="changeMethodName($event, methodKey)" 
+          <a-form-item name="methodName" label="Method Name1111" :rules="[{ required: true }]">
+            <a-select v-model:value="methodItem.formData.methodName" @select="changeMethodName($event, methodKey)" 
               placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name.indexOf('(')!='-1' ? item.name?.slice(0,item.name.indexOf('(')):item.name }))">
             </a-select>
           </a-form-item>
@@ -57,6 +57,7 @@
           <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
           <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
         </a-form-item>
+        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
       </a-form>
     </div>
     <div @click="moreContractMethod" 
@@ -65,13 +66,15 @@
       <label class="cursor-pointer">Add More Contract Methods</label>
     </div>
   </div>
-  <CustomParamsmodal :visible="visible" :customKey="customKey" @showContract="visible = false" @doneSecret="doneSecret" />
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, toRefs, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import CustomParamsmodal from "./CustomParamsmodal.vue";
-import type { FormInstance } from 'ant-design-vue';
+import { apiGetAbiInfobyId } from '@/apis/contractOrchestrationDeploy'
+
+const route:any = useRoute()
 
 const props = defineProps({
   selectedName: String,
@@ -86,10 +89,10 @@ const props = defineProps({
 });
 
 const { selectedName, methodMap, contractOrchestration } = toRefs(props);
+console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',methodMap.value)
 const emits = defineEmits(['setAbiInfo', 'setDisabledSave']);
 
 const visible = ref(false);
-const customKey = ref(0);
 const showMethod = ref(false);
 // const formInvokeRef = ref<FormInstance>();
 const formInvokeRef = ref();
@@ -133,14 +136,22 @@ const moreContractMethod = () => {
   }
 }
 //选择合同
-const changeMethodName = (val: any, methodKey: number) => {
+const changeMethodName = async(val: any, methodKey: number) => {
+  // console.log(1111111111111111,val,contractOrchestration.value)
+  // let a = contractOrchestration.value.filter((item:any)=>{
+  //   return item.name==val;
+  // })
+  // console.log(a[0].id,'选择合同:')
   checkFiledChange();
   methodList.value[methodKey].formData.methodType = '';
   methodList.value[methodKey].formData.address = '';
   methodList.value[methodKey].formData.customParams = '';
+  // console.log(222222222222,contractOrchestration.value)
   if (!methodMap.value.get(val)) {
+    // const res = await apiGetAbiInfobyId(route.query.id,'','')
     contractOrchestration.value.forEach((element: any) => {
       if (element.name === val) {
+        // console.log(1231123123123,element.abiInfo)
         emits('setAbiInfo', element.abiInfo, val, 'method');
       }
     });
@@ -157,27 +168,32 @@ const deleteBtn = (methodKey: number) => {
   checkFiledChange();
   methodList.value.splice(methodKey, 1)
 }
-const addCustomParamsBtn = () => {
-  visible.value = true;
-  console.log('add')
+const addCustomParamsBtn = (methodKey:number) => {
+  methodList.value[methodKey].formData.visible = true;
+  console.log('add',methodList.value[methodKey].formData.visible,methodKey)
 }
-const doneSecret = (val: any) => {
+const doneSecret = (methodKey:number, val:any) => {
   checkFiledChange();
-  visible.value = false;
   let str = '';
   val.forEach((e: any) => {
     str += `${e.secretName}: ${e.secretValue}\n`
   });
-  methodList.value[customKey.value].formData.customParams = str;
+  console.log(methodKey,1111111111111,methodList.value)
+  methodList.value[methodKey].formData.visible = false;
+  methodList.value[methodKey].formData.customParams = str;
   console.log('有值了：' + val)
 }
 const editCustom = (val: string, methodKey: number) => {
-  visible.value = true;
-  customKey.value = methodKey;
+  methodList.value[methodKey].formData.customParams = val
+  methodList.value[methodKey].formData.visible = true;
 }
 
 onMounted(() => {
   console.log("methodList:",methodList.value.length,methodList.value);
+  methodList.value = methodList.value.map((item:any)=>{
+    item.visible = false
+    return item
+  })
 });
 
 defineExpose({
