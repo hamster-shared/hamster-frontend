@@ -272,10 +272,14 @@ export default class NewEngine {
                 if (params[i].startsWith("$")){
                     let contractName = params[i].substring(1).split(".")[0]
                     let attr = params[i].substring(1).split(".")[1]
-                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && (t.contract.name === contractName || contractName.includes(t.contract.name)))
+                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && (t.contract.name === contractName))
                     if(deploy === undefined){
-                        continue
+                        deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && contractName.includes(t.contract.name))
+                        if(deploy === undefined){
+                            continue
+                        }
                     }
+
                     params[i] = deploy.contract[attr]
                 }
             }
