@@ -532,13 +532,13 @@ const getSingleContractInfo = async () => {
   contractSingileInfo.value = {}; //清空合同信息
   try {
     let param = {
-      id: route.query.id,
+      // id: route.query.id,
       projectId: route.query.id,
       contractId: Number(selectedId.value),
       contractName: selectedName.value,
       version: baseInfo.value.selectedVersion
     }
-    const { data } = await apiGetSingleContractInfo(param.id, param.projectId, param.contractId, param.contractName, param.version);
+    const { data } = await apiGetSingleContractInfo(route.query.id, param);
     if (data != null && data != "") {
       contractSingileInfo.value = JSON.parse(data);
       //拆分保存的合约信息
