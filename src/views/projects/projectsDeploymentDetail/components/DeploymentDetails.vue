@@ -16,9 +16,10 @@
     </div>
     <div v-if="executeArrange.length > 0">
       <a-collapse v-model:activeKey="activeKey">
-        <a-collapse-panel v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index)">
+        <a-collapse-panel v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index, item.status)">
           <template #extra>
             <div class="flex items-center">
+              <div v-if="item.transactionHash" class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
               <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
               <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2 text-[#fff]" />
@@ -67,12 +68,11 @@
                   <div>{{ item.transactionInfo.gasPrice }}</div>
                 </div>
               </div>
-              <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
             <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'!py-[0px] !text-left':'py-[70px]']">
               <label v-if="item.result==0 || item.result" class="text-[#D5D1CA] text-[14px] font-normal">{{item.result}}</label>
               <label v-else-if="item.errorInfo" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
-              <label v-else-if="!item.transactionHash">NO Data</label>
+              <label v-else-if="!item.transactionHash || item.status=='RUNNING'">NO Data</label>
               <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
             </div>
           </div>
@@ -229,9 +229,9 @@ const setTimerByStatus = (status: any) => {
 }
 
 // 获取单个合约的执行信息
-const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
+const getTransactionInfoByHash = async (transactionHash: any, key: any, status: string) => {
   // 如果没有hash 不调接口
-  if(!transactionHash){
+  if(!transactionHash || status== 'RUNNING'){
     return
   }
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
