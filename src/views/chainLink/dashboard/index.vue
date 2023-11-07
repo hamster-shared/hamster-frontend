@@ -116,7 +116,12 @@ watch(() => router.currentRoute.value,
 }
 
 :deep(.ant-menu-item) {
-  border-radius: 12px;
+  border-radius: 10px;
+}
+:deep(.ant-menu-inline .ant-menu-item){
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 15px;
 }
 
 :deep(.ant-menu.ant-menu-dark),

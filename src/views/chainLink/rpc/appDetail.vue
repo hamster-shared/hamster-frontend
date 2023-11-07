@@ -1,7 +1,7 @@
 <template>
   <div>
-    <bread-crumb :routes="breadCrumbInfo"/>
-    <div class="text-[24px] font-bold mb-[30px]">AIShow</div>
+    <bread-crumb separator=">" :routes="breadCrumbInfo"/>
+    <div class="text-[24px] font-bold my-[30px]">AIShow</div>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="1" tab="Get Started">
         <GetStartedPane></GetStartedPane>
