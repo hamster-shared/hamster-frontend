@@ -3,7 +3,7 @@
     <div class="text-[24px] font-bold">Contract Parameters</div>
     <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
-    <div v-if="selectedName">
+    <div v-if="inputData.length > 0">
       <a-form ref="formContractRef" :rules="formRules" :model="formData" layout="vertical">
         <div v-for="(item, key) in inputData" :key="key">
           <div class="grid grid-cols-2 gap-4" v-if="item.type == 'address'">
