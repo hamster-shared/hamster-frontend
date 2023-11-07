@@ -18,7 +18,7 @@
         <div v-else v-for="(itemArr , indexArr) in JSON.parse(item.originalArrange).deployStep" :key="indexArr">
           <div v-for="(itemStep , indexStep) in itemArr.steps" :key="indexStep">
             <div v-if="indexStep == 0" class="flex mb-[20px]">
-              <div class="mr-[20px] leading-[42px]">Contract Parameters: </div>
+              <div class="mr-[20px] leading-[42px] w-[160px]">Contract Parameters: </div>
               <div class="flex border border-solid border-[#EBEBEB] bg-[#F6F6F6] px-[15px] py-[10px] rounded-[8px]">
                 {{ itemStep.params.join(', ') }} 
               </div>
@@ -33,7 +33,7 @@
             </div>
           </div>
           <div v-if="itemArr.contract.proxy" class="flex mb-[20px]">
-            <div class="mr-[20px] leading-[42px]">Proxy Contract Required: </div>
+            <div class="mr-[20px] leading-[42px] w-[160px]">Proxy Contract Required: </div>
             <div class="flex border border-solid border-[#EBEBEB] bg-[#F6F6F6] px-[15px] py-[10px] rounded-[8px]">
               Yes
             </div>
