@@ -705,29 +705,30 @@ const getArrangeDeployList = async () => {
             noParamsContract.value.splice(noParamsContract.value.indexOf(sub.contract.name), 1);
           }
         });
+      } else {
+        // 数据为空，默认是不需要设置参数的合同，若不是，则noSaveContract字段会在判断时，提示未设置参数
+        if (noParamsContract.value.length > 0) {
+          deployStep.push({
+            contract: {
+              name: noParamsContract.value[0],
+              address: '',
+              proxyAddress: '',
+              proxy: false,
+            },
+            steps: [{
+              type: CONSTRUCTOR,
+              method: "",//都是空串
+              params: [],
+              status: "PENDING",
+            }],
+            status: 'PENDING',
+            step: 0
+          })
+          // 删除赋值后的合同
+          noParamsContract.value.splice(0, 1);
+        }
       }
     });
-    // 不需要设置合同参数的合同，对数组进行默认赋值
-    if (noParamsContract.value.length > 0) {
-      noParamsContract.value.forEach((item: any) => {
-        deployStep.push({
-          contract: {
-            name: item,
-            address: '',
-            proxyAddress: '',
-            proxy: false,
-          },
-          steps: [{
-            type: CONSTRUCTOR,
-            method: "",//都是空串
-            params: [],
-            status: "PENDING",
-          }],
-          status: 'PENDING',
-          step: 0
-        })
-      });
-    }
     deployArrange.value = {
       deployStep: deployStep,
       step: 0,
