@@ -134,6 +134,7 @@ const actionOptions = ref([
 ]);
 
 const goPage = (val:string)=>{
+  actionVal.value = 'All Action'
   console.log('goPage', val)
   if(val=='Dashboard'){
     router.push(`/projects/projectsDashboard?id=${route.query.id}`)
