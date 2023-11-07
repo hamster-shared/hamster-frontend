@@ -122,21 +122,22 @@ const selectContractId = (item: any) => {
 
 
 // 不执行
-const deployBtn = (item: any) => {
+const deployBtn = async(item: any) => {
   let index = dataList.value.indexOf(item)
   dataList.value.splice(index, 1);
   duplicateDataList.value.push(item);
-  getUseAndNotContractArr()
+  await getUseAndNotContractArr()
 }
 
 // copy 一份
-const duplicateBtn = (item: any) => {
+const duplicateBtn = async(item: any) => {
   const en:any = {}
   Object.assign(en,item)
   const flag = uuidv4();
   en.name = en.name+` copy #${flag.slice(0,8)}`
   dataList.value.push(en)
-  getUseAndNotContractArr()
+  await getUseAndNotContractArr()
+  emit('getProjectsContractName')
 }
 
 // 保存页面的顺序到后端
