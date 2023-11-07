@@ -3,15 +3,19 @@
     <div class="flex justify-between login-header">
       <img src="@/assets/images/logo-block.png" class="h-[28px] mt-[16px]" />
     </div>
-    <div>
+    <!-- <div>
       <a-button @click="testLogin">test-login</a-button>
-    </div>
+    </div> -->
     <div class="text-center login-content ">
       <img src="@/assets/images/logo.png" class="h-[92px]" />
       <div class="text-[32px] text-[#ffffff] font-bold mb-[32px]">Welcome to Hamster</div>
       <div class="login-btn mb-[24px] bg-[#ffffff] text-[#000000] cursor-pointer" @click="loginBox">
         <img src="@/assets/icons/Frame-white.svg" class="h-[24px]" />
         <span class="align-middle ml-[6px]">Continue with GitHub</span>
+      </div>
+      <div class="login-btn mb-[24px] bg-[#ffffff] text-[#000000] cursor-pointer" @click="loginBox">
+        <img src="@/assets/icons/metamask-icon.svg" class="h-[28px]" />
+        <span class="align-middle ml-[6px]">Continue with MetaMask</span>
       </div>
       <div class="login-btn btn-dis mb-[24px] bg-[#333230] text-[#FFFFFF]">
         <img src="@/assets/icons/icon-gitLab.svg" />
@@ -23,7 +27,6 @@
       </div>
     </div>
   </div>
-
 </template>
 <script lang='ts' setup>
 import { ref, onMounted } from "vue";
@@ -34,7 +37,7 @@ const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
 const testLogin = () => {
-  window.open('/test','','width=500, height=500')
+  window.open('/test', '', 'width=500, height=500')
 };
 
 const loginBox = () => {
