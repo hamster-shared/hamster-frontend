@@ -6,7 +6,7 @@ import {
     PROXY_UPGRADE,
 } from "../DeployData";
 import type { DeployRecord,DeployStep,ContractBuild,DeployParams} from '../DeployData';
-import {callContract, deployContract, deployProxyContract, getTransaction, upgradeProxyContract} from "./evm";
+import {callContract, deployContract, deployProxyContract, getTrans, getTransaction, upgradeProxyContract} from "./evm";
 import {apiUpdateExecuteInfo} from "@/apis/contractOrchestrationDeploy";
 import {apiProjectsContractDeploy} from "@/apis/projects";
 import {message} from "ant-design-vue";
@@ -65,23 +65,23 @@ export default class NewEngine {
                 await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 return;
             }
+            let network = ""
+            try {
+                const networkData = await apiGetNetworkByName(deployParams.network)
+                network = networkData.data.rpcUrl
+            } catch (e) {
+                step.status = "FAILED"
+                deployStep.status = "FAILED"
+                this.isRunning = false
+                if (e instanceof Error){
+                    step.errorInfo = e.message
+                }
+                // save exec status
+                await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                return
+            }
             if (step.status == "RUNNING") {
                 if (step.transactionHash != "" && step.transactionHash != undefined) {
-                    let network = ""
-                    try {
-                        const networkData = await apiGetNetworkByName(deployParams.network)
-                        network = networkData.data.rpcUrl
-                    } catch (e) {
-                        step.status = "FAILED"
-                        deployStep.status = "FAILED"
-                        this.isRunning = false
-                        if (e instanceof Error){
-                            step.errorInfo = e.message
-                        }
-                        // save exec status
-                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
-                        return
-                    }
                    try {
                        const receipt = await getTransaction(step.transactionHash,network)
                        if (receipt.status == 0 || receipt.status == undefined ) {
@@ -179,6 +179,50 @@ export default class NewEngine {
                         }
                     } else {
                         step.transactionHash = tx.hash
+                        const timeout = 5 * 60 * 1000;
+                        const startTime = Date.now();
+                        for (;;) {
+                            try {
+                                const transaction = await getTransaction(tx.hash,network)
+                                if (transaction) {
+                                    if (transaction.status === 0) {
+                                        step.status = "FAILED"
+                                        deployStep.status = "FAILED"
+                                        const data = await getTrans(tx.hash,network)
+                                        if (transaction.gasUsed.toNumber() == data.gasLimit.toNumber()) {
+                                            step.errorInfo = "Error encountered during contract execution [out of gas] "
+                                        } else {
+                                            step.errorInfo = "Error encountered during contract execution [execution reverted]"
+                                        }
+                                        this.isRunning = false
+                                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                        return
+                                    } else {
+                                        break
+                                    }
+                                }
+                                if (Date.now() - startTime > timeout) {
+                                    step.status = "FAILED"
+                                    deployStep.status = "FAILED"
+                                    this.isRunning = false
+                                    step.errorInfo = "time out"
+                                    // save exec status
+                                    await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                    return
+                                }
+                            }catch (e) {
+                                step.status = "FAILED"
+                                deployStep.status = "FAILED"
+                                this.isRunning = false
+                                if (e instanceof Error){
+                                    step.errorInfo = e.message
+                                }
+                                // save exec status
+                                await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                console.log(e)
+                                return
+                            }
+                        }
                     }
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
