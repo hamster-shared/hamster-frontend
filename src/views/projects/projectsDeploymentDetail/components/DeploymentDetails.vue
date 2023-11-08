@@ -19,7 +19,7 @@
         <a-collapse-panel v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index, item.status)">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.transactionHash" class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
+              <div v-if="item.transactionHash" class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionHash)">View on block explorer</div>
               <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
               <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2 text-[#fff]" />
