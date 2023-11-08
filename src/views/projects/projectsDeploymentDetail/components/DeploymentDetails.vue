@@ -53,7 +53,14 @@
                   <div class="collapse-content-title">To:</div>
                   <div>{{ item.transactionInfo.to }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.to)"/>
+                    <svg-icon v-if="item.status=='FAILED'" name="warn-failed" size="18" class="svg-color ml-2" />
                   </div>
+                </div>
+                <div v-if="item.status=='FAILED'" class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title"></div>
+                  <div class="text-[#F52222]">
+                    <svg-icon name="icon-include" size="12" class="ml-2 text-[#73706E] mb-[8px]"/>
+                    {{ item.errorInfo }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">Value:</div>
@@ -69,11 +76,11 @@
                 </div>
               </div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'!py-[0px] !text-left':'py-[70px]']">
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[(item.errorInfo && !item.status)?'!py-[0px] !text-left':'py-[70px]']">
               <label v-if="item.result==0 || item.result" class="text-[#D5D1CA] text-[14px] font-normal">{{item.result}}</label>
-              <label v-else-if="item.errorInfo" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
+              <label v-else-if="item.errorInfo && !item.transactionHash" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
               <label v-else-if="!item.transactionHash || item.status=='RUNNING'">NO Data</label>
-              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
+              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}"></LoadingOutlined>
             </div>
           </div>
         </a-collapse-panel>
