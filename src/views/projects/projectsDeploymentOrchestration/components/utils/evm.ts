@@ -362,3 +362,9 @@ export async function getTransaction(transactionHash:string,rpcUrl:string) {
     const receipt = await provider.getTransactionReceipt(transactionHash);
     return receipt
 }
+
+export async function getTrans(transactionHash:string,rpcUrl:string) {
+  const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+  const transaction = await provider.getTransaction(transactionHash);
+  return transaction
+}

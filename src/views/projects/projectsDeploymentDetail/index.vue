@@ -120,6 +120,7 @@ onMounted(async () => {
   await getContactDetail()
   initBreadCrumb()
   await getProjectsVersion()
+  await window.ethereum.enable();
   await execDeploy()
 })
 
