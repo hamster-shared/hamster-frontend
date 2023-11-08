@@ -160,7 +160,7 @@ const getExecuteInfoById = async () => {
     } else {
       timer.value = setTimeout(() => {
         getExecuteInfoById();
-    }, 1000)
+    }, 3000)
     }
   }
 }
