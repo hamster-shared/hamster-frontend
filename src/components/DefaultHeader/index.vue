@@ -5,11 +5,11 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }"
-        class="header-text-css ml-12 mr-8" id="pro">Projects</div>
-      <a-dropdown v-if="!isShowMiddleware">
-        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }"
-          @click.stop>
+      <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }" class="ml-12 mr-8 header-text-css"
+        id="pro">ALine</div>
+      <!--  v-if="!isShowMiddleware" -->
+      <a-dropdown>
+        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }" @click.stop>
           Middleware
           <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
           <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
@@ -25,8 +25,7 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" 
-        class="header-text-css  ml-12 mr-8">Docs</div>
+      <div @click="goDoc" class="ml-12 mr-8 header-text-css">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -214,11 +213,11 @@ const signOut = () => {
 
 onMounted(() => {
   // 解决middle刷新页面选中在projects tab下问题
-  if(window.location.href.indexOf('middleware') != -1){
+  if (window.location.href.indexOf('middleware') != -1) {
     isProject.value = false
-  }else if(window.location.href.indexOf('projects') != -1){
+  } else if (window.location.href.indexOf('projects') != -1) {
     isProject.value = true
-  }else if(window.location.href.indexOf('orders') != -1){
+  } else if (window.location.href.indexOf('orders') != -1) {
     isOrder.value = true
   }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
@@ -226,12 +225,12 @@ onMounted(() => {
   }
   changeTheme(defaultTheme.value);
   // 针对钱包登录的特殊处理
-  if(localStorage.getItem('token')?.startsWith('0x')){
+  if (localStorage.getItem('token')?.startsWith('0x')) {
     // debugger
     isShowMiddleware.value = true
     isConnectedWallet.value = true
-    const walletAddr:any  = localStorage.getItem('token')
-    walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
+    const walletAddr: any = localStorage.getItem('token')
+    walletAccount.value = walletAddr.substring(0, 5) + "..." + walletAddr.substring(walletAddr.length - 4)
   }
 });
 
@@ -251,7 +250,7 @@ const disconnect = () => {
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
   const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
-  if(isFakeToken){
+  if (isFakeToken) {
     localStorage.removeItem('token')
     router.push('/login')
   }
@@ -275,9 +274,10 @@ const handleOrder = () => {
 <style lang="less" scoped>
 @btnColor: #E2B578;
 
-.header-menu-line{
+.header-menu-line {
   border-bottom: 3px solid #E2B578;
 }
+
 .default-header {
   position: fixed;
   top: 0;
@@ -357,7 +357,7 @@ html[data-theme='dark'] {
 }
 </style>
 <style scoped>
-.header-text-css{
+.header-text-css {
   @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
 }
 </style>

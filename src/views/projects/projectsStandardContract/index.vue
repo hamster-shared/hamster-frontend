@@ -1,17 +1,20 @@
 <template>
-  <Breadcrumb :routes="breadCrumbInfo"/>
-  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
-    <a-button v-if="tokenMatemaskWallet" type="primary" style="float:right;margin-right: 20px;" @click="downloadInfo">Download</a-button>
+  <Breadcrumb :routes="breadCrumbInfo" />
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
+    class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
+    <a-button v-if="tokenMatemaskWallet" type="primary" style="float:right;margin-right: 20px;"
+      @click="downloadInfo">Download</a-button>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="ERC20" tab="ERC20">
         <div class="flex">
           <div class="w-1/4 p-4">
-            <SettingsERC20 :opts="optsERC20" @showContract="setContract"/>
+            <SettingsERC20 :opts="optsERC20" @showContract="setContract" />
             <FeaturesERC20 :opts="optsERC20" @checkboxClick="checkboxClick" />
             <AccessControl :opts="optsERC20" @showContract="setContract" />
             <Upgradeability :opts="optsERC20" @showContract="setContract" />
             <InfoSection :opts="optsERC20" @showContract="setContract" />
-            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
+            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
+              @click="createCodeVisible = true">Download</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC20"></CodeEditor>
@@ -21,12 +24,13 @@
       <a-tab-pane key="ERC721" tab="ERC721">
         <div class="flex">
           <div class="w-1/4 p-4">
-            <SettingsERC721 :opts="optsERC721" @showContract="setContract"/>
+            <SettingsERC721 :opts="optsERC721" @showContract="setContract" />
             <FeaturesERC721 :opts="optsERC721" @checkboxClick="checkboxClick" />
             <AccessControl :opts="optsERC721" @showContract="setContract" />
             <Upgradeability :opts="optsERC721" @showContract="setContract" />
             <InfoSection :opts="optsERC721" @showContract="setContract" />
-            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
+            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
+              @click="createCodeVisible = true">Download</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC721"></CodeEditor>
@@ -36,12 +40,12 @@
       <a-tab-pane key="ERC1155" tab="ERC1155">
         <div class="flex">
           <div class="w-1/4 p-4">
-            <SettingsERC1155 :opts="optsERC1155" @showContract="setContract"/>
+            <SettingsERC1155 :opts="optsERC1155" @showContract="setContract" />
             <FeaturesERC1155 :opts="optsERC1155" @checkboxClick="checkboxClick" />
             <AccessControl :opts="optsERC1155" @showContract="setContract" />
             <Upgradeability :opts="optsERC1155" @showContract="setContract" />
             <InfoSection :opts="optsERC1155" @showContract="setContract" />
-            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Create by Code</a-button>
+            <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Download</a-button>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC1155"></CodeEditor>
@@ -49,10 +53,12 @@
         </div>
       </a-tab-pane>
     </a-tabs>
-    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
+    <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createCodeVisible"
+      title="Create by template" @cancel="handleCancel">
       <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
         <a-form-item label="Project Name" name="name">
-          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear
+            autocomplete="off" />
         </a-form-item>
       </a-form>
       <span class="text-sm">Great project names are short and memorable.</span>
@@ -145,30 +151,30 @@ onMounted(async () => {
 })
 
 // 判断跳转来源
-const judgeOrigin = ()=>{
+const judgeOrigin = () => {
   breadCrumbInfo.value = [
-  {
-      breadcrumbName:'Create Project',
-      path:'/projects/create'
+    {
+      breadcrumbName: 'Template Market',
+      path: '/projects/create'
     },
     {
-      breadcrumbName:'Template',
-      path:`/projects/template/1`
+      breadcrumbName: 'Templates',
+      path: `/projects/template/1`
     },
     {
-      breadcrumbName:activeKey.value,
-      path:''
+      breadcrumbName: activeKey.value,
+      path: ''
     },
   ]
 }
 
 const setContract = async () => {
   if (activeKey.value === 'ERC20') {
-    console.log("optsERC20.value:",optsERC20.value);
+    console.log("optsERC20.value:", optsERC20.value);
     contractERC20.value = erc20.print(optsERC20.value);
-  } else if ( activeKey.value === 'ERC721') {
+  } else if (activeKey.value === 'ERC721') {
     contractERC721.value = erc721.print(optsERC721.value);
-  } else if ( activeKey.value === 'ERC1155') {
+  } else if (activeKey.value === 'ERC1155') {
     contractERC1155.value = erc1155.print(optsERC1155.value);
   }
   return contractERC20.value || contractERC721.value || contractERC1155.value
@@ -181,7 +187,7 @@ const checkboxClick = async (event: any) => {
       optsERC721.value.mintable = true;
     }
     optsERC721.value[event.target.name] = event.target.checked;
-  } else if ( activeKey.value === 'ERC1155') {
+  } else if (activeKey.value === 'ERC1155') {
     optsERC1155.value[event.target.name] = event.target.checked;
   }
 
@@ -212,7 +218,7 @@ const createProject = async () => {
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
     router.push("/projects");
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
   } finally {
     createCodeLoading.value = false
@@ -251,7 +257,7 @@ const formRules = computed(() => {
   };
 });
 
-const handleOk = async ()=>{
+const handleOk = async () => {
   await formRef.value.validate();
   createCodeLoading.value = true;
   createProjectLoading.value = true
@@ -259,7 +265,7 @@ const handleOk = async ()=>{
   createProject()
 }
 
-const handleCancel = ()=>{
+const handleCancel = () => {
   createCodeLoading.value = false
   createProjectLoading.value = false
   loading.value = false;
@@ -267,31 +273,31 @@ const handleCancel = ()=>{
   formRef.value.resetFields()
 }
 // 判断token是钱包的还是真实
-const tokenFrom = ()=>{
+const tokenFrom = () => {
   tokenMatemaskWallet.value = localStorage.getItem('token')?.startsWith('0x')
-  console.log('bool',tokenMatemaskWallet.value)
+  console.log('bool', tokenMatemaskWallet.value)
 }
 // 下载回调
-const downloadInfo = async()=>{
+const downloadInfo = async () => {
   const str = await setContract()
-  downloadRequest(str,activeKey.value,'sol')
+  downloadRequest(str, activeKey.value, 'sol')
 }
 // 监听tab切换更改对应面包屑的名称
-watch(()=>activeKey.value,(old,val)=>{
-  if(old!=val){
+watch(() => activeKey.value, (old, val) => {
+  if (old != val) {
     judgeOrigin()
   }
 })
 </script>
 <style lang='less' scoped>
-
 // :deep(.dark-css .ant-tabs){
 //   color: #E0DBD2;
 // }
-:deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn){
+:deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
   color: #FFFFFF;
 }
-:deep(.ant-tabs-tab-btn){
+
+:deep(.ant-tabs-tab-btn) {
   width: 100px;
   text-align: center;
 }

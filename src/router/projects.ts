@@ -29,6 +29,12 @@ const projectsRoute = [
         component: () => import('@/views/projects/projectsCreat/index.vue'),
       },
       {
+        path: "/projects/projectAddNew",
+        name: "ProjectAddNew",
+        component: () => import('@/views/projects/projectAddNew/index.vue'),
+      },
+      
+      {
         path: "/projects/template/:type",
         redirect: "/projects/template/:type",
         children: [

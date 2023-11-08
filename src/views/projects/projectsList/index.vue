@@ -9,13 +9,14 @@
           </template>
         </a-input>
       </div>
-      <div>
-        <!-- <a-button type="primary" ghost class="mr-[24px]">Template Market</a-button> -->
-        <a-button type="primary" @click="goCreateProject">Create Project</a-button>
+      <div class="flex">
+        <a-button type="primary" ghost class="mr-[24px]" @click="goCreateProject">Template Market</a-button>
+        <a-button type="primary" @click="goAddNewProject">Add New Project</a-button>
+        <!-- <a-button type="primary" @click="goCreateProject">Create Project</a-button> -->
       </div>
     </div>
-    <ALineService v-if="false" @goCreateProject="goCreateProject"></ALineService>
-    <div class="mt-4">
+    <ALineService v-if="totalContract == 0" @goCreateProject="goAddNewProject"></ALineService>
+    <div class="mt-4" v-else>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
           <div v-if="totalContract > 0">
@@ -92,22 +93,22 @@ const frontentList = ref([]);
 const nodeList = ref([])
 
 const onChange = (pageNumber: number) => {
-  if(activeKey.value === "1"){
+  if (activeKey.value === "1") {
     currentContract.value = pageNumber
-  }else if(activeKey.value === "2"){
+  } else if (activeKey.value === "2") {
     currentFrontend.value = pageNumber;
-  }else{
+  } else {
     currentNode.value = pageNumber;
   }
   getList(activeKey.value)
 }
 const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
   pageSize.value = pageSizeVal;
-  if(activeKey.value === "1"){
+  if (activeKey.value === "1") {
     currentContract.value = currentVal
-  }else if(activeKey.value === "2"){
+  } else if (activeKey.value === "2") {
     currentFrontend.value = currentVal;
-  }else{
+  } else {
     currentNode.value = currentVal;
   }
   getList(activeKey.value)
@@ -116,6 +117,11 @@ const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
 const goCreateProject = () => {
   localStorage.removeItem('createFormData');
   router.push("/projects/create");
+}
+
+const goAddNewProject = () => {
+  localStorage.removeItem('createFormData');
+  router.push("/projects/projectAddNew");
 }
 
 onBeforeMount(() => {
@@ -134,23 +140,23 @@ onMounted(() => {
 })
 
 // 获取不同的项目列表
-const getList = (activeKey:string)=>{
-  if(activeKey==='1'){
+const getList = (activeKey: string) => {
+  if (activeKey === '1') {
     getProjectsContract(activeKey)
-  }else if(activeKey==='2'){
+  } else if (activeKey === '2') {
     getProjectsFrontend(activeKey)
-  }else{
+  } else {
     getProjectsNode(activeKey)
   }
 }
 
 // 判断token是钱包的还是真实
-const tokenFrom = ()=>{
+const tokenFrom = () => {
   const bool = localStorage.getItem('token')?.startsWith('0x')
   // if(bool){
   //   localStorage.removeItem('token')
   // }
-  console.log('bool',bool)
+  console.log('bool', bool)
 }
 
 onBeforeUnmount(() => {
@@ -173,7 +179,7 @@ const getProjects = () => {
 }
 
 const handleTabClick = (tab: any) => {
-  console.log('handleTabClick',tab)
+  console.log('handleTabClick', tab)
   getList(tab)
   window.localStorage.setItem("projectActiveKey", tab);
 }
@@ -203,8 +209,8 @@ const getProjectsContract = async (type: string | undefined) => {
 const projectRunning = (projectList: any) => {
   const isRunning = ref(false);
   projectList.forEach((element: {
-frameType: number; recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; }; 
-}) => {
+    frameType: number; recentCheck: { status: number; }; recentBuild: { status: number; }; recentDeploy: { status: number; };
+  }) => {
     if (activeKey.value === '1' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.frameType === 7 && element.recentDeploy.status === 1)
       || activeKey.value === '2' && (element.recentCheck.status === 1 || element.recentBuild.status === 1 || element.recentDeploy.status === 1)) {
       isRunning.value = true;
@@ -254,7 +260,7 @@ const getProjectsNode = async (type: string | undefined) => {
     }
     const { data } = await apiGetProjects(params);
     if ((data.data === null || data.data === "[]") && (keyword.value === "" || keyword.value === null)) {
-      
+
       checkListEmpty(type);
     } else {
       nodeList.value = data.data;

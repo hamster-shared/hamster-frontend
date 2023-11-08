@@ -1,32 +1,36 @@
 <template>
-<bread-crumb :routes="breadCrumbInfo"/>
-<div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
-    <a-button type="primary" style="float:right;margin-right: 20px;" @click="showCreateEvm">Create by Code</a-button>
+  <bread-crumb :routes="breadCrumbInfo" />
+  <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
+    class="filecoin-detail mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] p-4 mt-[32px]">
+    <a-button type="primary" class="download-btn" @click="showCreateEvm">Download</a-button>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="Solidity" tab="Solidity">
         <div class="flex">
           <div class="w-1/4 p-4">
             <div class="font-bold text-[#818998] mb-2">Contract Name</div>
             <div>
-                <a-input v-model:value="name" placeholder="" allow-clear autocomplete="off" @change="getContent" oninput="value=value.replace(/^[0-9.]/g,'')"/>
+              <a-input v-model:value="name" placeholder="" allow-clear autocomplete="off" @change="getContent"
+                oninput="value=value.replace(/^[0-9.]/g,'')" />
             </div>
             <div class="font-bold text-[#818998] my-2">FEATURES</div>
             <div>
-                <div>
-                  <a-checkbox  @click="makeDealFn(makeDealBool)" v-model:checked="makeDealBool"> makeDeal</a-checkbox>
-                </div>
-                <div>
-                  <a-checkbox  @click="getDealFn(getDealBool)" v-model:checked="getDealBool"> getDeal</a-checkbox>
-                </div>
-                <div>
-                  <a-checkbox  @click="handleFileCoinFn(handleFileCoinBool)" v-model:checked="handleFileCoinBool"> handleFileCoin</a-checkbox>
-                </div>
-                <div>
-                  <a-checkbox  @click="updateActivationStatusFn(updateActivationStatusBool)" v-model:checked="updateActivationStatusBool"> updateActivationStatus</a-checkbox>
-                </div>
-                <div>
-                  <a-checkbox  @click="balanceFn(balanceBool)" v-model:checked="balanceBool"> balance</a-checkbox>
-                </div>
+              <div>
+                <a-checkbox @click="makeDealFn(makeDealBool)" v-model:checked="makeDealBool"> makeDeal</a-checkbox>
+              </div>
+              <div>
+                <a-checkbox @click="getDealFn(getDealBool)" v-model:checked="getDealBool"> getDeal</a-checkbox>
+              </div>
+              <div>
+                <a-checkbox @click="handleFileCoinFn(handleFileCoinBool)" v-model:checked="handleFileCoinBool">
+                  handleFileCoin</a-checkbox>
+              </div>
+              <div>
+                <a-checkbox @click="updateActivationStatusFn(updateActivationStatusBool)"
+                  v-model:checked="updateActivationStatusBool"> updateActivationStatus</a-checkbox>
+              </div>
+              <div>
+                <a-checkbox @click="balanceFn(balanceBool)" v-model:checked="balanceBool"> balance</a-checkbox>
+              </div>
             </div>
           </div>
           <div class="p-4  w-3/4 h-[700px]">
@@ -40,10 +44,12 @@
         </div>
       </a-tab-pane>
     </a-tabs>
-    <a-modal :footer="null" centered="true" v-model:visible="createCodeVisible" title="Create by template" @cancel="handleCancel">
+    <a-modal :footer="null" centered="true" v-model:visible="createCodeVisible" title="Create by template"
+      @cancel="handleCancel">
       <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
         <a-form-item label="Project Name" name="name">
-          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear autocomplete="off" />
+          <a-input class="modal-input" v-model:value="formData.name" placeholder="Please enter Project Name" allow-clear
+            autocomplete="off" />
         </a-form-item>
       </a-form>
       <span class="text-sm">Great project names are short and memorable.</span>
@@ -55,13 +61,13 @@
 </template>
 <script setup lang="ts">
 import BreadCrumb from "@/components/BreadCrumb.vue";
-import { ref,computed,onMounted, reactive } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import CodeEditor from '@/components/CodeEditor.vue';
 import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
 import { message } from 'ant-design-vue'
-import { getFileCoinContent} from '@/utils/fileCoinUtil';
+import { getFileCoinContent } from '@/utils/fileCoinUtil';
 import type { fileCoinContent } from '@/utils/fileCoinUtil';
 const theme = useThemeStore()
 const activeKey = ref('Solidity')
@@ -73,11 +79,11 @@ const router = useRouter()
 const name = ref('')
 const content = ref()
 const featuresList = ref([
-  { name: 'makeDeal', label: 'makeDeal', checked:true },
-  { name: 'getDeal', label: 'getDeal', checked:false },
-  { name: 'handleFileCoin', label: 'handleFileCoin', checked:true},
-  { name: 'updateActivationStatus', label: 'updateActivationStatus', checked:false},
-  { name: 'balance', label: 'balance', checked:false},
+  { name: 'makeDeal', label: 'makeDeal', checked: true },
+  { name: 'getDeal', label: 'getDeal', checked: false },
+  { name: 'handleFileCoin', label: 'handleFileCoin', checked: true },
+  { name: 'updateActivationStatus', label: 'updateActivationStatus', checked: false },
+  { name: 'balance', label: 'balance', checked: false },
 ]);
 const makeDealBool = ref(false)
 const getDealBool = ref(false)
@@ -93,12 +99,12 @@ const formData = reactive({
 const breadCrumbInfo = ref<any>([])
 
 // 弹出创建evm框
-const showCreateEvm = ()=>{
-  if(!name.value.trim()){
+const showCreateEvm = () => {
+  if (!name.value.trim()) {
     message.error('Please input the Contract Name!')
     return
   }
-    createCodeVisible.value = true
+  createCodeVisible.value = true
 }
 let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
 const formRules = computed(() => {
@@ -147,7 +153,7 @@ const createProject = async () => {
   try {
     // loading.value = true;
     const createProjectTemp = localStorage.getItem('createFormData');
-    console.log('createProjectTemp',createProjectTemp)
+    console.log('createProjectTemp', createProjectTemp)
     const params = {
       name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
@@ -160,13 +166,13 @@ const createProject = async () => {
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
     router.push("/projects");
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
     message.error(error.response.data.message);
   } finally {
     createCodeLoading.value = false
   }
 }
-const getContent = async()=>{
+const getContent = async () => {
   // const regex = /^[a-zA-Z][a-zA-Z0-9_]*$/;
   const params: fileCoinContent = {
     name: name.value,
@@ -180,49 +186,60 @@ const getContent = async()=>{
     const fileCoinContent = await getFileCoinContent(params);
     content.value = fileCoinContent
   } catch (err) {
-    console.log("err",err)
+    console.log("err", err)
   }
 }
 // 点击FEATURES触发数据更新
-const makeDealFn = async (bool:boolean) => {
+const makeDealFn = async (bool: boolean) => {
   makeDealBool.value = !bool
   getContent()
 }
-const getDealFn = async (bool:boolean) => {
+const getDealFn = async (bool: boolean) => {
   getDealBool.value = !bool
   getContent()
 }
-const handleFileCoinFn = async (bool:boolean) => {
+const handleFileCoinFn = async (bool: boolean) => {
   handleFileCoinBool.value = !bool
   getContent()
 }
-const updateActivationStatusFn = async (bool:boolean) => {
+const updateActivationStatusFn = async (bool: boolean) => {
   updateActivationStatusBool.value = !bool
   getContent()
 }
-const balanceFn = async (bool:boolean) => {
+const balanceFn = async (bool: boolean) => {
   balanceBool.value = !bool
   getContent()
 }
-onMounted(async()=>{
+onMounted(async () => {
   await getContent()
   breadCrumbInfo.value = [
-      {
-        breadcrumbName:'Create Project',
-        path:'/projects/create'
-      },
-      {
-        breadcrumbName:activeKey.value,
-        path:''
-      },
-    ]
+    {
+      breadcrumbName: 'Template Market',
+      path: '/projects/create'
+    },
+    {
+      breadcrumbName: activeKey.value,
+      path: ''
+    },
+  ]
 })
 </script>
 <style scoped lang="less">
-:deep(.ant-tabs-tab.ant-tabs-tab-disabled){
+.filecoin-detail {
+  position: relative;
+}
+
+.download-btn {
+  position: absolute;
+  right: 20px;
+  top: 24px;
+}
+
+:deep(.ant-tabs-tab.ant-tabs-tab-disabled) {
   color: #DCDCDC;
 }
-:deep(.ant-tabs-tab-btn){
+
+:deep(.ant-tabs-tab-btn) {
   width: 100px;
   text-align: center;
 }
