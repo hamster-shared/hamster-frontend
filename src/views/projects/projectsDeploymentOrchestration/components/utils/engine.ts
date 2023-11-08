@@ -188,12 +188,12 @@ export default class NewEngine {
                                     if (transaction.status === 0) {
                                         step.status = "FAILED"
                                         deployStep.status = "FAILED"
-                                        // const data = await getTrans(tx.hash,network)
-                                        // if (transaction.gasUsed.toNumber() == data.gasLimit.toNumber()) {
-                                        //     step.errorInfo = "Error encountered during contract execution [out of gas] "
-                                        // } else {
-                                        //     step.errorInfo = "Error encountered during contract execution [execution reverted]"
-                                        // }
+                                        const data = await getTrans(tx.hash,network)
+                                        if (transaction.gasUsed.toNumber() == data.gasLimit.toNumber()) {
+                                            step.errorInfo = "Error encountered during contract execution [out of gas] "
+                                        } else {
+                                            step.errorInfo = "Error encountered during contract execution [execution reverted]"
+                                        }
                                         this.isRunning = false
                                         await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                                         return
