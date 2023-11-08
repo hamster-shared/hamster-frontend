@@ -76,7 +76,7 @@
                 </div>
               </div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[(item.errorInfo && !item.status)?'!py-[0px] !text-left':'py-[70px]']">
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[(item.errorInfo && !item.transactionHash)?'!py-[0px] !text-left':'py-[70px]']">
               <label v-if="item.result==0 || item.result" class="text-[#D5D1CA] text-[14px] font-normal">{{item.result}}</label>
               <label v-else-if="item.errorInfo && !item.transactionHash" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
               <label v-else-if="!item.transactionHash || item.status=='RUNNING'">NO Data</label>
