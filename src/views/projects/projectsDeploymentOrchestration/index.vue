@@ -683,6 +683,7 @@ const getArrangeDeployList = async () => {
   console.log('获取已经编排过的合约列表:', res)
   if (res.code == 200) {
     let deployStep: any = [];
+    numberValue.value = 0
     res.data.forEach((item: any) => {
       if (item != '') {
         let strList = JSON.parse(item);
