@@ -620,7 +620,6 @@ const deployManyContract = async () => {
     if (noSaveContract.value.length == 0) {
       // 保存编排信息
       await saveOrchestrationInfo();
-      numberValue.value = contractOrchestration.value.length;
       
       // 部署调用代码
       visibleNumber.value = true
@@ -684,11 +683,14 @@ const getArrangeDeployList = async () => {
   console.log('获取已经编排过的合约列表:', res)
   if (res.code == 200) {
     let deployStep: any = [];
+    numberValue.value = 0
     res.data.forEach((item: any) => {
       if (item != '') {
         let strList = JSON.parse(item);
+        console.log("strList:",strList);
         strList.deployStep.forEach((sub: any) => {
           deployStep.push(sub);
+          numberValue.value += sub.steps.length - 1; // method数量累加
           if (sub.contract.proxy) {
             let copyData = JSON.parse(JSON.stringify(sub));
             copyData.steps.length = 1; // 只需要copy一条数据
@@ -730,6 +732,7 @@ const getArrangeDeployList = async () => {
         }
       }
     });
+    numberValue.value += deployStep.length; //合约数量累加
     deployArrange.value = {
       deployStep: deployStep,
       step: 0,
