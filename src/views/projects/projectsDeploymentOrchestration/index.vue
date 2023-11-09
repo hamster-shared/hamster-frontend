@@ -267,7 +267,7 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
   abiInfoData.map((item: any) => {
     if (item.type === 'constructor' && setType !== 'method') {
       setConstructorParams(item);
-    } else if (item.type === 'function') {
+    } else if (item.type === 'function' && item.stateMutability != 'pure') {
       setFunctionParams(item, mapKey);
     }
   }) 
