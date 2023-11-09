@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue';
+import {onUnmounted, onMounted, ref, watchEffect} from 'vue';
 import { useRoute } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
@@ -124,6 +124,9 @@ onMounted(async () => {
   await window.ethereum.enable();
   await execDeploy()
 })
+onUnmounted(() => {
+   newEngine?.destroy()
+});
 
 watchEffect(() => {
   if (versionRef.value != undefined) {
