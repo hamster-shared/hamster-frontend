@@ -45,7 +45,7 @@
         <template v-if="column.dataIndex === 'action'">
           <label class="cursor-pointer open-link-css hover:text-[#E4C08F] active:text-[#CE9C58]"
             @click="goWorkflowsDetail(record.type, record.id, record.detailId, record)">Details</label>
-          <label v-if="record.status === 1" class=" text-[#FF8A5B] hover:text-[#EBA183] active:text-[#EA7D51] ml-2 cursor-pointer"
+          <label v-if="record.status === 1 && frameType != 1" class=" text-[#FF8A5B] hover:text-[#EBA183] active:text-[#EA7D51] ml-2 cursor-pointer"
             @click="stopWorkflow(record.projectId, record.id, record.detailId)">Stop</label>
             <!-- evm没有删除 -->
           <label v-if="record.status !== 1 && frameType != 1" @click="deleteWorkflow(record.id, record.detailId)"
