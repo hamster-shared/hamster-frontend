@@ -18,7 +18,7 @@
             <template #icon>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
             </template>
-            <template #title>{{item.name}}</template>
+            <template #title><span class="text-[16px]">{{item.name}}</span></template>
             <template v-for="child in item.children">
               <template v-if="child?.meta?.isShow">
                 <a-menu-item :key="child.name" >
