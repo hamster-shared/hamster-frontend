@@ -15,7 +15,7 @@
         <!-- <a-button type="primary" @click="goCreateProject">Create Project</a-button> -->
       </div>
     </div>
-    <ALineService v-if="totalContract == 0" @goCreateProject="goAddNewProject"></ALineService>
+    <ALineService v-if="showALineService" @goCreateProject="goAddNewProject"></ALineService>
     <div class="mt-4" v-else>
       <a-tabs v-model:activeKey="activeKey" @tabClick="handleTabClick">
         <a-tab-pane key="1" tab="Contract">
@@ -91,6 +91,7 @@ const pageSize = ref(10);
 const contractList = ref([]);
 const frontentList = ref([]);
 const nodeList = ref([])
+const showALineService = ref(false)
 
 const onChange = (pageNumber: number) => {
   if (activeKey.value === "1") {
@@ -280,8 +281,10 @@ const checkListEmpty = (type: any) => {
       getProjectsFrontend('2');
     } else if (type === '2') {
       getProjectsNode('3')
-    } else { //三个tab都没有数据，跳转到新增页
-      goCreateProject();
+    }
+    else { //三个tab都没有数据，跳转到新增页
+      // goCreateProject();
+      showALineService.value = true
     }
   } else if (activeKey.value === "2") {
     if (type === '2') {
@@ -289,7 +292,8 @@ const checkListEmpty = (type: any) => {
     } else if (type === '1') {
       getProjectsNode('3')
     } else { //三个tab都没有数据，跳转到新增页
-      goCreateProject();
+      // goCreateProject();
+      showALineService.value = true
     }
   } else if (activeKey.value === "3") {
     if (type === '3') {
@@ -297,7 +301,8 @@ const checkListEmpty = (type: any) => {
     } else if (type === '1') {
       getProjectsFrontend('2');
     } else { //三个tab都没有数据，跳转到新增页
-      goCreateProject();
+      // goCreateProject();
+      showALineService.value = true
     }
   }
 }

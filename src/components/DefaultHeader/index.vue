@@ -217,7 +217,8 @@ onMounted(() => {
     isProject.value = false
   } else if (window.location.href.indexOf('projects') != -1) {
     isProject.value = true
-  } else if (window.location.href.indexOf('orders') != -1) {
+  }
+  else if (window.location.href.indexOf('orders') != -1) {
     isOrder.value = true
   }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
@@ -225,13 +226,12 @@ onMounted(() => {
   }
   changeTheme(defaultTheme.value);
   // 针对钱包登录的特殊处理
-  if (localStorage.getItem('token')?.startsWith('0x')) {
-    // debugger
-    isShowMiddleware.value = true
-    isConnectedWallet.value = true
-    const walletAddr: any = localStorage.getItem('token')
-    walletAccount.value = walletAddr.substring(0, 5) + "..." + walletAddr.substring(walletAddr.length - 4)
-  }
+  // if (localStorage.getItem('token')?.startsWith('0x')) {
+  //   isShowMiddleware.value = true
+  //   isConnectedWallet.value = true
+  //   const walletAddr: any = localStorage.getItem('token')
+  //   walletAccount.value = walletAddr.substring(0, 5) + "..." + walletAddr.substring(walletAddr.length - 4)
+  // }
 });
 
 watch(
@@ -252,6 +252,7 @@ const disconnect = () => {
   const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
   if (isFakeToken) {
     localStorage.removeItem('token')
+    // localStorage.removeItem('userInfo')
     router.push('/login')
   }
   visibleDisconnect.value = false;

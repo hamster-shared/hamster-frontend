@@ -233,6 +233,7 @@ onMounted(async () => {
   position: absolute;
   right: 20px;
   top: 24px;
+  z-index: 99;
 }
 
 :deep(.ant-tabs-tab.ant-tabs-tab-disabled) {

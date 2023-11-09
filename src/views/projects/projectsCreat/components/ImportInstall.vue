@@ -1,19 +1,24 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <div class="text-[24px] font-bold">Import Git Repository</div>
-    <div class="text-[14px] text-[#E2B578] mb-[20px]">Import Third-Party Git Repository ></div>
-    <div class="card">
+    <div class="card mt-[20px]">
       <img class="h-[108px] w-[108px]" src="@/assets/images/ImportInstall.png" />
       <div class="my-[20px]">Install the Github application for the accounts you wish to import from to continue</div>
-      <a-button type="primary" class="w-[150px]" @clcik="installGit">Install</a-button>
+      <a-button type="primary" class="w-[150px]" @click="installGit">Install</a-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from "vue";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore()
 
-const installGit = () => { }
+
+const installGit = () => {
+  const state = new Date().getTime();
+  const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
+  const url = `${oauthUrl.value}?state=${state}`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+}
 
 </script>
 <style scoped lang="less">

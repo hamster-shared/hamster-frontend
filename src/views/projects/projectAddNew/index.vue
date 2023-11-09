@@ -4,7 +4,7 @@
     <div class="text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Ready to start Aline Service? Get started with use an
       existing repository.
     </div>
-    <div class="flex mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
+    <div class="grid grid-cols-2 gap-8 mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div>
         <a-form :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'" :model="formData" layout="vertical">
           <a-form-item class="new-label" label="Project Type" name="type">
@@ -23,7 +23,10 @@
           </a-form-item>
         </a-form>
       </div>
-      <ImportInstall></ImportInstall>
+      <div>
+        <ImportGitRepository></ImportGitRepository>
+      </div>
+
     </div>
   </div>
 </template>
@@ -32,6 +35,7 @@
 import { ref, reactive } from "vue";
 import { useThemeStore } from "@/stores/useTheme";
 import ImportInstall from "@/views/projects/projectsCreat/components/ImportInstall.vue";
+import ImportGitRepository from "@/views/projects/projectsCreat/components/ImportGitRepository.vue"
 const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) || reactive({
   name: '',
   type: '1',
@@ -42,6 +46,10 @@ const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) ||
 const theme = useThemeStore();
 
 const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
+
+const getTemplatesShow = () => {
+
+}
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;

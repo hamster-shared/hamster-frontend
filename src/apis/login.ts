@@ -2,7 +2,7 @@ import httpRequest from "@/request";
 
 interface AddLoginParams {
   code: string,
-  clientId: string,
+  // clientId: string,
 }
 
 // login
@@ -109,11 +109,11 @@ export function getUserInfo() {
 }
 
 // metamask钱包登录
-export function metamaskLogin(address:string) {
+export function metamaskLogin(data:any) {
   return httpRequest({
     url: `/api/metamask/login`,
     method: "post",
-    data:{address: address}
+    data:{address:data.address}
   });
 }
 
