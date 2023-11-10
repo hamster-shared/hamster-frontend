@@ -22,9 +22,9 @@
       </div>
       <a-form ref="formInvokeRef" :rules="formRules" :model="methodItem.formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
-          <a-form-item name="methodName" label="Method Name1111" :rules="[{ required: true }]">
+          <a-form-item name="methodName" label="Method Name" :rules="[{ required: true }]">
             <a-select v-model:value="methodItem.formData.methodName" @select="changeMethodName($event, methodKey)" 
-              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name.indexOf('(')!='-1' ? item.name?.slice(0,item.name.indexOf('(')):item.name }))">
+              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label: item.name }))">
             </a-select>
           </a-form-item>
           <a-form-item class="form-noLabel" name="methodType" :rules="[{ required: true }]">
@@ -44,7 +44,7 @@
             <a-form-item class="form-noLabel" :name="item.name" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
               <a-select @change="checkFiledChange" v-if="methodItem.formData[item.name + 'param'] == 1" v-model:value="methodItem.formData[item.name]"  
-                placeholder="Contract Address" :options="contractOrchestration.map((opItem: any) => ({ value: opItem.name, label:opItem.name.indexOf('(')!='-1' ? opItem.name?.slice(0,opItem.name.indexOf('(')):opItem.name }))">
+                placeholder="Contract Address" :options="contractOrchestration.map((opItem: any) => ({ value: opItem.name, label:opItem.name }))">
               </a-select>
               <a-input @change="checkFiledChange" v-else v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" autoComplete="off" allowClear />
             </a-form-item>  
@@ -57,7 +57,7 @@
           <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
           <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
         </a-form-item>
-        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
+        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :customParams="methodItem.formData.customParams" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
       </a-form>
     </div>
     <div @click="moreContractMethod" 

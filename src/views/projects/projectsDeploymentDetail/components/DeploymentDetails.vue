@@ -19,8 +19,8 @@
         <a-collapse-panel v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index, item.status)">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.transactionHash" class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
-              <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
+              <div v-if="item.transactionHash" class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionHash)">View on block explorer</div>
+              <div v-if="item.status === 'FAILED' || item.status === 'STOP'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
               <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2 text-[#fff]" />
               <div>{{ item.status }}</div>
@@ -53,7 +53,14 @@
                   <div class="collapse-content-title">To:</div>
                   <div>{{ item.transactionInfo.to }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.to)"/>
+                    <svg-icon v-if="item.status=='FAILED'" name="warn-failed" size="18" class="svg-color ml-2" />
                   </div>
+                </div>
+                <div v-if="item.status=='FAILED'" class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title"></div>
+                  <div class="text-[#F52222]">
+                    <svg-icon name="icon-include" size="12" class="ml-2 text-[#73706E] mb-[8px]"/>
+                    {{ item.errorInfo }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">Value:</div>
@@ -69,11 +76,11 @@
                 </div>
               </div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'!py-[0px] !text-left':'py-[70px]']">
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[(item.errorInfo && !item.transactionHash)?'!py-[0px] !text-left':'py-[70px]']">
               <label v-if="item.result==0 || item.result" class="text-[#D5D1CA] text-[14px] font-normal">{{item.result}}</label>
-              <label v-else-if="item.errorInfo" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
+              <label v-else-if="item.errorInfo && !item.transactionHash" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
               <label v-else-if="!item.transactionHash || item.status=='RUNNING'">NO Data</label>
-              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
+              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}"></LoadingOutlined>
             </div>
           </div>
         </a-collapse-panel>
@@ -134,6 +141,7 @@ const actionOptions = ref([
 ]);
 
 const goPage = (val:string)=>{
+  actionVal.value = 'All Action'
   console.log('goPage', val)
   if(val=='Dashboard'){
     router.push(`/projects/projectsDashboard?id=${route.query.id}`)
@@ -159,7 +167,7 @@ const getExecuteInfoById = async () => {
     } else {
       timer.value = setTimeout(() => {
         getExecuteInfoById();
-    }, 1000)
+    }, 3000)
     }
   }
 }
@@ -216,16 +224,18 @@ const setExecuteInfoList = (arrangeData: any) => {
 }
 // 判断是否继续轮询
 const setTimerByStatus = (status: any) => {
-  if (!timeStop.value) {
+  // debugger
+  // if (!timeStop.value) {
     //有一条数据的状态是 stop 或 failed 则停止轮询
     if (status == 'STOP' || status == 'FAILED') {
       timeStop.value = true; //停止轮询
+      return
     } else if (status == 'PENDING' || status == 'RUNNING') {
       timeStop.value = false; //继续轮询
     } else if (status == 'SUCCESS') {
       statusSucNum.value++;
     }
-  }
+  // }
 }
 
 // 获取单个合约的执行信息

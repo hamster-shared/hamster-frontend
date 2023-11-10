@@ -122,7 +122,7 @@ const numberValue = ref(0)
 const noSaveContract = ref<any>([]);
 const visibleNoSave = ref(false);
 // 记录合同是否没有参数需要设置
-const noParamsContract = ref(true);
+const noParamsContract = ref<any>([]);
 
 const networkListData = ref<any>([])
 const networkLogo = ref('');
@@ -220,7 +220,9 @@ const selectContractId = async (id: string, abiInfo: any) => {
   //Invoke Contract Method字段赋值
   setFunctionParamsValue(); 
   //Contract Parameters 清空字段验证 
-  await paramsRef.value.formContractRef.clearValidate();
+  if (paramsRef.value.formContractRef != undefined) {
+    await paramsRef.value.formContractRef.clearValidate();
+  }
   //Invoke Contract Method 清空字段验证
   //获取子组件的表单ref值
   let invokeChild = contractRef.value.formInvokeRef;
@@ -265,7 +267,7 @@ const setAbiInfo = (abiInfo: any, mapKey: string, setType: string) => {
   abiInfoData.map((item: any) => {
     if (item.type === 'constructor' && setType !== 'method') {
       setConstructorParams(item);
-    } else if (item.type === 'function') {
+    } else if (item.type === 'function' && item.stateMutability != 'pure') {
       setFunctionParams(item, mapKey);
     }
   }) 
@@ -487,9 +489,10 @@ const setContractInfo = () => {
 }
 //验证Invoke Contract Method表单
 const checkContractForm = async () => {
-  
-  //Contract Parameters 字段非空验证
-  await paramsRef.value.formContractRef.validate();
+  if (paramsRef.value.formContractRef != undefined){
+    //Contract Parameters 字段非空验证
+    await paramsRef.value.formContractRef.validate();
+  }
   //Invoke Contract Method 字段非空验证
   //获取子组件的表单ref值
   let invokeChild = contractRef.value.formInvokeRef;
@@ -530,13 +533,13 @@ const getSingleContractInfo = async () => {
   contractSingileInfo.value = {}; //清空合同信息
   try {
     let param = {
-      id: route.query.id,
+      // id: route.query.id,
       projectId: route.query.id,
       contractId: Number(selectedId.value),
       contractName: selectedName.value,
       version: baseInfo.value.selectedVersion
     }
-    const { data } = await apiGetSingleContractInfo(param.id, param.projectId, param.contractId, param.contractName, param.version);
+    const { data } = await apiGetSingleContractInfo(route.query.id, param);
     if (data != null && data != "") {
       contractSingileInfo.value = JSON.parse(data);
       //拆分保存的合约信息
@@ -613,26 +616,16 @@ const deployManyContract = async () => {
     checkContractParam();
     // 获取已经编排过的合约列表
     await getArrangeDeployList();
-    // 合同没有参数需要设置
-    if (noParamsContract.value) {
+    // 所有待部署合约都填写并保存配置参数
+    if (noSaveContract.value.length == 0) {
       // 保存编排信息
       await saveOrchestrationInfo();
-      numberValue.value = contractOrchestration.value.length;
+      
       // 部署调用代码
       visibleNumber.value = true
     } else {
-      
-      // 所有待部署合约都填写并保存配置参数
-      if (noSaveContract.value.length == 0) {
-        // 保存编排信息
-        await saveOrchestrationInfo();
-        
-        // 部署调用代码
-        visibleNumber.value = true
-      } else {
-        // 提示未保存合约内容
-        visibleNoSave.value = true;
-      }
+      // 提示未保存合约内容
+      visibleNoSave.value = true;
     }
   }
 }
@@ -665,16 +658,22 @@ const getEVMNetwork = async()=>{
 }
 //判断合约是否需要设置参数
 const checkContractParam = () => {
-
-  noSaveContract.value = contractOrchestration.value?.map((item: any) => {
+  noSaveContract.value.length = 0;
+  noParamsContract.value.length = 0;
+  contractOrchestration.value?.map((item: any) => {
     let abiInfoData = YAML.parse(item.abiInfo);
+    let noParam = true;
     abiInfoData.map((abiItem: any) => {
       if (abiItem.type === 'constructor' && abiItem.inputs.length > 0) {
-        noParamsContract.value = false; // 有 param 需要设置参数
-      }
+        noSaveContract.value.push(item.name);
+        noParam = false;
+      } 
     }) 
-    return item.name
-  }) || [];
+    // 记录没有参数需要设置的合同
+    if (noParam) {
+      noParamsContract.value.push(item.name);
+    }
+  });
 }
 
 // 获取已经编排过的合约列表
@@ -684,12 +683,14 @@ const getArrangeDeployList = async () => {
   console.log('获取已经编排过的合约列表:', res)
   if (res.code == 200) {
     let deployStep: any = [];
-    let number = 0;
+    numberValue.value = 0
     res.data.forEach((item: any) => {
       if (item != '') {
         let strList = JSON.parse(item);
+        console.log("strList:",strList);
         strList.deployStep.forEach((sub: any) => {
           deployStep.push(sub);
+          numberValue.value += sub.steps.length - 1; // method数量累加
           if (sub.contract.proxy) {
             let copyData = JSON.parse(JSON.stringify(sub));
             copyData.steps.length = 1; // 只需要copy一条数据
@@ -699,36 +700,39 @@ const getArrangeDeployList = async () => {
             deployStep.push(copyData);
           }
           // 删除已经设置参数的合同
-          noSaveContract.value.splice(noSaveContract.value.indexOf(sub.contract.name), 1);
+          if (noSaveContract.value.indexOf(sub.contract.name) != -1) {
+            noSaveContract.value.splice(noSaveContract.value.indexOf(sub.contract.name), 1);
+          }
+          // 没有参数需要设置的合约，可能设置Proxy值
+          if (noParamsContract.value.indexOf(sub.contract.name) != -1) {
+            noParamsContract.value.splice(noParamsContract.value.indexOf(sub.contract.name), 1);
+          }
         });
-        number++;
-      } else if(!noParamsContract.value){
-        deployStep.push({})
+      } else {
+        // 数据为空，默认是不需要设置参数的合同，若不是，则noSaveContract字段会在判断时，提示未设置参数
+        if (noParamsContract.value.length > 0) {
+          deployStep.push({
+            contract: {
+              name: noParamsContract.value[0],
+              address: '',
+              proxyAddress: '',
+              proxy: false,
+            },
+            steps: [{
+              type: CONSTRUCTOR,
+              method: "",//都是空串
+              params: [],
+              status: "PENDING",
+            }],
+            status: 'PENDING',
+            step: 0
+          })
+          // 删除赋值后的合同
+          noParamsContract.value.splice(0, 1);
+        }
       }
     });
-    console.log("noSaveContract:",noSaveContract.value);
-    // 不需要设置合同参数的合同，对数组进行默认赋值
-    if (noParamsContract.value) {
-      noSaveContract.value.forEach((item: any) => {
-        deployStep.push({
-          contract: {
-            name: item,
-            address: '',
-            proxyAddress: '',
-            proxy: false,
-          },
-          steps: [{
-            type: CONSTRUCTOR,
-            method: "",//都是空串
-            params: [],
-            status: "PENDING",
-          }],
-          status: 'PENDING',
-          step: 0
-        })
-      });
-    }
-    numberValue.value = number;
+    numberValue.value += deployStep.length; //合约数量累加
     deployArrange.value = {
       deployStep: deployStep,
       step: 0,

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue';
+import {onUnmounted, onMounted, ref, watchEffect} from 'vue';
 import { useRoute } from 'vue-router';
 import BreadCrumb from "@/components/BreadCrumb.vue";
 import DeployVersionInfomation from '@/components/DeployVersionInfomation.vue';
@@ -75,8 +75,9 @@ const execDeploy = async () => {
   const res = await apiGetExecuteInfoById(projectId,executeId)
   if (res.code === 200) {
     let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
-    const execStatus = execJson.deployStep.some(item => item && item.status === "RUNNING" || item.status === "PENDING")
-    if (execStatus) {
+    const execStatus = execJson.deployStep.some(item => item && (item.status === "FAILED" || item.status === "STOP"))
+    const allSuccess = execJson.deployStep.every(item => item && item.status === "SUCCESS")
+    if (!execStatus && !allSuccess) {
       const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
       const contractMap = formatContractList(data)
       let deployParams = {
@@ -120,8 +121,12 @@ onMounted(async () => {
   await getContactDetail()
   initBreadCrumb()
   await getProjectsVersion()
+  await window.ethereum.enable();
   await execDeploy()
 })
+onUnmounted(() => {
+   newEngine?.destroy()
+});
 
 watchEffect(() => {
   if (versionRef.value != undefined) {

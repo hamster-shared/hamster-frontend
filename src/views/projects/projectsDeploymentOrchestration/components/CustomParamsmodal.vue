@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, toRefs } from "vue";
+import { ref, reactive, computed, toRefs, onMounted } from "vue";
 
 
 const props = defineProps({
@@ -43,9 +43,10 @@ const props = defineProps({
   methodKey: Number,
   methodType: String,
   methodName: String,
+  customParams: String,
 });
 
-const { visible, methodKey,methodType,methodName  } = toRefs(props);
+const { visible, methodKey,methodType,methodName,customParams  } = toRefs(props);
 
 const formData = reactive<any>({
   secretArr: [
@@ -105,6 +106,25 @@ const handleCancelVisible = () => {
   emit("showContract");
 }
 
+onMounted(() => {
+  if (customParams?.value != '') {
+    let str = customParams?.value?.split('\n');
+    str?.forEach((item: any, key: any) => {
+      if (item) {
+        let val = item.split(': ');
+        if (key == 0) {
+          formData.secretArr[key].secretName = val[0];
+          formData.secretArr[key].secretValue = val[1];
+        } else {
+          formData.secretArr.push({
+            secretName: val[0],
+            secretValue: val[1],
+          })
+        }
+      }
+    });
+  }
+});
 </script>
 
 <style lang="less" scoped>
