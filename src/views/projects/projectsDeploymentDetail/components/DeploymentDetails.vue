@@ -154,6 +154,7 @@ const hideOrchestrationInfo = () => {
 }
 // 根据执行id获取执行信息 
 const getExecuteInfoById = async () => {
+  if(!route.query.executeId) return
   const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
   console.log("根据执行id获取执行信息:", res);
   if (res.code == 200) {
