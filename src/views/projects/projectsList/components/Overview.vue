@@ -345,7 +345,7 @@ const deployTxHash = starknetHashData[props.viewInfo.id]?.deployTxHash || '';
 // console.log('deployTxHash', props.viewInfo.id, deployTxHash)
 
 const checkCondition = () => {
-  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType==3) {
+  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType==3 || (viewInfo.value.type == '1' && viewInfo.value.frameType == 8) ) {
     return true;
   } else {
     return false;

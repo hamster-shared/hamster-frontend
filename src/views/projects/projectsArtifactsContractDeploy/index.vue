@@ -60,9 +60,12 @@
           loading ? 'Deploying' : 'Deploy'
         }}</a-button>
     </div>
-    <!-- <div>
-      <a-button @click="deployContract">test deploy</a-button>
-    </div> -->
+    <hr />
+    <DeploySolana @Validate="solanaValidata" :solanaAbi="solanaAbi" />
+
+
+
+
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
   <Wallets ref="showWallets"></Wallets>
@@ -123,6 +126,7 @@ import {type Chain, ChainList, getChain} from "@/utils/chainlist"
 import DeploySolana from "./deploySolana.vue";
 
 
+
 import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
 import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
@@ -166,6 +170,7 @@ const chainName = ref('');
 const rpcUrl = ref('');
 const currencySymbol = ref('');
 
+
 // aptos
 const arr = [new PetraWallet()]
 const aptosWallet: any = new WalletCore(arr)
@@ -182,7 +187,9 @@ const breadCrumbInfo = ref<any>([])
 // sui
 const suiWallet = new WalletStandardAdapterProvider()
 
+
 //solana
+const solanaAbi = ref('');
 
 const initSolana = () =>{
   const walletOptions = {
@@ -385,6 +392,8 @@ const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
   data.map((item: any) => {
     console.log(item);
+
+    solanaAbi.value = item;
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
@@ -392,9 +401,12 @@ const getProjectsContract = async () => {
     petraMv.value.push(item.aptosMv);
     petraBsc.value.push(item.byteCode)
     aptosContractId.value.push(item.id)
+
     // aptos abi不走之前的那一套
-    if (frameType.value !== 2 && frameType.value !== 5) {
+    if (frameType.value !== 2 && frameType.value !== 5 && frameType.value !== 8) {
       setAbiInfo(item);
+    }else if(frameType.value === 8){
+      solanaAbi.value = item
     }
   })
   Object.assign(projectsContractData, data)
@@ -816,6 +828,10 @@ const getProjectsDetail = async () => {
       case 5:
         Object.assign(chainData, ['Sui'])
         networkData.value= [{name: 'Devnet', id: 'devnet', networkName: 'Devnet'},{name: 'Testnet',id:'testnet',networkName: 'Testnet'}]
+        break;
+      case 8:
+        Object.assign(chainData, ['Solana'])
+        networkData.value= [{name: 'Mainnet', id: 'Mainnet', networkName: 'Mainnet'},{name: 'Devnet', id: 'devnet', networkName: 'Devnet'},{name: 'Testnet',id:'testnet',networkName: 'Testnet'}]
         break;
       default: break;
     }

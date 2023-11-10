@@ -11,6 +11,7 @@ export enum ContractFrameTypeEnum {
   'Sui' = 5,
   'Chainlink' = 6,
   'IC' = 7,
+  'Solana' = 8,
 }
 export enum FrontEndFrameTypeEnum {
 
