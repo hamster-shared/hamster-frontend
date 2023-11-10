@@ -42,7 +42,7 @@
           </a-table>
 
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '1' && (item.checkTool === 'mythril' || item.checkTool === 'ESLint') && val.message"
+            v-if="(projectType === '2' || projectType==='1') && (item.checkTool === 'mythril' || item.checkTool === 'Move Prove') && val.message"
             :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
           </a-table>
 
@@ -243,7 +243,6 @@ const columns = [
   }
 ];
 const { checkReportData, projectType, checkStatus } = toRefs(props)
-
 </script>
 
 <style lang="less" scoped>

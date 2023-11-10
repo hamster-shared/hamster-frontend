@@ -156,6 +156,9 @@ const msgParam = ref({
 const toDeployUrl = (val: any) => {
   if (frameType?.value === 7) { 
     frontendDeploying(val)
+  } else if(frameType?.value === 1){
+    // evm 走多部署
+    router.push(`/projects/projectsDeploymentOrchestration?id=${route.params.id}`)
   } else {
     const contract = val.id || '00';
     const path = `/projects/${val.projectId}/artifacts-contract/${val.version}/deploy/${contract}?name=${currentName?.value?.replace('#','[')}`

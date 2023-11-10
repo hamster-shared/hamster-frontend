@@ -17,10 +17,16 @@ html[data-theme='dark'] {
   // color: #BBBAB9;
   height: 40px;
 }
+.ant-input[disabled]{
+  color: rgba(0,0,0,.85);
+}
 .ant-input, .ant-input-affix-wrapper{
   background-color: transparent;
   border-radius: 8px;
   border-color: #EBEBEB;
+}
+input:-internal-autofill-selected{
+  background-color: transparent !important;
 }
 .ant-input-affix-wrapper{
   padding-top: 0px;
