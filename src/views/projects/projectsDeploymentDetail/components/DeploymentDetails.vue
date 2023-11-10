@@ -224,16 +224,18 @@ const setExecuteInfoList = (arrangeData: any) => {
 }
 // 判断是否继续轮询
 const setTimerByStatus = (status: any) => {
-  if (!timeStop.value) {
+  // debugger
+  // if (!timeStop.value) {
     //有一条数据的状态是 stop 或 failed 则停止轮询
     if (status == 'STOP' || status == 'FAILED') {
       timeStop.value = true; //停止轮询
+      return
     } else if (status == 'PENDING' || status == 'RUNNING') {
       timeStop.value = false; //继续轮询
     } else if (status == 'SUCCESS') {
       statusSucNum.value++;
     }
-  }
+  // }
 }
 
 // 获取单个合约的执行信息
