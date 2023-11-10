@@ -54,17 +54,12 @@
       </div>
     </div>
     <div class="text-center mt-[16px]">
-      <DeploySolana @Validate="solanaValidata"  v-if="frameType === 8"  />
+      <DeploySolana @Validate="solanaValidata" :solanaAbi="solanaAbi" :network="chainName" @setProjectsContractDeploy="setProjectsContractDeploy" v-if="frameType === 8"  />
 
       <a-button v-else class="btn" @click="deployClick" :loading="loading">{{
           loading ? 'Deploying' : 'Deploy'
         }}</a-button>
     </div>
-    <hr />
-    <DeploySolana @Validate="solanaValidata" :solanaAbi="solanaAbi" />
-
-
-
 
   </div>
   <SelectWallet :visible="visible" @cancelModal="cancelModal"></SelectWallet>
@@ -123,7 +118,7 @@ import {WalletCore} from '@aptos-labs/wallet-adapter-core'
 import {AptosClient, BCS, HexString, TxnBuilderTypes} from 'aptos'
 import {sleep} from "@/utils/tool"
 import {type Chain, ChainList, getChain} from "@/utils/chainlist"
-import DeploySolana from "./deploySolana.vue";
+import DeploySolana from "./solana/deploySolana.vue";
 
 
 
@@ -831,7 +826,7 @@ const getProjectsDetail = async () => {
         break;
       case 8:
         Object.assign(chainData, ['Solana'])
-        networkData.value= [{name: 'Mainnet', id: 'Mainnet', networkName: 'Mainnet'},{name: 'Devnet', id: 'devnet', networkName: 'Devnet'},{name: 'Testnet',id:'testnet',networkName: 'Testnet'}]
+        networkData.value= [{name: 'Mainnet', id: 'Mainnet', networkName: 'mainnet-beta'},{name: 'Devnet', id: 'devnet', networkName: 'devnet'},{name: 'Testnet',id:'testnet',networkName: 'testnet'}]
         break;
       default: break;
     }
