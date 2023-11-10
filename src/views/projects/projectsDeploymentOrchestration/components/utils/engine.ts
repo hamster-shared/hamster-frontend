@@ -76,6 +76,12 @@ export default class NewEngine {
                 await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 return;
             }
+            if (step.status != "RUNNING") {
+                step.status = "RUNNING"
+                deployStep.status = "RUNNING"
+                step.errorInfo = ""
+                await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+            }
             if (step.status == "RUNNING") {
                 if (step.transactionHash != "" && step.transactionHash != undefined) {
                    try {
@@ -146,10 +152,6 @@ export default class NewEngine {
                    }
                 }
             }
-            step.status = "RUNNING"
-            deployStep.status = "RUNNING"
-            await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
-            console.info(step.type)
             if(step.type === CONSTRUCTOR){
                 try {
                     console.info("start deploy contract")
