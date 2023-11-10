@@ -24,7 +24,7 @@
         </a-form>
       </div>
       <div>
-        <ImportGitRepository></ImportGitRepository>
+        <ImportGitRepository :projectType="formData.type"></ImportGitRepository>
       </div>
 
     </div>

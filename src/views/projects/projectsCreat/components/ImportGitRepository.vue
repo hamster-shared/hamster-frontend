@@ -5,12 +5,19 @@
       <span v-if="props.projectType != '3'" class="text-sm cursor-pointer open-link-css"
         @click="handleImportRepository">Import Third-Party Git Repository ></span>
     </div>
-    <ImportInstall v-if="pagination.total == 0"></ImportInstall>
+    <ImportInstall v-if="!isGithubInstallCheck"></ImportInstall>
     <div v-else>
       <div class="flex">
-        <a-select ref="select" class="select-btn" style="width: 240px" v-model:value="selectValue">
-          <a-select-option value="jack">Jack</a-select-option>
-          <a-select-option value="lucy">Lucy</a-select-option>
+        <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue"
+          :field-names="{ label: 'name', value: 'id' }" @select="selectGithubAccount" :options="githubAccountList">
+          <template #dropdownRender="{ menuNode: menu }">
+            <v-nodes :vnodes="menu" />
+            <a-divider style="margin: 4px 0" />
+            <div style="padding: 4px 8px; cursor: pointer" @mousedown="e => e.preventDefault()" @click="addGithubAccount">
+              <plus-outlined />
+              Add Github Account
+            </div>
+          </template>
         </a-select>
         <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue"
           placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
@@ -32,13 +39,19 @@
 
       <div class="mb-6 text-center">
         <a-pagination v-if="pagination.total" size="small" @showSizeChange="pagination.onShowSizeChange"
-          @change="pagination.onChange" v-model:current="pagination.current" :total="pagination.total"
-          v-model:pageSize="pagination.pageSize" />
+          :pageSizeOptions="pagination.pageSizeOptions" @change="pagination.onChange" v-model:current="pagination.current"
+          :total="pagination.total" v-model:pageSize="pagination.pageSize" />
         <div v-else>
           <img src="@/assets/icons/noData--dark.svg" alt="" class="w-[128px] hidden dark:inline-block" />
           <img src="@/assets/icons/noData-white.svg" class="w-[128px] dark:hidden" />
           <p>No Data</p>
         </div>
+      </div>
+      <div>
+        <span>Missing Git repository? </span>
+        <span v-if="repositorySelection === 'selected'" class="text-[#E2B578] cursor-pointer"
+          @click="adjustGithubPremission">Adjust GitHub App
+          Permissions </span>
       </div>
     </div>
   </div>
@@ -111,10 +124,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
+import { PlusOutlined } from '@ant-design/icons-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiGetRepository, apiPostRepository } from '@/apis/projects';
+import { apiGetRepository, apiPostRepository, apiInstallRepository } from '@/apis/projects';
+import { getInstallations, githubInstallCheck, githubInstallAuth } from "@/apis/login";
 import ImportInstall from './ImportInstall.vue';
 
 const props = defineProps(({
@@ -122,13 +137,33 @@ const props = defineProps(({
 }))
 const router = useRouter()
 
+const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+
+const githubAccountList = ref([]);
+const selectValue = ref('');
+const selsectInstallId = ref('');
+
+const repositorySelection = ref('');
+
+
+const isGithubInstallCheck = ref(false);
+
 const repositoryData = ref()
 const searchInputValue = ref('')
 let importUrl = ref([])
 let nameDupErrInfo = ref('')
 
-const selectValue = ref('')
-
+const VNodes = defineComponent({
+  props: {
+    vnodes: {
+      type: Object,
+      required: true,
+    },
+  },
+  render() {
+    return this.vnodes;
+  },
+});
 
 const importVisible = ref(false);
 const repositoryVisible = ref(false);
@@ -175,6 +210,7 @@ const pagination = reactive({
   hideOnSinglePage: false, // 只有一页时是否隐藏分页器
   showQuickJumper: false, // 是否可以快速跳转至某页
   showSizeChanger: false, // 是否可以改变 pageSize
+  pageSizeOptions: ['3'],
   onShowSizeChange: (current: number, pagesize: number) => {
     // 改变 pageSize时的回调
     pagination.current = current;
@@ -188,14 +224,62 @@ const pagination = reactive({
   },
 });
 
+const addGithubAccount = () => {
+  // const state = new Date().getTime();
+  // const url = `${selectTargetUrl.value}?state=${state}`;
+  // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+}
+
+
+const getGithubInstallCheck = async () => {
+  try {
+    const { data } = await githubInstallCheck()
+    // console.log(data, ' 99999')
+    isGithubInstallCheck.value = data;
+  } catch (err: any) {
+
+  }
+}
+
+
+const adjustGithubPremission = () => {
+  const state = new Date().getTime();
+  const url = `${selectTargetUrl.value}?state=${state}`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+
+}
+
+const selectGithubAccount = (value: any, item: any) => {
+  console.log(value, item, '9090')
+  selsectInstallId.value = item.installId;
+  repositorySelection.value = item.repositorySelection;
+  searchLoading.value = true;
+  pagination.current = 1;
+  getRepositoryData()
+}
+
+const getInstallationsAccount = async () => {
+  try {
+    const { data } = await getInstallations();
+    githubAccountList.value = data;
+    selectValue.value = data[0].name;
+    selsectInstallId.value = data[0].installId;
+    repositorySelection.value = data[0].repositorySelection;
+    console.log(data, '999')
+  } catch (err: any) {
+    // message.error(err.message)
+  }
+
+}
+
 const getRepositoryData = async () => {
   const params = {
     page: pagination.current,
     size: pagination.pageSize,
-    filter: searchInputValue.value
+    query: searchInputValue.value
   }
   try {
-    const { data } = await apiGetRepository(params)
+    const { data } = await apiInstallRepository(selsectInstallId.value, params)
     // console.log('getRepositoryData-data:', data)
     pagination.total = data.total
     repositoryData.value = data.data
@@ -290,13 +374,17 @@ const handleDone = async () => {
 
 }
 
-onMounted(() => {
-  getRepositoryData()
+onMounted(async () => {
+
+  await getGithubInstallCheck()
+  await getInstallationsAccount();
+  getRepositoryData();
 })
 </script>
 
 <style lang="less" scoped>
 .ant-select {
+  height: 43px;
   margin-top: 20px;
   margin-right: 24px;
 }

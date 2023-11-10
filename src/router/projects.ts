@@ -123,7 +123,19 @@ const projectsRoute = [
         path: '/projects/projectsDeploySeting',
         name: "projectsDeploySeting",
         component: () => import('@/views/projects/projectsDeploySeting/index.vue'),
+      },
+      {
+        path: '/projects/installations',
+        name: "projectsInstallations",
+        component: () => import('@/views/projects/projectsCreat/installations.vue')
+      },
+      {
+        path: '/projects/adjustPremission',
+        name: "projectsAdjustPremission",
+        component: () => import('@/views/projects/projectsCreat/adjustPremission.vue')
       }
+
+
     ]
   }
 ]

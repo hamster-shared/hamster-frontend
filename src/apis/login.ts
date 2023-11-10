@@ -85,17 +85,18 @@ export function installGithubApp() {
 }
 
 // 钱包登录下需要install情况下github auth
-export function githubInstallAuth() {
+export function githubInstallAuth(params) {
   return httpRequest({
     url: `/api/github/install/auth`,
     method: "post",
+    params,
   });
 }
 
 // 获取用户是否install GitHub app  github/install
-export function githubInstall() {
+export function githubInstallCheck() {
   return httpRequest({
-    url: `/api/github/install`,
+    url: `/api/github/install/check`,
     method: "get",
   });
 }

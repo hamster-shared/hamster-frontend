@@ -8,17 +8,63 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { githubInstallAuth } from "@/apis/login";
+import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
-const theme = useThemeStore()
+const theme = useThemeStore();
+const router = useRouter();
+
+const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
+const oauthUrl = ref('https://github.com/login/oauth/authorize');
+const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+const loginType = ref(1);
 
 
 const installGit = () => {
-  const state = new Date().getTime();
-  const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
-  const url = `${oauthUrl.value}?state=${state}`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+  // loginType.value === 1 githun登录 2 === metaMask登录
+  if (loginType.value === 1) {
+    const state = new Date().getTime();
+    const url = `${selectTargetUrl.value}?state=${state}`;
+    const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+  } else {
+    const state = new Date().getTime();
+    const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+    const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    myWindow?.focus()
+  }
+
 }
+
+
+const initGithubInstallAuth = async () => {
+  if (router.currentRoute.value.query?.code) {
+    const params = {
+      code: router.currentRoute.value.query?.code,
+      clientId: clientId.value,
+    }
+    try {
+      const { data } = await githubInstallAuth(params);
+      if (!data) {
+        // const state = new Date().getTime();
+        // const url = `${selectTargetUrl.value}?state=${state}`;
+        // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      }
+    } catch (err: any) {
+
+    }
+  }
+
+}
+
+onMounted(() => {
+  let token = localStorage.getItem('token') || '';
+  let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
+  console.log(loginData, 'token')
+  loginType.value = loginData.loginType;
+
+  initGithubInstallAuth()
+})
 
 </script>
 <style scoped lang="less">
