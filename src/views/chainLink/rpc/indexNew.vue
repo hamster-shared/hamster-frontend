@@ -2,7 +2,7 @@
   <div>
     <div class="title">My APPs</div>
     <div class="card-border">
-      <div class="flex justify-end items-center text-[#E2B578]">
+      <div class="flex justify-end items-center text-[#E2B578] mb-[18px]">
         <div class="font-[14px] text-[#E2B578] cursor-pointer" @click="goMyApp">View all apps</div>
         <svg-icon name="right" size="13" class="ml-[10px]" />
       </div>
