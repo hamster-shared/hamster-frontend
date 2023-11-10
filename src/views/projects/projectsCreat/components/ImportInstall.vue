@@ -30,7 +30,7 @@ const installGit = () => {
   } else {
     const state = new Date().getTime();
     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-    const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/installations')
     myWindow?.focus()
   }
 

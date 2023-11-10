@@ -245,8 +245,7 @@ const getGithubInstallCheck = async () => {
 const adjustGithubPremission = () => {
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/adjustPremission')
 }
 
 const selectGithubAccount = (value: any, item: any) => {
