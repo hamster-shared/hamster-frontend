@@ -225,31 +225,28 @@ const processDeploy = async () => {
 const deployClick = async () => {
   emit("Validate");
   loading.value = true;
-  // chainId: string, address: string, contractId: number,deployTxHash: string
-  emit("setProjectsContractDeploy","devnet","HQWKsD4JpnzxywoeHrXeAoNBUrcCbwyPoFDkAksDbvgE",1598,"FYRdi576YfYrTbfysJLKp35A69pwQiyEtifCdLWkRMzZTrhNp35aArvanA4KCabTPChNaPGZ7vwM7r9K5vXyr7D");
-  router.push(`/projects/d9ddcebb-54e9-4c63-9ab1-020de8c0170b/contracts-details/4`)
 
-  //   try{
-  //     const phantom = wallets.value.find(item => item.adapter.name === "Phantom")
-  //     if (phantom) {
-  //       if (phantom.readyState !== "Installed") {
-  //         window.open(phantom.adapter.url, '_blank')
-  //       } else {
-  //         await select(phantom.adapter.name)
-  //         console.log("=========wallet======",wallet.value.adapter?.publicKey?.toBase58())
-  //         let rt = await deploySolana()
-  //         const {programKp,deployTxHash} = rt;
-  //         const {id,projectId,version} = solanaAbi.value;
-  //         emit("setProjectsContractDeploy",network.value,programKp?.publicKey.toString(),id,deployTxHash);
-  //         router.push(`/projects/${projectId}/contracts-details/${version}`)
-  //       }
-  //     }
-  // }catch (e){
-  //     message.error(e);
-  //   console.log("solana login error:",e)
-  // }finally {
-  //     loading.value = false;
-  //   }
+    try{
+      const phantom = wallets.value.find(item => item.adapter.name === "Phantom")
+      if (phantom) {
+        if (phantom.readyState !== "Installed") {
+          window.open(phantom.adapter.url, '_blank')
+        } else {
+          await select(phantom.adapter.name)
+          console.log("=========wallet======",wallet.value.adapter?.publicKey?.toBase58())
+          let rt = await deploySolana()
+          const {programKp,deployTxHash} = rt;
+          const {id,projectId,version} = solanaAbi.value;
+          emit("setProjectsContractDeploy",network.value,programKp?.publicKey.toString(),id,deployTxHash);
+          router.push(`/projects/${projectId}/contracts-details/${version}`)
+        }
+      }
+  }catch (e){
+      message.error(e);
+    console.log("solana login error:",e)
+  }finally {
+      loading.value = false;
+    }
 }
 </script>
 <style lang='less' scoped>
