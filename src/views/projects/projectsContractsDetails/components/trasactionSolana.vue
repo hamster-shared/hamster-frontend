@@ -24,14 +24,19 @@ import {findMetadataPda, mplTokenMetadata, findMasterEditionPda, MPL_TOKEN_METAD
 import {TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress,} from "@solana/spl-token";
 
 import {publicKey} from "@metaplex-foundation/umi";
+
+
 const resultUrl = ref("");
 const loading = ref(false);
 import {useWallet} from "solana-wallets-vue";
 import {message} from "ant-design-vue";
 const { wallets, wallet, select, disconnect, connecting, connected } = useWallet();
 const emit = defineEmits(["submitSolana"]);
-const props = defineProps({formState:Object});
-const { formState } = toRefs(props);
+const props = defineProps({
+  formState:Object,
+  formData:Object
+});
+const { formState,formData } = toRefs(props);
 
 
 const submit = async() =>{
@@ -62,13 +67,14 @@ const submitToSolana = async() =>{
 
 
   const {network,contractAddress,abiInfo} = formState?.value;
-  console.log(formState?.value)
+  console.log(formState?.value,formData.value)
+  return;
 
   const networkData =[{name: 'Mainnet', id: 'Mainnet', networkName: 'mainnet-beta'},{name: 'Devnet', id: 'devnet', networkName: 'devnet'},{name: 'Testnet',id:'testnet',networkName: 'testnet'}]
   let chain = networkData.filter((item)=>item.name=== network);
 
   if(!chain.length) return;
-
+//
   const chainName = chain[0].networkName;
   const signer = wallet.value.adapter;
 
@@ -76,12 +82,11 @@ const submitToSolana = async() =>{
   const provider = new AnchorProvider(connection, signer, AnchorProvider.defaultOptions());
   anchor.setProvider(provider);
 
-  console.log(anchor)
 
   const mint = anchor.web3.Keypair.generate();
   const programId = new PublicKey(contractAddress);
   const idl = JSON.parse(abiInfo);
-  const mintaddress = mint.publicKey.toString();
+
 
   const associatedTokenAccount = await getAssociatedTokenAddress(
       mint.publicKey,
@@ -98,12 +103,13 @@ const submitToSolana = async() =>{
   let masterEditionAccount = findMasterEditionPda(umi, {
     mint: publicKey(mint.publicKey),
   })[0];
-
+//
   const program = new anchor.Program(idl, programId, provider);
-return;
+
+  const {name,symbol, uri} = formData.value;
 
   const tx = await program.methods
-      .initNft(nftName.value,symbol.value, jsonUrl)
+      .initNft(name,symbol, uri)
       .accounts({
         signer: signer.publicKey,
         mint: mint.publicKey,

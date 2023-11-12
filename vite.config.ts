@@ -6,6 +6,7 @@ import vue from "@vitejs/plugin-vue";
 import viteCompression from 'vite-plugin-compression';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import prismjs from "vite-plugin-prismjs";
+import { polyfillNode, PolyfillNodeForDenoOptions } from "esbuild-plugin-polyfill-node";
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv) => defineConfig({
@@ -78,6 +79,9 @@ export default ({ mode }: ConfigEnv) => defineConfig({
     include: ['axios'],
     esbuildOptions: {
       target: ['es2020', 'safari14'],
+      plugins: [
+        polyfillNode({}),
+      ],
     },
   },
 });

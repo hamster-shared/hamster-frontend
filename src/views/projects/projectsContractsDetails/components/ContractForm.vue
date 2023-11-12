@@ -38,7 +38,7 @@
               </a-form-item>
           </div>
       </div>
-    <TrasactionSolana v-if="frameType === 8 " @submitSolana="validSolana" :formState="formState"/>
+    <TrasactionSolana v-if="frameType === 8 " @submitSolana="validSolana" :formState="formState" :formData="formData"/>
     <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend" v-else>{{
         isSend ? buttonInfo + 'ing' : buttonInfo
       }}</a-button>
@@ -284,8 +284,6 @@ const submit = async () => {
   } else if (frameType?.value == 7) {
     // 合约的icp move 调用
     contractIcpFn()
-  }else if (frameType?.value == 8) {
-    console.log("====",inputs?.value,formData)
   } else {
     evmDeployFunction();
   }
