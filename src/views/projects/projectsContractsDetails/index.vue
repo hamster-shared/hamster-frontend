@@ -32,7 +32,7 @@
         <div class="" v-if="item.abiInfo">
           <div class="text-[24px] font-bold mb-[32px]">Contract List</div>
           <ContractList v-if="frameType" :abiInfo="item.abiInfo" :contractAddress="contractAddress" :frameType="frameType"
-            @checkContract="checkContract" :canisterId="item.deployInfo[0].address">
+            @checkContract="checkContract" :canisterId="item.deployInfo[0].address" :network="item.deployInfo[0]?.network">
           </ContractList>
         </div>
         <div v-if="frameType ===  5">

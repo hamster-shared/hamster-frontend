@@ -35,6 +35,7 @@
     <div class="col-span-2 p-[32px]">
       <div>
         <ContractForm :checkValue="checkValue" :subTitle="subTitle" :contractAddress="contractAddress" :inputs="inputs" :outputs="outputs" :abiInfo="abiInfo"
+                      :network="network"
           :frameType="frameType" :buttonInfo="buttonInfo" :payable="payable" ref="contractForm" :aptosName="aptosName" :aptosAddress="aptosAddress" :canisterId="canisterId">
         </ContractForm>
       </div>
@@ -53,11 +54,12 @@ const theme = useThemeStore();
 const props = defineProps({
   contractAddress: String,
   abiInfo: String,
+  network:String,
   frameType: Number,
   canisterId: String,
 });
 
-const { contractAddress, abiInfo, frameType } = toRefs(props);
+const { contractAddress, abiInfo, frameType,network } = toRefs(props);
 
 const sendAbis = reactive<any>([])
 const callAbis = reactive<any>([])
@@ -73,6 +75,8 @@ const aptosName = ref('')
 const aptosAddress = ref('')
 const payable = ref(false)
 
+
+
 const data = YAML.parse(abiInfo.value);
 console.log("abiInfo::::",data);
 if (data.abi) {
@@ -80,6 +84,7 @@ if (data.abi) {
 } else {
   Object.assign(abiInfoData, data)
 }
+
 const commonFirst = ()=>{
   if (sendAbis.length > 0) {
     checkValue.value = sendAbis[0]?.name;
@@ -93,6 +98,8 @@ const commonFirst = ()=>{
           internalType:enmu
         }
       })
+    }else if(frameType?.value==8){
+      inputs.value = sendAbis[0]?.args;
     }else{
       inputs.value = sendAbis[0]?.inputs;
       outputs.value = sendAbis[0]?.outputs
@@ -219,6 +226,12 @@ onMounted(()=>{
     commonFirst()
   } else if (frameType?.value == 7) {
     getContractICPMoveInfo(JSON.parse(abiInfo?.value))
+  }else if(frameType?.value == 8){
+    let arr = JSON.parse(abiInfo?.value!);
+    arr.instructions.map((item:any)=>{
+      sendAbis.push(item)
+    })
+    commonFirst()
   } else {
     // console.log('000000000000000')
     abiInfoData.map((item: any) => {
