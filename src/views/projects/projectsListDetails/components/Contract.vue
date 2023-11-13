@@ -40,7 +40,7 @@
             <div @click="starknetVisible = true" v-if="deployTxHash && deployTxHash !== ''"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">
               View Deploy Process</div>
-            <div v-else-if="record.network.String || (frameType == 1 && record.lastContractDeployld)" @click="goContractDetail(record.version, record.lastContractDeployld)"
+            <div v-else-if="record.network.String || (frameType == 1 && record.lastContractDeployld)" @click="goContractDetail(record.version, record.lastContractDeployId)"
               class="dark:text-[#E0DBD2] text-[#73706E] cursor-pointer pt-[12px] hoverColor">View
               Dashboard
             </div>
@@ -272,9 +272,9 @@ const downloadAbi = (val: any) => {
   }
 };
 
-const goContractDetail = async (version: String, lastContractDeployld:string) => {
+const goContractDetail = async (version: String, lastContractDeployId:string) => {
   if(frameType?.value==1){
-    router.push(`/projects/projectDashboardExplorer?id=${detailId.value.toString()}&contractDeployId=${lastContractDeployld}`)
+    router.push(`/projects/projectDashboardExplorer?id=${detailId.value.toString()}&contractDeployId=${lastContractDeployId}`)
   }else{
     router.push("/projects/" + detailId.value + "/contracts-details/" + version);
   }
