@@ -133,7 +133,8 @@ const processDeploy = async () => {
   const bufferAddr = bufferKp.publicKey.toString()
   console.log("buffer publicKey: ", bufferAddr)
 
-  const programKp = Keypair.fromSecretKey(solanaContractPrivkey)
+  const privateKeyArray=  bs58.decode(solanaContractPrivkey);
+  const programKp = Keypair.fromSecretKey(privateKeyArray)
   const programPk = programKp.publicKey;
   const programAddr = programPk.toString()
   console.log("programPk privateKey: ", bs58.encode(programKp.secretKey))
