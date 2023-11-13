@@ -2,10 +2,11 @@
   <div>
     <div>
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
+      <!-- rightOutlined -->
       <span v-if="props.projectType != '3'" class="text-sm cursor-pointer open-link-css"
-        @click="handleImportRepository">Import Third-Party Git Repository ></span>
+        @click="handleImportRepository">Import Third-Party Git Repository <right-outlined /></span>
     </div>
-    <ImportInstall v-if="!isGithubInstallCheck"></ImportInstall>
+    <ImportInstall v-if="isGithubInstallCheck" @resetData="resetData"></ImportInstall>
     <div v-else>
       <div class="flex">
         <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue"
@@ -32,7 +33,8 @@
               class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">{{
                 item.Visibility }}</span>
           </div>
-          <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updatedAt, "noThing") }}</div>
+          <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updatedAt, "noThing") }}
+          </div>
         </div>
         <a-button class="self-center w-[140px] !h-[42px]" @click="handleImport(item)">Import</a-button>
       </div>
@@ -47,11 +49,10 @@
           <p>No Data</p>
         </div>
       </div>
-      <div>
+      <div v-if="repositorySelection === 'selected'">
         <span>Missing Git repository? </span>
-        <span v-if="repositorySelection === 'selected'" class="text-[#E2B578] cursor-pointer"
-          @click="adjustGithubPremission">Adjust GitHub App
-          Permissions </span>
+        <span class="text-[#E2B578] cursor-pointer" @click="adjustGithubPremission">Adjust GitHub App
+          Permissions <right-outlined /></span>
       </div>
     </div>
   </div>
@@ -126,7 +127,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
-import { PlusOutlined } from '@ant-design/icons-vue';
+import { PlusOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiGetRepository, apiPostRepository, apiInstallRepository } from '@/apis/projects';
 import { getInstallations, githubInstallCheck, githubInstallAuth } from "@/apis/login";
@@ -225,9 +226,10 @@ const pagination = reactive({
 });
 
 const addGithubAccount = () => {
-  // const state = new Date().getTime();
-  // const url = `${selectTargetUrl.value}?state=${state}`;
-  // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+  window.addEventListener('message', resetData, false)
+  const state = new Date().getTime();
+  const url = `${selectTargetUrl.value}?state=${state}`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/installations')
 }
 
 
@@ -243,6 +245,7 @@ const getGithubInstallCheck = async () => {
 
 
 const adjustGithubPremission = () => {
+  window.addEventListener('message', resetData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/adjustPremission')
@@ -268,7 +271,15 @@ const getInstallationsAccount = async () => {
   } catch (err: any) {
     // message.error(err.message)
   }
+}
 
+const resetData = () => {
+  console.log('可以刷新数据了')
+  pagination.current = 1;
+  pagination.pageSize = 3;
+  searchInputValue.value = '';
+
+  getRepositoryData();
 }
 
 const getRepositoryData = async () => {
@@ -382,8 +393,8 @@ onMounted(async () => {
 </script>
 
 <style lang="less" scoped>
-.ant-select {
-  height: 43px;
+.select-btn {
+  height: 42px;
   margin-top: 20px;
   margin-right: 24px;
 }

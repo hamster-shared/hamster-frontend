@@ -85,7 +85,7 @@ export function installGithubApp() {
 }
 
 // 钱包登录下需要install情况下github auth
-export function githubInstallAuth(params) {
+export function githubInstallAuth(params:any) {
   return httpRequest({
     url: `/api/github/install/auth`,
     method: "post",

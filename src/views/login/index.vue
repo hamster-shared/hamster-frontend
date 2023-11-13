@@ -40,7 +40,7 @@ import MetaMaskDownloadModal from "./components/metaMaskDownloadModal.vue";
 
 const metaMaskVisible = ref(false);
 const router = useRouter()
-
+const apiUrl = ref(import.meta.env.VITE_BASE_API)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
@@ -56,27 +56,34 @@ const oauthUrl = ref('https://github.com/login/oauth/authorize');
 // }
 
 
+// const loginBox = () => {
+//   // router.push("/loginTransition?code=5df6a81800434eb00145");
+//   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+//   if (JSON.stringify(userInfo) === '{}') {
+//     // 登录
+//     const state = new Date().getTime();
+//     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+//     const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+//     myWindow?.focus()
+//   } else {
+//     if (userInfo.token) {
+//       localStorage.setItem('token', userInfo.token);
+//       commonJump()
+//     } else {
+//       // install
+//       // const state = new Date().getTime();
+//       // const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+//       // const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+//       // myWindow?.focus()
+//     }
+//   }
+// }
+
 const loginBox = () => {
-  // router.push("/loginTransition?code=5df6a81800434eb00145");
-  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-  if (JSON.stringify(userInfo) === '{}') {
-    // 登录
-    const state = new Date().getTime();
-    const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-    const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-    myWindow?.focus()
-  } else {
-    if (userInfo.token) {
-      localStorage.setItem('token', userInfo.token);
-      commonJump()
-    } else {
-      // install
-      // const state = new Date().getTime();
-      // const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-      // const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-      // myWindow?.focus()
-    }
-  }
+  const state = new Date().getTime();
+  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+  const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=${apiUrl}/loginTransition`)
+  myWindow?.focus()
 }
 
 const getMetamaskLogin = async (address: string) => {
@@ -84,7 +91,7 @@ const getMetamaskLogin = async (address: string) => {
     const { data } = await metamaskLogin({ address: address })
     if (data && data.length > 0) {
       localStorage.setItem('token', data);
-      console.log(data, 'data')
+      console.log(data, '小狐狸登录的data')
       getUserInfoData();
       saveWallet(address).then();
     } else {
@@ -147,7 +154,8 @@ const awakeWallet = async () => {
           if (!error) {
             console.log('签名结果：', signature);
             // 在这里你可以将签名发送到后端服务器进行验证
-            getMetamaskLogin(address)
+            getMetamaskLogin(address);
+            window.localStorage.setItem("walletAccount", address);
           } else {
             console.error('签名请求失败：', error);
           }

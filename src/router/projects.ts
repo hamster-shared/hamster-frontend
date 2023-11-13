@@ -127,15 +127,27 @@ const projectsRoute = [
       {
         path: '/projects/installations',
         name: "projectsInstallations",
-        component: () => import('@/views/projects/projectsCreat/installations.vue')
+        component: () => import('@/views/projects/projectsCreat/installations.vue'),
+        meta: {
+          layout: 'null',
+        }
       },
       {
         path: '/projects/adjustPremission',
         name: "projectsAdjustPremission",
-        component: () => import('@/views/projects/projectsCreat/adjustPremission.vue')
+        component: () => import('@/views/projects/projectsCreat/adjustPremission.vue'),
+        meta: {
+          layout: 'null',
+        }
+      },
+      {
+        path: '/projects/metaMaskAuth',
+        name:'projectsMetaMaskAuth',
+        component: () => import('@/views/projects/projectsCreat/metaMaskAuth.vue'),
+        meta: {
+          layout: 'null',
+        }
       }
-
-
     ]
   }
 ]

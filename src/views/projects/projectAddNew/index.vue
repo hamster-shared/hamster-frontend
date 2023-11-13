@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import { useThemeStore } from "@/stores/useTheme";
 import ImportInstall from "@/views/projects/projectsCreat/components/ImportInstall.vue";
 import ImportGitRepository from "@/views/projects/projectsCreat/components/ImportGitRepository.vue"
@@ -50,6 +50,8 @@ const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 const getTemplatesShow = () => {
 
 }
+
+
 </script>
 <style lang='less' scoped>
 @baseColor: #E2B578;
