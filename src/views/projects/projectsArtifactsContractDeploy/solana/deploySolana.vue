@@ -3,6 +3,7 @@
       connecting ? 'Deploying' : 'Deploy'
     }}</a-button>
 </template>
+
 <script setup>
 import {ref, toRefs} from "vue";
 const emit = defineEmits(["Validate","setProjectsContractDeploy"]);
@@ -14,25 +15,23 @@ import {Keypair, Connection, clusterApiUrl, LAMPORTS_PER_SOL, PublicKey, SystemP
 import { ClientTx } from './utils';
 import {Common, BpfLoaderUpgradeable, Tx} from "./solana-bpf-upgradeable";
 
-
 import bs58 from 'bs58';
 import router from "@/router";
 import {message} from "ant-design-vue";
 
 const programBuffer = ref(null);
 
-
 const props = defineProps({
   solanaAbi:{
     type: Object,
-    required:true
+    required: true
   },
   network:{
     type: String,
-    required:true
+    required: true
   }
 });
-const { solanaAbi,network } = toRefs(props);
+const { solanaContractPrivkey, solanaAbi, network } = toRefs(props);
 
 const { wallets, wallet, select, disconnect, connecting, connected } = useWallet();
 
@@ -51,9 +50,9 @@ const deploySolana = async() =>{
   programBuffer.value = byteArray;
 
   try {
-    const {walletKp, programKp,deployTxHash} = await processDeploy();
+    const { walletKp, programKp, deployTxHash } = await processDeploy();
     console.log("Deploy Success!! wallet = " + walletKp?.publicKey.toString() + ", program = " + programKp?.publicKey.toString())
-    return {programKp,deployTxHash};
+    return { programKp, deployTxHash };
 
   } catch (e) {
     console.error(e)
@@ -118,28 +117,27 @@ const transferAll = async (fromWallet, toPubKey, conn) => {
   }
 }
 
-
 const processDeploy = async () => {
 
   const conn = new Connection(clusterApiUrl(network.value), "confirmed")
-
 
   const signerWallet = wallet.value.adapter;
 
   const walletKp = Keypair.generate();
   const payerAccountAddr = walletKp.publicKey.toString()
   console.log("payer publicKey: ", payerAccountAddr)
+
   const bufferKp = Keypair.generate();
   console.log("payer privateKey: ", bs58.encode(walletKp.secretKey))
   console.log("buffer privateKey: ", bs58.encode(bufferKp.secretKey))
   const bufferAddr = bufferKp.publicKey.toString()
   console.log("buffer publicKey: ", bufferAddr)
-  const programKp =  Keypair.generate();
+
+  const programKp = web3.Keypair.fromSecretKey(solanaContractPrivkey)
   const programPk = programKp.publicKey;
   const programAddr = programPk.toString()
   console.log("programPk privateKey: ", bs58.encode(programKp.secretKey))
-  console.log("Create Program Keypair: ", programAddr)
-
+  console.log("Solana ProgramId: ", programAddr)
 
   try {
     const programLen = programBuffer.value.length;
@@ -220,8 +218,6 @@ const processDeploy = async () => {
   }
 }
 
-
-
 const deployClick = async () => {
   emit("Validate");
   loading.value = true;
@@ -235,9 +231,10 @@ const deployClick = async () => {
           await select(phantom.adapter.name)
           console.log("=========wallet======",wallet.value.adapter?.publicKey?.toBase58())
           let rt = await deploySolana()
-          const {programKp,deployTxHash} = rt;
-          const {id,projectId,version} = solanaAbi.value;
-          emit("setProjectsContractDeploy",network.value,programKp?.publicKey.toString(),id,deployTxHash);
+          const { programKp, deployTxHash } = rt;
+          const { id, projectId, version } = solanaAbi.value;
+
+          emit("setProjectsContractDeploy", network.value, programKp?.publicKey.toString(), id, deployTxHash);
           router.push(`/projects/${projectId}/contracts-details/${version}`)
         }
       }
@@ -249,11 +246,7 @@ const deployClick = async () => {
     }
 }
 </script>
+
 <style lang='less' scoped>
 
 </style>
-
-
-
-
-

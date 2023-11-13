@@ -121,7 +121,6 @@ import {type Chain, ChainList, getChain} from "@/utils/chainlist"
 import DeploySolana from "./solana/deploySolana.vue";
 
 
-
 import {fromB64, JsonRpcProvider, normalizeSuiObjectId, testnetConnection, TransactionBlock,} from '@mysten/sui.js';
 
 import {WalletStandardAdapterProvider} from "@mysten/wallet-adapter-wallet-standard"
@@ -185,6 +184,7 @@ const suiWallet = new WalletStandardAdapterProvider()
 
 //solana
 const solanaAbi = ref('');
+const solanaContractPrivkey = ref('');
 
 const initSolana = () =>{
   const walletOptions = {
@@ -199,7 +199,6 @@ const initSolana = () =>{
 initSolana()
 
 const workflowsDetailsData = ref<any>({})
-
 
 const formState = reactive({
   version: router.currentRoute.value.params?.version,
@@ -373,10 +372,6 @@ const deploySuiContract = async (item: any)=> {
   router.push(`/projects/${queryParams.id}/contracts-details/${queryParams.version}`)
 }
 
-
-
-
-
 // 查询版本号
 const getVersion = async () => {
   const { data } = await apiGetProjectsVersions({ id: queryParams.id });
@@ -385,6 +380,7 @@ const getVersion = async () => {
 
 const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
+
   data.map((item: any) => {
     console.log(item);
 
@@ -402,11 +398,12 @@ const getProjectsContract = async () => {
       setAbiInfo(item);
     }else if(frameType.value === 8){
       solanaAbi.value = item
+      solanaContractPrivkey.value = item
     }
   })
+
   Object.assign(projectsContractData, data)
 }
-
 
 //  创建合约
 const contractFactory = async (abi: any, bytecode: any, argsMapData: any, contractId: number) => {
@@ -853,6 +850,7 @@ const judgeOrigin = ()=>{
     },
   ]
 }
+
 onMounted(async () => {
   localStorage.removeItem('deplayPath')
   projectName.value = localStorage.getItem("projectName") || '';
