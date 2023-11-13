@@ -67,7 +67,7 @@ export default class NewEngine {
         for (let stepIndexInStep = deployStep.step;stepIndexInStep < deployStep.steps.length; stepIndexInStep++) {
             const step = deployStep.steps[stepIndexInStep];
             if (this.isDestroy) {
-                console.info("for contract is destroy")
+                console.info("for contract is destroy1")
                 return
             }
             if (!this.isRunning) {

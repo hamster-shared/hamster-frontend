@@ -4,7 +4,7 @@
     <!-- 详情 -->
 
     <DeployVersionInfomation ref="versionRef" v-if="versionList.length" :name="contractInfo.name" :versionList="versionList" />
-    <DeploymentDetails v-if="version" :version="version" @execStop="execStop"></DeploymentDetails>
+    <DeploymentDetails v-if="version" :version="version"></DeploymentDetails>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ import {apiGetNetworkByName} from "@/apis/network";
 const breadCrumbInfo = ref<any>([]);
 const route = useRoute()
 const provider = new ethers.providers.Web3Provider(window.ethereum)
-const newEngine = new NewEngine(provider)
+let newEngine = new NewEngine(provider)
 // 合约信息对象
 const contractInfo = ref<any>({})
 const versionList = ref([]);
@@ -69,27 +69,27 @@ const getProjectsVersion = async () => {
 };
 
 // exec deploy
-const execDeploy = async () => {
-  const executeId = route.query.executeId
-  const projectId = route.query.id
-  const res = await apiGetExecuteInfoById(projectId,executeId)
-  if (res.code === 200) {
-    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
-    const execStatus = execJson.deployStep.some(item => item && (item.status === "FAILED" || item.status === "STOP"))
-    const allSuccess = execJson.deployStep.every(item => item && item.status === "SUCCESS")
-    if (!execStatus && !allSuccess) {
-      const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
-      const contractMap = formatContractList(data)
-      let deployParams = {
-        projectId:projectId,
-        execId: executeId,
-        version: route.query.version,
-        network: res.data.network,
-      }
-      newEngine.start(contractMap,execJson,deployParams)
-    }
-  }
-}
+// const execDeploy = async () => {
+//   const executeId = route.query.executeId
+//   const projectId = route.query.id
+//   const res = await apiGetExecuteInfoById(projectId,executeId)
+//   if (res.code === 200) {
+//     let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+//     const execStatus = execJson.deployStep.some(item => item && (item.status === "FAILED" || item.status === "STOP"))
+//     const allSuccess = execJson.deployStep.every(item => item && item.status === "SUCCESS")
+//     if (!execStatus && !allSuccess) {
+//       const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+//       const contractMap = formatContractList(data)
+//       let deployParams = {
+//         projectId:projectId,
+//         execId: executeId,
+//         version: route.query.version,
+//         network: res.data.network,
+//       }
+//       newEngine.start(contractMap,execJson,deployParams)
+//     }
+//   }
+// }
 
 //stop exec
 const execStop = () => {
@@ -122,11 +122,7 @@ onMounted(async () => {
   initBreadCrumb()
   await getProjectsVersion()
   await window.ethereum.enable();
-  await execDeploy()
 })
-onUnmounted(() => {
-   newEngine?.destroy()
-});
 
 watchEffect(() => {
   if (versionRef.value != undefined) {
