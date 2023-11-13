@@ -182,9 +182,9 @@ const breadCrumbInfo = ref<any>([])
 const suiWallet = new WalletStandardAdapterProvider()
 
 
+
 //solana
 const solanaAbi = ref('');
-const solanaContractPrivkey = ref('');
 
 const initSolana = () =>{
   const walletOptions = {
@@ -382,9 +382,7 @@ const getProjectsContract = async () => {
   const { data } = await apiGetProjectsContract({ id: queryParams.id, version: queryParams.version });
 
   data.map((item: any) => {
-    console.log(item);
 
-    solanaAbi.value = item;
     item.label = item.name;
     item.value = item.id;
     item.modalFormData = reactive({});
@@ -398,7 +396,7 @@ const getProjectsContract = async () => {
       setAbiInfo(item);
     }else if(frameType.value === 8){
       solanaAbi.value = item
-      solanaContractPrivkey.value = item
+      console.log(item)
     }
   })
 

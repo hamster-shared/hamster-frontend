@@ -31,10 +31,10 @@ const props = defineProps({
     required: true
   }
 });
-const { solanaContractPrivkey, solanaAbi, network } = toRefs(props);
+const {  solanaAbi, network } = toRefs(props);
 
 const { wallets, wallet, select, disconnect, connecting, connected } = useWallet();
-
+console.log(solanaAbi.value)
 const deploySolana = async() =>{
   const {byteCode} = solanaAbi.value;
 
@@ -118,7 +118,7 @@ const transferAll = async (fromWallet, toPubKey, conn) => {
 }
 
 const processDeploy = async () => {
-
+  const {solanaContractPrivkey} = solanaAbi.value;
   const conn = new Connection(clusterApiUrl(network.value), "confirmed")
 
   const signerWallet = wallet.value.adapter;
@@ -192,7 +192,7 @@ const processDeploy = async () => {
         bufferKp.publicKey,
         programKp.publicKey,
         bufferBalance,
-        programLen,
+        programLen * 2,
     )
     const deployTxHash = await ClientTx.send(deployTx, conn, walletKp, [programKp]);
     console.log("deployTxHash", deployTxHash)
