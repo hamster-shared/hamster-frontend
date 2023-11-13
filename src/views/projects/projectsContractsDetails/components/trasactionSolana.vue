@@ -61,14 +61,11 @@ const submit = async() =>{
     loading.value = false;
   }
 }
-
-
 const submitToSolana = async() =>{
 
 
   const {network,contractAddress,abiInfo} = formState?.value;
-  console.log(formState?.value,formData.value)
-  return;
+
 
   const networkData =[{name: 'Mainnet', id: 'Mainnet', networkName: 'mainnet-beta'},{name: 'Devnet', id: 'devnet', networkName: 'devnet'},{name: 'Testnet',id:'testnet',networkName: 'testnet'}]
   let chain = networkData.filter((item)=>item.name=== network);

@@ -192,7 +192,7 @@ const processDeploy = async () => {
         walletKp.publicKey,
         bufferKp.publicKey,
         programKp.publicKey,
-        bufferBalance,
+        programBalance,
         programLen * 2,
     )
     const deployTxHash = await ClientTx.send(deployTx, conn, walletKp, [programKp]);
