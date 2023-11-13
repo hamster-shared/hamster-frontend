@@ -111,7 +111,6 @@ const props = defineProps({
     default:''
   }
 })
-const emit = defineEmits(["execStop", "reDeploy"])
 const { version } = toRefs(props)
 
 const theme = useThemeStore();
@@ -155,6 +154,7 @@ const hideOrchestrationInfo = () => {
 }
 // 根据执行id获取执行信息 
 const getExecuteInfoById = async () => {
+  if(!route.query.executeId) return
   const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
   console.log("根据执行id获取执行信息:", res);
   if (res.code == 200) {
@@ -277,12 +277,11 @@ const goTranscationUrl = (transactionHash:any)=>{
 
 // 停止部署，执行引擎
 const stop = ()=>{
-  emit('execStop')
+  newEngine.stop()
 }
 
 // 重新部署，执行引擎
 const reDeploy = async()=>{
-  // emit('reDeploy')
   const executeId = route.query.executeId
   const projectId = route.query.id
   const res = await apiGetExecuteInfoById(projectId,executeId)
@@ -304,6 +303,28 @@ const reDeploy = async()=>{
   }
 }
 
+const execDeploy = async () => {
+  const executeId = route.query.executeId
+  const projectId = route.query.id
+  const res = await apiGetExecuteInfoById(projectId,executeId)
+  if (res.code === 200) {
+    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+    const execStatus = execJson.deployStep.some(item => item && (item.status === "FAILED" || item.status === "STOP"))
+    const allSuccess = execJson.deployStep.every(item => item && item.status === "SUCCESS")
+    if (!execStatus && !allSuccess) {
+      const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+      const contractMap = formatContractList(data)
+      let deployParams = {
+        projectId:projectId,
+        execId: executeId,
+        version: route.query.version,
+        network: res.data.network,
+      }
+      newEngine.start(contractMap,execJson,deployParams)
+    }
+  }
+}
+
 watch(
   () => props.version,
   async (value) => {
@@ -316,10 +337,12 @@ onMounted(async () => {
   // 根据执行id获取执行信息
   await getExecuteInfoById();
   await getNetworkByName()
+  await execDeploy()
 });
 
 onUnmounted(() => {
   clearTimeout(timer.value);
+  newEngine.destroy()
 })
 </script>
 <style scoped lang="less">

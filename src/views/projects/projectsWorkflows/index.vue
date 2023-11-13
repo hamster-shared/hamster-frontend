@@ -184,7 +184,7 @@ const yamlData = (list: any[], issue: number, dataType: string) => {
         })
         item.errorNumber = issue;
     })
-  } 
+  }
   return issue;
 }
 
