@@ -16,8 +16,9 @@ import { ClientTx } from './utils';
 import {Common, BpfLoaderUpgradeable, Tx} from "./solana-bpf-upgradeable";
 
 import bs58 from 'bs58';
-import router from "@/router";
+const router = useRouter()
 import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
 
 const programBuffer = ref(null);
 
