@@ -74,12 +74,10 @@ const submitToSolana = async() =>{
   const connection = new Connection(clusterApiUrl(chainName))
   const provider = new AnchorProvider(connection, signer, AnchorProvider.defaultOptions());
   anchor.setProvider(provider);
-
-
+  
   const mint = anchor.web3.Keypair.generate();
   const programId = new PublicKey(contractAddress);
   const idl = JSON.parse(abiInfo);
-
 
   const associatedTokenAccount = await getAssociatedTokenAddress(
       mint.publicKey,
@@ -106,7 +104,7 @@ const submitToSolana = async() =>{
   }
 
   // const nowAccount = idl.instructions.filter((item) =>item.name === checkValue.value);
-  
+
   const tx = await program.methods[checkValue.value](arr.join(","))
       .accounts({
         signer: signer.publicKey,
