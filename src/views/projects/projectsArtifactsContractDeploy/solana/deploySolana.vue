@@ -35,7 +35,6 @@ const props = defineProps({
 const {  solanaAbi, network } = toRefs(props);
 
 const { wallets, wallet, select, disconnect, connecting, connected } = useWallet();
-console.log(solanaAbi.value)
 const deploySolana = async() =>{
   const {byteCode} = solanaAbi.value;
 
@@ -46,7 +45,6 @@ const deploySolana = async() =>{
   for (let i = 0; i < binaryString.length; i++) {
     byteArray[i] = binaryString.charCodeAt(i);
   }
-  console.log(byteArray);
 
   programBuffer.value = byteArray;
 
@@ -71,7 +69,6 @@ const transfer = async (signer, toPubKey, lamports, conn) => {
     const tx = new Transaction();
     tx.add(instruction);
     let rt;
-    console.log("has signTransaction", signer)
     if (signer.signTransaction) {
       rt = await ClientTx.sendWithWallet(tx, conn, signer)
     } else {
@@ -96,24 +93,17 @@ const transfer = async (signer, toPubKey, lamports, conn) => {
 const transferAll = async (fromWallet, toPubKey, conn) => {
   try {
     const walletBalance = await conn.getBalance(fromWallet.publicKey);
-
-    console.log("wallet balance",fromWallet.publicKey.toString(), walletBalance)
     if (walletBalance) {
       const { blockhash } = await conn.getRecentBlockhash();
-      // 根据区块哈希获取交易费用计算器
       const feeCalculator = await conn.getFeeCalculatorForBlockhash(blockhash);
-      // 获取当前的交易费用
       const lamportsPerSignature = feeCalculator.value.lamportsPerSignature;
-      console.log("fee", lamportsPerSignature / LAMPORTS_PER_SOL)
       if (walletBalance > lamportsPerSignature) {
-        console.log("start transfer")
         await transfer(fromWallet, toPubKey, walletBalance-lamportsPerSignature, conn)
       } else {
         console.log("empty account to transfer")
       }
     }
   } catch (e) {
-
     console.error("transfer to user failed")
   }
 }
@@ -129,8 +119,6 @@ const processDeploy = async () => {
   console.log("payer publicKey: ", payerAccountAddr)
 
   const bufferKp = Keypair.generate();
-  console.log("payer privateKey: ", bs58.encode(walletKp.secretKey))
-  console.log("buffer privateKey: ", bs58.encode(bufferKp.secretKey))
   const bufferAddr = bufferKp.publicKey.toString()
   console.log("buffer publicKey: ", bufferAddr)
 
@@ -138,7 +126,6 @@ const processDeploy = async () => {
   const programKp = Keypair.fromSecretKey(privateKeyArray)
   const programPk = programKp.publicKey;
   const programAddr = programPk.toString()
-  console.log("programPk privateKey: ", bs58.encode(programKp.secretKey))
   console.log("Solana ProgramId: ", programAddr)
 
   try {
@@ -148,14 +135,11 @@ const processDeploy = async () => {
     const bufferBalance = await conn.getMinimumBalanceForRentExemption(
         bufferSize
     );
-    console.log("buffer account rent exemption: ", bufferBalance)
 
     const needTransfer = bufferBalance * 2 + 0.01 * LAMPORTS_PER_SOL;
-    console.log("need Transfer", needTransfer/LAMPORTS_PER_SOL)
 
     await transfer(signerWallet, walletKp.publicKey, needTransfer, conn)
 
-    console.log("Creating Buffer Account ... ");
     const createBufferTx = await BpfLoaderUpgradeable.createBuffer(
         walletKp.publicKey,
         bufferKp.publicKey,
@@ -171,23 +155,18 @@ const processDeploy = async () => {
     if (result.value.err) {
       return Promise.reject(`create buffer account faild: ${JSON.stringify(result.value.err)}`)
     }
-    console.log("Create Buffer Account Success !!!")
 
-    console.log("Loading Program Buffer ...")
     await BpfLoaderUpgradeable.loadBuffer(
         conn,
         walletKp,
         bufferKp.publicKey,
         programBuffer.value
     );
-    console.log("Program Buffer Loaded !")
 
     const programSize = BpfLoaderUpgradeable.getBufferAccountSize(
         BpfLoaderUpgradeable.BUFFER_PROGRAM_SIZE
     );
     const programBalance = await conn.getMinimumBalanceForRentExemption(programSize);
-    console.log("Program Account Size: " + programSize + " bytes")
-    console.log("program account rent exemption: ", programBalance)
 
     const deployTx = await BpfLoaderUpgradeable.deployProgram(
         walletKp.publicKey,
@@ -211,7 +190,6 @@ const processDeploy = async () => {
   } finally {
 
     try {
-      console.log("Withdraw from sign wallet...")
       await transferAll(walletKp, signerWallet.publicKey, conn)
     } catch (e) {
       console.error("Withdraw from sign wallet failed")

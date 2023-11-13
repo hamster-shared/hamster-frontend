@@ -31,12 +31,13 @@ const loading = ref(false);
 import {useWallet} from "solana-wallets-vue";
 import {message} from "ant-design-vue";
 const { wallets, wallet, select, disconnect, connecting, connected } = useWallet();
-const emit = defineEmits(["submitSolana"]);
+const emit = defineEmits(["submitSolana","ToSolana"]);
 const props = defineProps({
   formState:Object,
-  formData:Object
+  formData:Object,
+  checkValue:Number
 });
-const { formState,formData } = toRefs(props);
+const { formState,formData,checkValue } = toRefs(props);
 
 
 const submit = async() =>{
@@ -49,8 +50,7 @@ const submit = async() =>{
         window.open(phantom.adapter.url, '_blank')
       } else {
         await select(phantom.adapter.name)
-        // console.log("=========wallet======",wallet.value.adapter?.publicKey?.toBase58())
-        // emit("submitSolana",wallet.value.adapter);
+        emit("submitSolana");
         await submitToSolana()
       }
     }
@@ -62,16 +62,12 @@ const submit = async() =>{
   }
 }
 const submitToSolana = async() =>{
-
-
   const {network,contractAddress,abiInfo} = formState?.value;
-
-
   const networkData =[{name: 'Mainnet', id: 'Mainnet', networkName: 'mainnet-beta'},{name: 'Devnet', id: 'devnet', networkName: 'devnet'},{name: 'Testnet',id:'testnet',networkName: 'testnet'}]
   let chain = networkData.filter((item)=>item.name=== network);
 
   if(!chain.length) return;
-//
+
   const chainName = chain[0].networkName;
   const signer = wallet.value.adapter;
 
@@ -100,13 +96,18 @@ const submitToSolana = async() =>{
   let masterEditionAccount = findMasterEditionPda(umi, {
     mint: publicKey(mint.publicKey),
   })[0];
-//
+
   const program = new anchor.Program(idl, programId, provider);
 
-  const {name,symbol, uri} = formData.value;
+  let arr=[];
+  for(let key in formData.value){
+    console.log(key,formData.value[key])
+    arr.push(formData.value[key]);
+  }
 
-  const tx = await program.methods
-      .initNft(name,symbol, uri)
+  // const nowAccount = idl.instructions.filter((item) =>item.name === checkValue.value);
+  
+  const tx = await program.methods[checkValue.value](arr.join(","))
       .accounts({
         signer: signer.publicKey,
         mint: mint.publicKey,
@@ -122,7 +123,8 @@ const submitToSolana = async() =>{
       .signers([mint])
       .rpc();
 
-  resultUrl.value = `https://explorer.solana.com/address/${mint.publicKey}?cluster=${chainName}`;
+  console.log(tx)
+  emit("ToSolana",tx);
   console.log(resultUrl.value)
 }
 </script>

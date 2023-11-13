@@ -38,7 +38,7 @@
               </a-form-item>
           </div>
       </div>
-    <TrasactionSolana v-if="frameType === 8 " @submitSolana="validSolana" :formState="formState" :formData="formData"/>
+    <TrasactionSolana v-if="frameType === 8 " :checkValue="checkValue" @submitSolana="validSolana" @ToSolana="ToSolana" :formState="formState" :formData="formData"/>
     <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend" v-else>{{
         isSend ? buttonInfo + 'ing' : buttonInfo
       }}</a-button>
@@ -251,7 +251,10 @@ const validSolana = async () =>{
     message.warning('Please enter the necessary parameters')
     return
   }
+}
 
+const ToSolana = (str:string) =>{
+  hashValue.value = str;
 }
 
 const submit = async () => {
