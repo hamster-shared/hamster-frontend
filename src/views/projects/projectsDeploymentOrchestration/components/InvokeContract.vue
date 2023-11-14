@@ -37,7 +37,7 @@
             v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
           <div class="grid grid-cols-2 gap-4" v-if="item.type == 'address'">
             <a-form-item :label="item.name" :name="item.name + 'param'" :rules="[{ required: true }]" >
-              <a-select v-model:value="methodItem.formData[item.name + 'param']"  @change="checkFiledChange"
+              <a-select v-model:value="methodItem.formData[item.name + 'param']"  @change="checkFiledChange();methodItem.formData[item.name]=''"
                 placeholder="Select project contract" :options="paramList">
               </a-select>
             </a-form-item>

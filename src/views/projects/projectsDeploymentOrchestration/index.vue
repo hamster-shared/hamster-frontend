@@ -92,6 +92,9 @@ import { DisplayFieldsBackwardCompatibleResponse } from '@mysten/sui.js';
 import { apiEvmNetwork } from '@/apis/network'
 import { switchToChain } from '@/utils/changeNetwork'
 import { splitSignature } from 'ethers/lib/utils';
+import Web3 from 'web3'
+
+const web3 = new Web3(window.ethereum);
 
 const theme = useThemeStore();
 const walletAddress = useWalletAddress()
@@ -149,13 +152,15 @@ const originalArrange = ref<DeployRecord>(); //参数值数据格式整理
 const contractSingileInfo = ref<any>({});
 const deployArrange = ref<DeployRecord>(); // deploy now整理数据
 const executeId = ref(''); // 记录执行id
+const chainId = ref(''); // 记录选中小狐狸的id
 
 const changeChecked = (val: any) => {
   isChange.value = true;
 }
-const changeNetwork = (val: any) => {
-  let item = networkListData.value[val];
+const changeNetwork = () => {
+  let item = networkListData.value[selectNetwork.value];
   selectNetworkName.value = item.chainName;
+  chainId.value = item.chainId
   const walletAccount = window.localStorage.getItem("walletAccount");
   if (walletAccount === undefined || walletAccount === null) {
     connectWallet();
@@ -605,10 +610,14 @@ const goDeploy = ()=>{
 }
 
 const deployManyContract = async () => {
+  // 先获取当前小狐狸的chainId，与选中的进行对比
+  const nowChainId = await web3.eth.getChainId();
   // 点击部署之前需要判断改动的表单的数据是否保存
   if (paramsRef.value.isChange || contractRef.value.isChange || isChange.value) {
     visibleSave.value = true;
     return false;
+  } else if(chainId.value != `0x${nowChainId.toString(16)}`) {
+    changeNetwork()
   } else {
     // 获取可编排的合约
     await getProjectsContractName();

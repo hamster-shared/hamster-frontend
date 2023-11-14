@@ -8,7 +8,7 @@
         <div v-for="(item, key) in inputData" :key="key">
           <div class="grid grid-cols-2 gap-4" v-if="item.type == 'address'">
             <a-form-item :label="item.name" :name="item.name+'param'" :rules="[{ required: true }]" >
-              <a-select @change="checkFiledChange" v-model:value="formData[item.name+'param']" 
+              <a-select @change="checkFiledChange();formData[item.name]=''" v-model:value="formData[item.name+'param']" 
                 placeholder="Select project contract" :options="paramList">
               </a-select>
             </a-form-item>
@@ -64,7 +64,7 @@ const formRules = computed(() => {
   // };
 });
 
-const checkFiledChange = (val:any) => {
+const checkFiledChange = () => {
   isChange.value = true;
 }
 
