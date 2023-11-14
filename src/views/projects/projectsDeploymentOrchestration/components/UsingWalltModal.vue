@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :footer="null" width="760px" centered="true" v-model:visible="visibleNumber" maskClosable="false">
+    <a-modal :footer="null" width="760px" centered="true" v-model:visible="visibleNumber" :maskClosable="false">
       <div class="text-[24px] text-[#151210] font-bold">Sign Using Wallet</div>
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="close" />
