@@ -1,7 +1,7 @@
 <template>
   <div>
     <bread-crumb separator=">" :routes="breadCrumbInfo"/>
-    <div class="text-[24px] font-bold my-[30px]">AIShow</div>
+    <div class="text-[24px] font-bold my-[30px]">{{ apiKeyName }}</div>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="1" tab="Get Started">
         <GetStartedPane></GetStartedPane>
@@ -19,9 +19,14 @@ import { ref, onMounted } from 'vue';
 import GetStartedPane from './components/GetStartedPane.vue';
 import StatsPane from './components/StatsPane.vue'
 import BreadCrumb from "@/components/BreadCrumb.vue";
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
 
 const activeKey = ref('1');
 const breadCrumbInfo = ref<any>([])
+
+const apiKeyName = route.query.apiKeyName || '';
 
 // 判断跳转来源
 const judgeOrigin = ()=>{
@@ -31,7 +36,7 @@ const judgeOrigin = ()=>{
       path: '/middleware/dashboard/RPC/myapp'
     },
     {
-      breadcrumbName: 'AI Show',
+      breadcrumbName: apiKeyName,
       path: ''
     },
   ]

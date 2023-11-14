@@ -2,16 +2,16 @@
   <div class="border mb-[30px] border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[12px] p-[30px]">
     <div class="text-[21px] font-bold">API Key</div>
     <div class="mt-[20px] p-[16px] rounded-[8px] bg-[#F5F5F5] dark:bg-[#323232] flex justify-between items-center w-1/2">
-      <label class="text-[#73706E] dark:text-[#FFFFFF]">309xekoijx909hie892309023d47191co3i1ce</label>
-      <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard('')" />
+      <label class="text-[#73706E] dark:text-[#FFFFFF]">{{ apiKeyId }}</label>
+      <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard(apiKeyId)" />
     </div>
   </div>
-  <div>
-    <div class="ethereum-container">
+  <div v-if="apiKeyDetailList.length > 0">
+    <div class="ethereum-container" v-for="(item,key) in apiKeyDetailList" :key="key">
       <div class="flex justify-between items-center">
         <div class="flex justify-between items-center">
-          <img src="https://g.alpha.hamsternet.io/ipfs/QmQfkngAChGHkdiGMxQVeHmU3p9BqnZxaeRSdWzZtXF3Pf" class="h-[50px]">
-          <label class="font-bold text-[21px] ml-[10px]">Ethereum</label>
+          <img :src="item.ecosystemIcon" class="h-[50px]">
+          <label class="font-bold text-[21px] ml-[10px]">{{ item.ecosystemName }}</label>
         </div>
         <a-dropdown>
           <label class="cursor-pointer text-[16px] flex justify-between items-center" @click.prevent>
@@ -20,11 +20,8 @@
           </label>
           <template #overlay>
             <a-menu>
-              <a-menu-item>
-                <a href="javascript:;">Mainnet</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a href="javascript:;">Mainnet</a>
+              <a-menu-item v-for="(itemSub, itemKey) in item.networkDetailInfoList" :key="itemKey">
+                <a href="javascript:;">{{ itemSub.name }}</a>
               </a-menu-item>
             </a-menu>
           </template>
@@ -46,9 +43,24 @@
   </div>
 </template>
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { copyToClipboard } from "@/utils/tool";
+import { useRoute } from 'vue-router';
+import { apiZanApiKeyDetail } from "@/apis/middlewareRPC";
 
-// apiKeyId
+const route = useRoute()
+const apiKeyId = route.query.apiKeyId || '';
+const apiKeyDetailList = ref([]);
+const getApiKeyDetail = async () => {
+  let res = await apiZanApiKeyDetail(<string>apiKeyId)
+  console.log("res:", res);
+  if (res.code == 200) {
+    apiKeyDetailList.value = res.data.ecosystemDetailInfos
+  }
+}
+onMounted(() => {
+  getApiKeyDetail();
+});
 </script>
 <style scoped>
 .ethereum-container {

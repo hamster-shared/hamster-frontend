@@ -9,7 +9,7 @@
       <div class="flex">
         <!-- 循环遍历拿出app -->
         <div v-if="apIKeyInfo.length > 0">
-          <div v-for="(item, key) in apIKeyInfo" class="w-[300px] h-[188px] bg-[rgba(226,181,120,0.25)] rounded-[12px] border border-solid border-[#EBEBEB] p-[20px] cursor-pointer" @click="goMyAppDetail(item.apiKeyId)">
+          <div v-for="(item, key) in apIKeyInfo" class="w-[300px] h-[188px] bg-[rgba(226,181,120,0.25)] rounded-[12px] border border-solid border-[#EBEBEB] p-[20px] cursor-pointer" @click="goMyAppDetail(item.apiKeyId, item.name)">
             <div class="flex justify-between items-center">
               <div class="text-[21px] font-black">{{ item.name }}</div>
               <svg-icon name="right" size="17" />
@@ -130,8 +130,8 @@ const createApp = ()=>{
 }
 
 // 跳转app detail
-const goMyAppDetail = (apiKeyId: String)=>{
-  router.push('/middleware/dashboard/RPC/myapp/detail?apiKeyId='+apiKeyId)
+const goMyAppDetail = (apiKeyId: String, apiKeyName: String)=>{
+  router.push('/middleware/dashboard/RPC/myapp/detail?apiKeyId='+apiKeyId+'&apiKeyName=' + apiKeyName)
 }
 
 // 跳转app
