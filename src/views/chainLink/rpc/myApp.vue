@@ -33,18 +33,18 @@ const columns = reactive([
     key: 'name',
     align: 'center',
   },
-  {
-    title: 'Requests(24h)',
-    dataIndex: 'Requests(24h)',
-    key: 'Requests(24h)',
-    align: 'center',
-  },
-  {
-    title: 'Failed requests(24h)',
-    dataIndex: 'Failed requests(24h)',
-    key: 'Failed requests(24h)',
-    align: 'center',
-  },
+  // {
+  //   title: 'Requests(24h)',
+  //   dataIndex: 'Requests(24h)',
+  //   key: 'Requests(24h)',
+  //   align: 'center',
+  // },
+  // {
+  //   title: 'Failed requests(24h)',
+  //   dataIndex: 'Failed requests(24h)',
+  //   key: 'Failed requests(24h)',
+  //   align: 'center',
+  // },
   {
     title: 'Time',
     dataIndex: 'createdTime',
