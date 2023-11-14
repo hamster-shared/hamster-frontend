@@ -20,7 +20,7 @@ import GetStartedPane from './components/GetStartedPane.vue';
 import StatsPane from './components/StatsPane.vue'
 import BreadCrumb from "@/components/BreadCrumb.vue";
 
-const activeKey = ref('2');
+const activeKey = ref('1');
 const breadCrumbInfo = ref<any>([])
 
 // 判断跳转来源

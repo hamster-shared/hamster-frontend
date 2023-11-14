@@ -47,6 +47,8 @@
 </template>
 <script setup lang="ts">
 import { copyToClipboard } from "@/utils/tool";
+
+// apiKeyId
 </script>
 <style scoped>
 .ethereum-container {
