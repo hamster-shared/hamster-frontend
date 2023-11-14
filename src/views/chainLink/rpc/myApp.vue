@@ -20,11 +20,12 @@ import { reactive, ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import CreateAppModal from './components/CreateAppModal.vue';
+import { apiZanApiKeyPage } from "@/apis/middlewareRPC"
 
 const router = useRouter()
 const createVisible = ref(false);
 const modalType = ref('create');
-const tableData = ref([{'name':'show'},{'name':'has'}])
+const tableData = ref([])
 const columns = reactive([
   {
     title: 'App name',
@@ -46,8 +47,8 @@ const columns = reactive([
   },
   {
     title: 'Time',
-    dataIndex: 'time',
-    key: 'time',
+    dataIndex: 'createdTime',
+    key: 'createdTime',
     align: 'center',
     customRender: ({ text: date }: any) => formatDateToLocale(date).format("YYYY/MM/DD HH:mm:ss"),
   },
@@ -80,8 +81,13 @@ const pagination = reactive({
     getTableData()
   },
 });
-const getTableData = () => {
-
+const getTableData = async () => {
+  let res = await apiZanApiKeyPage(pagination.current, pagination.pageSize);
+  if (res.code == 200) {
+    tableData.value = res.data.data;
+    pagination.total = res.data.total;
+  }
+  console.log("table: res:; ",res);
 }
 const editApp = (item: any) => {
   modalType.value = 'edit';
@@ -100,7 +106,7 @@ const createApp = ()=>{
 }
 
 onMounted(()=>{
-
+  getTableData();
 })
 </script>
 <style lang="less">

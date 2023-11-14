@@ -41,32 +41,32 @@
         </div>
         <div class="w-1/3 pl-[30px]">
           <div class="flex items-center mb-[40px]">
-            <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">Free</div>
+            <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">{{ userPlan.planName }}</div>
             <a-button type="primary" @click="goVersionPlan">Upgrade</a-button>
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Balance:</label>
-            <label class="font-extrabold">500 millino </label>credits
+            <label class="font-extrabold">{{ userPlan.totalCredit-userPlan.usedCredit }} </label> credits
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Total:</label>
-            <label class="font-extrabold">500 millino </label>credits
+            <label class="font-extrabold">{{ userPlan.totalCredit }} </label> credits
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Rate Limits:</label>
-            <label class="font-extrabold">300 millino </label>credits/s
+            <label class="font-extrabold">{{ userPlan.creditLimit }} </label> credits/s
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Expire date:</label>
-            <label class="font-extrabold">2023-09-31</label>
+            <label class="font-extrabold">{{ formatDateToLocale(userPlan.expireTime).format("YYYY/MM/DD HH:mm:ss") }}</label>
           </div>
           <div class="text-[#E2B578] cursor-pointer" @click="goBilling">View More</div>
         </div>
       </div>
       <div class="flex justify-end mt-[30px]">
         <a-select class="w-[150px]" v-model:value="optionParams.opApp" autocomplete="off" :options="OptionsApp.map(item => ({ value: item.value, label: item.label }))" ></a-select>
-        <a-select class="!ml-[20px] w-[150px]" v-model:value="optionParams.opChain" autocomplete="off" :options="OptionsChain" ></a-select>
-        <a-select class="!ml-[20px] w-[150px]" v-model:value="optionParams.opDay" autocomplete="off" :options="OptionsDay" ></a-select>
+        <a-select class="!ml-[20px] w-[150px]" v-model:value="optionParams.opChain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
+        <a-select class="!ml-[20px] w-[150px]" v-model:value="optionParams.opDay" autocomplete="off" :options="optionTime" ></a-select>
       </div>
       <div class="flex">
         <div class="w-2/3">
@@ -96,24 +96,30 @@ import EchartBar from '@/components/EchartBar.vue';
 import EchartPie from '@/components/EchartPie.vue';
 import EchartLine from '@/components/EchartLine.vue';
 import CreateAppModal from './components/CreateAppModal.vue';
+import { formatDateToLocale } from '@/utils/dateUtil';
+import { optionTime } from './components/rpcData'
+import { apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest } from "@/apis/middlewareRPC";
 
 const router = useRouter()
 
 const OptionsApp = ref([
-  {label: 'All Apps', value: '0'},
+  {label: 'AiShow', value: 'aishow'},
+  {label: 'BiShow', value: 'bishow'},
 ]);
-const OptionsChain = ref([
-  {label: 'All Chain', value: '0'},
-]);
-const OptionsDay = ref([
-  {label: 'The Last 1 days', value: '1'},
-]);
+const optionEcosystems = ref([])
 const optionParams = reactive({
-  opApp: 'Ethereum',
-  opChain: '0',
-  opDay: '1'
+  opApp: 'aishow',
+  opChain: '',
+  opDay: optionTime[0].value
 });
 const createVisible = ref(false);
+const userPlan = ref<any>({
+  planName: '',
+  totalCredit: 0,
+  usedCredit: 0,
+  creditLimit: 0,
+  expireTime: '',
+});
 
 const hiddenCreateModal = () => {
   createVisible.value = false;
@@ -143,9 +149,28 @@ const goVersionPlan = ()=>{
   router.push('/middleware/dashboard/RPC/versionPlan')
 }
 
+// 获取overview free里面的字段信息
+const getOverviewFree = async () => {
+  const authedData = await apiGetZanUserAuthed();
+  if(authedData.data){
+    let res = await apiZanPlan();
+    if (res.code == 200) {
+      userPlan.value = res.data
+    }
+  }
+}
 
+// 获取下拉框的值 optionEcosystems
+const getEcosystems = async () => {
+  let res = await apiZanEcosystemsDigest();
+  if (res.code == 200) {
+    optionEcosystems.value = res.data
+  }
+}
 
-onMounted(()=>{
+onMounted(() => {
+  getOverviewFree();
+  getEcosystems();
 })
 </script>
 <style scoped>

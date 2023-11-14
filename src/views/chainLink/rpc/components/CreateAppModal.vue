@@ -20,6 +20,8 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, toRefs } from 'vue';
+import { apiZanCreateApiKey } from "@/apis/middlewareRPC"
+import { message } from 'ant-design-vue';
 
 const props = defineProps({
   createVisible: Boolean,
@@ -31,6 +33,7 @@ const props = defineProps({
 const { createVisible, modalType } = toRefs(props);
 const emits = defineEmits(['hiddenCreateModal']);
 
+const formRef = ref();
 const createLoading = ref(false);
 const formData = reactive({
   name: '',
@@ -66,8 +69,26 @@ const formRules = computed(() => {
     name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
   };
 });
-const handleOk = () => {
-  createLoading.value = true;
+const handleOk = async () => {
+  
+  try {
+    await formRef.value.validate();
+    createLoading.value = true;
+    let res:any = {};
+    if (modalType.value == 'create') {
+      res = await apiZanCreateApiKey(formData.name);
+      console.log("res:", res);
+    }
+    if (res.code == 200) {
+      message.success(res.message)
+    }
+  } catch (error: any) {
+    console.log("error:",error);
+    message.error(error.message)
+  } finally {
+    createLoading.value = false;
+    hideVisible();
+  }
 }
 const hideVisible = () => {
   emits('hiddenCreateModal');
