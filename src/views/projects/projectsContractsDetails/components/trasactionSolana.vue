@@ -74,7 +74,7 @@ const submitToSolana = async() =>{
   const connection = new Connection(clusterApiUrl(chainName))
   const provider = new AnchorProvider(connection, signer, AnchorProvider.defaultOptions());
   anchor.setProvider(provider);
-  
+
   const mint = anchor.web3.Keypair.generate();
   const programId = new PublicKey(contractAddress);
   const idl = JSON.parse(abiInfo);
@@ -97,15 +97,15 @@ const submitToSolana = async() =>{
 
   const program = new anchor.Program(idl, programId, provider);
 
-  let arr=[];
+  let arr = []
   for(let key in formData.value){
-    console.log(key,formData.value[key])
-    arr.push(formData.value[key]);
+    console.log(key, formData.value[key])
+    arr.push(formData.value[key])
   }
 
   // const nowAccount = idl.instructions.filter((item) =>item.name === checkValue.value);
 
-  const tx = await program.methods[checkValue.value](arr.join(","))
+  const tx = await (program.methods[checkValue.value]).apply(this, arr)
       .accounts({
         signer: signer.publicKey,
         mint: mint.publicKey,
@@ -122,7 +122,7 @@ const submitToSolana = async() =>{
       .rpc();
 
   console.log(tx)
-  emit("ToSolana",tx);
+  emit("ToSolana", tx);
   console.log(resultUrl.value)
 }
 </script>
