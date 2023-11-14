@@ -30,14 +30,14 @@ const middlewareRoute = [
           isShow: true,
         },
         children: [
-          // {
-          //   path: "/middleware/dashboard/RPC",
-          //   name: "RPC",
-          //   component: () => import('@/views/middleware/rpc/index.vue'),
-          //   meta: {
-          //     sidebarMap: ['RPC'],
-          //   }
-          // },
+          {
+            path: "/middleware/dashboard/RPC",
+            name: "RPC",
+            component: () => import('@/views/middleware/rpc/index.vue'),
+            meta: {
+              sidebarMap: ['RPC'],
+            }
+          },
           {
             path: "/middleware/dashboard/RPC/home",
             name: "Home",
