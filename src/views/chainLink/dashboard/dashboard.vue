@@ -12,12 +12,12 @@
             <div class="network">{{ val.network }}</div>
             <div class="view open-link-css" @click="networkClick(val)">View</div>
           </div>
-
-          <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css" v-if="RPCList.length>4">
+          <!-- v-if="RPCList.length>4" -->
+          <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css">
             <span @click="goMiwaspaceTab('RPC')">Add service</span>
             <span @click="goRPC">View more</span>
           </div>
-          <div v-else class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('RPC')">Add service</div>
+          <!-- <div v-else class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('RPC')">Add service</div> -->
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
@@ -90,7 +90,7 @@ const networkClick = (val: any) => {
 }
 // more 跳转rpc
 const goRPC = ()=>{
-  router.push('/middleware/dashboard/RPC/index')
+  router.push('/middleware/dashboard/RPC/versionPlan')
 }
 
 const oracleClick = () => {
