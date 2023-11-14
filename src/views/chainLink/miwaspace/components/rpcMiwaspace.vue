@@ -14,12 +14,12 @@
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div class="flex justify-between items-center mb-[100px]">
           <div>
-            <img :src="item.image" class="h-[50px] "/>
-            <span class="ml-[20px] text-[21px] font-bold align-middle">{{item.fullname}}</span>
+            <img :src="item.ecosystemIcon" class="h-[50px] "/>
+            <span class="ml-[20px] text-[21px] font-bold align-middle">{{item.ecosystemName}}</span>
           </div>
-          <div class="ml-[20px] text-[18px] font-medium">{{ item.nativeToken }}</div>
+          <div class="ml-[20px] text-[18px] font-medium">{{ item.ecosystemCode }}</div>
         </div>
-        <a-button class="w-full !h-[43px]">Start for Free</a-button>
+        <a-button class="w-full !h-[43px]" @click="handleOpenRpcService(item.buyFlag)">{{ item.buyFlag ? 'View more' : 'Start for Free' }}</a-button>
         <!-- <div class="flex justify-between text-sm">
           <div class="flex flex-col" v-if="parseInt(item.chainID, 16)">
             <span class="inline-block mb-2.5 mt-5">Chain ID</span>
@@ -50,8 +50,7 @@
   import { toRefs, onMounted,ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
-  import { apiPostCustomerOpenService } from '@/apis/middleWare'
-  import type { projectsParams } from "@/apis/utils/chainlinkInterface";
+  import { apiGetZanUserAuthed, apiGetZanAuthUrl } from "@/apis/middlewareRPC"
 
   const router = useRouter()
   const props = defineProps({
@@ -59,33 +58,30 @@
   })
   const { rpcPageInfo } = toRefs(props)
 
-  const copyInfo = async (_items: any) => {
-  let inp = document.createElement("input");
-  document.body.appendChild(inp);
-  inp.value = _items;
-  inp.select();
-  document.execCommand("copy", false);
-  inp.remove();
-  message.success('copy success')
-}
-// 开通rpc需要调接口
-const handleOpenRpcService = async(chain:string,network:string,userActive:boolean)=>{
-  if(userActive){
-    // 跳rpc-detail
-    router.push(`/middleware/dashboard/RPC/rpc-detail/${chain}?fromMiwaspace=1`)
-  }else{
-    // 跳rpc的折线图
-    try {
-      const params:projectsParams = {
-        chain:chain,
-        network:network
+const openAppModal = async () => {
+  const authedData = await apiGetZanUserAuthed()
+  if(authedData.data){
+      router.push('/middleware/dashboard/RPC/home')
+  }else {
+      let url = ""
+      try{
+        const authUrlResp = await apiGetZanAuthUrl()
+        url = authUrlResp.data
+      }catch (e) {
+          return
       }
-      const { data } = await apiPostCustomerOpenService('rpc',params)
-      console.log('handleOpenRpcService-data:', data)
-      router.push('/middleware/dashboard/rpc/index')
-    } catch(err:any) {
-      console.log('handleOpenRpcService-err:', err)
-    }
+      const myWindow = window.open(url, 'login-zan', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      myWindow?.focus()
+      // router.push(`/middleware/dashboard/rpc/zan/auth?authCode=${}`)
+  }
+}
+
+// 开通rpc需要调接口
+const handleOpenRpcService = async(buyFlag:boolean)=>{
+  if(buyFlag){
+    router.push(`/middleware/dashboard/RPC/home`);
+  }else{
+    openAppModal()
   }
 }
 
