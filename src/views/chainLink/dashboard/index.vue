@@ -21,7 +21,7 @@
             <template #title><span class="text-[16px]">{{item.name}}</span></template>
             <template v-for="child in item.children">
               <template v-if="child?.meta?.isShow">
-                <a-menu-item :key="child.name" >
+                <a-menu-item :key="child.name" class="!pl-[76px]">
                   <router-link :to="child.path">
                   <div>{{child.name}}</div>
                   </router-link>
