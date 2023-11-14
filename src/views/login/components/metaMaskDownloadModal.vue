@@ -30,8 +30,8 @@ const closeMetaMaskModal = () => {
 }
 
 const downloadMetaMask = () => {
-  // window.open()
   emit('closeMetaMaskModal')
+  window.open('https://metamask.io/download')
 }
 
 </script>
