@@ -61,10 +61,8 @@
 const openAppModal = async () => {
   const authedData = await apiGetZanUserAuthed()
   if(authedData.data){
-      // message.info("已经授权")
       router.push('/middleware/dashboard/RPC/home')
   }else {
-      // message.info("jump to zan to auth")
       let url = ""
       try{
         const authUrlResp = await apiGetZanAuthUrl()
@@ -74,6 +72,7 @@ const openAppModal = async () => {
       }
       const myWindow = window.open(url, 'login-zan', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
       myWindow?.focus()
+      // router.push(`/middleware/dashboard/rpc/zan/auth?authCode=${}`)
   }
 }
 
