@@ -42,3 +42,4 @@ node_modules
 /deploy_solana.sh
 /default_solana.conf
 /Dockerfile_solana
+/deploy_production.sh
