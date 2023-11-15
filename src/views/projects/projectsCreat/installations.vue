@@ -52,7 +52,7 @@ const checkSetupAction = () => {
 onMounted(() => {
   setupAction.value = router.currentRoute.value.query?.setup_action || '';
   console.log(setupAction.value, 'setupAction value')
-  checkSetupAction
+  checkSetupAction()
   // let token = localStorage.getItem('token') || '';
   // let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
   // console.log(loginData, '回调页看登录')
