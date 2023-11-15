@@ -2,7 +2,7 @@
   <div>
     <bread-crumb separator=">" :routes="breadCrumbInfo"/>
     <div class="text-[24px] font-bold my-[30px]">{{ apiKeyName }}</div>
-    <a-tabs v-model:activeKey="activeKey">
+    <a-tabs v-model:activeKey="activeKey" @change="changeTabs" destroyInactiveTabPane>
       <a-tab-pane key="1" tab="Get Started">
         <GetStartedPane></GetStartedPane>
       </a-tab-pane>
@@ -23,7 +23,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute()
 
-const activeKey = ref('1');
+const activeKey = ref('2');
 const breadCrumbInfo = ref<any>([])
 
 const apiKeyName = route.query.apiKeyName || '';
@@ -40,6 +40,13 @@ const judgeOrigin = ()=>{
       path: ''
     },
   ]
+}
+
+const changeTabs = () => {
+  console.log("changeTabs");
+  if (activeKey.value == '2') {
+    // location.reload();
+  }
 }
 
 onMounted(()=>{

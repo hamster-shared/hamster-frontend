@@ -15,13 +15,13 @@
         </div>
         <a-dropdown>
           <label class="cursor-pointer text-[16px] flex justify-between items-center" @click.prevent>
-            Mainnet
+            {{ item.networkValue }}
             <svg-icon name="right" size="17" class="ml-[10px]" style="transform: rotate(90deg);" />
           </label>
           <template #overlay>
             <a-menu>
               <a-menu-item v-for="(itemSub, itemKey) in item.networkDetailInfoList" :key="itemKey">
-                <a href="javascript:;">{{ itemSub.name }}</a>
+                <a href="javascript:;" @click="setNetWorkValue(key, itemSub)">{{ itemSub.name }}</a>
               </a-menu-item>
             </a-menu>
           </template>
@@ -30,13 +30,13 @@
       <div>
         <div class="label-title">HTTPS</div>
         <div class="label-input">
-          <div class="label-text text-ellipsis">309xekoijx909hie892309023d47191co3i1ce</div>
-          <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard('')" />
+          <div class="label-text text-ellipsis">{{ item.httpsUrl }}</div>
+          <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard(item.httpsUrl)" />
         </div>
         <div class="label-title">WSS</div>
         <div class="label-input">
-          <div class="label-text text-ellipsis">309xekoijx909hie892309023d47191co3i1ce</div>
-          <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard('')" />
+          <div class="label-text text-ellipsis">{{ item.wssUrl }}</div>
+          <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard(item.wssUrl)" />
         </div>
       </div>
     </div>
@@ -50,13 +50,30 @@ import { apiZanApiKeyDetail } from "@/apis/middlewareRPC";
 
 const route = useRoute()
 const apiKeyId = route.query.apiKeyId || '';
-const apiKeyDetailList = ref([]);
+const apiKeyDetailList = ref<any>([]);
+//获取apikey 详细信息
 const getApiKeyDetail = async () => {
   let res = await apiZanApiKeyDetail(<string>apiKeyId)
   console.log("res:", res);
   if (res.code == 200) {
-    apiKeyDetailList.value = res.data.ecosystemDetailInfos
+    apiKeyDetailList.value = res.data.ecosystemDetailInfos;
+    //设置network初始值
+    apiKeyDetailList.value.forEach((item: any, key: any) => {
+      if (item.networkDetailInfoList.length > 0) {
+        apiKeyDetailList.value[key].networkValue = item.networkDetailInfoList[0].name;
+        apiKeyDetailList.value[key].httpsUrl = item.networkDetailInfoList[0].httpsUrl;
+        apiKeyDetailList.value[key].wssUrl = item.networkDetailInfoList[0].wssUrl;
+      }
+    });
+    console.log("apiKeyDetailList.value:",apiKeyDetailList.value);
   }
+}
+// 切换 network 修改对应框得值
+const setNetWorkValue = (index: any, item: any) => {
+
+  apiKeyDetailList.value[index].networkValue = item.name;
+  apiKeyDetailList.value[index].httpsUrl = item.httpsUrl;
+  apiKeyDetailList.value[index].wssUrl = item.wssUrl;
 }
 onMounted(() => {
   getApiKeyDetail();
