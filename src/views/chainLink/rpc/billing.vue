@@ -10,29 +10,29 @@
           <div class="card-content">
             <div>
               <label class="sub-title">Credit:</label>
-              <label class="font-bold">0</label>
-              <label class="font-light"> / 300,000,000</label>
+              <label class="font-bold" v-if="userPlan.usedCredit">{{ setNumberValue(userPlan.usedCredit) }}</label>
+              <label class="font-light" v-if="userPlan.totalCredit"> / {{ setNumberValue(userPlan.totalCredit) }}</label>
             </div>
             <div class="mt-[20px]">
               <label class="sub-title">API Keys:</label>
-              <label class="font-bold">1</label>
-              <label class="font-light"> / 3 keys</label>
+              <label class="font-bold">{{ userPlan.createdApiKeyAmount }}</label>
+              <label class="font-light"> / {{ userPlan.apiKeyAmount }} keys</label>
             </div>
           </div>
         </div>
         <div class="card-div">
           <div class="card-title">Free</div>
           <div class="card-content">
-            <div>
-              <label class="font-bold">· 300</label>
-              <label class="font-light"> million credits/mo</label>
+            <div v-if="userPlan.totalCredit">
+              <label class="font-bold">· {{ setMillionValue(userPlan.totalCredit.toString()) }}</label>
+              <label class="font-light"><label v-if="userPlan.totalCredit.toString().length > 6"> million</label> credits/mo</label><!--million-->
             </div>
             <div class="mt-[20px]">
-              <label class="font-bold">· 300</label>
+              <label class="font-bold">· {{ userPlan.creditLimit }}</label>
               <label class="font-light"> credits/s (Rate Limites)</label>
             </div>
             <div class="mt-[20px]">
-              <label class="font-bold">· 3</label>
+              <label class="font-bold">· {{ userPlan.apiKeyAmount }}</label>
               <label class="font-light"> API keys</label>
             </div>
             <div class="mt-[20px]">
@@ -55,7 +55,7 @@
             </div>
             <div class="mt-[20px]">
               <label class="sub-title">Available until:</label>
-              <label class="font-bold">2023/10/12 00:00:00</label>
+              <label class="font-bold">{{ formatDateToLocale(userPlan.expireTime).format("YYYY/MM/DD HH:mm:ss") }}</label>
             </div>
             <div class="mt-[20px]">
               <label class="sub-title">Payment Method:</label>
@@ -68,10 +68,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { apiGetZanUserAuthed, apiZanPlan } from "@/apis/middlewareRPC";
 import { onMounted, ref } from "vue";
+import { formatDateToLocale } from '@/utils/dateUtil';
+import { setMillionValue, setNumberValue } from './components/rpcData'
+import { apiGetZanUserAuthed, apiZanPlan } from "@/apis/middlewareRPC";
 
-const userPlan = ref([]);
+const userPlan = ref<any>([]);
 // 获取plan里面的字段信息
 const getZanPlan = async () => {
   const authedData = await apiGetZanUserAuthed();
