@@ -32,17 +32,17 @@ const resetData = () => {
 const installGit = () => {
   // loginType.value === 1 githun登录 2 === metaMask登录
   window.addEventListener('message', resetData, false)
-  if (loginType.value === 1) {
+  if (loginType.value == 1) {
     const state = new Date().getTime();
-    const url = `${selectTargetUrl.value}?state=${state}`;
-    const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=${apiUrl}/projects/installations`)
+    const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl}/projects/installations`;
+    const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
     myWindow?.focus()
     // window.close();
     // window.opener.location.reload();
   } else {
     const state = new Date().getTime();
-    const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-    const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=${apiUrl}/projects/metaMaskAuth`)
+    const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl}/projects/metaMaskAuth`;
+    const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
     myWindow?.focus()
   }
 }

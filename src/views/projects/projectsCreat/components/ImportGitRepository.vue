@@ -234,8 +234,8 @@ const pagination = reactive({
 const addGithubAccount = () => {
   window.addEventListener('message', resetData, false)
   const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/installations')
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=projects/installation`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
 }
 
 
@@ -253,8 +253,8 @@ const getGithubInstallCheck = async () => {
 const adjustGithubPremission = () => {
   window.addEventListener('message', resetData, false)
   const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/installations')
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=projects/installations`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
 }
 
 const selectGithubAccount = (value: any, item: any) => {
@@ -280,7 +280,7 @@ const getInstallationsAccount = async () => {
 }
 
 const resetData = async () => {
-  await getInstallationsAccount()
+  // await getInstallationsAccount()
   console.log('可以刷新数据了')
   pagination.current = 1;
   pagination.pageSize = 3;

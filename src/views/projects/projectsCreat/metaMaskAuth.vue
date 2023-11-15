@@ -27,8 +27,8 @@ const initGithubInstallAuth = async () => {
       // data == true 需要install  false 不需要install
       if (data) {
         const state = new Date().getTime();
-        const url = `${selectTargetUrl.value}?state=${state}`;
-        const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=${apiUrl}/projects/installations`)
+        const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl}/projects/installations`;
+        const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
       } else {
         window.close();
         const opener = window.opener;
