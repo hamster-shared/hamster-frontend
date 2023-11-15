@@ -113,7 +113,8 @@ const getRpc = async()=>{
     rpcSer.value = res.data
     console.log('获取rpc信息:',res)
   } catch (error:any) {
-    message.error(error)
+    // message.error(error)
+    console.log(error)
   }
 }
 
