@@ -1,6 +1,6 @@
 <template>
   <div>
-    <bread-crumb separator=">" :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo"/>
     <div class="text-[24px] font-bold my-[30px]">{{ apiKeyName }}</div>
     <a-tabs v-model:activeKey="activeKey" @change="changeTabs" destroyInactiveTabPane>
       <a-tab-pane key="1" tab="Get Started">
