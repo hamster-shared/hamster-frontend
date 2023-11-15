@@ -39,8 +39,8 @@ const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
 
 const checkSetupAction = () => {
 
-  // setupAction === request 阻止  install === 个人
-  if (setupAction.value === 'request') {
+  // setupAction === request 组织  install === 个人
+  if (setupAction.value === 'install') {
     window.close();
     const opener = window.opener;
     opener.postMessage('message', '*');
@@ -50,6 +50,7 @@ const checkSetupAction = () => {
 }
 onMounted(() => {
   setupAction.value = router.currentRoute.value.query?.setup_action || '';
+  console.log(setupAction.value, 'setupAction value')
   checkSetupAction
   // let token = localStorage.getItem('token') || '';
   // let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));

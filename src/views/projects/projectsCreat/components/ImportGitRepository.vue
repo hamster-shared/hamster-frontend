@@ -6,7 +6,7 @@
       <span v-if="props.projectType != '3'" class="text-sm cursor-pointer open-link-css"
         @click="handleImportRepository">Import Third-Party Git Repository <right-outlined /></span>
     </div>
-    <ImportInstall v-if="isGithubInstallCheck" @resetData="resetData"></ImportInstall>
+    <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
     <div v-else>
       <div class="flex">
         <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
