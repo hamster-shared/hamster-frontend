@@ -38,15 +38,15 @@ const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
 // }
 
 const checkSetupAction = () => {
-
   // setupAction === request 组织  install === 个人
-  if (setupAction.value == 'install') {
+  if (setupAction.value == 'request') {
+    console.log('进入request')
+    router.push('/projects/adjustPremission');
+  } else {
     console.log('进入install')
     window.close();
     const opener = window.opener;
     opener.postMessage('message', '*');
-  } else {
-    router.push('/projects/adjustPremission');
   }
 }
 onMounted(() => {
