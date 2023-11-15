@@ -5,16 +5,42 @@
 <script lang="ts" setup>
 // 引入echarts
 import * as echarts from 'echarts'
-import { onMounted, toRefs } from "vue";
+import { onMounted, ref, toRefs } from "vue";
 
 const props = defineProps({
-  echartsData: Array,
+  // echartsData: Array,
+  echartsData: {
+    type:Object,
+    default: {
+      valueX: [],
+      valueY: {}
+    }
+  },
   echartsId: {
     type:String,
     required:true
   },
 });
 const { echartsData, echartsId } = toRefs(props);
+
+const seriesList = ref<any>([]);
+const setSeriesArray = () => {
+  for (let key in echartsData.value.valueY) {
+    seriesList.value.push({
+      name: key,
+      type: 'bar',
+      stack: 'total',
+      label: {
+        show: true
+      },
+      emphasis: {
+        focus: 'series'
+      },
+      data: echartsData.value.valueY[key]
+    });
+  }
+  console.log("seriesList.value:",seriesList.value);
+}
 
 const setShowNumber = (value: any) => {
   let valLen = value.toString().length;
@@ -26,7 +52,8 @@ const setShowNumber = (value: any) => {
 }
 
 onMounted(() => { // 需要获取到element,所以是onMounted的Hook
-  let myChart = echarts.init(document.getElementById(echartsId?.value)as HTMLElement);
+  let myChart = echarts.init(document.getElementById(echartsId?.value) as HTMLElement);
+  setSeriesArray(); //设置series数据
   // 绘制图表
   myChart.setOption({
     tooltip: {
@@ -50,7 +77,7 @@ onMounted(() => { // 需要获取到element,所以是onMounted的Hook
     xAxis: [
       {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: echartsData.value.valueX,
         axisTick: {
           alignWithLabel: true
         }
@@ -71,68 +98,69 @@ onMounted(() => { // 需要获取到element,所以是onMounted的Hook
         }
       }
     },
-    series: [
-      {
-        name: 'Direct',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [320, 302, 301, 334, 390, 330, 320]
-      },
-      {
-        name: 'Mail Ad',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: 'Affiliate Ad',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Video Ad',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [150, 212, 201, 154, 190, 330, 410]
-      },
-      {
-        name: 'Search Engine',
-        type: 'bar',
-        stack: 'total',
-        label: {
-          show: true
-        },
-        emphasis: {
-          focus: 'series'
-        },
-        data: [820, 832, 901, 934, 1290, 1330, 1320]
-      }
-    ]
+    series: seriesList.value
+    // [
+    //   {
+    //     name: 'Direct',
+    //     type: 'bar',
+    //     stack: 'total',
+    //     label: {
+    //       show: true
+    //     },
+    //     emphasis: {
+    //       focus: 'series'
+    //     },
+    //     data: [320, 302, 301, 334, 390, 330, 320]
+    //   },
+    //   {
+    //     name: 'Mail Ad',
+    //     type: 'bar',
+    //     stack: 'total',
+    //     label: {
+    //       show: true
+    //     },
+    //     emphasis: {
+    //       focus: 'series'
+    //     },
+    //     data: [120, 132, 101, 134, 90, 230, 210]
+    //   },
+    //   {
+    //     name: 'Affiliate Ad',
+    //     type: 'bar',
+    //     stack: 'total',
+    //     label: {
+    //       show: true
+    //     },
+    //     emphasis: {
+    //       focus: 'series'
+    //     },
+    //     data: [220, 182, 191, 234, 290, 330, 310]
+    //   },
+    //   {
+    //     name: 'Video Ad',
+    //     type: 'bar',
+    //     stack: 'total',
+    //     label: {
+    //       show: true
+    //     },
+    //     emphasis: {
+    //       focus: 'series'
+    //     },
+    //     data: [150, 212, 201, 154, 190, 330, 410]
+    //   },
+    //   {
+    //     name: 'Search Engine',
+    //     type: 'bar',
+    //     stack: 'total',
+    //     label: {
+    //       show: true
+    //     },
+    //     emphasis: {
+    //       focus: 'series'
+    //     },
+    //     data: [820, 832, 901, 934, 1290, 1330, 1320]
+    //   }
+    // ]
   });
   window.onresize = function () { // 自适应大小
     myChart.resize();

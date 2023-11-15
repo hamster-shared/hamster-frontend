@@ -8,7 +8,15 @@ import * as echarts from 'echarts'
 import { onMounted, toRefs } from "vue";
 
 const props = defineProps({
-  echartsData: Array,
+  // echartsData: Array,
+  echartsData: {
+    type:Object,
+    default: {
+      valueX: [],
+      valueY: [],
+      seriesName: '',
+    }
+  },
   echartsId: {
     type:String,
     required:true
@@ -44,7 +52,7 @@ onMounted(() => { // 需要获取到element,所以是onMounted的Hook
     xAxis: [
       {
         type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        data: echartsData.value.valueX,
         axisTick: {
           alignWithLabel: true
         }
@@ -67,10 +75,10 @@ onMounted(() => { // 需要获取到element,所以是onMounted的Hook
     },
     series: [
       {
-        name: 'Direct',
+        name: echartsData.value.seriesName,
         type: 'bar',
         barWidth: '60%',
-        data: [10000, 52000, 200000, 33000, 390000, 330000, 220000],
+        data: echartsData.value.valueY,
         itemStyle: {
           color: '#E2B578'
         },

@@ -6,7 +6,7 @@
       <a-tab-pane key="1" tab="Get Started">
         <GetStartedPane></GetStartedPane>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="Stats" force-render>
+      <a-tab-pane key="2" tab="Stats">
         <StatsPane></StatsPane>
       </a-tab-pane>
       <a-tab-pane key="3" tab="Security" disabled>Content of Tab Pane 3</a-tab-pane>
@@ -23,7 +23,7 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute()
 
-const activeKey = ref('2');
+const activeKey = ref('1');
 const breadCrumbInfo = ref<any>([])
 
 const apiKeyName = route.query.apiKeyName || '';

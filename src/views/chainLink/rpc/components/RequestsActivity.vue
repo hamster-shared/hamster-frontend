@@ -1,28 +1,48 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <a-table :columns="columns" :data-source="tableData" :pagination="pagination">
-      <template #expandedRowRender>
-        <a-table :columns="innerColumns" :data-source="innerData" :pagination="false">
+    <a-table :columns="columns" :data-source="tableData" :pagination="pagination" 
+      @expand="getInnerTableData" :rowKey="(record: any) => { return record.method}"
+      :expandedRowKeys="expandedRowKeys" >
+      <template #expandedRowRender="{record, index, indent, expanded}">
+        <a-table :rowKey="record.method" :columns="innerColumns" :data-source="innerData[record.method]" :pagination="false">
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'volume'">
+              {{ record.HttpsNum }} Http , {{ record.WssNum }} WS
+            </template>
+        </template>
         </a-table>
       </template>
     </a-table>
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref, toRefs } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
+import { useRoute } from 'vue-router';
+import { apiZanApiKeyRequestActivityStats, apiZanApiKeyRequestActivityStatsFail } from "@/apis/middlewareRPC";
+
+const route = useRoute()
 const theme = useThemeStore();
+const props = defineProps({
+  activityParam: {
+    type: Object as any,
+    default: {}
+  },
+});
+const { activityParam } = toRefs(props);
 
+const apiKeyId:any = route.query.apiKeyId || '';
 
-const tableData = ref([{key:1,'method':'testhie mehto', 'volume':40, 'failled':5},{key:2,'method':'testhie', 'volume':40, 'failled':5}]);
-const innerData = ref([{'status':405, 'volume':5}]);
+const tableData = ref<any>([]);
+const innerData = ref<any>([]);
+const expandedRowKeys = ref<any>([]); // 展开的行，控制属性
 const columns = reactive([
   { title: 'Method', dataIndex: 'method', key: 'method' },
-  { title: 'Volume', dataIndex: 'volume', key: 'volume' },
-  { title: 'Failled', dataIndex: 'failled', key: 'failled' },
+  { title: 'Volume', dataIndex: 'totalNum', key: 'totalNum' },
+  { title: 'Failled', dataIndex: 'failedNum', key: 'failedNum' },
 ]);
 const innerColumns = reactive([
-  { title: 'Status', dataIndex: 'status', key: 'status' },
+  { title: 'Status', dataIndex: 'Status', key: 'Status' },
   { title: 'Volume', dataIndex: 'volume', key: 'volume' },
 ]);
 const pagination = reactive({
@@ -48,10 +68,35 @@ const pagination = reactive({
     getTableData()
   },
 });
-const getTableData = () => {
+const getTableData = async () => {
 
+  let res = await apiZanApiKeyRequestActivityStats(apiKeyId, activityParam?.value.time, activityParam?.value.chain);
+  console.log("res:", res);
+  if (res.code == 200) {
+    expandedRowKeys.value.length = 0; //清空展开的数据
+    tableData.value = res.data;
+  }
 }
-
+const getInnerTableData = async (expanded: any, record: any) => {
+  console.log('expanded:',expanded, '  record:',record);
+  if (expanded) {
+    let res = await apiZanApiKeyRequestActivityStatsFail(apiKeyId, activityParam?.value.time, activityParam?.value.chain, record.method);
+    console.log("res:", res);
+    if (res.code == 200) {
+      innerData.value[record.method] = res.data;
+      expandedRowKeys.value.push(record.method);
+    }
+  } else {
+    //折叠时，删除选中的值
+    expandedRowKeys.value.splice(expandedRowKeys.value.indexOf(record.method),1)
+  }
+}
+onMounted(() => {
+  getTableData();
+});
+defineExpose({
+  getTableData
+});
 </script>
 <style scoped>
 :deep(.ant-table-tbody>tr>td>.ant-table-expanded-row-fixed>.ant-table-wrapper:only-child .ant-table),
