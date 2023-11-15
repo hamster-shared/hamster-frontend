@@ -40,7 +40,7 @@ const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
 const checkSetupAction = () => {
 
   // setupAction === request 组织  install === 个人
-  if (setupAction.value === 'install') {
+  if (setupAction.value == 'install') {
     window.close();
     const opener = window.opener;
     opener.postMessage('message', '*');

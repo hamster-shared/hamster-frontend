@@ -29,9 +29,9 @@
         v-for="(item, index) in repositoryData" :key="index">
         <div>
           <div class="text-base font-bold">{{ item.name }}
-            <span
-              class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">{{
-                item.Visibility }}</span>
+            <span v-if="item.private"
+              class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">private</span>
+              <span v-else class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">public</span>
           </div>
           <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updatedAt, "noThing") }}
           </div>

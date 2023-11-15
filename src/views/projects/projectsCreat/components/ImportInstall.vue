@@ -25,6 +25,7 @@ const setupAction = ref('');
 const emit = defineEmits(['resetData']);
 
 const resetData = () => {
+  console.log('install成功， 刷新数据')
   emit('resetData')
 }
 
