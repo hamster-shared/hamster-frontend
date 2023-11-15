@@ -9,7 +9,7 @@
     <ImportInstall v-if="isGithubInstallCheck" @resetData="resetData"></ImportInstall>
     <div v-else>
       <div class="flex">
-        <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue"
+        <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
           :field-names="{ label: 'name', value: 'id' }" @select="selectGithubAccount" :options="githubAccountList">
           <template #dropdownRender="{ menuNode: menu }">
             <v-nodes :vnodes="menu" />
@@ -154,17 +154,22 @@ const searchInputValue = ref('')
 let importUrl = ref([])
 let nameDupErrInfo = ref('')
 
-const VNodes = defineComponent({
-  props: {
-    vnodes: {
-      type: Object,
-      required: true,
-    },
-  },
-  render() {
-    return this.vnodes;
-  },
-});
+
+const VNodes: any = (_, { attrs }) => {
+  return attrs.vnodes;
+};
+
+// const VNodes = defineComponent({
+//   props: {
+//     vnodes: {
+//       type: Object,
+//       required: true,
+//     },
+//   },
+//   render() {
+//     return this.vnodes;
+//   },
+// });
 
 const importVisible = ref(false);
 const repositoryVisible = ref(false);
@@ -248,7 +253,7 @@ const adjustGithubPremission = () => {
   window.addEventListener('message', resetData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/adjustPremission')
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=projects/installations')
 }
 
 const selectGithubAccount = (value: any, item: any) => {
