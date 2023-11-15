@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div>111
         <echarts echarts-id="echarts"/>
 
         {{creditCostLast24}}
