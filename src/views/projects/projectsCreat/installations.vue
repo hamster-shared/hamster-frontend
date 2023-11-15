@@ -41,11 +41,12 @@ const checkSetupAction = () => {
 
   // setupAction === request 组织  install === 个人
   if (setupAction.value == 'install') {
+    console.log('进入install')
     window.close();
     const opener = window.opener;
     opener.postMessage('message', '*');
   } else {
-    router.push('/adjustPremission');
+    router.push('/projects/adjustPremission');
   }
 }
 onMounted(() => {

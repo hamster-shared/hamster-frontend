@@ -30,8 +30,10 @@ const initGithubInstallAuth = async () => {
         const url = `${selectTargetUrl.value}?state=${state}`;
         const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=${apiUrl}/projects/installations`)
       } else {
-        // checkSetupAction()
-        router.push('/projects/installations')
+        window.close();
+        const opener = window.opener;
+        opener.postMessage('message', '*');
+        // router.push('/projects/installations')
       }
     } catch (err: any) {
 
@@ -47,7 +49,7 @@ const initGithubInstallAuth = async () => {
 //     const opener = window.opener;
 //     opener.postMessage('message', '*');
 //   } else {
-//     router.push('/adjustPremission');
+//     router.push('/projects/adjustPremission');
 //   }
 // }
 

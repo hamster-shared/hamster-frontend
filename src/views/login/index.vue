@@ -146,12 +146,12 @@ const awakeWallet = async () => {
         // 请求用户授权连接到 MetaMask
         //  await window.ethereum.enable();
         // 创建一个要签署的消息
-        const message = `thirdweb.com wants you to sign in with your Ethereum account: ${address} 
+        const message = `hamsternet.io wants you to sign in with your Ethereum account: ${address} 
         
         Please ensure that the domain above matches the URL of the current website.
 
         Version: ${web3.version}
-        Chain ID: ${ethereum.chainId}`;
+        // Chain ID: ${ethereum.chainId}`;
         // 使用 Web3.js 发送请求签名的消息
         web3.eth.personal.sign(message, window.ethereum.selectedAddress, (error, signature) => {
           if (!error) {
