@@ -40,9 +40,11 @@
           <EchartBar v-if="Object.keys(creditCostData).length > 0" echartsId="CreditCost" :echartsData="creditCostData"></EchartBar>
         </div>
         <div class="w-1/3 pl-[30px]">
-          <div class="flex items-center mb-[40px]">
+          <div class="flex items-center mb-[40px] relative">
             <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">{{ userPlan.planName }}</div>
-            <a-button type="primary" @click="goVersionPlan">Upgrade</a-button>
+            <div class="absolute right-0">
+              <a-button class="" type="primary" @click="goVersionPlan">Upgrade</a-button>
+            </div>
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Balance:</label>
