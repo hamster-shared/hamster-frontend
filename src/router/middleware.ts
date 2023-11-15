@@ -29,22 +29,22 @@ const middlewareRoute = [
           isShow: true,
         },
         children: [
-          // {
-          //   path: "/middleware/dashboard/RPC",
-          //   name: "RPC",
-          //   component: () => import('@/views/middleware/rpc/index.vue'),
-          //   meta: {
-          //     sidebarMap: ['RPC'],
-          //   }
-          // },
           {
             path: "/middleware/dashboard/RPC",
             name: "RPC",
-            component: () => import('@/views/chainLink/rpc/indexNew.vue'),
+            component: () => import('@/views/middleware/rpc/index.vue'),
             meta: {
               sidebarMap: ['RPC'],
             }
           },
+          // {
+          //   path: "/middleware/dashboard/RPC",
+          //   name: "RPC",
+          //   component: () => import('@/views/chainLink/rpc/indexNew.vue'),
+          //   meta: {
+          //     sidebarMap: ['RPC'],
+          //   }
+          // },
           {
             path: "/middleware/dashboard/rpc/zan/auth",
             name: "zanAuth",

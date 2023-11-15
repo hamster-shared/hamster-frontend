@@ -34,7 +34,7 @@
 
     </div>
     <div>
-        <request-stats/>
+        <request-stats :apps="apiKeyList"/>
 
   </div>
 
