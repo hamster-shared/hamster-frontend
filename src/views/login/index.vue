@@ -150,8 +150,8 @@ const awakeWallet = async () => {
         
         Please ensure that the domain above matches the URL of the current website.
 
-        Version: ${web3.version}
-        // Chain ID: ${ethereum.chainId}`;
+        Version: ${web3.version}`
+
         // 使用 Web3.js 发送请求签名的消息
         web3.eth.personal.sign(message, window.ethereum.selectedAddress, (error, signature) => {
           if (!error) {

@@ -36,6 +36,7 @@ const installGit = () => {
     const state = new Date().getTime();
     const url = `${selectTargetUrl.value}?state=${state}`;
     const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700,redirect_uri=${apiUrl}/projects/installations`)
+    myWindow?.focus()
     // window.close();
     // window.opener.location.reload();
   } else {
