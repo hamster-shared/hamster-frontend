@@ -93,8 +93,8 @@ const editApp = (item: any) => {
   modalType.value = 'edit';
   createVisible.value = true;
 }
-const viewApp = (item: any) => {
-  router.push(`/middleware/dashboard/RPC/myapp/detail?id=${item.id}`)
+const viewApp = (item: any) => { 
+  router.push(`/middleware/dashboard/RPC/myapp/detail?apiKeyId=${item.apiKeyId}&apiKeyName=${item.name}`)
 }
 const hiddenCreateModal = () => {
   createVisible.value = false;

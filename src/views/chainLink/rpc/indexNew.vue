@@ -46,11 +46,11 @@
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Balance:</label>
-            <label class="font-extrabold">{{ userPlan.totalCredit-userPlan.usedCredit }} </label> credits
+            <label class="font-extrabold">{{ setNumberValue(userPlan.totalCredit-userPlan.usedCredit) }} </label> credits
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Total:</label>
-            <label class="font-extrabold">{{ userPlan.totalCredit }} </label> credits
+            <label class="font-extrabold">{{ setMillionValue(userPlan.totalCredit.toString()) }}<label v-if="userPlan.totalCredit.toString().length > 6"> million</label> </label> credits
           </div>
           <div class="mb-[20px]">
             <label class="card-label">Rate Limits:</label>
@@ -97,7 +97,7 @@ import EchartPie from '@/components/EchartPie.vue';
 import EchartLine from '@/components/EchartLine.vue';
 import CreateAppModal from './components/CreateAppModal.vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
-import { optionTime } from './components/rpcData'
+import { optionTime, setMillionValue, setNumberValue } from './components/rpcData'
 import { apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest, apiZanApiKeyPage } from "@/apis/middlewareRPC";
 
 const router = useRouter()

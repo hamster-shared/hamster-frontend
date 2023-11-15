@@ -7,3 +7,15 @@ export const optionTime = [
   { label: 'Last 1 Month', value: 'STAT_1_MONTH' },
 ];
 
+
+// 设置数据格式
+export const setMillionValue = (value: string) => {
+  console.log("value:", value);
+  return value.length > 6 ? value.substring(0, value.length - 6) : value
+}
+// 数字没3位加上逗号
+export const setNumberValue = (value: number) => {
+  const reg = /(\d)(?=(?:\d{3})+$)/g;
+  return value.toString().replace(reg, '$1,');
+}
+
