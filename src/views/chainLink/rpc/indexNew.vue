@@ -8,15 +8,15 @@
       </div>
       <div class="flex">
         <!-- 循环遍历拿出app -->
-        <div>
-          <div class="w-[300px] h-[188px] bg-[rgba(226,181,120,0.25)] rounded-[12px] border border-solid border-[#EBEBEB] p-[20px] cursor-pointer" @click="goMyAppDetail">
+        <div v-if="apIKeyInfo.length > 0">
+          <div v-for="(item, key) in apIKeyInfo" class="w-[300px] h-[188px] bg-[rgba(226,181,120,0.25)] rounded-[12px] border border-solid border-[#EBEBEB] p-[20px] cursor-pointer" @click="goMyAppDetail(item.apiKeyId, item.name)">
             <div class="flex justify-between items-center">
-              <div class="text-[21px] font-black">AI Show</div>
+              <div class="text-[21px] font-black">{{ item.name }}</div>
               <svg-icon name="right" size="17" />
             </div>
             <div class="flex items-center mt-[20px] mb-[40px]">
               <svg-icon name="time" size="19" />
-              <div class="text-[14px] font-light ml-[10px]">2023-09-01 16:10 (GMT+8)</div>
+              <div class="text-[14px] font-light ml-[10px]">{{ formatDateToLocale(item.createdTime).format("YYYY/MM/DD HH:mm:ss") }}</div>
             </div>
             <a-button type="primary" class="!rounded-[17px] w-[125px] !font-semibold !text-[15px] !flex justify-center items-center" >
               <svg-icon name="key" size="19" class="mr-[10px]" />
@@ -98,7 +98,7 @@ import EchartLine from '@/components/EchartLine.vue';
 import CreateAppModal from './components/CreateAppModal.vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { optionTime } from './components/rpcData'
-import { apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest } from "@/apis/middlewareRPC";
+import { apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest, apiZanApiKeyPage } from "@/apis/middlewareRPC";
 
 const router = useRouter()
 
@@ -130,8 +130,8 @@ const createApp = ()=>{
 }
 
 // 跳转app detail
-const goMyAppDetail = ()=>{
-  router.push('/middleware/dashboard/RPC/myapp/detail')
+const goMyAppDetail = (apiKeyId: String, apiKeyName: String)=>{
+  router.push('/middleware/dashboard/RPC/myapp/detail?apiKeyId='+apiKeyId+'&apiKeyName=' + apiKeyName)
 }
 
 // 跳转app
@@ -167,8 +167,18 @@ const getEcosystems = async () => {
     optionEcosystems.value = res.data
   }
 }
+//获取apps要显示的信息
+const apIKeyInfo = ref([]);
+const getApiKeyInfo = async () => {
+  let res = await apiZanApiKeyPage(1, 1);
+  if (res.code == 200) {
+    apIKeyInfo.value = res.data.data;
+  }
+  console.log("table: res:; ",res);
+}
 
 onMounted(() => {
+  getApiKeyInfo();
   getOverviewFree();
   getEcosystems();
 })

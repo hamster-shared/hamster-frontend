@@ -12,7 +12,7 @@
         <label class="select-title">Time</label>
         <a-select class="w-[150px]" v-model:value="requestParam.time" autocomplete="off" :options="optionTime" ></a-select>
         <label class="select-title">Chain</label>
-        <a-select class="w-[150px]" v-model:value="requestParam.chain" autocomplete="off" :options="optionChain" ></a-select>
+        <a-select class="w-[150px]" v-model:value="requestParam.chain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
       </div>
     </div>
     <div class="h-[300px]">
@@ -26,7 +26,7 @@
         <label class="select-title">Time</label>
         <a-select class="w-[150px]" v-model:value="activityParam.time" autocomplete="off" :options="optionTime" ></a-select>
         <label class="select-title">Chain</label>
-        <a-select class="w-[150px]" v-model:value="activityParam.chain" autocomplete="off" :options="optionChain" ></a-select>
+        <a-select class="w-[150px]" v-model:value="activityParam.chain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
       </div>
     </div>
     <div>
@@ -48,27 +48,49 @@
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { optionTime } from './rpcData';
 import EchartBar from '@/components/EchartBar.vue';
 import EchartBarTotal from '@/components/EchartBarTotal.vue';
 import RequestsActivity from './RequestsActivity.vue'
+import { apiZanEcosystemsDigest, apiZanApiKeyCreditCost } from "@/apis/middlewareRPC";
 
+const route = useRoute()
+const creditCostData = ref([])
+const apiKeyId = route.query.apiKeyId || '';
 const requestParam = reactive({
-  time: '0',
-  chain: '0',
+  time: optionTime[0].value,
+  chain: '',
 });
 const activityParam = reactive({
-  time: '0',
-  chain: '0',
+  time: optionTime[0].value,
+  chain: '',
 }); 
 const originParam = reactive({
-  time: '0',
+  time: optionTime[0].value,
 });
-const optionChain = ref([
-  {label: 'All Chain', value: '0'},
-]);
+const optionEcosystems = ref([]);
+
+// 获取下拉框的值 optionEcosystems
+const getEcosystems = async () => {
+  let res = await apiZanEcosystemsDigest();
+  if (res.code == 200) {
+    optionEcosystems.value = res.data
+  }
+}
+
+// 获取
+const getCreditCostData = async () => {
+  let res = await apiZanApiKeyCreditCost(apiKeyId);
+  if (res.code == 200) {
+    creditCostData.value = res.data;
+  }
+  console.log("getCreditCostData:",res);
+}
 
 onMounted(() => { 
+  getEcosystems();
+  getCreditCostData();
 });
 </script>
 <style scoped>
