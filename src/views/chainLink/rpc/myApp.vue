@@ -7,7 +7,7 @@
     <a-table :dataSource="tableData" :columns="columns" :pagination="pagination" style="width:100%">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
-          <a-button type="link" @click="editApp(record)">Edit</a-button>
+          <!-- <a-button type="link" @click="editApp(record)">Edit</a-button> -->
           <a-button type="link" @click="viewApp(record)">View</a-button>
         </template>
       </template>
