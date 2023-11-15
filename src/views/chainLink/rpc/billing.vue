@@ -68,7 +68,24 @@
   </div>
 </template>
 <script setup lang="ts">
+import { apiGetZanUserAuthed, apiZanPlan } from "@/apis/middlewareRPC";
+import { onMounted, ref } from "vue";
 
+const userPlan = ref([]);
+// 获取plan里面的字段信息
+const getZanPlan = async () => {
+  const authedData = await apiGetZanUserAuthed();
+  if(authedData.data){
+    let res = await apiZanPlan();
+    if (res.code == 200) {
+      userPlan.value = res.data
+    }
+  }
+  console.log("userPlan:", userPlan.value);
+}
+onMounted(() => {
+  getZanPlan();
+});
 </script>
 <style scoped>
 .card-div{
