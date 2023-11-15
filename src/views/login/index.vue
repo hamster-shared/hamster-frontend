@@ -157,8 +157,8 @@ const awakeWallet = async () => {
           if (!error) {
             console.log('签名结果：', signature);
             // 在这里你可以将签名发送到后端服务器进行验证
-            // getMetamaskLogin(address);
-            // window.localStorage.setItem("walletAccount", address);
+            getMetamaskLogin(address);
+            window.localStorage.setItem("walletAccount", address);
           } else {
             console.error('签名请求失败：', error);
           }
