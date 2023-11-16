@@ -252,8 +252,6 @@ onMounted(() => {
       let walletAccount = window.localStorage.getItem("walletAccount") || ''
       avatarURL.value = generateAvatarURL(walletAccount)
     }
-  } else {
-    router.push('/login')
   }
 
 });
@@ -267,6 +265,15 @@ watch(
       walletAccount.value = oldValue?.substring(0, 5) + "..." + oldValue?.substring(oldValue.length - 4);
     } else {
       isConnectedWallet.value = false
+    }
+  }, { deep: true, immediate: true }
+);
+
+watch(
+  () => loginType.value,
+  (oldV, newV) => {
+    if (newV) {
+      loginType.value = newV;
     }
   }, { deep: true, immediate: true }
 );
@@ -381,8 +388,4 @@ html[data-theme='dark'] {
   }
 }
 </style>
-<style scoped>
-.header-text-css {
-  @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
-}
-</style>
+

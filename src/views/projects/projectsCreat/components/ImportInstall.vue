@@ -40,6 +40,7 @@ const installGit = () => {
     // window.close();
     // window.opener.location.reload();
   } else {
+    console.log(apiUrl.value + '/projects/metaMaskAuth')
     const state = new Date().getTime();
     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/metaMaskAuth`;
     const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
