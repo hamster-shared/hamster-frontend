@@ -244,13 +244,18 @@ onMounted(() => {
 
 
   let token = localStorage.getItem('token') || '';
-  let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-  console.log(loginData, '回调页看登录')
-  loginType.value = loginData.loginType;
-  if (loginType.value == 2) {
-    let walletAccount = window.localStorage.getItem("walletAccount") || ''
-    avatarURL.value = generateAvatarURL(walletAccount)
+  if (token) {
+    let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
+    console.log(loginData, '回调页看登录')
+    loginType.value = loginData.loginType;
+    if (loginType.value == 2) {
+      let walletAccount = window.localStorage.getItem("walletAccount") || ''
+      avatarURL.value = generateAvatarURL(walletAccount)
+    }
+  } else {
+    router.push('/login')
   }
+
 });
 
 

@@ -73,9 +73,12 @@ const installGit = () => {
 onMounted(() => {
 
   let token = localStorage.getItem('token') || '';
-  let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-  console.log(loginData, 'token')
-  loginType.value = loginData.loginType;
+  if (token) {
+    let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
+    console.log(loginData, 'token')
+    loginType.value = loginData.loginType;
+  }
+
 
   // initGithubInstallAuth()
 })

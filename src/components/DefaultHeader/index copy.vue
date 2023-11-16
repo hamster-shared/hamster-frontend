@@ -237,9 +237,12 @@ onMounted(() => {
 
 
   let token = localStorage.getItem('token') || '';
-  let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-  console.log(loginData, '回调页看登录')
-  loginType.value = loginData.loginType;
+  if (token) {
+    let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
+    console.log(loginData, '回调页看登录')
+    loginType.value = loginData.loginType;
+  }
+
 });
 
 watch(
