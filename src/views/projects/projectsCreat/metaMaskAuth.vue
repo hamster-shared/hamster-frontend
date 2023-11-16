@@ -11,7 +11,7 @@ import { githubInstallAuth } from "@/apis/login";
 const router = useRouter();
 const setupAction = ref('');
 const loginType = ref();
-const apiUrl = ref(import.meta.env.VITE_BASE_API)
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
 

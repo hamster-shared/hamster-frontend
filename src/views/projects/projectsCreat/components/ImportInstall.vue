@@ -14,7 +14,7 @@ import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
 const router = useRouter();
-const apiUrl = ref(import.meta.env.VITE_BASE_API)
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
 const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
@@ -34,7 +34,7 @@ const installGit = () => {
   window.addEventListener('message', resetData, false)
   if (loginType.value == 1) {
     const state = new Date().getTime();
-    const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl}/projects/installations`;
+    const url = `${selectTargetUrl.value}?state=${state}`;
     const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
     myWindow?.focus()
     // window.close();

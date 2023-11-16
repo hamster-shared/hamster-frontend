@@ -140,6 +140,7 @@ const props = defineProps(({
 const router = useRouter()
 
 const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
 
 const githubAccountList = ref([]);
 const selectValue = ref('');
@@ -234,7 +235,7 @@ const pagination = reactive({
 const addGithubAccount = () => {
   window.addEventListener('message', resetData, false)
   const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=projects/installation`;
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl}/projects/installation`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
 }
 
@@ -253,7 +254,7 @@ const getGithubInstallCheck = async () => {
 const adjustGithubPremission = () => {
   window.addEventListener('message', resetData, false)
   const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=projects/installations`;
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
 }
 
