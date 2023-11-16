@@ -22,10 +22,9 @@ const service = axios.create({
 service.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
-    // 3Vpes5BrMdokkK38aOpru0fjlm5aTv7A8ofRwJN99FytUH5g3k4FgUZgfii156WV
     let token = localStorage.getItem("token") || '';
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
-      (config as Recordable).headers['Access-Token'] = token;
+      (config as Recordable).headers['Authorization'] = 'Bearer '+ token;
     }
 
     return config;
@@ -51,7 +50,7 @@ service.interceptors.response.use(
   },
   function (error: any) {
     if (error.response.status === 401) {
-      localStorage.setItem('token', '');
+      localStorage.removeItem('token');
       localStorage.removeItem('userInfo')
       window.location.href = '/login';
     }

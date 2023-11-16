@@ -20,26 +20,6 @@
           <div class="ml-[20px] text-[18px] font-medium">{{ item.ecosystemCode }}</div>
         </div>
         <a-button class="w-full !h-[43px]" @click="handleOpenRpcService(item.buyFlag)">{{ item.buyFlag ? 'View more' : 'Start for Free' }}</a-button>
-        <!-- <div class="flex justify-between text-sm">
-          <div class="flex flex-col" v-if="parseInt(item.chainID, 16)">
-            <span class="inline-block mb-2.5 mt-5">Chain ID</span>
-            <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
-          </div>
-          <div class="flex flex-col">
-            <span class="inline-block mb-2.5 mt-5">Currency</span>
-            <span class="self-center">{{ item.nativeToken }}</span>
-          </div>
-        </div>
-        <div>
-          <div class="my-5 text-sm">RPC URL</div>
-          <a-input placeholder="*********" v-model:value="item.httpAddress" disabled="true">
-            <template #suffix>
-              <img v-if="item.httpAddress" class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
-              <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span>
-            </template>
-          </a-input>
-        </div>
-        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network,item.userActive)">{{item.userActive ? 'Enter Now':'Get Service Now'}}</a-button> -->
       </div>
     </div>
 
@@ -73,6 +53,7 @@ const openAppModal = async () => {
       const myWindow = window.open(url, 'login-zan', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
       myWindow?.focus()
       // router.push(`/middleware/dashboard/rpc/zan/auth?authCode=${}`)
+      // router.push('/middleware/dashboard/RPC/home')
   }
 }
 
