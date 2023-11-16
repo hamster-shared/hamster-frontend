@@ -9,7 +9,7 @@
         <div v-if="item === 'RPC' && rpcSer">
           <div class="box flex justify-between pb-[14px]">
             <div>{{ rpcSer }}</div>
-            <div class="open-link-css" @click="networkClick(rpcSer)">View</div>
+            <div class="open-link-css cursor-pointer" @click="networkClick(rpcSer)">View</div>
           </div>
           <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css">
             <span @click="goMiwaspaceTab('RPC')">Add service</span>
