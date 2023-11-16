@@ -66,23 +66,23 @@
         </div>
       </div>
       <div class="flex justify-end mt-[30px]">
-        <a-select class="w-[150px]" v-model:value="optionParams.opApp" autocomplete="off" :options="optionsApp.map(item => ({ value: item.value, label: item.label }))" ></a-select>
-        <a-select class="!ml-[20px] w-[150px]" v-model:value="optionParams.opChain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
-        <a-select class="!ml-[20px] w-[150px]" v-model:value="optionParams.opDay" autocomplete="off" :options="optionTime" ></a-select>
+        <a-select @change="getMainChain" class="w-[150px]" v-model:value="optionParams.opApp" autocomplete="off" :options="optionsApp.map(item => ({ value: item.value, label: item.label }))" ></a-select>
+        <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.opChain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
+        <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.opDay" autocomplete="off" :options="optionTime" ></a-select>
       </div>
       <div class="flex">
-        <div class="w-2/3">
-          <EchartLine echartsId="echartLine" :echartsData="[]"></EchartLine>
+        <div class="w-2/3 h-[540px]">
+          <EchartLine v-if="Object.keys(mainChart).length > 0" echartsId="echartLine" :echartsData="mainChart"></EchartLine>
         </div>
         <div class="w-1/3">
           <div class="flex justify-center items-center mt-[20px]">
-            <EchartPie titleText="Top 5" echartsId="echartTop5" :echartsData="[]"></EchartPie>
+            <EchartPie v-if="circlePanel1Top5.length > 0" titleText="Top 5" echartsId="echartTop5" :echartsData="circlePanel1Top5"></EchartPie>
           </div>
           <div  class="flex justify-center items-center">
-            <EchartPie titleText="Source" echartsId="echartSource" :echartsData="[]"></EchartPie>
+            <EchartPie v-if="circlePanel2Source.length > 0" titleText="Source" echartsId="echartSource" :echartsData="circlePanel2Source"></EchartPie>
           </div>
           <div  class="flex justify-center items-center">
-            <EchartPie titleText="Errors" echartsId="echartErrors" :echartsData="[]"></EchartPie>
+            <EchartPie v-if="circlePanel3Error.length > 0" titleText="Errors" echartsId="echartErrors" :echartsData="circlePanel3Error"></EchartPie>
           </div>
         </div>
       </div>
@@ -101,7 +101,10 @@ import CreateAppModal from './components/CreateAppModal.vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { formatTimeToHM } from '@/utils/dateUtil';
 import { optionTime, setMillionValue, setNumberValue } from './components/rpcData'
-import { apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest, apiZanApiKeyPage, apiZanApiKeyCreditCostLast24 } from "@/apis/middlewareRPC";
+import {
+  apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest, apiZanApiKeyPage,
+  apiZanApiKeyCreditCostLast24, apiZanApiKeyRequestStats, apiZanApiKeyRequestActivityStats,apiZanApiKeyRequestOriginStats
+} from "@/apis/middlewareRPC";
 
 const router = useRouter()
 
@@ -109,10 +112,18 @@ const apIKeyInfo = ref<any>([]);
 const creditCostData = ref({})
 const optionsApp = ref<any>([]);
 const optionEcosystems = ref<any>([])
+// 主echarts
+const mainChart = ref<any>({})
+// 第一个圆饼  Top 5
+const circlePanel1Top5 = ref<any>([])
+// 第二个圆饼    Source
+const circlePanel2Source = ref<any>([])
+// 第三个圆饼  Errors
+const circlePanel3Error = ref<any>([])
 const optionParams = ref({
   opApp: '',
   opChain: '',
-  opDay: optionTime[0].value
+  opDay: optionTime[2].value
 });
 const createVisible = ref(false);
 const userPlan = ref<any>({
@@ -197,17 +208,105 @@ const getApiKeyInfo = async () => {
           label: item.name,
         });
       });
-      optionParams.value.opApp = res.data.data[0].apiKeyId;
-      apIKeyInfo.value = [res.data.data[0]];
+      optionParams.value.opApp = res.data.data[res.data.data.length-1].apiKeyId;
+      apIKeyInfo.value = [res.data.data[res.data.data.length-1]];
     }
   }
 }
 
+// 获取折线图和圆饼图数据
+const getMainChain = async () => {
+  let res = await apiZanApiKeyRequestStats(optionParams.value.opApp, optionParams.value.opDay, optionParams.value.opChain);
+
+  console.log("res:", res);
+  if (res.code == 200 && res.data.length > 0) {
+    let valueX: any = []; 
+    let valueY: any = [];
+    res.data.map((item: any) => {
+      valueX.push(formatTimeToHM(item.dataTime));
+      valueY.push(item.num);
+    });
+    mainChart.value = {
+      valueX: valueX,
+      valueY: valueY,
+      seriesName: 'num',
+    };
+  } else {
+    mainChart.value = {
+      valueX: [],
+      valueY: [],
+      seriesName: '',
+    };
+  }
+  //圆饼 TOP 5
+  getCircleTop5(res);
+  //获取圆饼Source
+  getCircleSource();
+  //获取圆饼Errors
+  getCircleErrors();
+}
+
+//获取圆饼Top 5
+const getCircleTop5 = (res: any) => {
+  const groupedByMethod: any = res.data.reduce((acc: any, requestStats: any) => {
+    const method = requestStats.method
+    let num = acc.get(method) || 0
+    num += requestStats.num
+    acc.set(method, num);
+    return acc;
+  }, new Map<string, number>());
+
+  groupedByMethod.forEach((value:any, key:any) => {
+    circlePanel1Top5.value.push({
+      name: key, value: value
+    });
+  });
+} 
+
+//获取圆饼Source
+const getCircleSource = async () => {
+  const res = await apiZanApiKeyRequestOriginStats(optionParams.value.opApp, optionParams.value.opDay);
+
+  const httpsWssData = res.data.reduce((acc:any,item:any)=> {
+    acc.httpsNum += item.httpsNum
+    acc.wssNum += item.wssNum
+    return acc
+  }, {
+    httpsNum: 0,
+    wssNum:0,
+  })
+
+  circlePanel2Source.value = [
+    { name: 'HTTPS', value: httpsWssData.httpsNum },
+    { name: 'WSS', value: httpsWssData.wssNum }
+  ]
+} 
+
+//获取圆饼Errors
+const getCircleErrors = async () => {
+  const res = await apiZanApiKeyRequestActivityStats(optionParams.value.opApp, optionParams.value.opDay, optionParams.value.opChain);
+  const successFailData = res.data.reduce((acc:any, item:any) => {
+    acc.successNum += (item.totalNum - item.failedNum)
+    acc.failedNum += item.failedNum
+    return acc
+  }, {
+    "successNum": 0,
+    "failedNum": 0,
+  })
+
+  circlePanel3Error.value = [
+    { name: 'SUCCESS', value: successFailData.successNum },
+    {name: 'FAILED', value: successFailData.failedNum}
+  ]
+} 
+
 onMounted(async () => {
-  getApiKeyInfo();
   getOverviewFree();
   getCreditCostLastData();
-  getEcosystems();
+  await getApiKeyInfo();
+  await getEcosystems();
+  getMainChain();
+
 })
 </script>
 <style scoped>

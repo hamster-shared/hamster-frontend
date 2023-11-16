@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 import { onMounted, toRefs } from "vue";
 
 const props = defineProps({
-  echartsData: Array,
+  echartsData: Array, //数据格式 echartsData = [{name:'',value:''}]
   echartsId: {
     type:String,
     required:true
