@@ -115,7 +115,8 @@ defineExpose({
   border-top-right-radius: 0px!important;
 }
 :deep(.ant-table-row:last-child .ant-table-cell:first-child),
-:deep(.ant-table-row:last-child .ant-table-cell:last-child){
+:deep(.ant-table-row:last-child .ant-table-cell:last-child),
+:deep(.ant-table-tbody .ant-table-cell:only-of-type){
   border-radius: 0px;
 }
 :deep(.ant-table-pagination.ant-pagination){
