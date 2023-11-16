@@ -38,9 +38,10 @@ import Web3 from 'web3';
 import { ethers } from 'ethers';
 import MetaMaskDownloadModal from "./components/metaMaskDownloadModal.vue";
 
+
 const metaMaskVisible = ref(false);
 const router = useRouter()
-const apiUrl = ref(import.meta.env.VITE_BASE_API)
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
@@ -81,7 +82,7 @@ const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
 const loginBox = () => {
   const state = new Date().getTime();
-  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state},redirect_uri=${apiUrl}/loginTransition`;
+  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl}/loginTransition`;
   const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
   myWindow?.focus()
 }
@@ -137,10 +138,10 @@ const awakeWallet = async () => {
     const { ethereum } = window;
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const address = accounts[0];
+
+    console.log(accounts, 'accounts')
     const web3 = new Web3(window.ethereum);
-
-
-    console.log(web3, ethereum.chainId, 'web3web3')
+    console.log(web3, ethereum.identicon, ethereum.chainId, 'web3web3')
     if (address) {
       try {
         // 请求用户授权连接到 MetaMask

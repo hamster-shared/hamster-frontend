@@ -41,30 +41,11 @@ const initGithubInstallAuth = async () => {
   }
 }
 
-// const checkSetupAction = () => {
-//   setupAction.value = ''
-//   // setupAction === request 阻止  install === 个人
-//   if (setupAction.value === 'request') {
-//     window.close();
-//     const opener = window.opener;
-//     opener.postMessage('message', '*');
-//   } else {
-//     router.push('/projects/adjustPremission');
-//   }
-// }
+
 
 
 onMounted(() => {
-  let token = localStorage.getItem('token') || '';
-  let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-  console.log(loginData, '回调页看登录')
-  loginType.value = loginData.loginType;
-  if (loginType.value === 1) {
-    // checkSetupAction()
-  } else {
-    initGithubInstallAuth()
-  }
-
+  initGithubInstallAuth()
 })
 </script>
 <style scoped lang="less">
