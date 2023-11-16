@@ -89,7 +89,7 @@ export function githubInstallAuth(params:any) {
   return httpRequest({
     url: `/api/github/install/auth`,
     method: "post",
-    params,
+    data: params,
   });
 }
 
