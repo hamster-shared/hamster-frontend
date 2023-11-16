@@ -103,7 +103,7 @@ import { formatTimeToHM } from '@/utils/dateUtil';
 import { optionTime, setMillionValue, setNumberValue } from './components/rpcData'
 import {
   apiGetZanUserAuthed, apiZanPlan, apiZanEcosystemsDigest, apiZanApiKeyPage,
-  apiZanApiKeyCreditCostLast24, apiZanApiKeyRequestStats, apiZanApiKeyRequestActivityStats,apiZanApiKeyRequestOriginStats
+  apiZanApiKeyCreditCostLast24, apiZanApiKeyRequestStats, apiZanApiKeyRequestActivityStats,apiZanApiKeyRequestOriginStats, apiGetZanAuthUrl
 } from "@/apis/middlewareRPC";
 
 const router = useRouter()
@@ -138,9 +138,9 @@ const hiddenCreateModal = () => {
   createVisible.value = false;
 }
 // 新建app
-const createApp = ()=>{
-  createVisible.value = true;
-}
+// const createApp = ()=>{
+//   createVisible.value = true;
+// }
 
 // 跳转app detail
 const goMyAppDetail = (apiKeyId: String, apiKeyName: String)=>{
@@ -298,7 +298,25 @@ const getCircleErrors = async () => {
     { name: 'SUCCESS', value: successFailData.successNum },
     {name: 'FAILED', value: successFailData.failedNum}
   ]
-} 
+}
+
+const createApp = async () => {
+  const authedData = await apiGetZanUserAuthed()
+  if(authedData.data){
+      // router.push('/middleware/dashboard/RPC/home')
+      createVisible.value = true;
+  }else {
+      let url = ""
+      try{
+        const authUrlResp = await apiGetZanAuthUrl()
+        url = authUrlResp.data
+      }catch (e) {
+          return
+      }
+      const myWindow = window.open(url, 'login-zan', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      myWindow?.focus()
+  }
+}
 
 onMounted(async () => {
   getOverviewFree();
