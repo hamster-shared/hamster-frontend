@@ -174,8 +174,8 @@ onMounted(()=>{
   border-bottom: 1px solid #434343;
 }
 .box div{
-  margin: -5px;
-  left: 5px;
+  // margin: -5px;
+  // left: 5px;
 }
 .name{
   float: left;
