@@ -3,6 +3,7 @@
     <div class="card-title mb-[30px]">Credit Cost(Last 24 hours)</div>
     <div class="h-[300px]">
       <EchartBar v-if="Object.keys(creditCostData).length > 0" echartsId="Requests" :echartsData="creditCostData"></EchartBar>
+      <NoData v-else></NoData>
     </div>
   </div>
   <div class="card-border">
@@ -17,6 +18,7 @@
     </div>
     <div class="h-[300px]">
       <EchartBarTotal v-if="Object.keys(requestData).length > 0" echartsId="RequestsActivity" :echartsData="requestData"></EchartBarTotal>
+      <NoData v-else></NoData>
     </div>
   </div>
   <div class="card-border">
@@ -43,6 +45,7 @@
     </div>
     <div class="h-[300px]">
       <EchartBarTotal v-if="Object.keys(requestOriginData).length > 0" echartsId="RequestsOrigin" :echartsData="requestOriginData"></EchartBarTotal>
+      <NoData v-else></NoData>
     </div>
   </div>
 </template>
@@ -50,6 +53,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { optionTime } from './rpcData';
+import NoData from './NoData.vue';
 import EchartBar from '@/components/EchartBar.vue';
 import EchartBarTotal from '@/components/EchartBarTotal.vue';
 import RequestsActivity from './RequestsActivity.vue'
@@ -90,7 +94,7 @@ const getEcosystems = async () => {
 // 获取 Credit Cost(Last 24 hours) 图表数据
 const getCreditCostData = async () => {
   let res = await apiZanApiKeyCreditCost(apiKeyId);
-  if (res.code == 200) {
+  if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueY: any = [];
     res.data.map((item: any) => {
@@ -102,6 +106,8 @@ const getCreditCostData = async () => {
       valueY: valueY,
       seriesName: 'totalCredit',
     };
+  } else {
+    creditCostData.value = {};
   }
   console.log("getCreditCostData:",creditCostData.value);
 }
@@ -110,7 +116,7 @@ const getCreditCostData = async () => {
 const getRequestData = async () => {
   let res = await apiZanApiKeyRequestStats(apiKeyId, requestParam.value.time, requestParam.value.chain);
   console.log("res:",res);
-  if (res.code == 200) {
+  if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueNum: any = [];
     res.data.map((item: any) => {
@@ -121,6 +127,8 @@ const getRequestData = async () => {
       valueX: valueX,
       valueY: { 'num': valueNum},
     };
+  } else {
+    requestData.value = {};
   }
   console.log("requestData:",requestData.value);
 }
@@ -132,7 +140,7 @@ const getRequestActivity = () => {
 // 获取 Requests Origin 数据
 const getRequestOriginData = async () => {
   let res = await apiZanApiKeyRequestOriginStats(apiKeyId, originParam.value.time);
-  if (res.code == 200) {
+  if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueTotalNum: any = [];
     let valueHttpsNum: any = []; //多条数据可依次声明添加
@@ -147,6 +155,8 @@ const getRequestOriginData = async () => {
       valueX: valueX,
       valueY: { 'totalNum': valueTotalNum, 'httpsNum': valueHttpsNum, 'wssNum': valueWssNum },
     };
+  } else {
+    requestOriginData.value = {};
   }
   console.log("requestOriginData:",requestOriginData.value);
 }

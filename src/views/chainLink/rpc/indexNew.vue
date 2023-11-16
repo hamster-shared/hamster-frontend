@@ -38,6 +38,7 @@
       <div class="flex pb-[30px] border-bottom">
         <div class="w-2/3">
           <EchartBar v-if="Object.keys(creditCostData).length > 0" echartsId="CreditCost" :echartsData="creditCostData"></EchartBar>
+          <NoData v-else></NoData>
         </div>
         <div class="w-1/3 pl-[30px]">
           <div class="flex items-center mb-[40px] relative">
@@ -70,19 +71,23 @@
         <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.opChain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
         <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.opDay" autocomplete="off" :options="optionTime" ></a-select>
       </div>
-      <div class="flex">
-        <div class="w-2/3 h-[540px]">
+      <div class="flex mt-[30px]">
+        <div class="w-2/3 h-[580px]">
           <EchartLine v-if="Object.keys(mainChart).length > 0" echartsId="echartLine" :echartsData="mainChart"></EchartLine>
+          <NoData v-else></NoData>
         </div>
-        <div class="w-1/3">
-          <div class="flex justify-center items-center mt-[20px]">
+        <div class="w-1/3 pl-[30px]">
+          <div class="flex justify-center items-center h-[180px]">
             <EchartPie v-if="circlePanel1Top5.length > 0" titleText="Top 5" echartsId="echartTop5" :echartsData="circlePanel1Top5"></EchartPie>
+            <NoData v-else></NoData>
           </div>
-          <div  class="flex justify-center items-center">
+          <div  class="flex justify-center items-center mt-[20px] h-[180px]">
             <EchartPie v-if="circlePanel2Source.length > 0" titleText="Source" echartsId="echartSource" :echartsData="circlePanel2Source"></EchartPie>
+            <NoData v-else></NoData>
           </div>
-          <div  class="flex justify-center items-center">
+          <div  class="flex justify-center items-center mt-[20px] h-[180px]">
             <EchartPie v-if="circlePanel3Error.length > 0" titleText="Errors" echartsId="echartErrors" :echartsData="circlePanel3Error"></EchartPie>
+            <NoData v-else></NoData>
           </div>
         </div>
       </div>
@@ -97,6 +102,7 @@ import { useRouter } from 'vue-router';
 import EchartBar from '@/components/EchartBar.vue';
 import EchartPie from '@/components/EchartPie.vue';
 import EchartLine from '@/components/EchartLine.vue';
+import NoData from './components/NoData.vue'
 import CreateAppModal from './components/CreateAppModal.vue';
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { formatTimeToHM } from '@/utils/dateUtil';
@@ -176,6 +182,8 @@ const getCreditCostLastData = async () => {
       valueY: valueY,
       seriesName: 'totalCredit',
     };
+  } else {
+    creditCostData.value = {}
   }
 }
 // 获取overview free里面的字段信息
@@ -232,11 +240,7 @@ const getMainChain = async () => {
       seriesName: 'num',
     };
   } else {
-    mainChart.value = {
-      valueX: [],
-      valueY: [],
-      seriesName: '',
-    };
+    mainChart.value = {};
   }
   //圆饼 TOP 5
   getCircleTop5(res);
@@ -248,24 +252,22 @@ const getMainChain = async () => {
 
 //获取圆饼Top 5
 const getCircleTop5 = (res: any) => {
-  const groupedByMethod: any = res.data.reduce((acc: any, requestStats: any) => {
-    const method = requestStats.method
-    let num = acc.get(method) || 0
-    num += requestStats.num
-    acc.set(method, num);
-    return acc;
-  }, new Map<string, number>());
-  
-  if (groupedByMethod.size > 0) {
+  if (res.code == 200 && res.data.length > 0) {
+    const groupedByMethod: any = res.data.reduce((acc: any, requestStats: any) => {
+      const method = requestStats.method
+      let num = acc.get(method) || 0
+      num += requestStats.num
+      acc.set(method, num);
+      return acc;
+    }, new Map<string, number>());
+    
     groupedByMethod.forEach((value: any, key: any) => {
       circlePanel1Top5.value.push({
         name: key, value: value
       });
     });
   } else {
-    circlePanel1Top5.value = [{
-      name: 'Others', value: 0
-    }];
+    circlePanel1Top5.value = [];
   }
 } 
 
@@ -273,37 +275,47 @@ const getCircleTop5 = (res: any) => {
 const getCircleSource = async () => {
   const res = await apiZanApiKeyRequestOriginStats(optionParams.value.opApp, optionParams.value.opDay);
 
-  const httpsWssData = res.data.reduce((acc:any,item:any)=> {
-    acc.httpsNum += item.httpsNum
-    acc.wssNum += item.wssNum
-    return acc
-  }, {
-    httpsNum: 0,
-    wssNum:0,
-  })
+  if (res.code == 200 && res.data.length > 0) {
+    
+    const httpsWssData = res.data.reduce((acc:any,item:any)=> {
+      acc.httpsNum += item.httpsNum
+      acc.wssNum += item.wssNum
+      return acc
+    }, {
+      httpsNum: 0,
+      wssNum:0,
+    })
 
-  circlePanel2Source.value = [
-    { name: 'HTTPS', value: httpsWssData.httpsNum },
-    { name: 'WSS', value: httpsWssData.wssNum }
-  ]
+    circlePanel2Source.value = [
+      { name: 'HTTPS', value: httpsWssData.httpsNum },
+      { name: 'WSS', value: httpsWssData.wssNum }
+    ]
+  } else {
+    circlePanel2Source.value = [];
+  }
 } 
 
 //获取圆饼Errors
 const getCircleErrors = async () => {
   const res = await apiZanApiKeyRequestActivityStats(optionParams.value.opApp, optionParams.value.opDay, optionParams.value.opChain);
-  const successFailData = res.data.reduce((acc:any, item:any) => {
-    acc.successNum += (item.totalNum - item.failedNum)
-    acc.failedNum += item.failedNum
-    return acc
-  }, {
-    "successNum": 0,
-    "failedNum": 0,
-  })
+  if (res.code == 200 && res.data.length > 0) {
+    const successFailData = res.data.reduce((acc: any, item: any) => {
+      acc.successNum += (item.totalNum - item.failedNum)
+      acc.failedNum += item.failedNum
+      return acc
+    }, {
+      "successNum": 0,
+      "failedNum": 0,
+    })
 
-  circlePanel3Error.value = [
-    { name: 'SUCCESS', value: successFailData.successNum },
-    {name: 'FAILED', value: successFailData.failedNum}
-  ]
+    circlePanel3Error.value = [
+      { name: 'SUCCESS', value: successFailData.successNum },
+      {name: 'FAILED', value: successFailData.failedNum}
+    ]
+  } else {
+    circlePanel3Error.value = [];
+  }
+  
 }
 
 const createApp = async () => {
