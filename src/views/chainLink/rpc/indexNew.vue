@@ -255,12 +255,18 @@ const getCircleTop5 = (res: any) => {
     acc.set(method, num);
     return acc;
   }, new Map<string, number>());
-
-  groupedByMethod.forEach((value:any, key:any) => {
-    circlePanel1Top5.value.push({
-      name: key, value: value
+  
+  if (groupedByMethod.size > 0) {
+    groupedByMethod.forEach((value: any, key: any) => {
+      circlePanel1Top5.value.push({
+        name: key, value: value
+      });
     });
-  });
+  } else {
+    circlePanel1Top5.value = [{
+      name: 'Others', value: 0
+    }];
+  }
 } 
 
 //获取圆饼Source

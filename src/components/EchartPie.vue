@@ -3,7 +3,7 @@
 </template>
 <script setup lang="ts">
 import * as echarts from 'echarts';
-import { onMounted, toRefs } from "vue";
+import { onMounted, toRefs, watch } from "vue";
 
 const props = defineProps({
   echartsData: Array, //数据格式 echartsData = [{name:'',value:''}]
@@ -18,9 +18,18 @@ const props = defineProps({
 });
 const { echartsData, echartsId, titleText } = toRefs(props);
 
-onMounted(() => {
+watch(
+  () => props.echartsData,
+  (value) => {
+    setEchartOption();
+  }, { deep: true, immediate: false }
+);
+
+const setEchartOption = () => {
   // 基于准备好的dom，初始化echarts实例
   var myChart = echarts.init(document.getElementById(echartsId.value));
+  // 清空图标中的数据
+  myChart.clear();
   // 绘制图表
   myChart.setOption({
     title: {
@@ -57,6 +66,13 @@ onMounted(() => {
       }
     ]
   });
+  window.onresize = function () { // 自适应大小
+    myChart.resize();
+  };
+}
+
+onMounted(() => {
+  setEchartOption();
 })
 
 

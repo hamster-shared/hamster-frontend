@@ -113,15 +113,13 @@ const getRequestData = async () => {
   if (res.code == 200) {
     let valueX: any = []; 
     let valueNum: any = [];
-    let valueNum2: any = []; //多条数据可依次声明添加
     res.data.map((item: any) => {
       valueX.push(formatTimeToHM(item.dataTime));
       valueNum.push(item.num);
-      valueNum2.push(item.num);
     });
     requestData.value = {
       valueX: valueX,
-      valueY: { 'num': valueNum, 'num2': valueNum2 },
+      valueY: { 'num': valueNum},
     };
   }
   console.log("requestData:",requestData.value);

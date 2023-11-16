@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 // 引入echarts
 import * as echarts from 'echarts'
-import { onMounted, ref, toRefs } from "vue";
+import { onMounted, ref, toRefs, watch } from "vue";
 
 const props = defineProps({
   // echartsData: Array,
@@ -51,8 +51,17 @@ const setShowNumber = (value: any) => {
   }
 }
 
-onMounted(() => { // 需要获取到element,所以是onMounted的Hook
+watch(
+  () => props.echartsData,
+  (value) => {
+    setEchartOption();
+  }, { deep: true, immediate: false }
+);
+
+const setEchartOption = () => {
   let myChart = echarts.init(document.getElementById(echartsId?.value) as HTMLElement);
+  // 清空图标中的数据
+  myChart.clear();
   setSeriesArray(); //设置series数据
   // 绘制图表
   myChart.setOption({
@@ -165,5 +174,8 @@ onMounted(() => { // 需要获取到element,所以是onMounted的Hook
   window.onresize = function () { // 自适应大小
     myChart.resize();
   };
+}
+onMounted(() => { // 需要获取到element,所以是onMounted的Hook
+  setEchartOption();
 });
 </script>
