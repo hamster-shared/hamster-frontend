@@ -9,8 +9,7 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-// getUserInfo } from "@/apis/login";
-import { githubInstallAuth, getUserInfo } from "@/apis/login";
+import { githubInstallAuth } from "@/apis/login";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
@@ -49,14 +48,14 @@ const installGit = () => {
   }
 }
 
-const getUserInfoData = async () => {
-  const { data } = await getUserInfo()
-  if (data) {
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    window.close();
-    window.opener.location.reload();
-  }
-};
+// const getUserInfoData = async () => {
+//   const { data } = await getUserInfo()
+//   if (data) {
+//     localStorage.setItem('userInfo', JSON.stringify(data));
+//     window.close();
+//     window.opener.location.reload();
+//   }
+// };
 
 onMounted(() => {
   let token = localStorage.getItem('token') || '';
@@ -64,9 +63,7 @@ onMounted(() => {
     let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
     console.log(loginData, 'token')
     loginType.value = loginData.loginType;
-    if (loginType.value == 2) {
-      getUserInfoData();
-    }
+
   }
 
 

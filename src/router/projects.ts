@@ -147,6 +147,14 @@ const projectsRoute = [
         meta: {
           layout: 'null',
         }
+      },
+      {
+        path: '/projects/connectGithub',
+        name:'projectsConnectGithub',
+        component: () => import('@/views/projects/projectsCreat/connectGithub.vue'),
+        meta: {
+          layout: 'null',
+        }
       }
     ]
   }

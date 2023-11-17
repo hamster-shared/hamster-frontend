@@ -270,7 +270,7 @@ const getInstallationsAccount = async () => {
 }
 
 const resetData = async () => {
-  // await getInstallationsAccount()
+  await getInstallationsAccount()
   console.log('可以刷新数据了')
   pagination.current = 1;
   pagination.pageSize = 3;

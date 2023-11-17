@@ -7,7 +7,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-// import { githubInstallAuth } from "@/apis/login";
+import { getUserInfo } from "@/apis/login";
 const router = useRouter();
 const setupAction = ref('');
 const loginType = ref();
@@ -36,6 +36,14 @@ const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
 //     }
 //   }
 // }
+// const getUserInfoData = async () => {
+//   const { data } = await getUserInfo()
+//   if (data) {
+//     localStorage.setItem('userInfo', JSON.stringify(data));
+//     window.close();
+//     window.opener.location.reload();
+//   }
+// };
 
 const checkSetupAction = () => {
   // setupAction === request 组织  install === 个人
@@ -53,6 +61,10 @@ onMounted(() => {
   setupAction.value = router.currentRoute.value.query?.setup_action || '';
   console.log(setupAction.value, 'setupAction value')
   checkSetupAction()
+
+  // if (loginType.value == 2) {
+  //   getUserInfoData();
+  // }
   // let token = localStorage.getItem('token') || '';
   // let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
   // console.log(loginData, '回调页看登录')
