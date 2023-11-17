@@ -234,6 +234,10 @@ const getGithubInstallCheck = async () => {
     const { data } = await githubInstallCheck()
     // console.log(data, ' 99999')
     isGithubInstallCheck.value = data;
+    if (data) {
+      await getInstallationsAccount();
+      getRepositoryData();
+    }
   } catch (err: any) {
 
   }
@@ -384,8 +388,7 @@ const handleDone = async () => {
 onMounted(async () => {
 
   await getGithubInstallCheck()
-  await getInstallationsAccount();
-  getRepositoryData();
+
 })
 </script>
 

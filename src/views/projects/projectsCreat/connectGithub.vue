@@ -12,19 +12,21 @@ const loginType = ref();
 
 const getUserInfoData = async () => {
   const { data } = await getUserInfo()
+
+  console.log(data, 'data')
   if (data) {
     localStorage.setItem('userInfo', JSON.stringify(data));
     console.log(data, '更新的userInfo， 有username吗？')
     window.close();
     window.opener.location.reload();
   }
-};
+}
 
 onMounted(() => {
   let token = localStorage.getItem('token') || '';
   if (token) {
     let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-    console.log(loginData, '回调页看登录')
+    console.log(loginData, 'connectGithub回调页')
     loginType.value = loginData.loginType;
     if (loginType.value == 2) {
       getUserInfoData();
