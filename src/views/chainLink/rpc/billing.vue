@@ -10,7 +10,7 @@
           <div class="card-content">
             <div>
               <label class="sub-title">Credit:</label>
-              <label class="font-bold" v-if="userPlan.usedCredit">{{ setNumberValue(userPlan.usedCredit) }}</label>
+              <label class="font-bold">{{ setNumberValue(userPlan.usedCredit) }}</label>
               <label class="font-light" v-if="userPlan.totalCredit"> / {{ setNumberValue(userPlan.totalCredit) }}</label>
             </div>
             <div class="mt-[20px]">
