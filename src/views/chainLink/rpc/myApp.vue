@@ -20,7 +20,7 @@ import { reactive, ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import CreateAppModal from './components/CreateAppModal.vue';
-import { apiZanApiKeyPage } from "@/apis/middlewareRPC"
+import { apiZanApiKeyPage, apiGetZanUserAuthed, apiGetZanAuthUrl } from "@/apis/middlewareRPC"
 
 const router = useRouter()
 const createVisible = ref(false);
@@ -99,10 +99,23 @@ const viewApp = (item: any) => {
 const hiddenCreateModal = () => {
   createVisible.value = false;
 }
-// 新建app
-const createApp = ()=>{
-  modalType.value = 'create';
-  createVisible.value = true;
+
+const createApp = async () => {
+  const authedData = await apiGetZanUserAuthed()
+  if(authedData.data){
+    modalType.value = 'create';
+    createVisible.value = true;
+  }else {
+      let url = ""
+      try{
+        const authUrlResp = await apiGetZanAuthUrl()
+        url = authUrlResp.data
+      }catch (e) {
+          return
+      }
+      const myWindow = window.open(url, 'login-zan', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      myWindow?.focus()
+  }
 }
 
 onMounted(()=>{
