@@ -119,7 +119,7 @@ interface apiGetRepositoryParams{
 interface apiInstallRepositoryParams{
   page?: number,
   size?: number,
-  search?: string,
+  query?: string,
 }
 // repository点击import按钮
 interface apiPostRepositoryParams{
@@ -416,7 +416,7 @@ export function apiInstallRepository(id: string,params:apiInstallRepositoryParam
   return httpRequest({
     url: `/api/github/installation/${id}/repositories`,
     method: "get",
-    params
+    data: params,
   });
 }
 

@@ -42,13 +42,17 @@ const goCreateProject = () => {
   emits('goCreateProject');
 }
 const createFormData = ref({
+  name: '',
   type: '1',
+  contractCode: '1',
+  frameType: '1',
+  deployType: '1',
 })
 
 const goTemplates = (val: string) => {
   createFormData.value.type = val;
-  // localStorage.setItem('createFormData', JSON.stringify(createFormData))
-  // router.push('/projects/create')
+  localStorage.setItem('createFormData', JSON.stringify(createFormData.value))
+  router.push('/projects/create')
 }
 
 onMounted(() => {

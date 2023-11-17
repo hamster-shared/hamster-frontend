@@ -161,17 +161,6 @@ const VNodes: any = (_, { attrs }) => {
   return attrs.vnodes;
 };
 
-// const VNodes = defineComponent({
-//   props: {
-//     vnodes: {
-//       type: Object,
-//       required: true,
-//     },
-//   },
-//   render() {
-//     return this.vnodes;
-//   },
-// });
 
 const importVisible = ref(false);
 const repositoryVisible = ref(false);

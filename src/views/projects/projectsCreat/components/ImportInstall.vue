@@ -9,7 +9,8 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { githubInstallAuth } from "@/apis/login";
+// getUserInfo } from "@/apis/login";
+import { githubInstallAuth, getUserInfo } from "@/apis/login";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
@@ -40,7 +41,7 @@ const installGit = () => {
     // window.close();
     // window.opener.location.reload();
   } else {
-    console.log(apiUrl.value + '/projects/metaMaskAuth')
+    // console.log(apiUrl.value + '/projects/metaMaskAuth')
     const state = new Date().getTime();
     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/metaMaskAuth`;
     const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
@@ -48,36 +49,24 @@ const installGit = () => {
   }
 }
 
-
-
-
-// const initGithubInstallAuth = async () => {
-//   if (router.currentRoute.value.query?.code) {
-//     const params = {
-//       code: router.currentRoute.value.query?.code,
-//       clientId: clientId.value,
-//     }
-//     try {
-//       const { data } = await githubInstallAuth(params);
-//       if (data) {
-//         const state = new Date().getTime();
-//         const url = `${selectTargetUrl.value}?state=${state}`;
-//         const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-//       }
-//     } catch (err: any) {
-
-//     }
-//   }
-
-// }
+const getUserInfoData = async () => {
+  const { data } = await getUserInfo()
+  if (data) {
+    localStorage.setItem('userInfo', JSON.stringify(data));
+    window.close();
+    window.opener.location.reload();
+  }
+};
 
 onMounted(() => {
-
   let token = localStorage.getItem('token') || '';
   if (token) {
     let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
     console.log(loginData, 'token')
     loginType.value = loginData.loginType;
+    if (loginType.value == 2) {
+      getUserInfoData();
+    }
   }
 
 

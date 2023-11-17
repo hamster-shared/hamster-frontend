@@ -58,13 +58,13 @@ export function getInstallations() {
 }
 
 // 获取github仓库列表
-export function getInstallationsRepositories(id:string) {
-  return httpRequest({
-    url: `/api/github/installations${id}/repositories`,
-    method: "get",
-    data: {id: id}
-  });
-}
+// export function getInstallationsRepositories(id:string) {
+//   return httpRequest({
+//     url: `/api/github/installations/${id}/repositories`,
+//     method: "get",
+//     data: {id: id}
+//   });
+// }
 
 // 获取github仓库的权限 all --->不展示调整权限
 //                      selected ------>展示调整权限字样

@@ -70,7 +70,11 @@
                 <span>Signed in as </span>
                 <span class="font-bold">{{ username }}</span>
               </div>
-              <a-menu-item class="" v-else>
+              <div v-if="loginType == 2 && username" class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
+                <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
+                <span class="font-bold">{{ username }}</span>
+              </div>
+              <a-menu-item class="" v-if='loginType == 2'>
                 <div class="py-[4px]" @click="githubInstall">
                   <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                   Connect Github
@@ -110,7 +114,7 @@
     <div class="text-[24px] text-[#151210] font-bold mb-4">Confirm disconnect wallets?</div>
     <div class="text-center">
       <a-button type="primary" @click="(visibleDisconnect = false)" ghost>No</a-button>
-      <a-button class="ml-4" type="primary" @click="disconnect">Yes</a-button>
+      <a-button class="ml-4" type="primary" @click="isDisconnect">Yes</a-button>
     </div>
   </a-modal>
 </template>
@@ -143,8 +147,8 @@ const isOrder = ref(false)
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
-const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
-const username = JSON.parse(userInfo)?.username;
+const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
+const username = JSON.parse(userInfo)?.username || '';
 const isShowMiddleware = ref(false)
 
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
@@ -178,10 +182,10 @@ const goMiwaspace = () => {
 
 const githubInstall = () => {
   // 关联github
-  // const state = new Date().getTime();
-  // const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-  // const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
-  // myWindow?.focus();
+  const state = new Date().getTime();
+  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+  const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  myWindow?.focus();
   // window.close();
   // window.opener.location.reload();
 };
@@ -212,19 +216,9 @@ const checkWallet = async (val: string) => {
 }
 
 const signOut = () => {
-  if (loginType.value == 1) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userInfo');
-    router.push('/')
-  } else {
-    // metaMask 登录 先判断是否关联github， 已关联则解绑小葫芦 ，没有关联则退出重新登录
-
-    // showWallets.value?.onClickDisconnect();
-    // walletAddress.setWalletAddress('');
-    // window.localStorage.removeItem("walletAccount");
-    // visibleDisconnect.value = false;
-    // isConnectedWallet.value = false
-  }
+  localStorage.removeItem('token');
+  localStorage.removeItem('userInfo');
+  router.push('/')
 };
 
 onMounted(() => {
@@ -277,6 +271,24 @@ watch(
     }
   }, { deep: true, immediate: true }
 );
+
+const isDisconnect = () => {
+  if (loginType.value == 1) {
+    disconnect()
+  } else {
+    // metaMask 登录 先判断是否关联github， 已关联则解绑小葫芦 ，没有关联则退出重新登录
+    if (username.value) {
+      disconnect()
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      router.push('/')
+    }
+  }
+
+}
+
+
 
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
