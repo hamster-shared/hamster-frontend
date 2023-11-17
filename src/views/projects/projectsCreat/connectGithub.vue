@@ -14,6 +14,7 @@ const getUserInfoData = async () => {
   const { data } = await getUserInfo()
   if (data) {
     localStorage.setItem('userInfo', JSON.stringify(data));
+    console.log(data, '更新的userInfo， 有username吗？')
     window.close();
     window.opener.location.reload();
   }
@@ -21,13 +22,16 @@ const getUserInfoData = async () => {
 
 onMounted(() => {
   let token = localStorage.getItem('token') || '';
-  let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-  console.log(loginData, '回调页看登录')
-  loginType.value = loginData.loginType;
-  if (loginType.value == 2) {
-    getUserInfoData();
+  if (token) {
+    let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
+    console.log(loginData, '回调页看登录')
+    loginType.value = loginData.loginType;
+    if (loginType.value == 2) {
+      getUserInfoData();
+    }
   }
 })
+
 </script>
 
 <style scoped lang="less">
