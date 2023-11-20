@@ -5,51 +5,82 @@
     <div class="mb-[8px]">Please wait...</div>
     <a-spin />
   </div>
-
 </template>
 <script lang='ts' setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin, apiInstall,apiGetUser} from "@/apis/login";
+import { apiLogin, apiInstall, apiGetUser, login, getUserInfo } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 
 
-const login = async () => {
+// const login = async () => {
+//   try {
+//     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
+//     localStorage.setItem('firstState', data.firstState.toString());
+//     localStorage.setItem('userInfo', JSON.stringify(data));
+//     if (data.token) {
+//       localStorage.setItem('token', data.token);
+//       window.close();
+//       window.opener.location.reload();
+//     }
+//   } catch (err: any) {
+//     window.close();
+//     localStorage.removeItem('userInfo');
+//     router.push('/');
+//     message.error(err.message);
+//   }
+// }
+
+
+
+const githubLogin = async () => {
   try {
-    const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
-    localStorage.setItem('firstState', data.firstState.toString());
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      window.close();
-      window.opener.location.reload();
+    const { data } = await login({ code: code.value });
+    // console.log(data, 'ggg')
+    if (data) {
+      localStorage.setItem('token', data);
+      getUserInfoData()
     }
   } catch (err: any) {
-    window.close();
-    localStorage.removeItem('userInfo');
-    router.push('/');
     message.error(err.message);
   }
 }
 
-
-const installGitHub = async () => {
+const getUserInfoData = async () => {
   try {
-    const { data } = await apiInstall(code.value);
-    localStorage.setItem('token', data);
+    const { data } = await getUserInfo();
+    console.log(data, 'github登录的data')
+    localStorage.setItem('userInfo', JSON.stringify(data));
     window.close();
     window.opener.location.reload();
   } catch (err: any) {
     window.close();
+    localStorage.removeItem('token');
     localStorage.removeItem('userInfo');
     router.push('/');
-    console.log('err:', err)
+    message.error(err.message);
   }
+
 }
+
+
+// const installGitHub = async () => {
+//   try {
+//     const { data } = await apiInstall(code.value);
+//     localStorage.setItem('token', data);
+//     window.close();
+//     window.opener.location.reload();
+//   } catch (err: any) {
+//     window.close();
+//     localStorage.removeItem('userInfo');
+//     router.push('/');
+//     console.log('err:', err)
+//   }
+// }
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {
@@ -60,28 +91,30 @@ onMounted(async () => {
       router.push('/projects')
     }
   } else {
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-    if (JSON.stringify(userInfo) === '{}') {
-      code.value = router.currentRoute.value.query?.code || '';
-      if (code.value) {
-        await login()
-      }
-      const state = new Date().getTime();
-      const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
-      const url = `${oauthUrl.value}?state=${state}`;
-      const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-    } else {
-      if (userInfo.token) {
-        localStorage.setItem('token', userInfo.token);
-        window.close();
-        window.opener.location.reload();
-      } else {
-        code.value = router.currentRoute.value.query?.code || '';
-        if (code.value) {
-          installGitHub()
-        }
-      }
-    }
+    code.value = router.currentRoute.value.query?.code || '';
+    githubLogin()
+    // const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+    // if (JSON.stringify(userInfo) === '{}') {
+    //   code.value = router.currentRoute.value.query?.code || '';
+    //   if (code.value) {
+    //     await githubLogin()
+    //   }
+    //   // const state = new Date().getTime();
+    //   // const oauthUrl = ref(import.meta.env.VITE_OAUTH_URL);
+    //   // const url = `${oauthUrl.value}?state=${state}`;
+    //   // const myWindow = window.open(url, '_parent', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    // } else {
+    //   if (userInfo.token) {
+    //     localStorage.setItem('token', userInfo.token);
+    //     window.close();
+    //     window.opener.location.reload();
+    //   } else {
+    //     code.value = router.currentRoute.value.query?.code || '';
+    //     if (code.value) {
+    //       githubLogin()
+    //     }
+    //   }
+    // }
   }
 })
 </script>

@@ -38,85 +38,52 @@ import Web3 from 'web3';
 import { ethers } from 'ethers';
 import MetaMaskDownloadModal from "./components/metaMaskDownloadModal.vue";
 
-
 const metaMaskVisible = ref(false);
 const router = useRouter()
-const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
+
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
 
-// const githubLogin = async () => {
-//   try {
-//     const { data } = await login({ code: '5df6a81800434eb00145' });
-//     localStorage.setItem('token', data);
-//     console.log(data, 'ggg')
-//     getUserInfoData()
-//   } catch (err: any) {
+const githubLogin = async () => {
+  const params = {
+    code: "30326d394df93e9e8a03",
+    clientId: clientId.value
+  }
+  try {
+    const { data } = await login(params);
+  } catch (err: any) {
 
-//   }
-// }
-
-
-// const loginBox = () => {
-//   // router.push("/loginTransition?code=5df6a81800434eb00145");
-//   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-//   if (JSON.stringify(userInfo) === '{}') {
-//     // 登录
-//     const state = new Date().getTime();
-//     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-//     const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-//     myWindow?.focus()
-//   } else {
-//     if (userInfo.token) {
-//       localStorage.setItem('token', userInfo.token);
-//       commonJump()
-//     } else {
-//       // install
-//       // const state = new Date().getTime();
-//       // const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-//       // const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-//       // myWindow?.focus()
-//     }
-//   }
-// }
+  }
+}
 
 const loginBox = () => {
-
-  const state = new Date().getTime();
-  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/loginTransition`;
-  const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
-  myWindow?.focus()
-}
-
-const getMetamaskLogin = async (address: string) => {
-  try {
-    const { data } = await metamaskLogin({ address: address })
-    if (data && data.length > 0) {
-      localStorage.setItem('token', data);
-      console.log(data, '小狐狸登录的data')
-      getUserInfoData();
-      saveWallet(address).then();
+  const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
+  if (JSON.stringify(userInfo) === '{}') {
+    // 登录
+    const state = new Date().getTime();
+    const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+    const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+    myWindow?.focus()
+  } else {
+    if (userInfo.token) {
+      localStorage.setItem('token', userInfo.token);
+      commonJump()
     } else {
-      message.error('登录失败，请稍候重试！')
+      // install
+      const state = new Date().getTime();
+      const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
+      const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      myWindow?.focus()
     }
-
-  } catch (err: any) {
-    message.error(err.message);
   }
-
 }
-
 
 const getUserInfoData = async () => {
   try {
     const { data } = await getUserInfo();
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    commonJump()
-  } catch (err: any) {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('token');
-    router.push('/');
-    message.error(err.message);
+    console.log(data, 'data')
+  } catch {
+
   }
 
 }
@@ -129,51 +96,45 @@ const commonJump = () => {
     router.push('/projects')
   }
 }
-
-
-
-
 // 通过钱包登录
 const awakeWallet = async () => {
   if (window.ethereum) {
-    const { ethereum } = window;
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const address = accounts[0];
-
-    console.log(accounts, 'accounts')
-    const web3 = new Web3(window.ethereum);
-    console.log(web3, ethereum.identicon, ethereum.chainId, 'web3web3')
-    if (address) {
-      try {
-        // 请求用户授权连接到 MetaMask
-        //  await window.ethereum.enable();
-        // 创建一个要签署的消息
-        const message = `hamsternet.io wants you to sign in with your Ethereum account: ${address} 
-        
-Please ensure that the domain above matches the URL of the current website.
-
-Version: ${web3.version}`
-
-        // 使用 Web3.js 发送请求签名的消息
-        web3.eth.personal.sign(message, window.ethereum.selectedAddress, (error, signature) => {
-          if (!error) {
-            console.log('签名结果：', signature);
-            // 在这里你可以将签名发送到后端服务器进行验证
-            getMetamaskLogin(address);
-            window.localStorage.setItem("walletAccount", address);
-          } else {
-            console.error('签名请求失败：', error);
-          }
-        });
-        // 用户已连接，可以使用 web3 进行操作
-        console.log('已连接到 MetaMask');
-        // getMetamaskLogin(address)
-      } catch (error) {
-        console.error('用户拒绝连接：', error);
-      }
-      console.log(`Metamask wallet address: ${address}`, accounts);
+    for (let account of accounts) {
+      saveWallet(account).then()
     }
+    const address = accounts[0];
+    const web3 = new Web3(window.ethereum);
+    if (address) {
+      localStorage.setItem('token', address)
+      commonJump()
+    }
+    try {
+      // 请求用户授权连接到 MetaMask
+      //  await window.ethereum.enable();
+      // 创建一个要签署的消息
+      const message =
+        `thirdweb.com wants you to sign in with your Ethereum account: 
+    ${address} 
+    Please ensure that the domain above matches the URL of the current website.
 
+    Version:1
+    Chain ID:1`;
+      // 使用 Web3.js 发送请求签名的消息
+      web3.eth.personal.sign(message, window.ethereum.selectedAddress, (error, signature) => {
+        if (!error) {
+          console.log('签名结果：', signature);
+          // 在这里你可以将签名发送到后端服务器进行验证
+        } else {
+          console.error('签名请求失败：', error);
+        }
+      });
+      // 用户已连接，可以使用 web3 进行操作
+      console.log('已连接到 MetaMask');
+    } catch (error) {
+      console.error('用户拒绝连接：', error);
+    }
+    console.log(`Metamask wallet address: ${address}`, accounts);
   } else {
     metaMaskVisible.value = true;
   }
@@ -196,6 +157,7 @@ const closeMetaMaskModal = () => {
 
 
 onMounted(() => {
+  getUserInfoData()
   if (localStorage.getItem('token')) {
     if (localStorage.getItem('firstState') === "0" && false) {
       router.push('/welcome')

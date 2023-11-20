@@ -113,7 +113,13 @@ interface apiReportsParams{
 interface apiGetRepositoryParams{
   page?: number,
   size?: number,
-  filter?: string
+  filter?: string,
+}
+
+interface apiInstallRepositoryParams{
+  page?: number,
+  size?: number,
+  query?: string,
 }
 // repository点击import按钮
 interface apiPostRepositoryParams{
@@ -404,6 +410,16 @@ export function apiGetRepository(params:apiGetRepositoryParams) {
   });
 }
 
+
+// // api/github/installation/{id}/repositories
+export function apiInstallRepository(id: string,params:apiInstallRepositoryParams) {
+  return httpRequest({
+    url: `/api/github/installation/${id}/repositories`,
+    method: "get",
+    data: params,
+  });
+}
+
 // 仓库导入，点击import按钮弹框调取接口
 export function apiPostRepository(params: apiPostRepositoryParams) {
   return httpRequest({
@@ -412,6 +428,8 @@ export function apiPostRepository(params: apiPostRepositoryParams) {
     data: params,
   });
 }
+
+
 
 // 获取polkadot模板详情
 export function apiNodeTemplateDetail(id:string) {
