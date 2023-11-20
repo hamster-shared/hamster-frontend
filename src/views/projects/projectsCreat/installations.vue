@@ -9,37 +9,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const setupAction = ref('');
-
-
-// const initGithubInstallAuth = async () => {
-//   if (router.currentRoute.value.query?.code) {
-//     const params = {
-//       code: router.currentRoute.value.query?.code,
-//       clientId: clientId.value,
-//     }
-//     try {
-//       const { data } = await githubInstallAuth(params);
-//       // data == true 需要install  false 不需要install
-//       if (data) {
-//         const state = new Date().getTime();
-//         const url = `${selectTargetUrl.value}?state=${state}`;
-//         const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-//       } else {
-//         checkSetupAction()
-//       }
-//     } catch (err: any) {
-
-//     }
-//   }
-// }
-// const getUserInfoData = async () => {
-//   const { data } = await getUserInfo()
-//   if (data) {
-//     localStorage.setItem('userInfo', JSON.stringify(data));
-//     window.close();
-//     window.opener.location.reload();
-//   }
-// };
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 
 const checkSetupAction = () => {
   // setupAction === request 组织  install === 个人
@@ -47,10 +17,12 @@ const checkSetupAction = () => {
     console.log('进入request')
     router.push('/projects/adjustPremission');
   } else {
+
     console.log('进入install')
-    window.close();
     const opener = window.opener;
-    opener.postMessage('message', '*');
+    // opener.postMessage('message', apiUrl.value);
+    window.close();
+    opener.location.reload();
   }
 }
 onMounted(() => {

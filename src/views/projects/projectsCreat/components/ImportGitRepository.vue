@@ -13,8 +13,9 @@
           :field-names="{ label: 'name', value: 'id' }" @select="selectGithubAccount" :options="githubAccountList">
           <template #dropdownRender="{ menuNode: menu }">
             <v-nodes :vnodes="menu" />
-            <a-divider style="margin: 4px 0" />
-            <div style="padding: 4px 8px; cursor: pointer" @mousedown="e => e.preventDefault()" @click="addGithubAccount">
+            <!-- <a-divider class="text-[#F4F4F4]" style="margin: 4px 0" /> -->
+            <div class="border border-solid border-[#F4F4F4] w-hull h-[1px]"></div>
+            <div style="padding: 4px 8px; cursor: pointer" @click="addGithubAccount">
               <plus-outlined />
               Add Github Account
             </div>
@@ -222,10 +223,23 @@ const pagination = reactive({
 });
 
 const addGithubAccount = () => {
-  window.addEventListener('message', resetData, false)
+  // console.log('jkjkjk')
+  window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installation`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+  // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
+  const myWindow = window.open('http://localhost:5173/projects/installations?setup_action=install');
+}
+
+const resetRepositoryData = async (event: Event) => {
+  if (event.data.origin == apiUrl.value) return
+  // await getInstallationsAccount()
+  console.log(event, 'RepositoryData更新列表1111')
+  // pagination.current = 1;
+  // pagination.pageSize = 3;
+  // searchInputValue.value = '';
+
+  // getRepositoryData();
 }
 
 
@@ -245,7 +259,7 @@ const getGithubInstallCheck = async () => {
 
 
 const adjustGithubPremission = () => {
-  window.addEventListener('message', resetData, false)
+  // window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
@@ -273,15 +287,14 @@ const getInstallationsAccount = async () => {
   }
 }
 
-const resetData = async () => {
-  await getInstallationsAccount()
-  console.log('可以刷新数据了')
-  pagination.current = 1;
-  pagination.pageSize = 3;
-  searchInputValue.value = '';
-
-  getRepositoryData();
-}
+// const resetData = async () => {
+//   await getInstallationsAccount()
+//   console.log('可以刷新数据了')
+//   pagination.current = 1;
+//   pagination.pageSize = 3;
+//   searchInputValue.value = '';
+//   getRepositoryData();
+// }
 
 const getRepositoryData = async () => {
   const params = {
