@@ -114,6 +114,7 @@ const getCreditCostData = async () => {
 
 // 获取 Request 图表数据
 const getRequestData = async () => {
+  requestData.value = {}
   let res = await apiZanApiKeyRequestStats(apiKeyId, requestParam.value.time, requestParam.value.chain);
   console.log("res:",res);
   if (res.code == 200 && res.data.length > 0) {
