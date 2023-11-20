@@ -2,17 +2,34 @@
   <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
     <div
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <a-menu v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue">
-        <a-menu-item v-for="item in menuRouterList" :key="item.name" :disabled="item.meta.isTag">
-          <router-link
-            :to="((item.name === 'RPC' && !isRpcDefault) || (item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
-            <div>
+      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
+        <div v-for="item in menuRouterList">
+          <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
+            <router-link
+              :to="((item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
+              <div>
+                <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
+                <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
+                <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
+              </div>
+            </router-link>
+          </a-menu-item>
+          <a-sub-menu v-else :key="item.key" @titleClick="toChild">
+            <template #icon>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
-              <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
-              <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
-            </div>
-          </router-link>
-        </a-menu-item>
+            </template>
+            <template #title><span class="text-[16px]">{{item.name}}</span></template>
+            <template v-for="child in item.children">
+              <template v-if="child?.meta?.isShow">
+                <a-menu-item :key="child.name" class="!pl-[76px]">
+                  <router-link :to="child.path">
+                  <div>{{child.name}}</div>
+                  </router-link>
+                </a-menu-item>
+              </template>
+            </template>
+          </a-sub-menu>
+        </div>
       </a-menu>
     </div>
     <div class="p-[32px] dashboard-index-right">
@@ -30,7 +47,8 @@ const router = useRouter();
 const menuRouterList = ref<any>([]);
 const selectedKeys = ref<any>(['']);
 const isRpcDefault = ref(false)
-const isOracleDefault = ref(false)
+const isOracleDefault = ref(false);
+const openKeys = ref<any>([]);
 
 // console.log('router', router.options.routes)
 onBeforeMount(() => {
@@ -42,7 +60,12 @@ onBeforeMount(() => {
     }
   })
   // console.log(dashboard.children, 'dashboard')
+  console.log(11111111111,menuRouterList.value)
 })
+
+const toChild = ( {key, domEvent })=>{
+  console.log('toChild',key,domEvent)
+}
 
 onMounted(async()=>{
   const rpcRes = await apiGetIfOpenService('rpc');
@@ -57,9 +80,10 @@ watch(() => router.currentRoute.value,
       selectedKeys.value = [value.params.type];
     } else {
       selectedKeys.value = value.meta.sidebarMap || [''];
+      if (value.path.indexOf('/middleware/dashboard/RPC') != -1) {
+        openKeys.value = ['RPC'];
+      }
     }
-
-    // console.log(value, 'value')
   }, { deep: true, immediate: true }
 )
 </script>
@@ -92,12 +116,20 @@ watch(() => router.currentRoute.value,
 }
 
 :deep(.ant-menu-item) {
-  border-radius: 12px;
+  border-radius: 10px;
+}
+:deep(.ant-menu-inline .ant-menu-item){
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 15px;
 }
 
-:deep(.ant-menu.ant-menu-dark) {
+:deep(.ant-menu.ant-menu-dark),
+:deep(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
   background-color: #1D1C1A;
-  ;
+}
+:deep(.ant-menu-sub.ant-menu-inline){
+  background-color: #ffffff;
 }
 
 :deep(.ant-menu-vertical>.ant-menu-item) {
@@ -106,7 +138,7 @@ watch(() => router.currentRoute.value,
   margin-bottom: 15px;
 }
 
-:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected) {
+:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected){
   background-color: #FFFAF3;
 
 }
