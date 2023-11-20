@@ -416,7 +416,7 @@ export function apiInstallRepository(id: string,params:apiInstallRepositoryParam
   return httpRequest({
     url: `/api/github/installation/${id}/repositories`,
     method: "get",
-    data: params,
+    params: params,
   });
 }
 

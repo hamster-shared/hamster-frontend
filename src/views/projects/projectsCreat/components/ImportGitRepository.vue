@@ -291,9 +291,10 @@ const getRepositoryData = async () => {
   }
   try {
     const { data } = await apiInstallRepository(selsectInstallId.value, params)
-    // console.log('getRepositoryData-data:', data)
+    console.log('getRepositoryData-data:', data)
     pagination.total = data.total
     repositoryData.value = data.data
+
   } catch (err: any) {
     console.log('repositoryData-err:', err)
   } finally {
@@ -317,7 +318,7 @@ const handleImport = async (item: any) => {
   console.log('handleImport:', item)
   //选择project type为1时（contract), 点击Import按钮展示contractImportVisible的modal弹框
   importFormData.value.name = item.name;
-  importFormData.value.cloneUrl = item.githubUrl;
+  importFormData.value.cloneUrl = item.cloneUrl;
   if (props.projectType === '3') {
     importFormData.value.ecosystem = 1;
     importFormData.value.type = 3;
@@ -359,7 +360,8 @@ const handleDone = async () => {
       return item.name == importFormData.value.name
     })
   }
-  importFormData.value.cloneUrl = repositoryVisible.value ? importFormData.value.cloneUrl : importUrl.value.githubUrl
+  importFormData.value.cloneUrl = repositoryVisible.value ? importFormData.value.cloneUrl : importUrl.value.cloneUrl
+
   if (props.projectType === '1') {
     importFormData.value.type = 1;
   } else {
