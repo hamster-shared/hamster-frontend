@@ -72,6 +72,7 @@
               </div>
               <div v-if="loginType == 2 && username" class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
                 <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
+                <span>Signed in as </span>
                 <span class="font-bold">{{ username }}</span>
               </div>
               <a-menu-item class="" v-if='loginType == 2'>
