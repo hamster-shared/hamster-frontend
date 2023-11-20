@@ -399,4 +399,9 @@ html[data-theme='dark'] {
   }
 }
 </style>
+<style scoped>
+.header-text-css {
+  @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
+}
+</style>
 
