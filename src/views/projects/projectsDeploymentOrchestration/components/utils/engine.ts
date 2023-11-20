@@ -6,7 +6,7 @@ import {
     PROXY_UPGRADE,
 } from "../DeployData";
 import type { DeployRecord,DeployStep,ContractBuild,DeployParams} from '../DeployData';
-import {callContract, deployContract, deployProxyContract, getTransaction, upgradeProxyContract} from "./evm";
+import {callContract, deployContract, deployProxyContract, getTrans, getTransaction, upgradeProxyContract} from "./evm";
 import {apiUpdateExecuteInfo} from "@/apis/contractOrchestrationDeploy";
 import {apiProjectsContractDeploy} from "@/apis/projects";
 import {message} from "ant-design-vue";
@@ -17,6 +17,7 @@ import {apiGetNetworkByName} from "@/apis/network";
 export default class NewEngine {
     private readonly provider:ethers.providers.Web3Provider;
     public isRunning: boolean = false;
+    public isDestroy: boolean = false;
     constructor(provider:ethers.providers.Web3Provider) {
         this.provider = provider;
     }
@@ -26,7 +27,9 @@ export default class NewEngine {
             console.log("Workflow is already running.");
             return;
         }
-
+        if (this.isDestroy) {
+            return
+        }
         this.isRunning = true;
         await this.run(abiMap,deployInfo,deployParams);
     }
@@ -35,6 +38,10 @@ export default class NewEngine {
         if (deployInfo.step >= deployInfo.deployStep.length) {
             console.info("exec finished")
             return;
+        }
+        if (this.isDestroy) {
+            console.info("contract is destroy")
+            return
         }
         let deployStep = deployInfo.deployStep[deployInfo.step]
         if (JSON.stringify(deployStep) === "{}") {
@@ -59,38 +66,66 @@ export default class NewEngine {
         let bytecode = contractBuild.bytecode
         for (let stepIndexInStep = deployStep.step;stepIndexInStep < deployStep.steps.length; stepIndexInStep++) {
             const step = deployStep.steps[stepIndexInStep];
+            if (this.isDestroy) {
+                console.info("for contract is destroy1")
+                return
+            }
             if (!this.isRunning) {
                 step.status = "STOP"
                 deployStep.status = "STOP"
                 await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                 return;
             }
+            if (step.status != "RUNNING") {
+                step.status = "RUNNING"
+                deployStep.status = "RUNNING"
+                step.errorInfo = ""
+                await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+            }
             if (step.status == "RUNNING") {
                 if (step.transactionHash != "" && step.transactionHash != undefined) {
-                    let network = ""
-                    try {
-                        const networkData = await apiGetNetworkByName(deployParams.network)
-                        network = networkData.data.rpcUrl
-                    } catch (e) {
-                        step.status = "FAILED"
-                        deployStep.status = "FAILED"
-                        this.isRunning = false
-                        if (e instanceof Error){
-                            step.errorInfo = e.message
-                        }
-                        // save exec status
-                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
-                        return
-                    }
                    try {
-                       const receipt = await getTransaction(step.transactionHash,network)
-                       if (receipt.status == 0 || receipt.status == undefined ) {
+                       let  timeOut = 3 * 60 * 1000;
+                       const start = Date.now();
+                       let receipt = null
+                       let network = ""
+                       try {
+                           const networkData = await apiGetNetworkByName(deployParams.network)
+                           network = networkData.data.rpcUrl
+                       } catch (e) {
                            step.status = "FAILED"
                            deployStep.status = "FAILED"
                            this.isRunning = false
+                           if (e instanceof Error){
+                               step.errorInfo = e.message
+                           }
                            // save exec status
                            await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                            return
+                       }
+                       for (;;) {
+                           receipt = await getTransaction(step.transactionHash,network)
+                           if (receipt) {
+                               if (receipt.status == 0 || receipt.status == undefined ) {
+                                   step.status = "FAILED"
+                                   deployStep.status = "FAILED"
+                                   this.isRunning = false
+                                   // save exec status
+                                   await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                   return
+                               } else {
+                                   break
+                               }
+                           }
+                           if (Date.now() - start > timeOut) {
+                               step.status = "FAILED"
+                               deployStep.status = "FAILED"
+                               this.isRunning = false
+                               // step.errorInfo = "time out"
+                               // save exec status
+                               await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                               return
+                           }
                        }
                        if (step.type == CONSTRUCTOR || step.type == PROXY_CONSTRUCTOR) {
                            // save contract deploy info
@@ -102,6 +137,7 @@ export default class NewEngine {
                        // save exec status
                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                        deployStep.step = stepIndexInStep + 1
+                       await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
                        continue
                    }catch (e) {
                        step.status = "FAILED"
@@ -116,19 +152,17 @@ export default class NewEngine {
                    }
                 }
             }
-            step.status = "RUNNING"
-            deployStep.status = "RUNNING"
-            await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
-            console.info(step.type)
             if(step.type === CONSTRUCTOR){
                 try {
                     console.info("start deploy contract")
                     const params = this.paramReplace(step.params,deployInfo.deployStep)
-                    const deployTransactionResponse= await deployContract(this.provider,abi, bytecode, ...params)
+                    const deployTransaction = await deployContract(this.provider,abi, bytecode, ...params)
+                    step.transactionHash = deployTransaction.hash
+                    await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                    const deployTransactionResponse = await deployTransaction.wait()
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash, abi)
                     deployStep.contract.address = deployTransactionResponse.contractAddress
-                    step.transactionHash = deployTransactionResponse.transactionHash
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
                     // save exec status
@@ -179,6 +213,65 @@ export default class NewEngine {
                         }
                     } else {
                         step.transactionHash = tx.hash
+                        const timeout = 5 * 60 * 1000;
+                        const startTime = Date.now();
+                        for (;;) {
+                            try {
+                                let network = ''
+                                try {
+                                    const networkData = await apiGetNetworkByName(deployParams.network)
+                                    network = networkData.data.rpcUrl
+                                } catch (e) {
+                                    step.status = "FAILED"
+                                    deployStep.status = "FAILED"
+                                    this.isRunning = false
+                                    if (e instanceof Error){
+                                        step.errorInfo = e.message
+                                    }
+                                    // save exec status
+                                    await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                    return
+                                }
+                                const transaction = await getTransaction(tx.hash,network)
+                                if (transaction) {
+                                    if (transaction.status === 0) {
+                                        step.status = "FAILED"
+                                        deployStep.status = "FAILED"
+                                        const data = await getTrans(tx.hash,network)
+                                        if (transaction.gasUsed.toNumber() == data.gasLimit.toNumber()) {
+                                            step.errorInfo = "Error encountered during contract execution [out of gas] "
+                                        } else {
+                                            step.errorInfo = "Error encountered during contract execution [execution reverted]"
+                                        }
+                                        this.isRunning = false
+                                        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                        return
+                                    } else {
+                                        break
+                                    }
+                                }
+                                if (Date.now() - startTime > timeout) {
+                                    step.status = "FAILED"
+                                    deployStep.status = "FAILED"
+                                    this.isRunning = false
+                                    // step.errorInfo = "time out"
+                                    // save exec status
+                                    await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                    return
+                                }
+                            }catch (e) {
+                                step.status = "FAILED"
+                                deployStep.status = "FAILED"
+                                this.isRunning = false
+                                if (e instanceof Error){
+                                    step.errorInfo = e.message
+                                }
+                                // save exec status
+                                await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                                console.log(e)
+                                return
+                            }
+                        }
                     }
                     step.status = "SUCCESS"
                     deployStep.status = "SUCCESS"
@@ -213,7 +306,10 @@ export default class NewEngine {
                     if (contractAddress == null) {
                         throw new Error("No proxy contract address found")
                     }
-                    const deployTransactionResponse = await deployProxyContract(this.provider, abi, bytecode,step.method, params,contractAddress)
+                    const deployProxyTransaction = await deployProxyContract(this.provider, abi, bytecode,step.method, params,contractAddress)
+                    step.transactionHash = deployProxyTransaction.hash
+                    await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
+                    const deployTransactionResponse = await deployProxyTransaction.wait();
                     // save contract deploy info
                     await saveContractDeployInfo(deployParams.projectId,contractBuild.id,deployParams.version,deployParams.network,deployTransactionResponse.contractAddress,deployTransactionResponse.transactionHash,abi)
                     deployStep.contract.address = deployTransactionResponse.contractAddress
@@ -257,8 +353,10 @@ export default class NewEngine {
                 }
             }
             deployStep.step = stepIndexInStep + 1
+            await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
         }
         deployInfo.step = deployInfo.step + 1
+        await saveDeployExec(deployParams.projectId,deployParams.execId,JSON.stringify(deployInfo))
         await this.run(abiMap,deployInfo,deployParams);
     }
 
@@ -272,10 +370,14 @@ export default class NewEngine {
                 if (params[i].startsWith("$")){
                     let contractName = params[i].substring(1).split(".")[0]
                     let attr = params[i].substring(1).split(".")[1]
-                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && (t.contract.name === contractName || contractName.includes(t.contract.name)))
+                    let deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && (t.contract.name === contractName))
                     if(deploy === undefined){
-                        continue
+                        deploy = deployInfo.find((t: DeployStep) => JSON.stringify(t) != "{}" && contractName.includes(t.contract.name))
+                        if(deploy === undefined){
+                            continue
+                        }
                     }
+
                     params[i] = deploy.contract[attr]
                 }
             }
@@ -302,6 +404,10 @@ export default class NewEngine {
         this.isRunning = false;
         console.log("Workflow has been stopped.");
     }
+    public destroy(): void {
+        this.isDestroy = true
+    }
+
 }
 
 export function formatContractList(contractData:any) {

@@ -217,10 +217,7 @@ export async function deployContract(provider: ethers.providers.Web3Provider, ab
   const signer = provider.getSigner()
   let factory = new ethers.ContractFactory(abi, bytecode, signer)
   const contract = await factory.deploy(...args)
-  const deployTransactionResponse = await contract.deployTransaction.wait();
-  console.log(deployTransactionResponse);
-  console.log(contract.address)
-  return deployTransactionResponse
+  return contract.deployTransaction
 }
 
 
@@ -257,15 +254,13 @@ export async function deployProxyContract(provider: ethers.providers.Web3Provide
   }
   const ProxyFactory = new ethers.ContractFactory(ERC1967_ABI, ERC1967_BYTECODE, signer)
   const proxyInstance = await ProxyFactory.deploy(contractAddress, data)
-  const deployTransactionInfo = await proxyInstance.deployTransaction.wait();
   const address = getContractAddress({
     from: await factory.signer.getAddress(),
     nonce: proxyInstance.deployTransaction.nonce,
   })
-  console.log(deployTransactionInfo)
   console.log("getContractAddress: ", address)
 
-  return deployTransactionInfo
+  return proxyInstance.deployTransaction
 }
 
 
@@ -361,4 +356,10 @@ export async function getTransaction(transactionHash:string,rpcUrl:string) {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     const receipt = await provider.getTransactionReceipt(transactionHash);
     return receipt
+}
+
+export async function getTrans(transactionHash:string,rpcUrl:string) {
+  const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+  const transaction = await provider.getTransaction(transactionHash);
+  return transaction
 }

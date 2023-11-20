@@ -1,7 +1,7 @@
 <template>
-    <a-breadcrumb :routes="routes">
+    <a-breadcrumb :routes="routes" :separator="separator">
         <template #itemRender="{ route }">
-            <span v-if="routes.indexOf(route) === routes.length - 1">
+            <span class="font-bold" v-if="routes.indexOf(route) === routes.length - 1">
                 {{ route.breadcrumbName }}
             </span>
             <router-link v-else :to="route.path">
@@ -16,7 +16,11 @@ import { defineProps } from 'vue'
         routes: {
             type: Array,
             default: () => [],
-        },
+      },
+      separator: {
+        type: String,
+          default: '/'
+        }
     });
 </script>
 <style scoped lang="less">

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :footer="null" width="760px" centered="true" v-model:visible="visibleNoSave">
+    <a-modal :footer="null" width="760px" centered="true" v-model:visible="visibleNoSave" :maskClosable="false">
       <!-- <div class="text-[24px] text-[#151210] font-bold">Custom Params</div> -->
       <template #closeIcon>
         <img class="mt-5" src="@/assets/icons/closeIcon.svg" @click="handleCancel" />
@@ -15,7 +15,7 @@
           </div>
           <div class="my-[10px]">
             <div class="bg-[#FFF8EC] rounded-[8px] p-[20px] h-[200px] overflow-y-auto">
-              <div class="font-bold" v-for="(item, key) in noSaveContract" :key="key">- {{ item?.indexOf('(')!='-1' ? item?.slice(0,item?.indexOf('(')):item }}</div>
+              <div class="font-bold" v-for="(item, key) in noSaveContract" :key="key">- {{ item }}</div>
             </div>
           </div>
           <div class="mb-[30px]">

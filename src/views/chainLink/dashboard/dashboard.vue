@@ -6,18 +6,15 @@
         class="border border-solid dark:border-[#434343] border-[#EBEBEB] rounded-[12px] p-[24px] dark:bg-[#36322D] bg-[#ffffff] relative">
         <div class="text-[16px] font-bold mb-[16px]">{{ item }}</div>
 
-        <div v-if="RPCList.length && item === 'RPC'">
-          <div v-for="val in RPCList" :key="val.id" class="box">
-            <div class="name">{{ val.chain }}</div>
-            <div class="network">{{ val.network }}</div>
-            <div class="view open-link-css" @click="networkClick(val)">View</div>
+        <div v-if="item === 'RPC' && rpcSer">
+          <div class="box flex justify-between pb-[14px]">
+            <div>{{ rpcSer }}</div>
+            <div class="open-link-css cursor-pointer" @click="networkClick(rpcSer)">View</div>
           </div>
-
-          <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css" v-if="RPCList.length>4">
+          <div class="flex justify-between w-full mt-[18px] cursor-pointer open-link-css">
             <span @click="goMiwaspaceTab('RPC')">Add service</span>
             <span @click="goRPC">View more</span>
           </div>
-          <div v-else class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('RPC')">Add service</div>
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
@@ -25,7 +22,10 @@
             <div>{{val}}</div>
             <div class="cursor-pointer open-link-css" @click="oracleClick">View</div>
           </div>
-          <div class="text-center mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
+          <div class="flex justify-center">
+            <div class="mt-[18px] cursor-pointer open-link-css" @click="goMiwaspaceTab('Oracle')">Add service</div>
+            <!-- <div class="mt-[18px] cursor-pointer open-link-css" @click="oracleClick">View more</div> -->
+          </div>
         </div>
         <div v-else-if="item === 'Node'">
           <div v-if="JSON.stringify(nodeInfo)=='{}'">
@@ -72,9 +72,10 @@
 <script lang="ts" setup name="Dashboard">
 import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { apiGetMynetwork } from '@/apis/rpcs'
+import { apiGetRpc } from '@/apis/rpcs'
 import { apiGetNodeStatistics } from '@/apis/node'
 import { apiGetIfOpenService } from '@/apis/middleWare'
+import { message } from "ant-design-vue";
 const dashboardList = ref(['RPC','Node', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
 const RPCList = ref<any>([]);
 const nodeInfo = ref<any>({});
@@ -84,29 +85,39 @@ const index = ref()
 // oracle是否开通服务
 const isShowOracle = ref(false)
 const oracleList = ref<any>([])
+// 已经开通 rpc 信息
+const rpcSer = ref('')
+
 const networkClick = (val: any) => {
   console.log('networkClick',val)
-  router.push(`/middleware/dashboard/RPC/rpc-detail/${val.chain}?network=${val.network}&fromDashboard=1`)
+  router.push(`/middleware/dashboard/RPC/home`)
 }
 // more 跳转rpc
 const goRPC = ()=>{
-  router.push('/middleware/dashboard/RPC')
+  router.push('/middleware/dashboard/RPC/versionPlan')
+}
+
+// more 跳转 oracle
+const goOracleMore = ()=>{
+  router.push('')
 }
 
 const oracleClick = () => {
   router.push('/middleware/dashboard/Oracle')
 }
-const getChains = async()=>{
-  const params = {
-    page:1,
-    size:10
-  }
-  const res = await apiGetMynetwork(params)
-  if(res.code===200 && res.data?.length){
-    console.log('getChains',res)
-    RPCList.value = res.data.splice(0,5)
+
+// 获取rpc信息
+const getRpc = async()=>{
+  try {
+    const res = await apiGetRpc()
+    rpcSer.value = res.data
+    console.log('获取rpc信息:',res)
+  } catch (error:any) {
+    // message.error(error)
+    console.log(error)
   }
 }
+
 // 开通服务跳转对应的miwaspace
 const goMiwaspaceTab = (tab:any)=>{
   console.log('goMiwaspaceTab',tab)
@@ -153,7 +164,7 @@ const getNodeStatistics = async()=>{
   }
 }
 onMounted(()=>{
-  getChains()
+  getRpc()
   openService()
   getNodeStatistics();
 })
@@ -163,8 +174,8 @@ onMounted(()=>{
   border-bottom: 1px solid #434343;
 }
 .box div{
-  margin: -5px;
-  left: 5px;
+  // margin: -5px;
+  // left: 5px;
 }
 .name{
   float: left;
