@@ -134,15 +134,16 @@ const deployBtn = async(item: any) => {
 const duplicateBtn = async(item: any) => {
   const en:any = {}
   Object.assign(en, item);
-  let copyNum:any = 0; //记录copy后缀的个数
+  let copyNum: any = 0; //记录copy后缀的个数
+  let copyName = item.name.split('(1)')[0];
   dataList.value.forEach((ele:any) => {
     let list = ele.name.split('(1)');
-    if (list.length - 1 > copyNum) {
+    if (copyName.trim() == list[0].trim() && list.length - 1 > copyNum) {
       copyNum = list.length - 1;
     }
   });
   //重新追加copy后缀
-  en.name =  item.name.split('(1)')[0] + ' (1)';
+  en.name = copyName + ' (1)';
   for (let _i = 0; _i < copyNum; _i++) {
     en.name += '(1)'
   }
