@@ -216,8 +216,8 @@ const getApiKeyInfo = async () => {
           label: item.name,
         });
       });
-      optionParams.value.opApp = res.data.data[res.data.data.length-1].apiKeyId;
-      apIKeyInfo.value = [res.data.data[res.data.data.length-1]];
+      optionParams.value.opApp = res.data.data[0].apiKeyId;
+      apIKeyInfo.value = [res.data.data[0]];
     }
   }
 }
