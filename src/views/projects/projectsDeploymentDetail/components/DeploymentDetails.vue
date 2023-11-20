@@ -159,6 +159,8 @@ const getExecuteInfoById = async () => {
   if(!route.query.executeId) return
   const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
   console.log("根据执行id获取执行信息:", res);
+  console.log("timeStop.value:", timeStop.value);
+  console.log("transactionInfoMap:",transactionInfoMap);
   if (res.code == 200) {
     network.value = res.data.network;
     //设置执行信息数据
@@ -254,7 +256,7 @@ const getTransactionInfoByHash = async (transactionHash: any, key: any, status: 
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
     const res = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
     executeArrange.value[key].transactionInfo = res;
-    transactionInfoMap.set('transactionHash',res); 
+    transactionInfoMap.set(transactionHash,res); 
     console.log('根据transactionHash调的接口返回数据：',executeArrange.value[key].transactionInfo)
   }
   console.log("getTransactionInfoByHash executeArrange:",executeArrange.value);
