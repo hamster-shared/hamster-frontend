@@ -224,7 +224,7 @@ const pagination = reactive({
 
 const addGithubAccount = () => {
   // console.log('jkjkjk')
-  window.addEventListener('message', resetRepositoryData, false)
+  // window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
