@@ -10,11 +10,13 @@ export const optionTime = [
 
 // 设置数据格式
 export const setMillionValue = (value: string) => {
+  if(!value) return
   console.log("value:", value);
   return value.length > 6 ? value.substring(0, value.length - 6) : value
 }
 // 数字没3位加上逗号
 export const setNumberValue = (value: number) => {
+  if(!value) return
   const reg = /(\d)(?=(?:\d{3})+$)/g;
   return value.toString().replace(reg, '$1,');
 }
