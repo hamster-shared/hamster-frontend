@@ -16,10 +16,11 @@
     </div>
     <div v-if="executeArrange.length > 0">
       <a-collapse v-model:activeKey="activeKey">
-        <a-collapse-panel v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index)">
+        <a-collapse-panel v-for="(item,index) in executeArrange" :key="index" :header="item.name?.indexOf('.')!='-1' ? item.name : `Deploy ${item.name}`" @click.stop="getTransactionInfoByHash(item.transactionHash, index, item.status)">
           <template #extra>
             <div class="flex items-center">
-              <div v-if="item.status === 'FAILED'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
+              <div v-if="item.transactionHash" class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionHash)">View on block explorer</div>
+              <div v-if="item.status === 'FAILED' || item.status === 'STOP'" class="text-[#E2B578] font-semibold mr-[20px]" @click.stop="reDeploy">{{item.name?.indexOf('.')!='-1' ? 'Retry':'Redeploy'}}</div>
               <!-- <img :src="getImageURL(`deploy${item.status}.png`)" class="h-[22px] mr-2" /> -->
               <svg-icon :name="`deploy${item.status}`" size="22" class="mr-2 text-[#fff]" />
               <div>{{ item.status }}</div>
@@ -52,7 +53,14 @@
                   <div class="collapse-content-title">To:</div>
                   <div>{{ item.transactionInfo.to }}
                     <svg-icon name="copy" size="18" class="svg-color ml-2"  @click="copyToClipboard(item.transactionInfo.to)"/>
+                    <svg-icon v-if="item.status=='FAILED'" name="warn-failed" size="18" class="svg-color ml-2" />
                   </div>
+                </div>
+                <div v-if="item.status=='FAILED'" class="flex items-center mt-[10px]">
+                  <div class="collapse-content-title"></div>
+                  <div class="text-[#F52222]">
+                    <svg-icon name="icon-include" size="12" class="ml-2 text-[#73706E] mb-[8px]"/>
+                    {{ item.errorInfo }}</div>
                 </div>
                 <div class="flex items-center mt-[10px]">
                   <div class="collapse-content-title">Value:</div>
@@ -67,13 +75,12 @@
                   <div>{{ item.transactionInfo.gasPrice }}</div>
                 </div>
               </div>
-              <div class="text-[#E2B578] text-[14px] font-semibold cursor-pointer mr-[20px]" @click.stop="goTranscationUrl(item.transactionInfo.transactionHash)">View on block explorer</div>
             </div>
-            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[item.errorInfo?'!py-[0px] !text-left':'py-[70px]']">
+            <div v-else class="text-[#666666] text-[18px] font-medium py-[70px] text-center overflow-y-scroll h-[200px] w-[100%] break-word break-all whitespace-normal" :class="[(item.errorInfo && !item.transactionHash)?'!py-[0px] !text-left':'py-[70px]']">
               <label v-if="item.result==0 || item.result" class="text-[#D5D1CA] text-[14px] font-normal">{{item.result}}</label>
-              <label v-else-if="item.errorInfo" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
-              <label v-else-if="!item.transactionHash">NO Data</label>
-              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}" ></LoadingOutlined>
+              <label v-else-if="item.errorInfo && !item.transactionHash" class="text-[#D5D1CA] text-[14px] font-normal">{{item.errorInfo}}</label>
+              <label v-else-if="!item.transactionHash || item.status=='RUNNING'">NO Data</label>
+              <LoadingOutlined v-else-if="item.transactionHash" :style="{fontSize: '50px', color: '#E2B578'}"></LoadingOutlined>
             </div>
           </div>
         </a-collapse-panel>
@@ -104,7 +111,6 @@ const props = defineProps({
     default:''
   }
 })
-const emit = defineEmits(["execStop", "reDeploy"])
 const { version } = toRefs(props)
 
 const theme = useThemeStore();
@@ -134,6 +140,7 @@ const actionOptions = ref([
 ]);
 
 const goPage = (val:string)=>{
+  actionVal.value = 'All Action'
   console.log('goPage', val)
   if(val=='Dashboard'){
     router.push(`/projects/projectsDashboard?id=${route.query.id}`)
@@ -147,6 +154,7 @@ const hideOrchestrationInfo = () => {
 }
 // 根据执行id获取执行信息 
 const getExecuteInfoById = async () => {
+  if(!route.query.executeId) return
   const res = await apiGetExecuteInfoById(route.query.id, route.query.executeId);
   console.log("根据执行id获取执行信息:", res);
   if (res.code == 200) {
@@ -159,7 +167,7 @@ const getExecuteInfoById = async () => {
     } else {
       timer.value = setTimeout(() => {
         getExecuteInfoById();
-    }, 1000)
+    }, 3000)
     }
   }
 }
@@ -216,22 +224,24 @@ const setExecuteInfoList = (arrangeData: any) => {
 }
 // 判断是否继续轮询
 const setTimerByStatus = (status: any) => {
-  if (!timeStop.value) {
+  // debugger
+  // if (!timeStop.value) {
     //有一条数据的状态是 stop 或 failed 则停止轮询
     if (status == 'STOP' || status == 'FAILED') {
       timeStop.value = true; //停止轮询
+      return
     } else if (status == 'PENDING' || status == 'RUNNING') {
       timeStop.value = false; //继续轮询
     } else if (status == 'SUCCESS') {
       statusSucNum.value++;
     }
-  }
+  // }
 }
 
 // 获取单个合约的执行信息
-const getTransactionInfoByHash = async (transactionHash: any, key: any) => {
+const getTransactionInfoByHash = async (transactionHash: any, key: any, status: string) => {
   // 如果没有hash 不调接口
-  if(!transactionHash){
+  if(!transactionHash || status== 'RUNNING'){
     return
   }
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
@@ -267,12 +277,11 @@ const goTranscationUrl = (transactionHash:any)=>{
 
 // 停止部署，执行引擎
 const stop = ()=>{
-  emit('execStop')
+  newEngine.stop()
 }
 
 // 重新部署，执行引擎
 const reDeploy = async()=>{
-  // emit('reDeploy')
   const executeId = route.query.executeId
   const projectId = route.query.id
   const res = await apiGetExecuteInfoById(projectId,executeId)
@@ -294,6 +303,28 @@ const reDeploy = async()=>{
   }
 }
 
+const execDeploy = async () => {
+  const executeId = route.query.executeId
+  const projectId = route.query.id
+  const res = await apiGetExecuteInfoById(projectId,executeId)
+  if (res.code === 200) {
+    let execJson:DeployRecord = JSON.parse(res.data.arrangeProcessData)
+    const execStatus = execJson.deployStep.some(item => item && (item.status === "FAILED" || item.status === "STOP"))
+    const allSuccess = execJson.deployStep.every(item => item && item.status === "SUCCESS")
+    if (!execStatus && !allSuccess) {
+      const { data } = await apiGetProjectsContract({ id: projectId, version: route.query.version});
+      const contractMap = formatContractList(data)
+      let deployParams = {
+        projectId:projectId,
+        execId: executeId,
+        version: route.query.version,
+        network: res.data.network,
+      }
+      newEngine.start(contractMap,execJson,deployParams)
+    }
+  }
+}
+
 watch(
   () => props.version,
   async (value) => {
@@ -306,10 +337,12 @@ onMounted(async () => {
   // 根据执行id获取执行信息
   await getExecuteInfoById();
   await getNetworkByName()
+  await execDeploy()
 });
 
 onUnmounted(() => {
   clearTimeout(timer.value);
+  newEngine.destroy()
 })
 </script>
 <style scoped lang="less">

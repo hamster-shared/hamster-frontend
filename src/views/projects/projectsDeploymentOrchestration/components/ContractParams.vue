@@ -3,19 +3,19 @@
     <div class="text-[24px] font-bold">Contract Parameters</div>
     <div class="mb-[20px] text-[16px] text-[#73706E] dark:text-[#E0DBD2]">Parameters the contract specifies to be passed in during deploymrnt
     </div>
-    <div v-if="selectedName">
+    <div v-if="inputData.length > 0">
       <a-form ref="formContractRef" :rules="formRules" :model="formData" layout="vertical">
         <div v-for="(item, key) in inputData" :key="key">
           <div class="grid grid-cols-2 gap-4" v-if="item.type == 'address'">
             <a-form-item :label="item.name" :name="item.name+'param'" :rules="[{ required: true }]" >
-              <a-select @change="checkFiledChange" v-model:value="formData[item.name+'param']" 
+              <a-select @change="checkFiledChange();formData[item.name]=''" v-model:value="formData[item.name+'param']" 
                 placeholder="Select project contract" :options="paramList">
               </a-select>
             </a-form-item>
             <a-form-item class="form-noLabel" :name="item.name" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
               <a-select v-if="formData[item.name+'param'] == 1" v-model:value="formData[item.name]" @change="checkFiledChange"
-                placeholder="Contract Address" :options="contractOrchestration.map((opItem:any) => ({ value: opItem.name, label:opItem.name.indexOf('(')!='-1' ? opItem.name?.slice(0,opItem.name.indexOf('(')):opItem.name }))">
+                placeholder="Contract Address" :options="contractOrchestration.map((opItem:any) => ({ value: opItem.name, label:opItem.name }))">
               </a-select>
               <a-input v-else @change="checkFiledChange" v-model:value="formData[item.name]" :placeholder="'Please input ' + item.type" autoComplete="off" allowClear />
             </a-form-item>  
@@ -64,7 +64,7 @@ const formRules = computed(() => {
   // };
 });
 
-const checkFiledChange = (val:any) => {
+const checkFiledChange = () => {
   isChange.value = true;
 }
 

@@ -12,30 +12,14 @@
 
     <div>
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
-        <div>
-          <img :src="item.image" class="h-6"/>
-          <span class="ml-2 text-base font-bold align-middle">{{item.fullname}}</span>
-        </div>
-        <div class="flex justify-between text-sm">
-          <div class="flex flex-col" v-if="parseInt(item.chainID, 16)">
-            <span class="inline-block mb-2.5 mt-5">Chain ID</span>
-            <span class="self-center">{{ parseInt(item.chainID, 16) }}</span>
+        <div class="flex justify-between items-center mb-[100px]">
+          <div>
+            <img :src="item.ecosystemIcon" class="h-[50px] "/>
+            <span class="ml-[20px] text-[21px] font-bold align-middle">{{item.ecosystemName}}</span>
           </div>
-          <div class="flex flex-col">
-            <span class="inline-block mb-2.5 mt-5">Currency</span>
-            <span class="self-center">{{ item.nativeToken }}</span>
-          </div>
+          <div class="ml-[20px] text-[18px] font-medium">{{ item.ecosystemCode }}</div>
         </div>
-        <div>
-          <div class="my-5 text-sm">RPC URL</div>
-          <a-input placeholder="*********" v-model:value="item.httpAddress" disabled="true">
-            <template #suffix>
-              <img v-if="item.httpAddress" class="cursor-pointer" src="@/assets/svg/miwaspace-copy.svg" @click="copyInfo(item.httpAddress)"/>
-              <!-- <span v-if="item.httpAddress" class="cursor-pointer text-[#E2B578] pl-1" @click="copyInfo(item.httpAddress)">Copy</span> -->
-            </template>
-          </a-input>
-        </div>
-        <a-button class="w-full mt-5 !h-[43px]" @click="handleOpenRpcService(item.name,item.network,item.userActive)">{{item.userActive ? 'Enter Now':'Get Service Now'}}</a-button>
+        <a-button class="w-full !h-[43px]" @click="handleOpenRpcService(item.buyFlag)">{{ item.buyFlag ? 'View more' : 'Start for Free' }}</a-button>
       </div>
     </div>
 
@@ -46,8 +30,7 @@
   import { toRefs, onMounted,ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
-  import { apiPostCustomerOpenService } from '@/apis/middleWare'
-  import type { projectsParams } from "@/apis/utils/chainlinkInterface";
+  import { apiGetZanUserAuthed, apiGetZanAuthUrl } from "@/apis/middlewareRPC"
 
   const router = useRouter()
   const props = defineProps({
@@ -55,47 +38,49 @@
   })
   const { rpcPageInfo } = toRefs(props)
 
-  const copyInfo = async (_items: any) => {
-  let inp = document.createElement("input");
-  document.body.appendChild(inp);
-  inp.value = _items;
-  inp.select();
-  document.execCommand("copy", false);
-  inp.remove();
-  message.success('copy success')
-}
-// 开通rpc需要调接口
-const handleOpenRpcService = async(chain:string,network:string,userActive:boolean)=>{
-  if(userActive){
-    // 跳rpc-detail
-    router.push(`/middleware/dashboard/RPC/rpc-detail/${chain}?fromMiwaspace=1`)
-  }else{
-    // 跳rpc的折线图
-    try {
-      const params:projectsParams = {
-        chain:chain,
-        network:network
+const openAppModal = async () => {
+  const authedData = await apiGetZanUserAuthed()
+  if(authedData.data){
+      router.push('/middleware/dashboard/RPC/home')
+  }else {
+      let url = ""
+      try{
+        const authUrlResp = await apiGetZanAuthUrl()
+        url = authUrlResp.data
+      }catch (e) {
+          return
       }
-      const { data } = await apiPostCustomerOpenService('rpc',params)
-      console.log('handleOpenRpcService-data:', data)
-      router.push('/middleware/dashboard/rpc')
-    } catch(err:any) {
-      console.log('handleOpenRpcService-err:', err)
-    }
+      const myWindow = window.open(url, 'login-zan', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+      myWindow?.focus()
+      // router.push(`/middleware/dashboard/rpc/zan/auth?authCode=${}`)
+      // router.push('/middleware/dashboard/RPC/home')
+  }
+}
+
+// 开通rpc需要调接口
+const handleOpenRpcService = async(buyFlag:boolean)=>{
+  if(buyFlag){
+    router.push(`/middleware/dashboard/RPC/home`);
+  }else{
+    openAppModal()
   }
 }
 
 </script>
 
-<style lang="less" scoped>
+<style scoped>
   .ethereum-container {
+    @apply dark:bg-[#10100F];
     display: inline-block;
-    height: 326px;
-    min-width: 300px;
+    /* // height: 326px; */
+    min-width: 400px;
     padding: 30px;
-    background: rgba(226,181,120,0.1);
+    background: #F3F3F3;
     border-radius: 12px;
-    border: 1px solid #EBEBEB;
     margin: 10px;
+    border: 1px solid transparent;
+  }
+  .ethereum-container:hover{
+    border: 1px solid #E2B578;
   }
 </style>

@@ -22,9 +22,9 @@
       </div>
       <a-form ref="formInvokeRef" :rules="formRules" :model="methodItem.formData" layout="vertical">
         <div class="grid grid-cols-2 gap-4">
-          <a-form-item name="methodName" label="Method Name1111" :rules="[{ required: true }]">
+          <a-form-item name="methodName" label="Method Name" :rules="[{ required: true }]">
             <a-select v-model:value="methodItem.formData.methodName" @select="changeMethodName($event, methodKey)" 
-              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label:item.name.indexOf('(')!='-1' ? item.name?.slice(0,item.name.indexOf('(')):item.name }))">
+              placeholder="Contract Address" :options="contractOrchestration.map((item: any) => ({ value: item.name, label: item.name }))">
             </a-select>
           </a-form-item>
           <a-form-item class="form-noLabel" name="methodType" :rules="[{ required: true }]">
@@ -37,14 +37,14 @@
             v-for="(item, key) in methodMap.get(methodItem.formData.methodName).inputData[methodItem.formData.methodType]" :key="key">
           <div class="grid grid-cols-2 gap-4" v-if="item.type == 'address'">
             <a-form-item :label="item.name" :name="item.name + 'param'" :rules="[{ required: true }]" >
-              <a-select v-model:value="methodItem.formData[item.name + 'param']"  @change="checkFiledChange"
+              <a-select v-model:value="methodItem.formData[item.name + 'param']"  @change="checkFiledChange();methodItem.formData[item.name]=''"
                 placeholder="Select project contract" :options="paramList">
               </a-select>
             </a-form-item>
             <a-form-item class="form-noLabel" :name="item.name" :rules="[{ required: true }]">
               <label class="text-[#73706E] dark:text-[#C0BCB4] absolute -top-[30px] right-0">Address</label>
               <a-select @change="checkFiledChange" v-if="methodItem.formData[item.name + 'param'] == 1" v-model:value="methodItem.formData[item.name]"  
-                placeholder="Contract Address" :options="contractOrchestration.map((opItem: any) => ({ value: opItem.name, label:opItem.name.indexOf('(')!='-1' ? opItem.name?.slice(0,opItem.name.indexOf('(')):opItem.name }))">
+                placeholder="Contract Address" :options="contractOrchestration.map((opItem: any) => ({ value: opItem.name, label:opItem.name }))">
               </a-select>
               <a-input @change="checkFiledChange" v-else v-model:value="methodItem.formData[item.name]" :placeholder="'Please input ' + item.type" autoComplete="off" allowClear />
             </a-form-item>  
@@ -57,7 +57,7 @@
           <span class="custom-edit" @click="editCustom(methodItem.formData.customParams, methodKey)">Edit</span>
           <a-textarea disabled="true" v-model:value="methodItem.formData.customParams" :rows="4" placeholder="please inter a value" />
         </a-form-item>
-        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
+        <CustomParamsmodal :methodName="methodItem.formData.methodName" :methodType="methodItem.formData.methodType" :customParams="methodItem.formData.customParams" :visible="methodItem.formData.visible" :methodKey="methodKey" @showContract="methodItem.formData.visible = false" @doneSecret="doneSecret" />
       </a-form>
     </div>
     <div @click="moreContractMethod" 
@@ -146,12 +146,12 @@ const changeMethodName = async(val: any, methodKey: number) => {
   methodList.value[methodKey].formData.methodType = '';
   methodList.value[methodKey].formData.address = '';
   methodList.value[methodKey].formData.customParams = '';
-  console.log(222222222222,contractOrchestration.value)
+  // console.log(222222222222,contractOrchestration.value)
   if (!methodMap.value.get(val)) {
-    const res = await apiGetAbiInfobyId(route.query.id,'','')
+    // const res = await apiGetAbiInfobyId(route.query.id,'','')
     contractOrchestration.value.forEach((element: any) => {
       if (element.name === val) {
-        console.log(1231123123123,element.abiInfo)
+        // console.log(1231123123123,element.abiInfo)
         emits('setAbiInfo', element.abiInfo, val, 'method');
       }
     });

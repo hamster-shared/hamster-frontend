@@ -98,7 +98,7 @@ const commonFirst = () => {
     } else {
       inputs.value = sendAbis[0]?.inputs;
       outputs.value = sendAbis[0]?.outputs
-      payable.value = sendAbis[0]?.stateMutability === 'payable'
+      payable.value = sendAbis[0]?.stateMutability === 'payable' 
     }
     buttonInfo.value = 'Transact'
   } else if (sendAbis.length <= 0 && callAbis.length > 0) {
@@ -109,7 +109,7 @@ const commonFirst = () => {
     } else {
       inputs.value = callAbis[0]?.inputs;
       outputs.value = callAbis[0]?.outputs;
-      payable.value = callAbis[0]?.stateMutability === 'payable'
+      payable.value = callAbis[0]?.stateMutability === 'payable' || callAbis[0]?.stateMutability === 'pure'
     }
     buttonInfo.value = 'Call'
   } else {
@@ -229,7 +229,7 @@ onMounted(() => {
       if (item.type === "function") {
         if (!item.stateMutability || item.stateMutability === 'nonpayable' || item.stateMutability === 'payable') {
           sendAbis.push(item)
-        } else if (item.stateMutability === 'view' || item.stateMutability === 'constant') {
+        } else if (item.stateMutability === 'view' || item.stateMutability === 'constant' || item.stateMutability === 'pure') {
           callAbis.push(item)
         }
       }

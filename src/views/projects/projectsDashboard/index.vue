@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useRoute, useRouter } from 'vue-router';
 import { message } from 'ant-design-vue';
 import { apiGetProjectsDetail } from '@/apis/projects'
@@ -138,6 +138,7 @@ const getList = async()=>{
   const res = await apiGetExecuteInfoList(route.query.id,versionvValue.value)
   try {
     dataSource.value = res.data
+    splitDataSource();
   } catch (error:any) {
     message.error(error)
   }
@@ -157,7 +158,6 @@ const getProjectsVersion = async () => {
 onMounted(async () => {
   await getProjectsVersion()
   await getList()
-  splitDataSource();
   await getContactDetail()
   initBreadCrumb()
 })

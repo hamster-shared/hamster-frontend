@@ -28,6 +28,11 @@ interface SingleContractInfo {
   originalArrange: any
 }
 
+interface getSingleContractArrange extends projectParmams{
+  contractId: string,
+  contractName: string
+}
+
 // interface pageList {
 //     page:number;
 //     size:number;
@@ -129,10 +134,11 @@ export function apiSaveSingleContractInfo(id: string, params: SingleContractInfo
 }
 
 // 获取单个合约的最新编排信息
-export function apiGetSingleContractInfo(id: string, projectId: string, contractId: number, contractName: string, version: string) {
+export function apiGetSingleContractInfo(id: string, params: getSingleContractArrange) {
   return httpRequest({
-    url: `/api/projects/${id}/arrange/contract/name?projectId=${projectId}&contractId=${contractId}&contractName=${contractName}&version=${version}`,
-    method: "get",
+    url: `/api/projects/${id}/arrange/contract/name`,
+    data: params,
+    method: "post",
   })
 }
 
