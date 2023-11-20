@@ -133,9 +133,21 @@ const deployBtn = async(item: any) => {
 // copy 一份
 const duplicateBtn = async(item: any) => {
   const en:any = {}
-  Object.assign(en,item)
-  const flag = uuidv4();
-  en.name = en.name+` copy #${flag.slice(0,8)}`
+  Object.assign(en, item);
+  let copyNum:any = 0; //记录copy后缀的个数
+  dataList.value.forEach((ele:any) => {
+    let list = ele.name.split('(1)');
+    if (list.length - 1 > copyNum) {
+      copyNum = list.length - 1;
+    }
+  });
+  //重新追加copy后缀
+  en.name =  item.name.split('(1)')[0] + ' (1)';
+  for (let _i = 0; _i < copyNum; _i++) {
+    en.name += '(1)'
+  }
+  // const flag = uuidv4();
+  // en.name = en.name+` copy #${flag.slice(0,8)}`
   dataList.value.push(en)
   await getUseAndNotContractArr()
   emit('getProjectsContractName')

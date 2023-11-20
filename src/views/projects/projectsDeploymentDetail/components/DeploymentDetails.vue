@@ -121,6 +121,8 @@ const showOrchestrationInfo = ref(false)
 const orchestrationInfo = ref<any>();
 //获取执行信息 
 const executeArrange = ref<any>([]);
+// 记录 transaction 查询的信息
+const transactionInfoMap = new Map();
 // 跳转第三方网址base url
 const blockExplorerUrl = ref('')
 // 点击单个列表查询信息所需的参数
@@ -198,7 +200,10 @@ const setExecuteInfoList = (arrangeData: any) => {
           params.transactionHash = item.transactionHash || '';
           params.status = item.status;
           params.result=item.result;
-          params.errorInfo=item.errorInfo
+          params.errorInfo = item.errorInfo;
+          if (params.transactionHash != '') {
+            params.transactionInfo = transactionInfoMap.get(item.transactionHash) || {};
+          }
         }
         
         if (item.type == "function") {  
@@ -210,6 +215,9 @@ const setExecuteInfoList = (arrangeData: any) => {
             transactionInfo: {},
             result:item.result,
             errorInfo:item.errorInfo
+          }
+          if (params.transactionHash != '') {
+            params.transactionInfo = transactionInfoMap.get(item.transactionHash) || {};
           }
           executeArrange.value.push(params);
         }
@@ -225,7 +233,7 @@ const setExecuteInfoList = (arrangeData: any) => {
 // 判断是否继续轮询
 const setTimerByStatus = (status: any) => {
   // debugger
-  // if (!timeStop.value) {
+  if (!timeStop.value) {
     //有一条数据的状态是 stop 或 failed 则停止轮询
     if (status == 'STOP' || status == 'FAILED') {
       timeStop.value = true; //停止轮询
@@ -235,9 +243,8 @@ const setTimerByStatus = (status: any) => {
     } else if (status == 'SUCCESS') {
       statusSucNum.value++;
     }
-  // }
+  }
 }
-
 // 获取单个合约的执行信息
 const getTransactionInfoByHash = async (transactionHash: any, key: any, status: string) => {
   // 如果没有hash 不调接口
@@ -246,7 +253,8 @@ const getTransactionInfoByHash = async (transactionHash: any, key: any, status: 
   }
   if (transactionHash != "" && activeKey.value.indexOf(key.toString()) > -1) {
     const res = await getTransactionInfo(transactionHash, rpcUrl.value, symbol.value);
-    executeArrange.value[key].transactionInfo = res
+    executeArrange.value[key].transactionInfo = res;
+    transactionInfoMap.set('transactionHash',res); 
     console.log('根据transactionHash调的接口返回数据：',executeArrange.value[key].transactionInfo)
   }
   console.log("getTransactionInfoByHash executeArrange:",executeArrange.value);

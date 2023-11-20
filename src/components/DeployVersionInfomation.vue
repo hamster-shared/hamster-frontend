@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="mt-[32px] mb-[20px]">Contract Version</div>
-    <a-select ref="select" v-model:value="selectedVersion" style="width: 50%"
+    <a-select ref="select" v-model:value="selectedVersion" style="width: 50%" !disabled="route.query?.version"
       :options="versionList.map(item => ({ value: item }))" @select="getSourceInfo">
     </a-select>
     <div class="text-[16px] font-bold mt-[30px] mb-[20px]">Source Info</div>
