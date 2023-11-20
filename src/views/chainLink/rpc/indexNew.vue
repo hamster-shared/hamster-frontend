@@ -224,6 +224,7 @@ const getApiKeyInfo = async () => {
 
 // 获取折线图和圆饼图数据
 const getMainChain = async () => {
+  mainChart.value = {};
   let res = await apiZanApiKeyRequestStats(optionParams.value.opApp, optionParams.value.opDay, optionParams.value.opChain);
 
   console.log("res:", res);

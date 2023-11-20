@@ -93,6 +93,7 @@ const getEcosystems = async () => {
 
 // 获取 Credit Cost(Last 24 hours) 图表数据
 const getCreditCostData = async () => {
+  creditCostData.value = {};
   let res = await apiZanApiKeyCreditCost(apiKeyId);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
@@ -140,6 +141,7 @@ const getRequestActivity = () => {
 
 // 获取 Requests Origin 数据
 const getRequestOriginData = async () => {
+  requestOriginData.value = {};
   let res = await apiZanApiKeyRequestOriginStats(apiKeyId, originParam.value.time);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
