@@ -16,7 +16,8 @@ const getUserInfoData = async () => {
   console.log(data, 'data')
   if (data) {
     localStorage.setItem('userInfo', JSON.stringify(data));
-    console.log(data, '更新的userInfo， 有username吗？')
+    localStorage.setItem('test', 'test connect gIthub后更新的userInfo')
+    console.log(data, 'connect gIthub后更新的userInfo， 有username吗？')
     window.close();
     window.opener.location.reload();
   }

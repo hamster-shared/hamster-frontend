@@ -7,12 +7,8 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { getUserInfo } from "@/apis/login";
 const router = useRouter();
 const setupAction = ref('');
-const loginType = ref();
-const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
-const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
 
 
 // const initGithubInstallAuth = async () => {
@@ -61,20 +57,6 @@ onMounted(() => {
   setupAction.value = router.currentRoute.value.query?.setup_action || '';
   console.log(setupAction.value, 'setupAction value')
   checkSetupAction()
-
-  // if (loginType.value == 2) {
-  //   getUserInfoData();
-  // }
-  // let token = localStorage.getItem('token') || '';
-  // let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-  // console.log(loginData, '回调页看登录')
-  // loginType.value = loginData.loginType;
-  // if (loginType.value === 1) {
-  //   checkSetupAction()
-  // } else {
-  //   initGithubInstallAuth()
-  // }
-
 })
 </script>
 
