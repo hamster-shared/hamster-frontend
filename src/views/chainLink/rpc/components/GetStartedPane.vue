@@ -6,12 +6,12 @@
       <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard(apiKeyId)" />
     </div>
   </div>
-  <div v-if="apiKeyDetailList.length > 0">
+  <div v-if="apiKeyDetailList.length > 0" class="grid grid-cols-3 gap-[10px]">
     <div class="ethereum-container" v-for="(item,key) in apiKeyDetailList" :key="key">
       <div class="flex justify-between items-center">
         <div class="flex justify-between items-center">
           <img :src="item.ecosystemIcon" class="h-[50px]">
-          <label class="font-bold text-[21px] ml-[10px]">{{ item.ecosystemName }}</label>
+          <label class="font-bold text-[21px] mx-[10px] max-w-[120px]">{{ item.ecosystemName }}</label>
         </div>
         <a-dropdown>
           <label class="cursor-pointer text-[16px] flex justify-between items-center" @click.prevent>
@@ -82,12 +82,12 @@ onMounted(() => {
 <style scoped>
 .ethereum-container {
   @apply dark:bg-[#10100F];
-  display: inline-block;
-  min-width: 350px;
+  /* display: inline-block;
+  min-width: 300px; */
   padding: 20px;
   background: #F3F3F3;
   border-radius: 12px;
-  margin: 5px;
+  /* margin: 5px; */
   border: 1px solid transparent;
 }
 .ethereum-container:hover{
