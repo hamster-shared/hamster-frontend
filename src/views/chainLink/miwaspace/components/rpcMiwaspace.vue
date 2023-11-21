@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="grid grid-cols-3 gap-[10px]">
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div class="flex justify-between items-center mb-[100px]">
           <div>
@@ -71,13 +71,13 @@ const handleOpenRpcService = async(buyFlag:boolean)=>{
 <style scoped>
   .ethereum-container {
     @apply dark:bg-[#10100F];
-    display: inline-block;
+    /* display: inline-block; */
     /* // height: 326px; */
-    min-width: 400px;
+    /* min-width: 400px; */
     padding: 30px;
     background: #F3F3F3;
     border-radius: 12px;
-    margin: 10px;
+    /* margin: 10px; */
     border: 1px solid transparent;
   }
   .ethereum-container:hover{
