@@ -61,7 +61,7 @@
         </div>
 
       </div>
-      <div class="center">
+      <div class="center dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343]">
         <div class="grid grid-cols-4 gap-4">
           <div>
             <div class="text-[16px] font-bold">Code Repository</div>
@@ -75,6 +75,7 @@
             <div v-if="projectType === '1'">
               <div>
                 <div class="inline-block cursor-pointer open-link-css" @click="openInChainIDE(viewInfo)">
+                  <svg-icon name="external-link" size="18" class="mr-2" />
                   <span>Open with ChainIDE</span>
                 </div>
               </div>
@@ -1036,4 +1037,5 @@ html[data-theme='light'] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}</style>
+}
+</style>

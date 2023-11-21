@@ -20,10 +20,12 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router"
 const router = useRouter();
 // import.meta.env.VITE_BASE_API
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const closeBtn = () => {
   const opener = window.opener
-  opener.postMessage('message', '*');
+  // opener.postMessage('message', apiUrl.value);
   window.close();
+  opener.location.reload();
 }
 </script>
 
