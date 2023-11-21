@@ -117,7 +117,7 @@ export function formatDateToLocale(datetime: any) {
 export const formatToDate = formatDate;
 export const dateUtil = dayjs;
 
-export function formatTimeToHM(time: number) {
+export function formatTimeToHM(time: number, format = 'hm') {
   // time 只有10位，需要 * 1000
   const date = time.toString().length === 10 ? new Date(time * 1000) : new Date(time);
   const year = date.getFullYear();
@@ -126,6 +126,10 @@ export function formatTimeToHM(time: number) {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  return `${hours}:${minutes}`;
+  let value = `${hours}:${minutes}`;
+  if (format == 'md') {
+    value = `${month}-${day}`;
+  }
+  return value;
 
 }

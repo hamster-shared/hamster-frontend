@@ -50,6 +50,15 @@ const middlewareRoute = [
             }
           },
           {
+            path: "/middleware/dashboard/RPC/myapp",
+            name: "Apps",
+            component: () => import('@/views/chainLink/rpc/myApp.vue'),
+            meta: {
+              isShow: true,
+              sidebarMap: ['Apps'],
+            }
+          },
+          {
             path: "/middleware/dashboard/RPC/Billing",
             name: "Billing",
             key: 'RPCBilling',
@@ -61,7 +70,7 @@ const middlewareRoute = [
           },
           {
             path: "/middleware/dashboard/RPC/versionPlan",
-            name: "versionPlan",
+            name: "Pricing",
             key: 'RPCVersionPlan',
             component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
             meta: {
@@ -70,19 +79,11 @@ const middlewareRoute = [
             },
           },
           {
-            path: "/middleware/dashboard/RPC/myapp",
-            name: "Apps",
-            component: () => import('@/views/chainLink/rpc/myApp.vue'),
-            meta: {
-              isShow: true,
-              sidebarMap: ['Apps'],
-            }
-          },
-          {
             path: "/middleware/dashboard/RPC/myapp/detail",
             name: "Detail",
             component: () => import('@/views/chainLink/rpc/appDetail.vue'),
             meta: {
+              // isShow: true,
               sidebarMap: ['Apps'],
             }
           },

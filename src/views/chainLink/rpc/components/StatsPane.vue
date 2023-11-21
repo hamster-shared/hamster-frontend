@@ -122,7 +122,12 @@ const getRequestData = async () => {
     let valueX: any = []; 
     let valueNum: any = [];
     res.data.map((item: any) => {
-      valueX.push(formatTimeToHM(item.dataTime));
+      if (requestParam.value.time == 'STAT_7_DAY' || requestParam.value.time == 'STAT_1_MONTH') {
+        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
+      } else {
+        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+      }
+      
       valueNum.push(item.num);
     });
     requestData.value = {
@@ -145,18 +150,21 @@ const getRequestOriginData = async () => {
   let res = await apiZanApiKeyRequestOriginStats(apiKeyId, originParam.value.time);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
-    let valueTotalNum: any = [];
     let valueHttpsNum: any = []; //多条数据可依次声明添加
     let valueWssNum: any = [];
     res.data.map((item: any) => {
-      valueX.push(formatTimeToHM(item.dataTime));
-      valueTotalNum.push(item.totalNum);
+      if (originParam.value.time == 'STAT_7_DAY' || originParam.value.time == 'STAT_1_MONTH') {
+        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
+      } else {
+        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+      }
+      
       valueHttpsNum.push(item.httpsNum);
       valueWssNum.push(item.wssNum);
     });
     requestOriginData.value = {
       valueX: valueX,
-      valueY: { 'totalNum': valueTotalNum, 'httpsNum': valueHttpsNum, 'wssNum': valueWssNum },
+      valueY: { 'httpsNum': valueHttpsNum, 'wssNum': valueWssNum },
     };
   } else {
     requestOriginData.value = {};
