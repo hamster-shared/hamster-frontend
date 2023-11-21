@@ -70,12 +70,12 @@
                 <span>Signed in as </span>
                 <span class="font-bold">{{ username }}</span>
               </div>
-              <div v-if="loginType == 2 && userId" class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
+              <div v-if="loginType == 2 && username" class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
                 <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                 <span>Signed in as </span>
                 <span class="font-bold">{{ username }}</span>
               </div>
-              <a-menu-item class="" v-if='loginType == 2 && !userId'>
+              <a-menu-item class="" v-if='loginType == 2 && !username'>
                 <div class="py-[4px]" @click="githubInstall">
                   <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                   Connect Github
@@ -152,7 +152,6 @@ const userInfo = localStorage.getItem('userInfo');
 console.log(JSON.parse(userInfo), 'userInfo')
 const githubAvatarUrl = ref('');
 const username = ref('');
-const userId = ref('');
 // const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
 // const username = JSON.parse(userInfo)?.username || '';
 const isShowMiddleware = ref(false)
@@ -248,11 +247,8 @@ onMounted(() => {
     console.log(loginData, '回调页看登录')
     loginType.value = loginData.loginType;
     if (loginType.value == 2) {
-      userId.value = JSON.parse(userInfo)?.userId || '';
       let walletAccount = window.localStorage.getItem("walletAccount") || ''
-      if (userId.value && userId.value != 0) {
-        username.value = JSON.parse(userInfo)?.username || '';
-      }
+      username.value = JSON.parse(userInfo)?.username || '';
       avatarURL.value = generateAvatarURL(walletAccount)
     } else {
       githubAvatarUrl.value = JSON.parse(userInfo)?.avatarUrl || '';

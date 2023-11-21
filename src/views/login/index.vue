@@ -118,7 +118,7 @@ const getUserInfoData = async () => {
   try {
     const { data } = await getUserInfo();
 
-    console.log(data)
+    console.log(data, 'data125678')
     if (data.userId == 0) {
       localStorage.setItem('userInfo', JSON.stringify(data));
       commonJump()
