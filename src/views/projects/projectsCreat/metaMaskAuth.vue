@@ -43,9 +43,6 @@ const initGithubInstallAuth = async () => {
   }
 }
 
-
-
-
 onMounted(() => {
   initGithubInstallAuth()
 })
