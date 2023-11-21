@@ -91,7 +91,7 @@
           </div>
         </div>
       </div>
-      <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div>
+      <!-- <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div> -->
     </div>
   </div>
   <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal" @refreshApps="getApiKeyInfo"></CreateAppModal>
