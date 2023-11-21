@@ -4,7 +4,7 @@
     <div class="border border-solid border-[#EBEBEB] rounded-[12px] dark:border-[#434343] p-[30px]">
       <div class="text-[36px] font-black text-[#E2B578] text-center mt-[20px]">Your Plan</div>
       <div class="text-[21px] text-center mb-[50px]">Manage your subscription</div>
-      <div class="">
+      <div class="grid grid-cols-3 gap-[10px]">
         <div class="card-div">
           <div class="card-title">Usage</div>
           <div class="card-content">
@@ -22,7 +22,7 @@
         </div>
         <div class="card-div">
           <div class="card-title">Free</div>
-          <div class="card-content">
+          <div class="card-content relative">
             <div v-if="userPlan.totalCredit">
               <label class="font-bold">· {{ setMillionValue(userPlan.totalCredit.toString()) }}</label>
               <label class="font-light"><label v-if="userPlan.totalCredit.toString().length > 6"> million</label> credits/mo</label><!--million-->
@@ -39,7 +39,9 @@
               <label class="font-bold">· </label>
               <label class="font-light"> Archive data access</label>
             </div>
-            <a-button type="primary" class="!h-[42px] !w-full mt-[50px]">Upgrade</a-button>
+            <div class="absolute bottom-[30px] left-[30px] right-[30px]">
+              <a-button type="primary" class="!h-[42px] !w-full ">Upgrade</a-button>
+            </div>
           </div>
         </div>
         <div class="card-div">
@@ -91,10 +93,12 @@ onMounted(() => {
 </script>
 <style scoped>
 .card-div{
-  display: inline-block;
-  margin: 10px;
-  min-width: 320px;
-  width: 31%;
+  /* display: inline-block; */
+  /* margin: 10px; */
+  margin-top: 10px;
+  margin-bottom: 10px;
+  /* min-width: 200px;
+  width: 32%; */
   vertical-align: top;
   border-radius: 12px;
   border: 1px solid transparent;
@@ -107,7 +111,7 @@ onMounted(() => {
   border-radius: 12px 12px 0 0;
 }
 .card-content{
-  @apply bg-[#F3F3F3] dark:bg-[#10100F] p-[30px] h-[300px];
+  @apply bg-[#F3F3F3] dark:bg-[#10100F] p-[30px] h-[320px];
   border-radius: 0 0 12px 12px;
 }
 .sub-title{

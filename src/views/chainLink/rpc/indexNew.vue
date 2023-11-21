@@ -91,7 +91,7 @@
           </div>
         </div>
       </div>
-      <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div>
+      <!-- <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div> -->
     </div>
   </div>
   <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal" @refreshApps="getApiKeyInfo"></CreateAppModal>
@@ -165,7 +165,7 @@ const goBilling = ()=>{
 
 // 跳转 versionPlan
 const goVersionPlan = ()=>{
-  router.push('/middleware/dashboard/RPC/versionPlan')
+  router.push('/middleware/dashboard/RPC/pricing')
 }
 // 获取 Credit Cost(Last 24 hours) 图表数据
 const getCreditCostLastData = async () => {
