@@ -317,7 +317,7 @@ const adjustGithubPremission = () => {
 const selectGithubAccount = (item: any) => {
   console.log(item, '9090')
   // installationsData.value = item;
-  selectValue = item.name;
+  selectValue.value = item.name;
   selectAvatarUrl.value = item.avatarUrl;
   selsectInstallId.value = item.installId;
   repositorySelection.value = item.repositorySelection;
