@@ -113,7 +113,7 @@ export function getUserInfo() {
 // metaMask登录用户信息  /api/github/user/:id
 export function getUserInfoById(id:string) {
   return httpRequest({
-    url: `/api/v2/user/${id}`,
+    url: `/api/github/user/${id}`,
     method: "get",
   });
 }
