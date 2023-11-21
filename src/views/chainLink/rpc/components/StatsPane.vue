@@ -122,7 +122,12 @@ const getRequestData = async () => {
     let valueX: any = []; 
     let valueNum: any = [];
     res.data.map((item: any) => {
-      valueX.push(formatTimeToHM(item.dataTime));
+      if (requestParam.value.time == 'STAT_7_DAY' || requestParam.value.time == 'STAT_1_MONTH') {
+        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
+      } else {
+        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+      }
+      
       valueNum.push(item.num);
     });
     requestData.value = {

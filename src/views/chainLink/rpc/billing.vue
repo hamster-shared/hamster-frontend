@@ -93,7 +93,7 @@ onMounted(() => {
 .card-div{
   display: inline-block;
   margin: 10px;
-  min-width: 250px;
+  min-width: 320px;
   width: 31%;
   vertical-align: top;
   border-radius: 12px;
@@ -103,7 +103,7 @@ onMounted(() => {
   border: 1px solid #E2B578;
 }
 .card-title{
-  @apply bg-[#E2B578] h-[50px] leading-[50px] text-center text-[#FFFFFF];
+  @apply bg-[#E2B578] h-[80px] leading-[80px] text-center text-[#FFFFFF] text-[24px] font-black;
   border-radius: 12px 12px 0 0;
 }
 .card-content{

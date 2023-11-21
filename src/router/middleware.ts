@@ -61,7 +61,7 @@ const middlewareRoute = [
           },
           {
             path: "/middleware/dashboard/RPC/versionPlan",
-            name: "versionPlan",
+            name: "Pricing",
             key: 'RPCVersionPlan',
             component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
             meta: {

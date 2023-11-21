@@ -42,7 +42,7 @@
         </div>
         <div class="w-1/3 pl-[30px]">
           <div class="flex items-center mb-[40px] relative">
-            <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">{{ userPlan.planName }}</div>
+            <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">Free</div>
             <div class="absolute right-0">
               <a-button class="" type="primary" @click="goVersionPlan">Upgrade</a-button>
             </div>
@@ -91,7 +91,7 @@
           </div>
         </div>
       </div>
-      <!-- <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div> -->
+      <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div>
     </div>
   </div>
   <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal" @refreshApps="getApiKeyInfo"></CreateAppModal>
