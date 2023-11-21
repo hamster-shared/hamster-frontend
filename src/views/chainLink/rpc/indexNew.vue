@@ -165,7 +165,7 @@ const goBilling = ()=>{
 
 // 跳转 versionPlan
 const goVersionPlan = ()=>{
-  router.push('/middleware/dashboard/RPC/versionPlan')
+  router.push('/middleware/dashboard/RPC/pricing')
 }
 // 获取 Credit Cost(Last 24 hours) 图表数据
 const getCreditCostLastData = async () => {
