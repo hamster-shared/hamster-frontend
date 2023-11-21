@@ -211,7 +211,6 @@ const VNodes: any = (_, { attrs }) => {
   return attrs.vnodes;
 };
 
-
 const importVisible = ref(false);
 const repositoryVisible = ref(false);
 const importFormRef = ref();
@@ -272,16 +271,14 @@ const pagination = reactive({
 });
 
 const addGithubAccount = () => {
-  // console.log('jkjkjk')
-  // window.addEventListener('message', resetRepositoryData, false)
+  window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
-  // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
-  const myWindow = window.open('http://localhost:5173/projects/installations?setup_action=install');
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
+
 }
 
 const resetRepositoryData = async (event: Event) => {
-  if (event.data.origin == apiUrl.value) return
   // await getInstallationsAccount()
   console.log(event, 'RepositoryData更新列表1111')
   // pagination.current = 1;
@@ -455,7 +452,6 @@ const handleDone = async () => {
 }
 
 onMounted(async () => {
-
   await getGithubInstallCheck()
 
 })
