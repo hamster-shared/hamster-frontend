@@ -35,7 +35,10 @@ const setEchartOption = () => {
     title: {
       text: titleText.value,
       subtext: '',
-      left: 'center'
+      left: 'center',
+      textStyle:{
+        color: '#898989'
+      },
     },
     tooltip: {
       trigger: 'item',
@@ -62,6 +65,13 @@ const setEchartOption = () => {
             shadowOffsetX: 0,
             shadowColor: 'rgba(0, 0, 0, 0.5)'
           }
+        },
+        labelLine: {
+          show: false
+        },
+        label: {
+          show: false,
+          position: 'center'
         }
       }
     ]
