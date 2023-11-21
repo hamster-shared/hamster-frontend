@@ -3,8 +3,8 @@
     <div>
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
       <!-- rightOutlined -->
-      <span v-if="props.projectType != '3'" class="text-sm cursor-pointer open-link-css"
-        @click="handleImportRepository">Import Third-Party Git Repository <right-outlined /></span>
+      <span class="text-sm cursor-pointer open-link-css" @click="handleImportRepository">Import Third-Party Git Repository
+        <right-outlined /></span>
     </div>
     <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
     <div v-else>

@@ -109,6 +109,15 @@ export function getUserInfo() {
   });
 }
 
+
+// metaMask登录用户信息  /api/github/user/:id
+export function getUserInfoById(id:string) {
+  return httpRequest({
+    url: `/api/v2/user/${id}`,
+    method: "get",
+  });
+}
+
 // metamask钱包登录
 export function metamaskLogin(data:any) {
   return httpRequest({
