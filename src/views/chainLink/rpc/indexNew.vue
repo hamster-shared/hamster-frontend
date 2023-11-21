@@ -42,7 +42,7 @@
         </div>
         <div class="w-1/3 pl-[30px]">
           <div class="flex items-center mb-[40px] relative">
-            <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">{{ userPlan.planName }}</div>
+            <div class="text-[30px] font-extrabold text-[#E2B578] mr-[20px]">Free</div>
             <div class="absolute right-0">
               <a-button class="" type="primary" @click="goVersionPlan">Upgrade</a-button>
             </div>
@@ -69,7 +69,7 @@
       <div class="flex justify-end mt-[30px]">
         <a-select @change="getMainChain" class="w-[150px]" v-model:value="optionParams.opApp" autocomplete="off" :options="optionsApp.map(item => ({ value: item.value, label: item.label }))" ></a-select>
         <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.opChain" autocomplete="off" :options="optionEcosystems.map((item:any) => ({ value: item.ecosystemCode, label: item.ecosystemName }))" ></a-select>
-        <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.opDay" autocomplete="off" :options="optionTime" ></a-select>
+        <a-select @change="getMainChain" class="!ml-[20px] w-[150px]" v-model:value="optionParams.time" autocomplete="off" :options="optionTime" ></a-select>
       </div>
       <div class="flex mt-[30px]">
         <div class="w-2/3 h-[580px]">
@@ -91,10 +91,10 @@
           </div>
         </div>
       </div>
-      <!-- <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div> -->
+      <div class="w-2/3 text-center cursor-pointer text-[#E2B578] mt-[20px]">View More</div>
     </div>
   </div>
-  <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal"></CreateAppModal>
+  <CreateAppModal :createVisible="createVisible" @hiddenCreateModal="hiddenCreateModal" @refreshApps="getApiKeyInfo"></CreateAppModal>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
@@ -129,7 +129,7 @@ const circlePanel3Error = ref<any>([])
 const optionParams = ref({
   opApp: '',
   opChain: '',
-  opDay: optionTime[2].value
+  time: optionTime[2].value
 });
 const createVisible = ref(false);
 const userPlan = ref<any>({
@@ -216,22 +216,28 @@ const getApiKeyInfo = async () => {
           label: item.name,
         });
       });
-      optionParams.value.opApp = res.data.data[res.data.data.length-1].apiKeyId;
-      apIKeyInfo.value = [res.data.data[res.data.data.length-1]];
+      optionParams.value.opApp = res.data.data[0].apiKeyId;
+      apIKeyInfo.value = [res.data.data[0]];
     }
   }
 }
 
 // 获取折线图和圆饼图数据
 const getMainChain = async () => {
-  let res = await apiZanApiKeyRequestStats(optionParams.value.opApp, optionParams.value.opDay, optionParams.value.opChain);
+  mainChart.value = {};
+  let res = await apiZanApiKeyRequestStats(optionParams.value.opApp, optionParams.value.time, optionParams.value.opChain);
 
   console.log("res:", res);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueY: any = [];
     res.data.map((item: any) => {
-      valueX.push(formatTimeToHM(item.dataTime));
+      if (optionParams.value.time == 'STAT_7_DAY' || optionParams.value.time == 'STAT_1_MONTH') {
+        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
+      } else {
+        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+      }
+      
       valueY.push(item.num);
     });
     mainChart.value = {
@@ -273,7 +279,7 @@ const getCircleTop5 = (res: any) => {
 
 //获取圆饼Source
 const getCircleSource = async () => {
-  const res = await apiZanApiKeyRequestOriginStats(optionParams.value.opApp, optionParams.value.opDay);
+  const res = await apiZanApiKeyRequestOriginStats(optionParams.value.opApp, optionParams.value.time);
 
   if (res.code == 200 && res.data.length > 0) {
     
@@ -297,7 +303,7 @@ const getCircleSource = async () => {
 
 //获取圆饼Errors
 const getCircleErrors = async () => {
-  const res = await apiZanApiKeyRequestActivityStats(optionParams.value.opApp, optionParams.value.opDay, optionParams.value.opChain);
+  const res = await apiZanApiKeyRequestActivityStats(optionParams.value.opApp, optionParams.value.time, optionParams.value.opChain);
   if (res.code == 200 && res.data.length > 0) {
     const successFailData = res.data.reduce((acc: any, item: any) => {
       acc.successNum += (item.totalNum - item.failedNum)

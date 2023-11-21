@@ -140,7 +140,12 @@ watch(() => router.currentRoute.value,
 
 :deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected){
   background-color: #FFFAF3;
-
+}
+:deep(.ant-menu-inline .ant-menu-item-selected:after, .ant-menu-inline .ant-menu-selected:after){
+  opacity: 0;
+}
+:deep(.ant-menu-inline){
+  border-right: 0;
 }
 
 :deep(.ant-menu .ant-menu-item-selected>span>a) {
