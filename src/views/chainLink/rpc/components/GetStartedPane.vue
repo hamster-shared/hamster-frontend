@@ -6,15 +6,15 @@
       <svg-icon name="copy" size="18" class="svg-color ml-2 text-[#E2B578]" @click="copyToClipboard(apiKeyId)" />
     </div>
   </div>
-  <div v-if="apiKeyDetailList.length > 0">
+  <div v-if="apiKeyDetailList.length > 0" class="grid grid-cols-3 gap-[10px]">
     <div class="ethereum-container" v-for="(item,key) in apiKeyDetailList" :key="key">
       <div class="flex justify-between items-center">
         <div class="flex justify-between items-center">
-          <img :src="item.ecosystemIcon" class="h-[50px]">
-          <label class="font-bold text-[21px] ml-[10px]">{{ item.ecosystemName }}</label>
+          <img :src="item.ecosystemIcon" class="h-[42px]">
+          <label class="font-bold text-[18px] mx-[10px] max-w-[120px]">{{ item.ecosystemName }}</label>
         </div>
         <a-dropdown>
-          <label class="cursor-pointer text-[16px] flex justify-between items-center" @click.prevent>
+          <label class="cursor-pointer text-[14px] flex justify-between items-center" @click.prevent>
             {{ item.networkValue }}
             <svg-icon name="right" size="17" class="ml-[10px]" style="transform: rotate(90deg);" />
           </label>
@@ -82,12 +82,12 @@ onMounted(() => {
 <style scoped>
 .ethereum-container {
   @apply dark:bg-[#10100F];
-  display: inline-block;
-  min-width: 350px;
+  /* display: inline-block;
+  min-width: 300px; */
   padding: 20px;
   background: #F3F3F3;
   border-radius: 12px;
-  margin: 5px;
+  /* margin: 5px; */
   border: 1px solid transparent;
 }
 .ethereum-container:hover{
@@ -99,7 +99,7 @@ onMounted(() => {
   overflow: hidden;
 }
 .label-title{
-  @apply text-[16px] font-medium mt-[20px];
+  @apply text-[12px] font-medium mt-[20px];
 }
 .label-input{
   @apply mt-[10px] bg-[#FFFFFF] dark:bg-[#242424] rounded-[8px] py-[12px] px-[10px] flex justify-between items-center;
