@@ -9,18 +9,64 @@
     <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
     <div v-else>
       <div class="flex">
-        <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
-          :field-names="{ label: 'name', value: 'id' }" @select="selectGithubAccount" :options="githubAccountList">
+        <!-- <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
+          :field-names="{ label: 'name', value: 'id' }" @change="selectGithubAccount" :options="githubAccountList">
+          <template #label>
+            <span>
+              <user-outlined />
+              Manager
+            </span>
+          </template>
           <template #dropdownRender="{ menuNode: menu }">
             <v-nodes :vnodes="menu" />
-            <!-- <a-divider class="text-[#F4F4F4]" style="margin: 4px 0" /> -->
             <div class="border border-solid border-[#F4F4F4] w-hull h-[1px]"></div>
             <div style="padding: 4px 8px; cursor: pointer" @click="addGithubAccount">
               <plus-outlined />
               Add Github Account
             </div>
           </template>
-        </a-select>
+          <template #menuItemSelectedIcon>
+            <svg-icon name="success-color" size="18" class="ml-4" />
+          </template>
+        </a-select> -->
+        <div class="mt-5 mb-4 w-[100%] text-[14px]">
+          <a-dropdown :trigger="['click']">
+            <div
+              class="flex justify-between w-hull h-[52px] border border-solid border-[#45423D] rounded-[8px] mr-[20px] leading-[38px] pl-[16px] py-[6px] cursor-pointer">
+
+              <div>
+                <img :src="selectAvatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />{{ selectValue }}
+              </div>
+              <div class="mr-[20px]">
+                <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
+                <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
+              </div>
+            </div>
+            <template #overlay>
+              <a-menu>
+                <a-menu-item v-for="it in githubAccountList" :key="it.installId" class=""
+                  @click="selectGithubAccount(it)">
+                  <div class="flex justify-between">
+
+                    <div :class="selsectInstallId === it.installId ? 'text-[#E2B578]' : 'text-[#000000]'">
+                      <img :src="it.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+                      {{ it.name }}
+                    </div>
+                    <svg-icon v-if="selsectInstallId === it.installId" name="success-color" size="18"
+                      class="ml-4 mt-[9px]" />
+                  </div>
+                </a-menu-item>
+                <a-menu-item>
+                  <div class="text-center plus-outlined h-[42px] leading-[42px] text-[#666666]" @click="addGithubAccount">
+                    <plus-outlined />
+                    Add Github Account
+                  </div>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
+
+        </div>
         <a-input-search :loading="searchLoading" class="mt-5 mb-4 search-btn" v-model:value="searchInputValue"
           placeholder="Search here..." allow-clear autocomplete="off" @search="handleSearch"></a-input-search>
 
@@ -146,6 +192,7 @@ const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
 const githubAccountList = ref([]);
 const selectValue = ref('');
 const selsectInstallId = ref('');
+const selectAvatarUrl = ref('');
 
 const repositorySelection = ref('');
 
@@ -156,6 +203,8 @@ const repositoryData = ref()
 const searchInputValue = ref('')
 let importUrl = ref([])
 let nameDupErrInfo = ref('')
+
+const installationsData = ref({})
 
 
 const VNodes: any = (_, { attrs }) => {
@@ -265,8 +314,11 @@ const adjustGithubPremission = () => {
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
 }
 
-const selectGithubAccount = (value: any, item: any) => {
-  console.log(value, item, '9090')
+const selectGithubAccount = (item: any) => {
+  console.log(item, '9090')
+  // installationsData.value = item;
+  selectValue.value = item.name;
+  selectAvatarUrl.value = item.avatarUrl;
   selsectInstallId.value = item.installId;
   repositorySelection.value = item.repositorySelection;
   searchLoading.value = true;
@@ -279,8 +331,10 @@ const getInstallationsAccount = async () => {
     const { data } = await getInstallations();
     githubAccountList.value = data;
     selectValue.value = data[0].name;
+    selectAvatarUrl.value = data[0].avatarUrl;
     selsectInstallId.value = data[0].installId;
     repositorySelection.value = data[0].repositorySelection;
+    // installationsData.value = data[0]
     console.log(data, '999')
   } catch (err: any) {
     // message.error(err.message)
@@ -416,6 +470,7 @@ onMounted(async () => {
 
 .search-btn {
   :deep(.ant-input-affix-wrapper) {
+    height: 52px !important;
     border-radius: 8px 0px 0px 8px !important;
   }
 
@@ -432,6 +487,12 @@ onMounted(async () => {
     // border: 1px solid #EBEBEB;
     border-radius: 0px 8px 8px 0px !important;
   }
+
+
+}
+
+:deep(.ant-dropdown-content .ant-dropdown-menu) {
+  border-radius: 8px !important;
 }
 
 :deep(.ant-radio-wrapper span) {
@@ -444,6 +505,10 @@ onMounted(async () => {
 
 .radio-sub {
   color: #C3C4C7;
+}
+
+.plus-outlined {
+  border-top: 1px solid #F4F4F4;
 }
 
 :deep(.ant-radio-wrapper-checked span .radio-sub) {
