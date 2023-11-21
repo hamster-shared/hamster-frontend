@@ -6,7 +6,7 @@
         Web3 development is inseparable from the support of blockchain nodes, 
         and building and maintaining nodes requires a lot of cost and effort. 
         In order to enable developers to obtain efficient and stable node services, 
-        Miwago provides RPC services to meet the development needs of developers for various ecological projects.
+        Miwaspace provides RPC services to meet the development needs of developers for various ecological projects.
       </div>
     </div>
 
