@@ -28,7 +28,6 @@ const loginType = ref(1);
 
 const installGit = () => {
   // loginType.value === 1 githun登录 2 === metaMask登录
-  // window.addEventListener('message', resetData, false)
   if (loginType.value == 1) {
     const state = new Date().getTime();
     const url = `${selectTargetUrl.value}?state=${state}`;
