@@ -31,7 +31,7 @@ const props = defineProps({
   }
 });
 const { createVisible, modalType } = toRefs(props);
-const emits = defineEmits(['hiddenCreateModal']);
+const emits = defineEmits(['hiddenCreateModal','refreshApps']);
 
 const formRef = ref();
 const createLoading = ref(false);
@@ -81,6 +81,7 @@ const handleOk = async () => {
     }
     if (res.code == 200) {
       message.success(res.message)
+      emits('refreshApps')
     }
   } catch (error: any) {
     console.log("error:",error);
