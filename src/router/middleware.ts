@@ -82,6 +82,9 @@ const middlewareRoute = [
             path: "/middleware/dashboard/RPC/myapp/detail",
             name: "Detail",
             component: () => import('@/views/chainLink/rpc/appDetail.vue'),
+            meta: {
+              sidebarMap: ['Apps'],
+            }
           },
           {
             path: "/middleware/dashboard/rpc/zan/auth",
