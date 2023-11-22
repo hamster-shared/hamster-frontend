@@ -10,37 +10,15 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
-import { apiLogin, apiInstall, apiGetUser, login, getUserInfo } from "@/apis/login";
+import { login, getUserInfo } from "@/apis/login";
 
 const router = useRouter();
 const code = ref('');
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 
-
-// const login = async () => {
-//   try {
-//     const { data } = await apiLogin({ code: code.value, clientId: clientId.value });
-//     localStorage.setItem('firstState', data.firstState.toString());
-//     localStorage.setItem('userInfo', JSON.stringify(data));
-//     if (data.token) {
-//       localStorage.setItem('token', data.token);
-//       window.close();
-//       window.opener.location.reload();
-//     }
-//   } catch (err: any) {
-//     window.close();
-//     localStorage.removeItem('userInfo');
-//     router.push('/');
-//     message.error(err.message);
-//   }
-// }
-
-
-
 const githubLogin = async () => {
   try {
     const { data } = await login({ code: code.value });
-    // console.log(data, 'ggg')
     if (data) {
       localStorage.setItem('token', data);
       getUserInfoData()
@@ -64,23 +42,7 @@ const getUserInfoData = async () => {
     router.push('/');
     message.error(err.message);
   }
-
 }
-
-
-// const installGitHub = async () => {
-//   try {
-//     const { data } = await apiInstall(code.value);
-//     localStorage.setItem('token', data);
-//     window.close();
-//     window.opener.location.reload();
-//   } catch (err: any) {
-//     window.close();
-//     localStorage.removeItem('userInfo');
-//     router.push('/');
-//     console.log('err:', err)
-//   }
-// }
 
 onMounted(async () => {
   if (localStorage.getItem('token')) {

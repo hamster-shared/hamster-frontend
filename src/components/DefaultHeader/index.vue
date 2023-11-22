@@ -75,7 +75,7 @@
                 <span>Signed in as </span>
                 <span class="font-bold">{{ username }}</span>
               </div>
-              <a-menu-item class="" v-if='loginType == 2'>
+              <a-menu-item class="" v-if='loginType == 2 && !username'>
                 <div class="py-[4px]" @click="githubInstall">
                   <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                   Connect Github
@@ -129,6 +129,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import selectNetwork from "./components/selectNetwork.vue";
 import { generateAvatarURL } from '@cfx-kit/wallet-avatar';
+// import { getUserInfoById } from "@/apis/login.ts";
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
@@ -148,8 +149,11 @@ const isOrder = ref(false)
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
-const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
-const username = JSON.parse(userInfo)?.username || '';
+console.log(JSON.parse(userInfo), 'userInfo')
+const githubAvatarUrl = ref('');
+const username = ref('');
+// const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
+// const username = JSON.parse(userInfo)?.username || '';
 const isShowMiddleware = ref(false)
 
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
@@ -244,7 +248,11 @@ onMounted(() => {
     loginType.value = loginData.loginType;
     if (loginType.value == 2) {
       let walletAccount = window.localStorage.getItem("walletAccount") || ''
+      username.value = JSON.parse(userInfo)?.username || '';
       avatarURL.value = generateAvatarURL(walletAccount)
+    } else {
+      githubAvatarUrl.value = JSON.parse(userInfo)?.avatarUrl || '';
+      username.value = JSON.parse(userInfo)?.username || '';
     }
   }
 
