@@ -130,5 +130,8 @@ defineExpose({
     background-color: #363636;
   }
 }
+:deep(.ant-table-row-expand-icon){
+  color:#454545;
+}
 </style>
 
