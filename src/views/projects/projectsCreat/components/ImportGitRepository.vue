@@ -196,6 +196,8 @@ const selectValue = ref('');
 const selsectInstallId = ref('');
 const selectAvatarUrl = ref('');
 
+// const installId = ref('');
+
 const repositorySelection = ref('');
 
 
@@ -222,6 +224,7 @@ const importFormData = ref<any>({
   cloneUrl: '',
   type: 1,
   deployType: '2',
+  installId: '',
 });
 let reg = /^((git|ssh|http(s)?)|(git@[\w.]+))(:(\/\/)?)([\w.@:/\-~]+)(\.git)(\/)?$/
 const importRules = {
@@ -382,6 +385,7 @@ const handleImportRepository = () => {
 const handleImport = async (item: any) => {
   console.log('handleImport:', item)
   //选择project type为1时（contract), 点击Import按钮展示contractImportVisible的modal弹框
+  importFormData.value.installId = selsectInstallId.value;
   importFormData.value.name = item.name;
   importFormData.value.cloneUrl = item.cloneUrl;
   if (props.projectType === '3') {
@@ -439,6 +443,7 @@ const handleDone = async () => {
     cloneUrl: importFormData.value.cloneUrl,
     type: importFormData.value.type,
     deployType: importFormData.value.deployType - 0,
+    installId: selsectInstallId.value,
   }
   try {
     const { data } = await apiPostRepository(params)
@@ -449,7 +454,6 @@ const handleDone = async () => {
     doneLoading.value = false
     importUrl.value = []
   }
-
 }
 
 onMounted(async () => {

@@ -33,7 +33,7 @@
 import { message } from "ant-design-vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { login, saveWallet, metamaskLogin, getUserInfo, getUserInfoById } from "@/apis/login";
+import { saveWallet, metamaskLogin, getUserInfo, getUserInfoById } from "@/apis/login";
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import MetaMaskDownloadModal from "./components/metaMaskDownloadModal.vue";
@@ -44,41 +44,6 @@ const router = useRouter()
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const oauthUrl = ref('https://github.com/login/oauth/authorize');
-
-// const githubLogin = async () => {
-//   try {
-//     const { data } = await login({ code: '5df6a81800434eb00145' });
-//     localStorage.setItem('token', data);
-//     console.log(data, 'ggg')
-//     getUserInfoData()
-//   } catch (err: any) {
-
-//   }
-// }
-
-
-// const loginBox = () => {
-//   // router.push("/loginTransition?code=5df6a81800434eb00145");
-//   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || {};
-//   if (JSON.stringify(userInfo) === '{}') {
-//     // 登录
-//     const state = new Date().getTime();
-//     const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-//     const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-//     myWindow?.focus()
-//   } else {
-//     if (userInfo.token) {
-//       localStorage.setItem('token', userInfo.token);
-//       commonJump()
-//     } else {
-//       // install
-//       // const state = new Date().getTime();
-//       // const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}`;
-//       // const myWindow = window.open(url, 'login-github', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-//       // myWindow?.focus()
-//     }
-//   }
-// }
 
 const loginBox = () => {
   const state = new Date().getTime();
@@ -98,43 +63,41 @@ const getMetamaskLogin = async (address: string) => {
     } else {
       message.error('登录失败，请稍候重试！')
     }
-
   } catch (err: any) {
     message.error(err.message);
   }
-
 }
 
 
 const getMetaMaskUserInfo = async (id: string) => {
-  const { data } = await getUserInfoById(id);
-  if (data) {
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    commonJump()
+  try {
+    const { data } = await getUserInfoById(id);
+    if (data) {
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      commonJump()
+    }
+  } catch (err: any) {
+    message.error(err.message);
   }
 }
 
 const getUserInfoData = async () => {
   try {
     const { data } = await getUserInfo();
-
-    console.log(data, 'data125678')
+    console.log('小狐狸登录成功后的userInfo:' + data)
+    // userId == 0 没有关联github 不为0（一般是一串int）则已经关联github，再去查询github的userInfo
     if (data.userId == 0) {
       localStorage.setItem('userInfo', JSON.stringify(data));
       commonJump()
     } else {
       getMetaMaskUserInfo(data.userId)
     }
-    // getMetaMaskUserInfo(data.userId)
-    // localStorage.setItem('userInfo', JSON.stringify(data));
-    // commonJump()
   } catch (err: any) {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('token');
     router.push('/');
     message.error(err.message);
   }
-
 }
 
 const commonJump = () => {
@@ -145,9 +108,6 @@ const commonJump = () => {
     router.push('/projects')
   }
 }
-
-
-
 
 // 通过钱包登录
 const awakeWallet = async () => {
@@ -189,7 +149,6 @@ Version: ${web3.version}`
       }
       console.log(`Metamask wallet address: ${address}`, accounts);
     }
-
   } else {
     metaMaskVisible.value = true;
   }
