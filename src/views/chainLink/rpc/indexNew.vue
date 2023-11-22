@@ -209,7 +209,7 @@ const getEcosystems = async () => {
 const getApiKeyInfo = async () => {
   let res = await apiZanApiKeyPage(1, 10);
   if (res.code == 200) {
-    if (res.data.data.length > 0) {
+    if (res.data?.data?.length > 0) {
       res.data.data.forEach((item: any) => {
         optionsApp.value.push({
           value: item.apiKeyId,
@@ -231,15 +231,23 @@ const getMainChain = async () => {
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueY: any = [];
+    let tempMap = new Map();
     res.data.map((item: any) => {
+      let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (optionParams.value.time == 'STAT_7_DAY' || optionParams.value.time == 'STAT_1_MONTH') {
-        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
-      } else {
-        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+        tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      
-      valueY.push(item.num);
+      let tempNum = item.num;
+      if (tempMap.get(tempX)) { //相同的日期累加数据
+        tempNum += tempMap.get(tempX).num;
+      }
+      tempMap.set(tempX,{ 'num': tempNum })
     });
+    tempMap.forEach((item: any, key: any) => {
+      
+      valueX.push(key);
+      valueY.push(item.num);
+    })
     mainChart.value = {
       valueX: valueX,
       valueY: valueY,
@@ -287,11 +295,11 @@ const quickFun:any = (params:any)=> {
       return params;
   }
   let middleIndex = Math.floor(params.length / 2); //获取基准数据的下标
-  let middleItem = params.splice(middleIndex,1)[0]?.value; //截取基准数据
+  let middleItem = params.splice(middleIndex,1)[0]; //截取基准数据
   let leftArr = [];
   let rightArr = [];
   for (let k = 0; k < params.length; k++) {
-      if (params[k].value > middleItem) {
+      if (params[k].value > middleItem?.value) {
         rightArr.push(params[k]);
       }else{
         leftArr.push(params[k]);

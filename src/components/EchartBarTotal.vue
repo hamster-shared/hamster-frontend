@@ -13,7 +13,9 @@ const props = defineProps({
     type:Object,
     default: {
       valueX: [],
-      valueY: {}
+      valueY: {},
+      type: 'normal',
+      valueOther: {},
     }
   },
   echartsId: {
@@ -25,19 +27,39 @@ const { echartsData, echartsId } = toRefs(props);
 
 const seriesList = ref<any>([]);
 const setSeriesArray = () => {
+  let seriesObj = {
+    name: '',
+    type: 'bar',
+    stack: 'total',
+    label: {
+      show: true,
+    },
+    emphasis: {
+      focus: 'series'
+    },
+    tooltip: {},
+    data: []
+  }
   for (let key in echartsData.value.valueY) {
-    seriesList.value.push({
-      name: key,
-      type: 'bar',
-      stack: 'total',
-      label: {
-        show: true
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: echartsData.value.valueY[key]
-    });
+    let tempObj: any = Object.assign({}, seriesObj);
+    tempObj.name = key;
+    tempObj.data = echartsData.value.valueY[key];
+    if (echartsData.value.type == 'requestOrigin') {
+      tempObj.tooltip = {
+        trigger: 'item',
+        formatter: function (params: any) { 
+          return params.seriesName + '<br/><div style="display: flex;align-items: center;">' 
+            + '<div style = "width:10px; height:10px; border-radius:50%;margin-right:5px; background-color:' + params.color + ';"></div>'
+            + '<div>http: ' + echartsData.value.valueOther[params.seriesName][params.dataIndex].httpsNum + "</div>"
+            + '</div>'
+            + '<div style="display: flex;align-items: center;">'
+            + '<div style = "width:10px; height:10px; border-radius:50%;margin-right:5px; background-color:' + params.color + ';"></div>'
+            + '<div>wss: ' + echartsData.value.valueOther[params.seriesName][params.dataIndex].wssNum + "</div>"
+            + "</div>";
+        }
+      }
+    }
+    seriesList.value.push(tempObj);
   }
   console.log("seriesList.value:",seriesList.value);
 }

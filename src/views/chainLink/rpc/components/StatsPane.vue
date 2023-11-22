@@ -120,19 +120,47 @@ const getRequestData = async () => {
   console.log("res:",res);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
-    let valueNum: any = [];
+    let valueY: any = {};
+    let tempMap = new Map();
+    let methodSet = new Set();
     res.data.map((item: any) => {
+      let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (requestParam.value.time == 'STAT_7_DAY' || requestParam.value.time == 'STAT_1_MONTH') {
-        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
-      } else {
-        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+        tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      
-      valueNum.push(item.num);
+      if (item.method) { // 空的不展示
+        methodSet.add(item.method);
+        let tempNum = item.num;
+        if (tempMap.get(tempX)) { //相同的日期累加数据
+          // tempNum += tempMap.get(tempX).num;
+          let tempObj = tempMap.get(tempX);
+          tempObj[item.method] = tempNum;
+          tempMap.set(tempX, tempObj);
+        } else {
+          tempMap.set(tempX,{ [item.method]: tempNum })
+        }
+      } else {
+        tempMap.set(tempX, {});
+      }
     });
+    let methodList = Array.from(methodSet).sort();
+    tempMap.forEach((item: any, key: any) => {
+      valueX.push(key);
+      methodList.map((it: any, k: any) => {
+        if (valueY[it]) {
+          if (item[it]) {
+            valueY[it].push(item[it]);
+          } else {
+            valueY[it].push('');
+          }
+        } else {
+          valueY[it] = [item[it]];
+        }
+      });
+    })
     requestData.value = {
       valueX: valueX,
-      valueY: { 'num': valueNum},
+      valueY: valueY,
     };
   } else {
     requestData.value = {};
@@ -150,21 +178,52 @@ const getRequestOriginData = async () => {
   let res = await apiZanApiKeyRequestOriginStats(apiKeyId, originParam.value.time);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
-    let valueHttpsNum: any = []; //多条数据可依次声明添加
-    let valueWssNum: any = [];
+    let valueY: any = {};
+    let valueOther: any = {}; 
+    let tempMap = new Map();
+    let originIpSet = new Set();
     res.data.map((item: any) => {
+      let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (originParam.value.time == 'STAT_7_DAY' || originParam.value.time == 'STAT_1_MONTH') {
-        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
-      } else {
-        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+        tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      
-      valueHttpsNum.push(item.httpsNum);
-      valueWssNum.push(item.wssNum);
+      if (item.originIp) { // 空的不展示
+        originIpSet.add(item.originIp);
+        console.log("tempMap:",tempMap);
+        if (tempMap.get(tempX)) {
+          let tempObj = tempMap.get(tempX);
+          tempObj[item.originIp] = { totalNum : item.totalNum, httpsNum : item.httpsNum, wssNum : item.wssNum };
+          tempMap.set(tempX, tempObj);
+        } else {
+          tempMap.set(tempX,{ [item.originIp]: { totalNum : item.totalNum, httpsNum : item.httpsNum, wssNum : item.wssNum } })
+        }
+      } else {
+        tempMap.set(tempX, {});
+      }
     });
+    let originIpList = Array.from(originIpSet).sort();
+    tempMap.forEach((item: any, key: any) => {
+      valueX.push(key);
+      originIpList.map((it: any, k: any) => {
+        if (valueY[it]) {
+          if (item[it]) {
+            valueY[it].push(item[it].totalNum);
+            valueOther[it].push({httpsNum: item[it].httpsNum, wssNum: item[it].wssNum});
+          } else {
+            valueY[it].push('');
+            valueOther[it].push({httpsNum: '', wssNum: ''});
+          }
+        } else {
+          valueY[it] = [item[it]?.totalNum];
+          valueOther[it] = [{httpsNum: item[it]?.httpsNum, wssNum: item[it]?.wssNum}];
+        }
+      });
+    })
     requestOriginData.value = {
       valueX: valueX,
-      valueY: { 'httpsNum': valueHttpsNum, 'wssNum': valueWssNum },
+      valueY: valueY,
+      type: 'requestOrigin',
+      valueOther: valueOther,
     };
   } else {
     requestOriginData.value = {};
