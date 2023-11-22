@@ -121,15 +121,25 @@ const getRequestData = async () => {
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueNum: any = [];
+    let tempMap = new Map();
     res.data.map((item: any) => {
+      let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (requestParam.value.time == 'STAT_7_DAY' || requestParam.value.time == 'STAT_1_MONTH') {
-        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
-      } else {
-        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+        tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      
-      valueNum.push(item.num);
+
+      let tempNum = item.num;
+      if (tempMap.get(tempX)) { //相同的日期累加数据
+        tempNum += tempMap.get(tempX).num;
+      }
+      tempMap.set(tempX,{ 'num': tempNum })
     });
+    tempMap.forEach((item: any, key: any) => {
+      // 过滤掉空对象
+      if(!item) return
+      valueX.push(key);
+      valueNum.push(item.num);
+    })
     requestData.value = {
       valueX: valueX,
       valueY: { 'num': valueNum},
@@ -152,16 +162,27 @@ const getRequestOriginData = async () => {
     let valueX: any = []; 
     let valueHttpsNum: any = []; //多条数据可依次声明添加
     let valueWssNum: any = [];
+    let tempMap = new Map();
     res.data.map((item: any) => {
+      let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (originParam.value.time == 'STAT_7_DAY' || originParam.value.time == 'STAT_1_MONTH') {
-        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
-      } else {
-        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+        tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      
+      let tempHttps = item.httpsNum;
+      let tempWss = item.wssNum;
+      if (tempMap.get(tempX)) { //相同的日期累加数据
+        tempHttps += tempMap.get(tempX).httpsNum;
+        tempWss += tempMap.get(tempX).wssNum;
+      }
+      tempMap.set(tempX,{ 'httpsNum': tempHttps, 'wssNum': tempWss})
+    });
+    tempMap.forEach((item: any, key: any) => {
+      // 过滤掉空对象
+      if(!item) return
+      valueX.push(key);
       valueHttpsNum.push(item.httpsNum);
       valueWssNum.push(item.wssNum);
-    });
+    })
     requestOriginData.value = {
       valueX: valueX,
       valueY: { 'httpsNum': valueHttpsNum, 'wssNum': valueWssNum },
