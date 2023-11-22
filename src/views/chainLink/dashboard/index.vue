@@ -60,7 +60,7 @@ onBeforeMount(() => {
     }
   })
   // console.log(dashboard.children, 'dashboard')
-  console.log(11111111111,menuRouterList.value)
+  // console.log(11111111111,menuRouterList.value)
 })
 
 const toChild = ( {key, domEvent })=>{
