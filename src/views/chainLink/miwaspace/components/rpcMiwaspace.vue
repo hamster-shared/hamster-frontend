@@ -14,10 +14,10 @@
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
         <div class="flex justify-between items-center mb-[100px]">
           <div>
-            <img :src="item.ecosystemIcon" class="h-[50px] "/>
-            <span class="ml-[20px] text-[21px] font-bold align-middle">{{item.ecosystemName}}</span>
+            <img :src="item.ecosystemIcon" class="h-[42px] "/>
+            <span class="ml-[10px] text-[18px] font-bold align-middle">{{item.ecosystemName}}</span>
           </div>
-          <div class="ml-[20px] text-[18px] font-medium">{{ item.ecosystemCode }}</div>
+          <div class="ml-[20px] text-[14px] font-medium">{{ item.ecosystemCode }}</div>
         </div>
         <a-button class="w-full !h-[43px]" @click="handleOpenRpcService(item.buyFlag)">{{ item.buyFlag ? 'View more' : 'Start for Free' }}</a-button>
       </div>
