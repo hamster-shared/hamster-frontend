@@ -287,11 +287,11 @@ const quickFun:any = (params:any)=> {
       return params;
   }
   let middleIndex = Math.floor(params.length / 2); //获取基准数据的下标
-  let middleItem = params.splice(middleIndex,1)[0]?.value; //截取基准数据
+  let middleItem = params.splice(middleIndex,1)[0]; //截取基准数据
   let leftArr = [];
   let rightArr = [];
   for (let k = 0; k < params.length; k++) {
-      if (params[k].value > middleItem) {
+      if (params[k].value > middleItem?.value) {
         rightArr.push(params[k]);
       }else{
         leftArr.push(params[k]);
