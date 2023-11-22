@@ -33,7 +33,7 @@
 import { message } from "ant-design-vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { login, saveWallet, metamaskLogin, getUserInfo } from "@/apis/login";
+import { login, saveWallet, metamaskLogin, getUserInfo, getUserInfoById } from "@/apis/login";
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import MetaMaskDownloadModal from "./components/metaMaskDownloadModal.vue";
@@ -81,7 +81,6 @@ const oauthUrl = ref('https://github.com/login/oauth/authorize');
 // }
 
 const loginBox = () => {
-
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/loginTransition`;
   const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
@@ -107,11 +106,28 @@ const getMetamaskLogin = async (address: string) => {
 }
 
 
+const getMetaMaskUserInfo = async (id: string) => {
+  const { data } = await getUserInfoById(id);
+  if (data) {
+    localStorage.setItem('userInfo', JSON.stringify(data));
+    commonJump()
+  }
+}
+
 const getUserInfoData = async () => {
   try {
     const { data } = await getUserInfo();
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    commonJump()
+
+    console.log(data, 'data125678')
+    if (data.userId == 0) {
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      commonJump()
+    } else {
+      getMetaMaskUserInfo(data.userId)
+    }
+    // getMetaMaskUserInfo(data.userId)
+    // localStorage.setItem('userInfo', JSON.stringify(data));
+    // commonJump()
   } catch (err: any) {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('token');

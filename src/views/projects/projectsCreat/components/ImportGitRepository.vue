@@ -3,8 +3,8 @@
     <div>
       <div class="mb-2 text-2xl font-bold">Import Git Repository</div>
       <!-- rightOutlined -->
-      <span v-if="props.projectType != '3'" class="text-sm cursor-pointer open-link-css"
-        @click="handleImportRepository">Import Third-Party Git Repository <right-outlined /></span>
+      <span class="text-sm cursor-pointer open-link-css" @click="handleImportRepository">Import Third-Party Git Repository
+        <right-outlined /></span>
     </div>
     <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
     <div v-else>
@@ -29,13 +29,13 @@
             <svg-icon name="success-color" size="18" class="ml-4" />
           </template>
         </a-select> -->
-        <div class="mt-5 mb-4 w-[100%] text-[14px]">
-          <a-dropdown :trigger="['click']">
+        <div class="mt-5 mb-4 w-[100%] text-[14px] github-account-list">
+          <a-dropdown :trigger="['click']" class="">
             <div
-              class="flex justify-between w-hull h-[52px] border border-solid border-[#45423D] rounded-[8px] mr-[20px] leading-[38px] pl-[16px] py-[6px] cursor-pointer">
+              class="flex justify-between w-hull h-[42px] border border-solid border-[#EBEBEB] dark:border-[#45423D] rounded-[8px] mr-[20px] leading-[38px] pl-[16px] cursor-pointer">
 
               <div>
-                <img :src="selectAvatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />{{ selectValue }}
+                <img :src="selectAvatarUrl" class="w-[28px] h-[28px] rounded-[50%] mr-[10px]" />{{ selectValue }}
               </div>
               <div class="mr-[20px]">
                 <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
@@ -56,6 +56,7 @@
                       class="ml-4 mt-[9px]" />
                   </div>
                 </a-menu-item>
+                <NoData v-if="githubAccountList.length <= 0" />
                 <a-menu-item>
                   <div class="text-center plus-outlined h-[42px] leading-[42px] text-[#666666]" @click="addGithubAccount">
                     <plus-outlined />
@@ -180,6 +181,7 @@ import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import { apiGetRepository, apiPostRepository, apiInstallRepository } from '@/apis/projects';
 import { getInstallations, githubInstallCheck, githubInstallAuth } from "@/apis/login";
 import ImportInstall from './ImportInstall.vue';
+import NoData from "@/components/NoData.vue";
 
 const props = defineProps(({
   projectType: String
@@ -271,11 +273,10 @@ const pagination = reactive({
 });
 
 const addGithubAccount = () => {
-  window.addEventListener('message', resetRepositoryData, false)
+  // window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
-
 }
 
 const resetRepositoryData = async (event: Event) => {
@@ -464,9 +465,13 @@ onMounted(async () => {
   margin-right: 24px;
 }
 
+:deep(.ant-dropdown .ant-dropdown-menu) {
+  border-radius: 8px !important;
+}
+
 .search-btn {
   :deep(.ant-input-affix-wrapper) {
-    height: 52px !important;
+    // height: 52px !important;
     border-radius: 8px 0px 0px 8px !important;
   }
 
@@ -485,10 +490,6 @@ onMounted(async () => {
   }
 
 
-}
-
-:deep(.ant-dropdown-content .ant-dropdown-menu) {
-  border-radius: 8px !important;
 }
 
 :deep(.ant-radio-wrapper span) {

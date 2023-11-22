@@ -17,10 +17,9 @@ const checkSetupAction = () => {
     console.log('进入request')
     router.push('/projects/adjustPremission');
   } else {
-
     console.log('进入install')
     const opener = window.opener;
-    // opener.postMessage('message', apiUrl.value);
+    // opener.postMessage('message', '*');
     window.close();
     opener.location.reload();
   }
@@ -30,6 +29,7 @@ onMounted(() => {
   console.log(setupAction.value, 'setupAction value')
   checkSetupAction()
 })
+
 </script>
 
 <style scoped lang="less">
