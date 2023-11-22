@@ -120,29 +120,47 @@ const getRequestData = async () => {
   console.log("res:",res);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
-    let valueNum: any = [];
+    let valueY: any = {};
     let tempMap = new Map();
+    let methodSet = new Set();
     res.data.map((item: any) => {
       let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (requestParam.value.time == 'STAT_7_DAY' || requestParam.value.time == 'STAT_1_MONTH') {
         tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-
-      let tempNum = item.num;
-      if (tempMap.get(tempX)) { //相同的日期累加数据
-        tempNum += tempMap.get(tempX).num;
+      if (item.method) { // 空的不展示
+        methodSet.add(item.method);
+        let tempNum = item.num;
+        if (tempMap.get(tempX)) { //相同的日期累加数据
+          // tempNum += tempMap.get(tempX).num;
+          let tempObj = tempMap.get(tempX);
+          tempObj[item.method] = tempNum;
+          tempMap.set(tempX, tempObj);
+        } else {
+          tempMap.set(tempX,{ [item.method]: tempNum })
+        }
+      } else {
+        tempMap.set(tempX, {});
       }
-      tempMap.set(tempX,{ 'num': tempNum })
     });
+    let methodList = Array.from(methodSet).sort();
     tempMap.forEach((item: any, key: any) => {
-      // 过滤掉空对象
-      if(!item) return
       valueX.push(key);
-      valueNum.push(item.num);
+      methodList.map((it: any, k: any) => {
+        if (valueY[it]) {
+          if (item[it]) {
+            valueY[it].push(item[it]);
+          } else {
+            valueY[it].push('');
+          }
+        } else {
+          valueY[it] = [''];
+        }
+      });
     })
     requestData.value = {
       valueX: valueX,
-      valueY: { 'num': valueNum},
+      valueY: valueY,
     };
   } else {
     requestData.value = {};
