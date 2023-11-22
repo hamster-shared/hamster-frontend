@@ -209,7 +209,7 @@ const getEcosystems = async () => {
 const getApiKeyInfo = async () => {
   let res = await apiZanApiKeyPage(1, 10);
   if (res.code == 200) {
-    if (res.data.data.length > 0) {
+    if (res.data?.data?.length > 0) {
       res.data.data.forEach((item: any) => {
         optionsApp.value.push({
           value: item.apiKeyId,
