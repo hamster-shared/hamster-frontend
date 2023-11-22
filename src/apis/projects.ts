@@ -127,7 +127,8 @@ interface apiPostRepositoryParams{
   ecosystem: string | number,
   cloneUrl: string,
   type: string | number,
-  deployType?: string | number
+  deployType?: string | number,
+  installId: string | number,
 }
 
 //创建项目
