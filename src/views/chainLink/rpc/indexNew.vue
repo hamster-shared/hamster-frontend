@@ -231,15 +231,23 @@ const getMainChain = async () => {
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
     let valueY: any = [];
+    let tempMap = new Map();
     res.data.map((item: any) => {
+      let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (optionParams.value.time == 'STAT_7_DAY' || optionParams.value.time == 'STAT_1_MONTH') {
-        valueX.push(formatTimeToHM(item.dataTime, 'md')); // 格式：MM-DD
-      } else {
-        valueX.push(formatTimeToHM(item.dataTime)); // 格式：hh:mm
+        tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      
-      valueY.push(item.num);
+      let tempNum = item.num;
+      if (tempMap.get(tempX)) { //相同的日期累加数据
+        tempNum += tempMap.get(tempX).num;
+      }
+      tempMap.set(tempX,{ 'num': tempNum })
     });
+    tempMap.forEach((item: any, key: any) => {
+      
+      valueX.push(key);
+      valueY.push(item.num);
+    })
     mainChart.value = {
       valueX: valueX,
       valueY: valueY,

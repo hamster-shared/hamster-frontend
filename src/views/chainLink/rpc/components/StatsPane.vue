@@ -154,7 +154,7 @@ const getRequestData = async () => {
             valueY[it].push('');
           }
         } else {
-          valueY[it] = [''];
+          valueY[it] = [item[it]];
         }
       });
     })
@@ -178,32 +178,52 @@ const getRequestOriginData = async () => {
   let res = await apiZanApiKeyRequestOriginStats(apiKeyId, originParam.value.time);
   if (res.code == 200 && res.data.length > 0) {
     let valueX: any = []; 
-    let valueHttpsNum: any = []; //多条数据可依次声明添加
-    let valueWssNum: any = [];
+    let valueY: any = {};
+    let valueOther: any = {}; 
     let tempMap = new Map();
+    let originIpSet = new Set();
     res.data.map((item: any) => {
       let tempX = formatTimeToHM(item.dataTime); // 格式：hh:mm
       if (originParam.value.time == 'STAT_7_DAY' || originParam.value.time == 'STAT_1_MONTH') {
         tempX = formatTimeToHM(item.dataTime, 'md'); // 格式：MM-DD
       }
-      let tempHttps = item.httpsNum;
-      let tempWss = item.wssNum;
-      if (tempMap.get(tempX)) { //相同的日期累加数据
-        tempHttps += tempMap.get(tempX).httpsNum;
-        tempWss += tempMap.get(tempX).wssNum;
+      if (item.originIp) { // 空的不展示
+        originIpSet.add(item.originIp);
+        console.log("tempMap:",tempMap);
+        if (tempMap.get(tempX)) {
+          let tempObj = tempMap.get(tempX);
+          tempObj[item.originIp] = { totalNum : item.totalNum, httpsNum : item.httpsNum, wssNum : item.wssNum };
+          tempMap.set(tempX, tempObj);
+        } else {
+          tempMap.set(tempX,{ [item.originIp]: { totalNum : item.totalNum, httpsNum : item.httpsNum, wssNum : item.wssNum } })
+        }
+      } else {
+        tempMap.set(tempX, {});
       }
-      tempMap.set(tempX,{ 'httpsNum': tempHttps, 'wssNum': tempWss})
     });
+    let originIpList = Array.from(originIpSet).sort();
     tempMap.forEach((item: any, key: any) => {
-      // 过滤掉空对象
-      if(!item) return
       valueX.push(key);
-      valueHttpsNum.push(item.httpsNum);
-      valueWssNum.push(item.wssNum);
+      originIpList.map((it: any, k: any) => {
+        if (valueY[it]) {
+          if (item[it]) {
+            valueY[it].push(item[it].totalNum);
+            valueOther[it].push({httpsNum: item[it].httpsNum, wssNum: item[it].wssNum});
+          } else {
+            valueY[it].push('');
+            valueOther[it].push({httpsNum: '', wssNum: ''});
+          }
+        } else {
+          valueY[it] = [item[it].totalNum];
+          valueOther[it] = [{httpsNum: item[it].httpsNum, wssNum: item[it].wssNum}];
+        }
+      });
     })
     requestOriginData.value = {
       valueX: valueX,
-      valueY: { 'httpsNum': valueHttpsNum, 'wssNum': valueWssNum },
+      valueY: valueY,
+      type: 'requestOrigin',
+      valueOther: valueOther,
     };
   } else {
     requestOriginData.value = {};
