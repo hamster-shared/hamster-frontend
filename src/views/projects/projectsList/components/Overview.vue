@@ -610,6 +610,7 @@ const getIcpInfo = async(status:number)=>{
 }
 
 const projectsDeploy = async (id: string, version: string, status: number) => {
+  debugger
   // icp
   if(viewInfo.value.type=='2' && viewInfo.value.deployType==3){
     // 前端ic 需要先 build 完成，才能进行部署
