@@ -268,14 +268,37 @@ const getCircleTop5 = (res: any) => {
     }, new Map<string, number>());
     
     groupedByMethod.forEach((value: any, key: any) => {
+      // 过滤掉空对象
+      if(!value) return
       circlePanel1Top5.value.push({
         name: key, value: value
       });
-    });
+    })
+    circlePanel1Top5.value =  quickFun(circlePanel1Top5.value).slice(-5)
+    console.log('前五Top 5',circlePanel1Top5.value)
   } else {
     circlePanel1Top5.value = [];
   }
-} 
+}
+
+const quickFun:any = (params:any)=> {
+  //当进行递归的数组的长度小于等于 1 的时候直接返回该数组
+  if (params.length <= 1) {
+      return params;
+  }
+  let middleIndex = Math.floor(params.length / 2); //获取基准数据的下标
+  let middleItem = params.splice(middleIndex,1)[0]?.value; //截取基准数据
+  let leftArr = [];
+  let rightArr = [];
+  for (let k = 0; k < params.length; k++) {
+      if (params[k].value > middleItem) {
+        rightArr.push(params[k]);
+      }else{
+        leftArr.push(params[k]);
+      }
+  }
+  return quickFun(leftArr).concat(middleItem,quickFun(rightArr)); //将左边数组，基准数据和右边数组进行拼接成一个完整的数组
+}
 
 //获取圆饼Source
 const getCircleSource = async () => {
