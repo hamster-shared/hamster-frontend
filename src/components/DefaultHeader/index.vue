@@ -6,7 +6,7 @@
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
       <div @click="goPrjects" :class="{ 'header-menu-line': selectedNavTitle === 'projects' }"
-        class="ml-12 mr-8 header-text-css" id="pro">Projects</div>
+        class="ml-12 mr-8 header-text-css" id="pro">Project</div>
       <a-dropdown>
         <div class="header-text-css"
           :class="{ 'header-menu-line': selectedNavTitle === 'dashboard' || selectedNavTitle === 'miwaspace' }"
