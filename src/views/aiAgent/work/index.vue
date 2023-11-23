@@ -1,18 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <div class="font-bold text-[24px] mb-[30px]">Work</div>
-    <div v-if="noData" class="bg-[#F3F3F3] dark:bg-[#0E0E0E] rounded-[12px] h-[836px] flex justify-center items-center py-[100px] px-[30px]">
-      <div class="text-center">
-        <img src="@/assets/images/rpc-nodata.png" class="h-[150px]"/>
-        <div class="text-[21px] font-medium text-[#656D7A] mt-[30px]">You don`t have any Agent yet, hurry up and go to the market to hire one!</div>
-        <div class="mt-[60px] flex justify-center items-center">
-          <div class="h-[65px] leading-[65px] w-[360px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]">
-            <svg-icon name="add-white" size="26" class="mr-[10px]" />
-            Hire Agent from marketplace
-          </div>
-        </div>
-      </div>
-    </div>
+    <NoData v-if="noData"></NoData>
     <div v-else class="h-[836px] flex rounded-[12px]">
       <div class="w-1/3 bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
         <div class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">History</div>
@@ -25,7 +14,7 @@
             </div>
           </div>
         </div>
-        <div class=" absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]">
+        <div class="absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]">
           <svg-icon name="add-white" size="26" class="mr-[10px]" />
           New AI Agent
         </div>
@@ -47,10 +36,12 @@
 import { ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
+import NoData from '../home/NoData.vue'
+
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 
-const noData = ref(false); 
+const noData = ref(true); 
 const inputValue = ref('');
 const historyList = ref([ 
   {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'比特币还能做更多吗？'},
