@@ -29,6 +29,7 @@ const initGithubInstallAuth = async () => {
         const state = new Date().getTime();
         const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
         const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+        window.close();
       } else {
         // 小狐狸登录情况下，不需要install 
         const opener = window.opener;
