@@ -5,10 +5,10 @@
       <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
         <div v-for="item in menuRouterList">
           <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
-            <router-link
-              :to="((item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
+            <router-link :to="item.path">
               <div>
-                <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
+                <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px] icon-no" />
+                <svg-icon :name="item.name+'Selected'" size="20" class="ml-[8px] mr-[12px] icon-yes" />
                 <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
                 <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
               </div>
@@ -37,17 +37,14 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup name="Dashboard">
+<script lang="ts" setup>
 import { ref, onBeforeMount, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
-import { apiGetIfOpenService } from '@/apis/middleWare'
 const theme = useThemeStore();
 const router = useRouter();
 const menuRouterList = ref<any>([]);
 const selectedKeys = ref<any>(['']);
-const isRpcDefault = ref(false)
-const isOracleDefault = ref(false);
 const openKeys = ref<any>([]);
 
 onBeforeMount(() => {
@@ -64,9 +61,6 @@ const toChild = ( {key, domEvent })=>{
   console.log('toChild',key,domEvent)
 }
 
-onMounted(async()=>{
-})
-
 watch(() => router.currentRoute.value,
   (value) => {
     selectedKeys.value = value.meta.sidebarMap || [''];
@@ -74,6 +68,7 @@ watch(() => router.currentRoute.value,
 )
 </script>
 <style scoped lang="less">
+
 .dashboard-index {
   min-height: calc(100% - 114px);
 
@@ -134,8 +129,20 @@ watch(() => router.currentRoute.value,
   border-right: 0;
 }
 
+.icon-yes{
+  display: none;
+}
+.icon-no{
+  display: inline-block;
+}
 :deep(.ant-menu .ant-menu-item-selected>span>a) {
   color: #E2B578;
   font-weight: bold;
+  .icon-yes{
+    display: inline-block;
+  }
+  .icon-no{
+    display: none;
+  }
 }
 </style>
