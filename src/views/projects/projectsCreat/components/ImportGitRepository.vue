@@ -89,7 +89,7 @@
       </div>
 
       <div class="mb-6 text-center">
-        <a-pagination v-if="pagination.total" size="small" @showSizeChange="pagination.onShowSizeChange"
+        <a-pagination v-if="pagination.total" size="small"
           @change="pagination.onChange" v-model:current="pagination.current"
           :total="pagination.total" v-model:pageSize="pagination.pageSize" />
         <div v-else>
