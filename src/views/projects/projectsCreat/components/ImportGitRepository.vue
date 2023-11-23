@@ -90,7 +90,7 @@
 
       <div class="mb-6 text-center">
         <a-pagination v-if="pagination.total" size="small" @showSizeChange="pagination.onShowSizeChange"
-          :pageSizeOptions="pagination.pageSizeOptions" @change="pagination.onChange" v-model:current="pagination.current"
+          @change="pagination.onChange" v-model:current="pagination.current"
           :total="pagination.total" v-model:pageSize="pagination.pageSize" />
         <div v-else>
           <img src="@/assets/icons/noData--dark.svg" alt="" class="w-[128px] hidden dark:inline-block" />
@@ -261,7 +261,7 @@ const pagination = reactive({
   hideOnSinglePage: false, // 只有一页时是否隐藏分页器
   showQuickJumper: false, // 是否可以快速跳转至某页
   showSizeChanger: false, // 是否可以改变 pageSize
-  pageSizeOptions: ['3'],
+  // pageSizeOptions: ['3'],
   onShowSizeChange: (current: number, pagesize: number) => {
     // 改变 pageSize时的回调
     pagination.current = current;
