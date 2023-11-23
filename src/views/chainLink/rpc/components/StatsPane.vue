@@ -214,8 +214,8 @@ const getRequestOriginData = async () => {
             valueOther[it].push({httpsNum: '', wssNum: ''});
           }
         } else {
-          valueY[it] = [item[it].totalNum];
-          valueOther[it] = [{httpsNum: item[it].httpsNum, wssNum: item[it].wssNum}];
+          valueY[it] = [item[it]?.totalNum];
+          valueOther[it] = [{httpsNum: item[it]?.httpsNum, wssNum: item[it]?.wssNum}];
         }
       });
     })
