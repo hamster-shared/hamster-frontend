@@ -17,15 +17,17 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router";
 const router = useRouter();
 // import.meta.env.VITE_BASE_API
-const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
+const channel = new BroadcastChannel("updateRepositoryData");
 const closeBtn = () => {
   const opener = window.opener
   // opener.postMessage('message', apiUrl.value);
+  channel.postMessage('update');
   window.close();
-  opener.location.reload();
+  // opener.location.reload();
 }
 </script>
 

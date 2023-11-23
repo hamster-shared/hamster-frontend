@@ -81,6 +81,12 @@
                   Connect Github
                 </div>
               </a-menu-item>
+              <a-menu-item class="">
+                <div class="py-[4px]" @click="githubInstall">
+                  <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
+                  Connect Github
+                </div>
+              </a-menu-item>
               <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
               <a-menu-item class="">
                 <div class="py-[4px]" @click="handleOrder">
@@ -154,7 +160,9 @@ const githubAvatarUrl = ref('');
 const username = ref('');
 // const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
 // const username = JSON.parse(userInfo)?.username || '';
-const isShowMiddleware = ref(false)
+const isShowMiddleware = ref(false);
+
+const channel = new BroadcastChannel("updateUserInfo");
 
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
@@ -189,8 +197,15 @@ const githubInstall = () => {
   // 关联github
   const state = new Date().getTime();
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/connectGithub`;
-  const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  // const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  const myWindow = window.open('http://localhost:5173/projects/connectGithub')
   myWindow?.focus();
+  channel.onmessage = (e) => {
+    console.log(e, 'ee')
+    // username.value = JSON.parse(localStorage.getItem('userInfo'))?.username;
+    username.value = 'hhh'
+    console.log(username.value, 'username.value')
+  }
   // window.close();
   // window.opener.location.reload();
 };
@@ -276,6 +291,16 @@ watch(
   (oldV, newV) => {
     if (newV) {
       loginType.value = newV;
+    }
+  }, { deep: true, immediate: true }
+);
+
+watch(
+  () => username.value,
+  (oldV, newV) => {
+    if (newV) {
+      console.log(newV, 'new')
+      username.value = newV;
     }
   }, { deep: true, immediate: true }
 );

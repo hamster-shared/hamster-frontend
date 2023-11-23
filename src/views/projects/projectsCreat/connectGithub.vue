@@ -13,7 +13,7 @@ const router = useRouter();
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
-
+const channel = new BroadcastChannel("updateUserInfo");
 
 const getUserInfoData = async () => {
   const { data } = await getUserInfo()
@@ -30,8 +30,10 @@ const getMetaMaskUserInfo = async (id: string) => {
     localStorage.setItem('userInfo', JSON.stringify(data));
     localStorage.setItem('test', 'test connect gIthub后更新的userInfo')
     console.log(data, 'connect gIthub后更新的userInfo， 有username吗？')
+    channel.postMessage('update')
     window.close();
-    window.opener.location.reload();
+
+    // window.opener.location.reload();
 
   }
 }
@@ -61,6 +63,7 @@ onMounted(() => {
     loginType.value = loginData.loginType;
     if (loginType.value == 2) {
       initGithubInstallAuth()
+
     }
   }
 })

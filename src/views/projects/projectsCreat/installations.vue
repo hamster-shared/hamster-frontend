@@ -9,7 +9,8 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const setupAction = ref('');
-const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
+const channel = new BroadcastChannel("updateRepositoryData");
 
 const checkSetupAction = () => {
   // setupAction === request 组织  install === 个人
@@ -18,10 +19,11 @@ const checkSetupAction = () => {
     router.push('/projects/adjustPremission');
   } else {
     console.log('进入install')
-    const opener = window.opener;
-    // opener.postMessage('message', '*');
+    channel.postMessage('update');
+    // const opener = window.opener;
+    // // opener.postMessage('message', '*');
     window.close();
-    opener.location.reload();
+    // opener.location.reload();
   }
 }
 onMounted(() => {

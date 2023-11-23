@@ -6,7 +6,7 @@
       <span class="text-sm cursor-pointer open-link-css" @click="handleImportRepository">Import Third-Party Git Repository
         <right-outlined /></span>
     </div>
-    <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
+    <ImportInstall v-if="!isGithubInstallCheck"></ImportInstall>
     <div v-else>
       <div class="flex">
         <!-- <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
@@ -100,7 +100,7 @@
       </div>
       <div v-if="repositorySelection === 'selected'">
         <span>Missing Git repository? </span>
-        <span class="text-[#E2B578] cursor-pointer" @click="adjustGithubPremission">Adjust GitHub App
+        <span class="text-[#E2B578] cursor-pointer" @click="addGithubAccount">Adjust GitHub App
           Permissions <right-outlined /></span>
       </div>
     </div>
@@ -215,6 +215,8 @@ const VNodes: any = (_, { attrs }) => {
   return attrs.vnodes;
 };
 
+const channel = new BroadcastChannel("updateRepositoryData");
+
 const importVisible = ref(false);
 const repositoryVisible = ref(false);
 const importFormRef = ref();
@@ -276,27 +278,26 @@ const pagination = reactive({
 });
 
 const addGithubAccount = () => {
-  // window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
-}
-
-const resetRepositoryData = async (event: Event) => {
-  // await getInstallationsAccount()
-  console.log(event, 'RepositoryData更新列表1111')
-  // pagination.current = 1;
-  // pagination.pageSize = 3;
-  // searchInputValue.value = '';
-
-  // getRepositoryData();
+  // const myWindow = window.open('http://localhost:5173/projects/installations?setup_action=install')
+  channel.onmessage = async (e) => {
+    console.log(e, '收到传信，更新数据');
+    if (e.data === 'update') {
+      await getInstallationsAccount()
+      pagination.current = 1;
+      pagination.pageSize = 3;
+      searchInputValue.value = '';
+      getRepositoryData();
+    }
+  };
 }
 
 
 const getGithubInstallCheck = async () => {
   try {
     const { data } = await githubInstallCheck()
-    // console.log(data, ' 99999')
     isGithubInstallCheck.value = data;
     if (data) {
       await getInstallationsAccount();
@@ -308,16 +309,27 @@ const getGithubInstallCheck = async () => {
 }
 
 
-const adjustGithubPremission = () => {
-  // window.addEventListener('message', resetRepositoryData, false)
-  const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
-  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
-}
+// const adjustGithubPremission = () => {
+//   // window.addEventListener('message', resetRepositoryData, false)
+//   const state = new Date().getTime();
+//   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+//   // const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
+//   const myWindow = window.open('http://localhost:5173/projects/installations?setup_action=install')
+
+//   channel.onmessage = async (e) => {
+//     console.log(e, '收到传信，更新数据2');
+//     if (e.data === 'update') {
+//       await getInstallationsAccount()
+//       pagination.current = 1;
+//       pagination.pageSize = 3;
+//       searchInputValue.value = '';
+//       getRepositoryData();
+//     }
+//   };
+// }
 
 const selectGithubAccount = (item: any) => {
   console.log(item, '9090')
-  // installationsData.value = item;
   selectValue.value = item.name;
   selectAvatarUrl.value = item.avatarUrl;
   selsectInstallId.value = item.installId;
@@ -335,21 +347,11 @@ const getInstallationsAccount = async () => {
     selectAvatarUrl.value = data[0].avatarUrl;
     selsectInstallId.value = data[0].installId;
     repositorySelection.value = data[0].repositorySelection;
-    // installationsData.value = data[0]
     console.log(data, '999')
   } catch (err: any) {
     // message.error(err.message)
   }
 }
-
-// const resetData = async () => {
-//   await getInstallationsAccount()
-//   console.log('可以刷新数据了')
-//   pagination.current = 1;
-//   pagination.pageSize = 3;
-//   searchInputValue.value = '';
-//   getRepositoryData();
-// }
 
 const getRepositoryData = async () => {
   const params = {

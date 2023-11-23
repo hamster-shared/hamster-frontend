@@ -14,6 +14,7 @@ const loginType = ref();
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
 const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+const channel = new BroadcastChannel("updateRepositoryData");
 
 
 const initGithubInstallAuth = async () => {
@@ -33,9 +34,9 @@ const initGithubInstallAuth = async () => {
         // 小狐狸登录情况下，不需要install 
         const opener = window.opener;
         // opener.postMessage('message', apiUrl.value);
-
+        channel.postMessage('update');
         window.close();
-        opener.location.reload();
+        // opener.location.reload();
       }
     } catch (err: any) {
 
