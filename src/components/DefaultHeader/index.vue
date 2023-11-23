@@ -8,7 +8,7 @@
       <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }" class="ml-12 mr-8 header-text-css"
         id="pro">ALine</div>
       <a-dropdown>
-        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }" @click.stop>
+        <div class="header-text-css" :class="{ 'header-menu-line': !isProject && !isAgent }" @click.stop>
           Middleware
           <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
           <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
@@ -24,6 +24,8 @@
           </a-menu>
         </template>
       </a-dropdown>
+      <div @click="goAgent" :class="{ 'header-menu-line': isAgent }" class="ml-12 header-text-css"
+        id="pro">AI Agent</div>
       <div @click="goDoc" class="ml-12 mr-8 header-text-css">Docs</div>
     </div>
     <div class="flex items-center">
@@ -146,6 +148,7 @@ const isConnectedWallet = ref(false);
 const walletAccount = ref("");
 const isProject = ref(true)
 const isOrder = ref(false)
+const isAgent = ref(false)
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
@@ -172,8 +175,14 @@ const goHome = () => {
 const goPrjects = () => {
   router.push("/projects");
   isProject.value = true;
-}
+  isAgent.value = false;
 
+}
+const goAgent = () => {
+  router.push("/aiAgent/work");
+  isProject.value = false;
+  isAgent.value = true;
+}
 // 跳官网文档
 const goDoc = () => {
   window.open('https://hamsternet.io/docs/')
@@ -182,6 +191,7 @@ const goDoc = () => {
 const goMiwaspace = () => {
   router.push("/middleware/miwaspace?key=1");
   isProject.value = false;
+  isAgent.value = false;
 }
 
 
@@ -199,6 +209,7 @@ const githubInstall = () => {
 const goDashboard = () => {
   router.push("/middleware/dashboard");
   isProject.value = false;
+  isAgent.value = false;
 }
 
 const changeTheme = (val: string) => {
@@ -231,9 +242,11 @@ onMounted(() => {
     isProject.value = false
   } else if (window.location.href.indexOf('projects') != -1) {
     isProject.value = true
-  }
-  else if (window.location.href.indexOf('orders') != -1) {
+  } else if (window.location.href.indexOf('orders') != -1) {
     isOrder.value = true
+  } else if (window.location.href.indexOf('aiAgent') != -1) {
+    isAgent.value = true
+    isProject.value = false
   }
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
