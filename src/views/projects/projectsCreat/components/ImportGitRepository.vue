@@ -6,7 +6,7 @@
       <span class="text-sm cursor-pointer open-link-css" @click="handleImportRepository">Import Third-Party Git Repository
         <right-outlined /></span>
     </div>
-    <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
+    <ImportInstall v-if="!isGithubInstallCheck"></ImportInstall>
     <div v-else>
       <div class="flex">
         <!-- <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
@@ -423,7 +423,8 @@ const handleCancelImport = () => {
 
 const handleDone = async () => {
   await importFormRef.value.validate()
-  doneLoading.value = true
+  doneLoading.value = true;
+  window.localStorage.setItem("projectActiveKey", props.projectType);
   if (!repositoryVisible.value) {
     importUrl.value = repositoryData.value.find((item: any) => {
       return item.name == importFormData.value.name
