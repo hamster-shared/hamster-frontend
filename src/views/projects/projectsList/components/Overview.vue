@@ -683,6 +683,7 @@ const goContractBuild = async (id: string, workflowId: string, detailId: string)
 };
 
 const goContractDeploy = async (id: string, status: number) => {
+  console.log(id, status, 'iiii')
   if (localStorage.getItem('projectActiveKey') == '1') {
     localStorage.setItem("projectName", viewInfo.value.name)
     localStorage.setItem("projectId", id)
@@ -701,6 +702,8 @@ const goContractDeploy = async (id: string, status: number) => {
       // goFrontendDeploy();
       if (viewInfo.value.type == '2' && viewInfo.value.deployType == 3) {
         getIcpInfo(status)
+      } else {
+        frontCommonDeploy(status)
       }
     }
   }
