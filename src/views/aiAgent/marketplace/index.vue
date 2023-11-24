@@ -1,12 +1,20 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <div class="font-bold text-[24px] mb-[30px]">Marketplace</div>
-    <img src="@/assets/images/marketplace-top.png" class="h-[250px] w-full mb-[30px]"/>
+    <img src="@/assets/images/marketplace-top.png" class=" w-full mb-[30px]"/>
     <a-tabs v-model:activeKey="activeKey" centered>
-      <a-tab-pane key="1" tab="All">Content of Tab Pane 1</a-tab-pane>
-      <a-tab-pane key="2" tab="NFT" force-render>Content of Tab Pane 2</a-tab-pane>
-      <a-tab-pane key="3" tab="Develop">Content of Tab Pane 3</a-tab-pane>
-      <a-tab-pane key="4" tab="Other">Content of Tab Pane 4</a-tab-pane>
+      <a-tab-pane key="1" tab="All">
+        <TabsContent :tabsList="tabsList"></TabsContent>
+      </a-tab-pane>
+      <a-tab-pane key="2" tab="NFT">
+        <TabsContent :tabsList="tabsList"></TabsContent>
+      </a-tab-pane>
+      <a-tab-pane key="3" tab="Develop">
+        <TabsContent :tabsList="tabsList"></TabsContent>
+      </a-tab-pane>
+      <a-tab-pane key="4" tab="Other">
+        <TabsContent :tabsList="tabsList"></TabsContent>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
@@ -14,11 +22,18 @@
 import { ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
+import TabsContent from './components/TabsContent.vue'
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 
 const activeKey = ref('1');
+const tabsList = ref([ 
+  {id:'1',logo:'testLogo.png', name:'币圈索罗斯', title:'投资顾问', desc:'项目研报、Alpha资源、钱包监控、自动min挖掘…项目研报、Alpha资源、钱包监控、自动min挖掘…项目研报、Alpha资源、钱包监控、自动…'},
+  {id:'2',logo:'testLogo.png', name:'琴心幻影', title:'古风创意创作小宅女', desc:'帮我生成一张汉服写真照片'},
+  {id:'3',logo:'testLogo.png', name:'梦幻音符', title:'陪伴、聊天、情感支持', desc:'心情不好，夸夸我～'},
+  {id:'4',logo:'testLogo.png', name:'Sophia', title:'产品营销、危机公关，产品营销、危机公关', desc:'我家爱豆闹绯闻怎么办怎么办怎么办'},
+]);
 
 </script>
 <style scoped lang="less">
@@ -27,6 +42,9 @@ const activeKey = ref('1');
   font-weight: 600;
   color: #000000;
   font-size: 16px;
+}
+:deep(.ant-tabs-top>.ant-tabs-nav){
+  margin-bottom: 30px;
 }
 :deep(.ant-tabs-tab + .ant-tabs-tab){
   margin: 0 0 0 10px

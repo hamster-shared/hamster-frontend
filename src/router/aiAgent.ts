@@ -29,6 +29,14 @@ const aiAgentRoute = [
             meta: {
               sidebarMap: ['Marketplace'],
             }
+          },
+          {
+            path: "/aiAgent/marketplace/detail",
+            name: "MarketplaceDetail",
+            component: () => import('@/views/aiAgent/marketplace/detail.vue'),
+            meta: {
+              sidebarMap: ['Marketplace'],
+            }
           }
         ]
       },
