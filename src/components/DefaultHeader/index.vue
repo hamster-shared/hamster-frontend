@@ -5,12 +5,15 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }" class="ml-12 mr-8 header-text-css"
-        id="pro">ALine</div>
+      <div @click="goPrjects" :class="{ 'header-menu-line': selectedNavTitle === 'projects' }"
+        class="ml-12 mr-8 header-text-css" id="pro">Project</div>
       <a-dropdown>
-        <div class="header-text-css" :class="{ 'header-menu-line': !isProject && !isAgent }" @click.stop>
+        <!-- <div class="header-text-css" :class="{ 'header-menu-line': !isProject && !isAgent }" @click.stop> -->
+        <div class="header-text-css"
+          :class="{ 'header-menu-line': selectedNavTitle === 'dashboard' || selectedNavTitle === 'miwaspace' }"
+          @click.stop>
           Middleware
-          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
+          <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden up-tran">
           <img src="@/assets/icons/skx1.svg" alt="" class="h-[7px] inline-block up-tran">
         </div>
         <template #overlay>
@@ -24,9 +27,12 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goAgent" :class="{ 'header-menu-line': isAgent }" class="ml-12 header-text-css"
+      <div @click="goAgent" :class="{ 'header-menu-line': selectedNavTitle == 'aiAgent' }" class="ml-8 header-text-css"
         id="pro">AI Agent</div>
-      <div @click="goDoc" class="ml-12 mr-8 header-text-css">Docs</div>
+      <div @click="goTemplate" class="ml-8 mr-8 header-text-css"
+        :class="{ 'header-menu-line': selectedNavTitle === 'template' }">
+        Template</div>
+      <div @click="goDoc" class="mr-8 header-text-css">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -149,6 +155,10 @@ const walletAccount = ref("");
 const isProject = ref(true)
 const isOrder = ref(false)
 const isAgent = ref(false)
+const isTemplate = ref(false);
+
+const selectedNavTitle = ref('projects');
+
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
@@ -173,12 +183,14 @@ const goHome = () => {
 };
 
 const goPrjects = () => {
+  selectedNavTitle.value = 'projects';
   router.push("/projects");
   isProject.value = true;
   isAgent.value = false;
-
+  // isProject.value = true;
 }
 const goAgent = () => {
+  selectedNavTitle.value = 'aiAgent';
   router.push("/aiAgent/work");
   isProject.value = false;
   isAgent.value = true;
@@ -188,10 +200,18 @@ const goDoc = () => {
   window.open('https://hamsternet.io/docs/')
 }
 
+const goTemplate = () => {
+  selectedNavTitle.value = 'template';
+  router.push('/projects/create')
+
+}
+
 const goMiwaspace = () => {
+  selectedNavTitle.value = 'miwaspace';
   router.push("/middleware/miwaspace?key=1");
   isProject.value = false;
   isAgent.value = false;
+  // isProject.value = false;
 }
 
 
@@ -207,9 +227,11 @@ const githubInstall = () => {
 
 
 const goDashboard = () => {
+  selectedNavTitle.value = 'dashboard';
   router.push("/middleware/dashboard");
   isProject.value = false;
   isAgent.value = false;
+  // isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
@@ -240,14 +262,26 @@ onMounted(() => {
   // 解决middle刷新页面选中在projects tab下问题
   if (window.location.href.indexOf('middleware') != -1) {
     isProject.value = false
+    selectedNavTitle.value = 'dashboard';
   } else if (window.location.href.indexOf('projects') != -1) {
     isProject.value = true
   } else if (window.location.href.indexOf('orders') != -1) {
+    // selectedNavTitle.value = 'projects';
+    // isProject.value = true
+    if (window.location.href.indexOf('create') != -1 || window.location.href.indexOf('template') != -1) {
+      selectedNavTitle.value = 'template';
+    } else {
+      selectedNavTitle.value = 'projects';
+    }
+
+  }
+  else if (window.location.href.indexOf('orders') != -1) {
+    selectedNavTitle.value = 'orders';
     isOrder.value = true
   } else if (window.location.href.indexOf('aiAgent') != -1) {
-    isAgent.value = true
-    isProject.value = false
+    selectedNavTitle.value = 'aiAgent';
   }
+
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
@@ -268,7 +302,6 @@ onMounted(() => {
       username.value = JSON.parse(userInfo)?.username || '';
     }
   }
-
 });
 
 

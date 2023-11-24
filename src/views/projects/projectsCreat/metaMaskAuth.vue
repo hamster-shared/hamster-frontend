@@ -26,6 +26,7 @@ const initGithubInstallAuth = async () => {
       const { data } = await githubInstallAuth(params);
       // data == true 需要install  false 不需要install
       if (data) {
+        window.close();
         const state = new Date().getTime();
         const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
         const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
@@ -33,12 +34,10 @@ const initGithubInstallAuth = async () => {
         // 小狐狸登录情况下，不需要install 
         const opener = window.opener;
         // opener.postMessage('message', apiUrl.value);
-
         window.close();
         opener.location.reload();
       }
     } catch (err: any) {
-
     }
   }
 }

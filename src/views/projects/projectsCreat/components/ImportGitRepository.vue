@@ -6,7 +6,7 @@
       <span class="text-sm cursor-pointer open-link-css" @click="handleImportRepository">Import Third-Party Git Repository
         <right-outlined /></span>
     </div>
-    <ImportInstall v-if="!isGithubInstallCheck" @resetData="resetData"></ImportInstall>
+    <ImportInstall v-if="!isGithubInstallCheck"></ImportInstall>
     <div v-else>
       <div class="flex">
         <!-- <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
@@ -82,16 +82,16 @@
             <span v-else
               class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">public</span>
           </div>
-          <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updatedAt, "noThing") }}
+          <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updateAt, "noThing") }}
           </div>
         </div>
         <a-button class="self-center w-[140px] !h-[42px]" @click="handleImport(item)">Import</a-button>
       </div>
 
       <div class="mb-6 text-center">
-        <a-pagination v-if="pagination.total" size="small" @showSizeChange="pagination.onShowSizeChange"
-          :pageSizeOptions="pagination.pageSizeOptions" @change="pagination.onChange" v-model:current="pagination.current"
-          :total="pagination.total" v-model:pageSize="pagination.pageSize" />
+        <a-pagination v-if="pagination.total" size="small"
+          @change="pagination.onChange" v-model:current="pagination.current"
+          :total="pagination.total" v-model:pageSize="pagination.pageSize" :showSizeChanger="false"/>
         <div v-else>
           <img src="@/assets/icons/noData--dark.svg" alt="" class="w-[128px] hidden dark:inline-block" />
           <img src="@/assets/icons/noData-white.svg" class="w-[128px] dark:hidden" />
@@ -261,7 +261,7 @@ const pagination = reactive({
   hideOnSinglePage: false, // 只有一页时是否隐藏分页器
   showQuickJumper: false, // 是否可以快速跳转至某页
   showSizeChanger: false, // 是否可以改变 pageSize
-  pageSizeOptions: ['3'],
+  // pageSizeOptions: ['3'],
   onShowSizeChange: (current: number, pagesize: number) => {
     // 改变 pageSize时的回调
     pagination.current = current;
@@ -423,7 +423,8 @@ const handleCancelImport = () => {
 
 const handleDone = async () => {
   await importFormRef.value.validate()
-  doneLoading.value = true
+  doneLoading.value = true;
+  window.localStorage.setItem("projectActiveKey", props.projectType);
   if (!repositoryVisible.value) {
     importUrl.value = repositoryData.value.find((item: any) => {
       return item.name == importFormData.value.name
