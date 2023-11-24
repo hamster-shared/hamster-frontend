@@ -41,7 +41,7 @@ import NoData from '../home/NoData.vue'
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 
-const noData = ref(true); 
+const noData = ref(false); 
 const inputValue = ref('');
 const historyList = ref([ 
   {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'比特币还能做更多吗？'},
