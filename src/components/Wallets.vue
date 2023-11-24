@@ -163,7 +163,10 @@ const onClickDisconnect = async () => {
 }
 
 watch(() => connectedWallet.value, (newVal, oldVal) => {
-  if (newVal && newVal !== oldVal) {
+  console.log(11111111111,connectedWallet.value)
+  console.log(22222,newVal,33333,oldVal)
+  // debugger
+  if (newVal) {
     console.info("start init")
     const provider = newVal.provider;
     const network = newVal.chains[0].id;
