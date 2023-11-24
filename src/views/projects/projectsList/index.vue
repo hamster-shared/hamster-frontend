@@ -10,7 +10,7 @@
         </a-input>
       </div>
       <div class="flex">
-        <a-button type="primary" ghost class="mr-[24px]" @click="goCreateProject">Template Market</a-button>
+        <!-- <a-button type="primary" ghost class="mr-[24px]" @click="goCreateProject">Template Market</a-button> -->
         <a-button type="primary" @click="goAddNewProject">Add New Project</a-button>
         <!-- <a-button type="primary" @click="goCreateProject">Create Project</a-button> -->
       </div>

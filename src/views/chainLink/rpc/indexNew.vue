@@ -274,7 +274,6 @@ const getCircleTop5 = (res: any) => {
       acc.set(method, num);
       return acc;
     }, new Map<string, number>());
-    
     groupedByMethod.forEach((value: any, key: any) => {
       // 过滤掉空对象
       if(!value) return
@@ -282,11 +281,32 @@ const getCircleTop5 = (res: any) => {
         name: key, value: value
       });
     })
-    circlePanel1Top5.value =  quickFun(circlePanel1Top5.value).slice(-5)
+    const addArr = accumulateDuplicates(circlePanel1Top5.value)
+    circlePanel1Top5.value =  quickFun(addArr).slice(-5)
     console.log('前五Top 5',circlePanel1Top5.value)
   } else {
     circlePanel1Top5.value = [];
   }
+}
+
+// 数组重复对象元素累加
+const accumulateDuplicates = (arr:any)=> {
+  if(!arr.length) return
+  const counts:any = {};
+
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+    const key = item.name;
+
+    if (counts[key]) {
+      counts[key].value += item.value;
+    } else {
+      counts[key] = { ...item };
+    }
+  }
+
+  const result = Object.values(counts);
+  return result;
 }
 
 const quickFun:any = (params:any)=> {
