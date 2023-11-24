@@ -140,15 +140,6 @@ const onClickConnect = async () => {
     for(let account of walletStates[0].accounts){
       saveWallet(account.address).then(() => {})
     }
-
-    if (connectedWallet.value) {
-      console.info("start init 11111")
-      const provider = connectedWallet.value.provider;
-      const network = connectedWallet.value.chains[0].id;
-      const address = connectedWallet.value.accounts[0].address;
-      console.log('~~~~~~~~',provider,1111,network,2222,address)
-      contractApi.initContractApi(provider, network, address);
-    }
   }
 }
 
@@ -172,10 +163,7 @@ const onClickDisconnect = async () => {
 }
 
 watch(() => connectedWallet.value, (newVal, oldVal) => {
-  console.log(11111111111,connectedWallet.value)
-  console.log(22222,newVal,33333,oldVal)
-  // debugger
-  if (newVal) {
+  if (newVal && newVal !== oldVal) {
     console.info("start init")
     const provider = newVal.provider;
     const network = newVal.chains[0].id;
