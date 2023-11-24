@@ -40,7 +40,7 @@
               <label class="font-light"> Archive data access</label>
             </div>
             <div class="absolute bottom-[30px] left-[30px] right-[30px]">
-              <a-button type="primary" class="!h-[42px] !w-full ">Upgrade</a-button>
+              <a-button type="primary" class="!h-[42px] !w-full " @click="router.push('/middleware/dashboard/RPC/pricing')">Upgrade</a-button>
             </div>
           </div>
         </div>
@@ -71,9 +71,12 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { setMillionValue, setNumberValue } from './components/rpcData'
 import { apiGetZanUserAuthed, apiZanPlan } from "@/apis/middlewareRPC";
+
+const router = useRouter()
 
 const userPlan = ref<any>([]);
 // 获取plan里面的字段信息
