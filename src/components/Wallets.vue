@@ -140,6 +140,15 @@ const onClickConnect = async () => {
     for(let account of walletStates[0].accounts){
       saveWallet(account.address).then(() => {})
     }
+
+    if (connectedWallet.value) {
+      console.info("start init 11111")
+      const provider = connectedWallet.value.provider;
+      const network = connectedWallet.value.chains[0].id;
+      const address = connectedWallet.value.accounts[0].address;
+      console.log('~~~~~~~~',provider,1111,network,2222,address)
+      contractApi.initContractApi(provider, network, address);
+    }
   }
 }
 
