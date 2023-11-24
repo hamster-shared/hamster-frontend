@@ -26,10 +26,10 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goTemplate" class="ml-12 mr-8 header-text-css"
+      <div @click="goTemplate" class="ml-8 mr-8 header-text-css"
         :class="{ 'header-menu-line': selectedNavTitle === 'template' }">
         Template</div>
-      <div @click="goDoc" class="ml-12 mr-8 header-text-css">Docs</div>
+      <div @click="goDoc" class="mr-8 header-text-css">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
