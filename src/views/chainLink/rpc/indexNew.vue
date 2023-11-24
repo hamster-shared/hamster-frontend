@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="title">My APPs</div>
-    <div class="card-border">
+    <div class="card-border card-width">
       <div class="flex justify-end items-center text-[#E2B578] mb-[18px]">
         <div class="font-[14px] text-[#E2B578] cursor-pointer" @click="goMyApp">View all apps</div>
         <svg-icon name="right" size="13" class="ml-[10px]" />
       </div>
-      <div class="flex">
+      <div class="flex pb-[10px] overflow-x-scroll" :style="{width: scrollWidth}">
         <!-- 循环遍历拿出app -->
-        <div v-if="apIKeyInfo.length > 0">
-          <div v-for="(item, key) in apIKeyInfo" :key="key" class="w-[300px] h-[188px] bg-[rgba(226,181,120,0.25)] rounded-[12px] border border-solid border-[#EBEBEB] p-[20px] cursor-pointer" @click="goMyAppDetail(item.apiKeyId, item.name)">
+        <div v-if="apIKeyInfo.length > 0" class="flex">
+          <div v-for="(item, key) in apIKeyInfo" :key="key" class="mr-[30px] w-[300px] h-[188px] bg-[rgba(226,181,120,0.25)] rounded-[12px] border border-solid border-[#EBEBEB] p-[20px] cursor-pointer" @click="goMyAppDetail(item.apiKeyId, item.name)">
             <div class="flex justify-between items-center">
               <div class="text-[21px] font-black">{{ item.name }}</div>
               <svg-icon name="right" size="17" />
@@ -24,7 +24,7 @@
             </a-button>
           </div>
         </div>
-        <div class="flex justify-center items-center h-[188px] w-[188px] ml-[30px] rounded-[8px] border border-dashed border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] cursor-pointer" @click="createApp">
+        <div class="shrink-0 flex justify-center items-center h-[188px] w-[188px] rounded-[8px] border border-dashed border-[#D2D2D2] dark:border-[#6C6C6C] bg-[#FCFCFC] dark:bg-[#191816] cursor-pointer" @click="createApp">
           <div class="text-center text-[#666666]">
             <svg-icon name="add-icon" size="33" class="dark:text-[#6C6C6C]" />
             <div class="font-normal mt-[20px] dark:text-[#FFFFFF]">Create Now</div>
@@ -114,6 +114,7 @@ import {
 
 const router = useRouter()
 
+const scrollWidth = ref('');
 const apIKeyInfo = ref<any>([]);
 const creditCostData = ref({})
 const optionsApp = ref<any>([]);
@@ -217,7 +218,7 @@ const getApiKeyInfo = async () => {
         });
       });
       optionParams.value.opApp = res.data.data[0].apiKeyId;
-      apIKeyInfo.value = [res.data.data[0]];
+      apIKeyInfo.value = res.data.data; //[res.data.data[0]];
     }
   }
 }
@@ -394,12 +395,12 @@ const createApp = async () => {
 }
 
 onMounted(async () => {
+  scrollWidth.value = (document.getElementsByClassName('card-width')[0].clientWidth - 60) + 'px';
   getOverviewFree();
   getCreditCostLastData();
   await getApiKeyInfo();
   await getEcosystems();
   getMainChain();
-
 })
 </script>
 <style scoped>
