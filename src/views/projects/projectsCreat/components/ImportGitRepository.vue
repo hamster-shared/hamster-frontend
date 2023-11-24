@@ -82,7 +82,7 @@
             <span v-else
               class="border border-solid border-[#EBEBEB] text-sm font-normal px-4 py-[6px] rounded-[32px] inline-block ml-2">public</span>
           </div>
-          <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updatedAt, "noThing") }}
+          <div class="mt-[10px]">{{ item.language }} | Update {{ fromNowexecutionTime(item.updateAt, "noThing") }}
           </div>
         </div>
         <a-button class="self-center w-[140px] !h-[42px]" @click="handleImport(item)">Import</a-button>
