@@ -201,7 +201,7 @@ const toDetailUrl = (val: any) => {
 
 const downloadAbi = (val: any) => {
   // aptos 这一步没有abi信息
-  if (frameType?.value == 2) {
+  if (frameType?.value == 2 && !val.abiInfo) {
     aptosAbiShow.value = true
   }
   else if (frameType?.value === 5) { //sui
