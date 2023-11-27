@@ -244,6 +244,7 @@ const signOut = () => {
 };
 
 onMounted(() => {
+  console.log('是否加载了头部组件~~~~')
   // 解决middle刷新页面选中在projects tab下问题
   if (window.location.href.indexOf('middleware') != -1) {
     isProject.value = false
