@@ -127,13 +127,20 @@ onBeforeMount(async () => {
 });
 
 const onClickConnect = async () => {
+  walletStates = await onboard.connectWallet()
+  console.log('开始链接钱包', walletStates[0])
+  const provider = walletStates[0].provider;
+  const network = walletStates[0].chains[0].id;
+  const address = walletStates[0].accounts[0].address;
+  console.log('~~~~~~~~',provider,1111,network,2222,address)
+  contractApi.initContractApi(provider, network, address);
   // 进入页面即要求连接钱包
-  const walletStatesOrNull = await autoConnectSavedWallet()
-  if (walletStatesOrNull == null) {
-    walletStates = await onboard.connectWallet()
-  } else {
-    walletStates = walletStatesOrNull
-  }
+  // const walletStatesOrNull = await autoConnectSavedWallet()
+  // if (walletStatesOrNull == null) {
+  //   walletStates = await onboard.connectWallet()
+  // } else {
+  //   walletStates = walletStatesOrNull
+  // }
   if (walletStates[0]) {
     setWalletAccount(walletStates[0]);
     // 后端保存钱包地址
@@ -156,6 +163,7 @@ const setWalletAccount = async (walletState: { accounts: any; }) => {
   }
 }
 const onClickDisconnect = async () => {
+  console.log('断开了钱包链接',connectedWallet.value)
   const { provider, label } = connectedWallet.value || {}
   if (provider && label) {
     disconnectWallet({ label })
