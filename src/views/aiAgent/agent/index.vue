@@ -8,7 +8,7 @@
         Hire Agent from marketplace
       </div>
       <div class="grid grid-cols-3 gap-[20px]">
-        <div v-for="(item,key) in agentList" :key="agentList" class="card-div bg-[#FFFFFF] dark:bg-[#000000] hover:border hover:border-solid hover:border-[#E2B578] cursor-pointer">
+        <div v-for="(item,key) in agentList" :key="agentList" class="card-div bg-[#FFFFFF] dark:bg-[#000000] hover:border hover:border-solid hover:!border-[#E2B578] cursor-pointer">
           <div class="p-[30px]">
             <div class="flex mb-[10px]">
               <img v-if="item.desc2" src="@/assets/images/Owned-by-you.png" class="h-[24px] w-[105px] absolute -top-[6px] left-[90px]"/>
@@ -47,6 +47,7 @@ const agentList = ref([
 .card-div{
   box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.1);
   border-radius: 12px;
+  border: 1px solid transparent;
 }
 .title-w{
   max-width: calc(100% - 90px);;

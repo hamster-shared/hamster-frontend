@@ -47,6 +47,7 @@ const goDetail = (id: any) => {
   border-radius: 12px;
   padding: 30px;
   text-align: center;
+  border: 1px solid transparent;
   .title{
     font-size: 21px;
     font-weight: 600;
