@@ -62,6 +62,9 @@
                 <a-radio :style="radioStyle" value="7">Internet Computer
                   <div class="radio-sub">Build application based on IC and Motoko language</div>
                 </a-radio>
+                <a-radio :style="radioStyle" value="8">Solana
+                  <div class="radio-sub">Build application based on Solana and Rust language</div>
+                </a-radio>
               </div>
               <a-radio :style="radioStyle" value="1" v-if="formData.type == 3">Polkadot
                 <div class="radio-sub">Build application based on Substrate and Rust language</div>
@@ -106,8 +109,7 @@
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '3'">A collection of our most
             deployed substrate templates.</div>
           <!-- filecoin的是上下布局，反之是两栏布局 -->
-          <div v-if="formData.type === '1' || formData.type === '3'"
-            :class="formData.frameType != '6' ? 'grid grid-cols-2 gap-4' : ''" class="template-height1">
+          <div v-if="formData.type === '1' || formData.type === '3'" :class="(formData.frameType != '6'  && formData.frameType != '8') ? 'grid grid-cols-2 gap-4':''" class="template-height1">
             <div v-if="formData.frameType != '6'" v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
@@ -198,7 +200,7 @@ import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import ImportGitRepository from './components/ImportGitRepository.vue'
-import FilecoinTemplate from './components/FilecoinTemplate.vue'
+import FilecoinTemplate from './components/FilecoinTemplate.vue';
 import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
@@ -206,6 +208,17 @@ const theme = useThemeStore()
 const router = useRouter();
 const loading = ref(false);
 const showList = ref([])
+const templateList = ref([    {
+  "id": 57,
+  "templateTypeId": 8,
+  "name": "NFT Collection Contract",
+  "description": "Create collection of unique NFTs.",
+  "audited": true,
+  "lastVersion": "1.0.0",
+  "logo": "https://g.alpha.hamsternet.io/ipfs/QmYCLdgTEmLwVuecuzzXxC9aUhsPAW2cLd6TDi9QBEsQCn",
+  "image": "",
+  "labelDisplay": ""
+}])
 const formRef = ref();
 
 const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) || reactive({
@@ -301,7 +314,7 @@ const getInitTemplates = async () => {
     let languageType = '';
     if (formData.type === '1') {
       languageType = formData.frameType
-    } else if (formData.type === '2') {
+    } else if (formData.type === '2' || formData.type === '8') {
       languageType = null;
     } else {
       languageType = '1';

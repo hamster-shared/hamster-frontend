@@ -204,45 +204,45 @@
                 </div>
               </div>
 
-              <div class="text-[#D3C9BC]"
-                v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">
+            <div class="text-[#D3C9BC]"
+                 v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">
                 Explorer</div>
-              <div v-else class="inline-block cursor-pointer open-link-css">
-                <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
-                <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
+            <div v-else class="inline-block cursor-pointer open-link-css">
+              <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
+              <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">{{
+                RecentStatusEnums[viewInfo.recentDeploy.status]
+            }}</div>
+            <div v-else class="flex items-center my-2 ">
+              <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
+              <div class="text-ellipsis">
+                {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
+                  fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
               </div>
             </div>
+
+            <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
             <div v-else>
-              <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">{{
-                RecentStatusEnums[viewInfo.recentDeploy.status]
-              }}</div>
-              <div v-else class="flex items-center my-2 ">
-                <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
-                <div class="text-ellipsis">
-                  {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
-                    fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
+              <div v-if="projectType === '2'">
+                <div class="inline-block cursor-pointer open-link-css"
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
+                  View FrontEnd
                 </div>
               </div>
-
-              <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
-              <div v-else>
-                <div v-if="projectType === '2'">
-                  <div class="inline-block cursor-pointer open-link-css"
-                    @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
-                    View FrontEnd
-                  </div>
+              <div v-else-if="projectType === '3'">
+                <div class="inline-block cursor-pointer open-link-css"
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
+                  v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
+                  View Process
                 </div>
-                <div v-else-if="projectType === '3'">
-                  <div class="inline-block cursor-pointer open-link-css"
-                    @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
-                    v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
-                    View Process
-                  </div>
-                  <!-- polkdot -->
-                  <div class="inline-block cursor-pointer open-link-css"
-                    @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" v-else>
-                    View Result
-                  </div>
+                <!-- polkdot -->
+                <div class="inline-block cursor-pointer open-link-css"
+                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
+                  v-else>
+                  View Result
                 </div>
               </div>
             </div>
@@ -250,6 +250,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
   <ContainerParam :containerVisible="containerVisible" :detailId="viewInfo?.id" @hideContainerParam="hideContainerParam"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
@@ -358,7 +359,7 @@ const deployTxHash = starknetHashData[props.viewInfo.id]?.deployTxHash || '';
 // console.log('deployTxHash', props.viewInfo.id, deployTxHash)
 
 const checkCondition = () => {
-  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType == 3) {
+  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType==3 || (viewInfo.value.type == '1' && viewInfo.value.frameType == 8) ) {
     return true;
   } else {
     return false;
@@ -457,51 +458,51 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
   // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
   //   e.stopPropagation()
   // } else {
-  disabled.value = false;
-  try {
-    //判断是否为EVM 显示弹框 并且 ipfs不弹
-    if (props.viewInfo.frameType === 1 && projectType.value === '1') {
-      projectId.value = id
-      const res = await apiIsCheck(id)
-      // message.destroy()
-      if (res.code === 200) {
-        // 如果没有数据就弹，有数据不弹
-        if (JSON.stringify(res.data) === "{}") {
-          evmCheckVisible.value = true
+    disabled.value = false;
+    try {
+      //判断是否为EVM 显示弹框 并且 ipfs不弹
+      if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
+        projectId.value = id
+        const res= await apiIsCheck(id)
+        // message.destroy()
+        if(res.code===200){
+          // 如果没有数据就弹，有数据不弹
+          if(JSON.stringify(res.data) === "{}"){
+            evmCheckVisible.value=true
+          } else {
+            const { data } = await apiProjectsCheck(id);
+            if (checkData.status !== 1) {
+              setMsgShow(data.workflowId, data.detailId, 'check', 1);
+            }
+            loadView();
+          }
+        }
+      }
+      if (checkData.status === 1) {
+        // 点击check按钮，提示
+        message.info(t('project.pipeline_executing_now'));
+      } else {
+        //判断是否为EVM 显示弹框
+        if (props.viewInfo.frameType === 1 && projectType.value === '1') {
+          // evm 没有数据时，弹框唤起不吐丝
+          // if (!evmCheckVisible.value) {
+          //   setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
+          //   // message.info("The workflow of checking is running, view now.")
+          // }
         } else {
           const { data } = await apiProjectsCheck(id);
-          if (checkData.status !== 1) {
-            setMsgShow(data.workflowId, data.detailId, 'check', 1);
-          }
+
+          setMsgShow(data.workflowId, data.detailId, 'check', 1);
+          // message.success(res.message);
           loadView();
         }
       }
+    } catch (error: any) {
+      console.log("erro:", error)
+      message.error('Failed ',error);
+    } finally {
+      // loading.value = false;
     }
-    if (checkData.status === 1) {
-      // 点击check按钮，提示
-      message.info(t('project.pipeline_executing_now'));
-    } else {
-      //判断是否为EVM 显示弹框
-      if (props.viewInfo.frameType === 1 && projectType.value === '1') {
-        // evm 没有数据时，弹框唤起不吐丝
-        // if (!evmCheckVisible.value) {
-        //   setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
-        //   // message.info("The workflow of checking is running, view now.")
-        // }
-      } else {
-        const { data } = await apiProjectsCheck(id);
-
-        setMsgShow(data.workflowId, data.detailId, 'check', 1);
-        // message.success(res.message);
-        loadView();
-      }
-    }
-  } catch (error: any) {
-    console.log("erro:", error)
-    message.error('Failed ', error);
-  } finally {
-    // loading.value = false;
-  }
   // }
 };
 
@@ -516,7 +517,7 @@ const buildStatusAction = async (id: string, buildData: any) => {
 }
 
 const aptosBuildParams = ref([])
-const goAptosBuild = async (id: string, buildData: any, frameType: string, type: any) => {
+const goAptosBuild = async (id: string, buildData: any, frameType: string,type:any) => {
   let needsParams = false
   const res = await apiCheckSetAptosBuildParams(id)
   needsParams = res.data.needsParams
