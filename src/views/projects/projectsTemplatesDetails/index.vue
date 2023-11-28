@@ -506,7 +506,6 @@ const getContractTemplatesDetail = async () => {
 const setAbiInfoData = (abiInfoData: any) => {
   abiInfoData.forEach((item: any) => {
     if (item.type === 'function') {
-      // debugger
       // aptos 的 abi 
       if (frameType == 2) {
         if (item.isAptosSend) {

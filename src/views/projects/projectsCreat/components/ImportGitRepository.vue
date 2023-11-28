@@ -9,31 +9,10 @@
     <ImportInstall v-if="!isGithubInstallCheck"></ImportInstall>
     <div v-else>
       <div class="flex">
-        <!-- <a-select ref="select" class="select-btn" style="width: 340px" v-model:value="selectValue" placeholder="请选择"
-          :field-names="{ label: 'name', value: 'id' }" @change="selectGithubAccount" :options="githubAccountList">
-          <template #label>
-            <span>
-              <user-outlined />
-              Manager
-            </span>
-          </template>
-          <template #dropdownRender="{ menuNode: menu }">
-            <v-nodes :vnodes="menu" />
-            <div class="border border-solid border-[#F4F4F4] w-hull h-[1px]"></div>
-            <div style="padding: 4px 8px; cursor: pointer" @click="addGithubAccount">
-              <plus-outlined />
-              Add Github Account
-            </div>
-          </template>
-          <template #menuItemSelectedIcon>
-            <svg-icon name="success-color" size="18" class="ml-4" />
-          </template>
-        </a-select> -->
         <div class="mt-5 mb-4 w-[100%] text-[14px] github-account-list">
           <a-dropdown :trigger="['click']" class="">
             <div
               class="flex justify-between w-hull h-[42px] border border-solid border-[#EBEBEB] dark:border-[#45423D] rounded-[8px] mr-[20px] leading-[38px] pl-[16px] cursor-pointer">
-
               <div>
                 <img :src="selectAvatarUrl" class="w-[28px] h-[28px] rounded-[50%] mr-[10px]" />{{ selectValue }}
               </div>
@@ -47,7 +26,6 @@
                 <a-menu-item v-for="it in githubAccountList" :key="it.installId" class=""
                   @click="selectGithubAccount(it)">
                   <div class="flex justify-between">
-
                     <div :class="selsectInstallId === it.installId ? 'text-[#E2B578]' : 'text-[#000000]'">
                       <img :src="it.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
                       {{ it.name }}
@@ -196,8 +174,6 @@ const selectValue = ref('');
 const selsectInstallId = ref('');
 const selectAvatarUrl = ref('');
 
-// const installId = ref('');
-
 const repositorySelection = ref('');
 
 
@@ -209,11 +185,6 @@ let importUrl = ref([])
 let nameDupErrInfo = ref('')
 
 const installationsData = ref({})
-
-
-const VNodes: any = (_, { attrs }) => {
-  return attrs.vnodes;
-};
 
 const importVisible = ref(false);
 const repositoryVisible = ref(false);
@@ -276,27 +247,14 @@ const pagination = reactive({
 });
 
 const addGithubAccount = () => {
-  // window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
 }
 
-const resetRepositoryData = async (event: Event) => {
-  // await getInstallationsAccount()
-  console.log(event, 'RepositoryData更新列表1111')
-  // pagination.current = 1;
-  // pagination.pageSize = 3;
-  // searchInputValue.value = '';
-
-  // getRepositoryData();
-}
-
-
 const getGithubInstallCheck = async () => {
   try {
     const { data } = await githubInstallCheck()
-    // console.log(data, ' 99999')
     isGithubInstallCheck.value = data;
     if (data) {
       await getInstallationsAccount();
@@ -309,15 +267,12 @@ const getGithubInstallCheck = async () => {
 
 
 const adjustGithubPremission = () => {
-  // window.addEventListener('message', resetRepositoryData, false)
   const state = new Date().getTime();
   const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700')
 }
 
 const selectGithubAccount = (item: any) => {
-  console.log(item, '9090')
-  // installationsData.value = item;
   selectValue.value = item.name;
   selectAvatarUrl.value = item.avatarUrl;
   selsectInstallId.value = item.installId;
@@ -335,21 +290,11 @@ const getInstallationsAccount = async () => {
     selectAvatarUrl.value = data[0].avatarUrl;
     selsectInstallId.value = data[0].installId;
     repositorySelection.value = data[0].repositorySelection;
-    // installationsData.value = data[0]
     console.log(data, '999')
   } catch (err: any) {
     // message.error(err.message)
   }
 }
-
-// const resetData = async () => {
-//   await getInstallationsAccount()
-//   console.log('可以刷新数据了')
-//   pagination.current = 1;
-//   pagination.pageSize = 3;
-//   searchInputValue.value = '';
-//   getRepositoryData();
-// }
 
 const getRepositoryData = async () => {
   const params = {
