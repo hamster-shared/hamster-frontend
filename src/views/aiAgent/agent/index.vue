@@ -7,13 +7,13 @@
         <svg-icon name="add-white" size="26" class="mr-[10px]" />
         Hire Agent from marketplace
       </div>
-      <div class="grid grid-cols-3 gap-[20px]">
+      <div class="grid grid-cols-2 gap-[20px]">
         <div v-for="(item,key) in agentList" :key="agentList" class="card-div bg-[#FFFFFF] dark:bg-[#000000] hover:border hover:border-solid hover:!border-[#E2B578] cursor-pointer">
           <div class="p-[30px]">
             <div class="flex mb-[10px]">
               <img v-if="item.desc2" src="@/assets/images/Owned-by-you.png" class="h-[24px] w-[105px] absolute -top-[6px] left-[90px]"/>
               <img :src="getImageURL(`${item.logo}`)" class="h-[70px] w-[70px] rounded-full mr-[20px]"/>
-              <div class="h-[70px] leading-[70px] text-[21px] font-medium title-w text-ellipsis">{{ item.name }}</div>
+              <div class="h-[70px] leading-[70px] text-[18px] font-medium title-w text-ellipsis">{{ item.name }}</div>
             </div>
             <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.desc1 }}</div>
           </div>
