@@ -57,7 +57,7 @@ const projectsRoute = [
             path: "/projects/templates/details",
             name: "FilecoinDetail",
             component: () => import('@/views/projects/FilecoinDetail/index.vue'),
-          },
+          }
         ]
       },
       {

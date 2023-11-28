@@ -13,7 +13,7 @@
           <span class="dark:text-[#FFFFFF] text-[#151210] text-[16px] font-bold">{{ item.name || `param${index+1}` }}</span>
         </div>
         <a-input class="dark:text-white text-[121211]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''"
-          :placeholder= "'Enter a value for ' + (frameType === 4 || frameType === 7 ? item.type : item.internalType)" allowClear
+          :placeholder= "'Enter a value for ' + (frameType === 4 || frameType === 7|| frameType === 8 ? item.type : item.internalType)" allowClear
           v-model:value="formData[item.name || `param${index+1}`]"></a-input>
       </a-form-item>
     </div>
@@ -38,8 +38,8 @@
               </a-form-item>
           </div>
       </div>
-
-    <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend">{{
+    <TrasactionSolana v-if="frameType === 8 " :checkValue="checkValue" @submitSolana="validSolana" @ToSolana="ToSolana" :formState="formState" :formData="formData"/>
+    <a-button class="btn" :disabled="isSend" type="primary" html-type="submit" :loading="isSend" v-else>{{
         isSend ? buttonInfo + 'ing' : buttonInfo
       }}</a-button>
     <div v-if="submitErrorInfo" class="border border-solid border-[#F6662B] rounded-[12px] bg-[rgba(246,102,43,0.13)] p-[20px] mt-[32px]">{{ submitErrorInfo }}</div>
@@ -68,6 +68,10 @@ import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { WalletCore } from '@aptos-labs/wallet-adapter-core';
 import { AptosClient } from 'aptos'
 import { toICPService, toDisplay, ICPServiceWrapper } from "@/utils/contractICPMove";
+import {PhantomWalletAdapter} from "@solana/wallet-adapter-wallets";
+import {initWallet} from "solana-wallets-vue";
+import TrasactionSolana from "./trasactionSolana.vue";
+
 const theme = useThemeStore();
 const deployAddress = useDeployAddressStore();
 const props = defineProps({
@@ -75,6 +79,7 @@ const props = defineProps({
   checkValue: String,
   abiInfo: String,
   buttonInfo: String,
+  network: String,
   frameType: {
     type: Number,
     required: true
@@ -109,6 +114,20 @@ const payableValue = ref(0)
 const payUnit = ref("ether")
 const submitErrorInfo = ref('');
 
+//solana
+
+const initSolana = () =>{
+  const walletOptions = {
+    wallets: [
+      new PhantomWalletAdapter()
+    ],
+    autoConnect: true,
+  };
+  initWallet(walletOptions);
+}
+
+initSolana()
+
 // aptos
 const arr = [new PetraWallet()]
 const aptosWallet: any = new WalletCore(arr)
@@ -117,8 +136,8 @@ const aptosNetwork = ref('')
 const testData = reactive({});
 
 const formData = reactive<any>({});
-const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle,canisterId } = toRefs(props)
-Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value })
+const { checkValue, contractAddress, abiInfo, inputs,outputs, buttonInfo,frameType, aptosName, aptosAddress, subTitle,canisterId,network } = toRefs(props)
+Object.assign(formState, { contractAddress: contractAddress?.value, checkValue: checkValue?.value, abiInfo: abiInfo?.value, frameType: frameType?.value,network:network?.value })
 const connectWallet = async () => {
   const windowStarknet = await connect({
     include: ["argentX"],
@@ -229,6 +248,19 @@ const executeSet = async () => {
     isSend.value = false;
   }
 }
+
+const validSolana = async () =>{
+  const emptyInputs = inputs?.value.filter( (item: { name: string | number;}, key: number) => !formData[item.name || `param${key+1}`]);
+  if (emptyInputs.length > 0) {
+    message.warning('Please enter the necessary parameters')
+    return
+  }
+}
+
+const ToSolana = (str:string) =>{
+  hashValue.value = str;
+}
+
 const submit = async () => {
   submitErrorInfo.value = '';
   const emptyInputs = inputs?.value.filter( (item: { name: string | number;}, key: number) => !formData[item.name || `param${key+1}`]);

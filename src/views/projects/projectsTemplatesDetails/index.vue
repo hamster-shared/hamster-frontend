@@ -451,31 +451,39 @@ const getContractTemplatesDetail = async () => {
       })
       const aptosCallList: any = YAML.parse(data.abiInfo)?.structs.map((item: any) => {
         return {
-          name: item.name,
-          inputs: item.fields,
-          type: 'function',
-          isAptosCall: true,
-          isAptosSend: false
-        }
-      })
-      ainInfoData.value = [...aptosSendList, ...aptosCallList]
-    } else {
+          name:item.name,
+          inputs:item.fields,
+          type:'function',
+          isAptosCall:true,
+          isAptosSend:false
+      }})
+      ainInfoData.value = [...aptosSendList,...aptosCallList]
+    }else{
+
       if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
         ainInfoData.value = YAML.parse(data.abiInfo).abi;
+
       } else {
         ainInfoData.value = YAML.parse(data.abiInfo);
       }
     }
-    if (frameType !== '5' && frameType != 7) {
+
+    if (frameType !== '5' && frameType!=7 && frameType!=8) {
       setAbiInfoData(ainInfoData.value);
-    } else if (frameType == '7') {
-      getContractICPMoveInfo(JSON.parse(icpAbi))
+    }else if(frameType == '7'){
+        getContractICPMoveInfo(JSON.parse(icpAbi))
+    }else if(frameType == '8'){
+      ainInfoData.value = YAML.parse(data.abiInfo).instructions;
+      sendList.value=ainInfoData.value;
+      functionList.value = sendList.value[0]?.args;
+      functionName.value = sendList.value[0]?.name;
+
     }
     axios
       .get(data.codeSources)
       .then(res => {
         if (res.data) {
-          if (frameType === '5') {
+          if (frameType === '5' ) {
             res.data.forEach((ele: any) => {
               axios
                 .get(ele.download_url)
@@ -504,11 +512,13 @@ const getContractTemplatesDetail = async () => {
 }
 
 const setAbiInfoData = (abiInfoData: any) => {
+
   abiInfoData.forEach((item: any) => {
+
     if (item.type === 'function') {
-      // aptos 的 abi 
-      if (frameType == 2) {
-        if (item.isAptosSend) {
+      // aptos 的 abi
+      if(frameType==2){
+        if(item.isAptosSend){
           sendList.value.push(item)
         } else if (item.isAptosCall) {
           callList.value.push(item)
