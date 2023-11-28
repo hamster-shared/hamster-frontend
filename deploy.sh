@@ -6,6 +6,7 @@ export PIPELINE_ID=$(date "+%Y%m%d%H%M%S")
 
 # build
 yarn install
+#yarn build:staging
 node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build --mode staging
 
 #buildx
