@@ -112,6 +112,7 @@
             <a-select-option value="4">Starknet</a-select-option>
             <a-select-option value="5">Sui</a-select-option>
             <a-select-option value="7">Internet Computer</a-select-option>
+            <a-select-option value="8">Solana</a-select-option>
           </a-select>
         </a-form-item>
         <div v-else>
