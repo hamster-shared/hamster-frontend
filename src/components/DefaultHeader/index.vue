@@ -311,13 +311,13 @@ const isDisconnect = () => {
   if (loginType.value == 1) {
     disconnect()
   } else {
-    // metaMask 登录 先判断是否关联github， 已关联则解绑小葫芦 ，没有关联则退出重新登录
+    // metaMask 登录 先判断是否关联github， 已关联则解绑 ，没有关联则退出重新登录
     if (username.value) {
       disconnect()
     } else {
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
-      router.push('/')
+      router.push('/login')
     }
   }
 
@@ -329,12 +329,12 @@ const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
-  const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
-  if (isFakeToken) {
-    localStorage.removeItem('token')
-    // localStorage.removeItem('userInfo')
-    router.push('/login')
-  }
+  // const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
+  // if (isFakeToken) {
+  //   localStorage.removeItem('token')
+  //   // localStorage.removeItem('userInfo')
+  //   router.push('/login')
+  // }
   visibleDisconnect.value = false;
   isConnectedWallet.value = false
 }

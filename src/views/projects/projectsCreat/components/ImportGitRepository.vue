@@ -162,7 +162,10 @@ import ImportInstall from './ImportInstall.vue';
 import NoData from "@/components/NoData.vue";
 
 const props = defineProps(({
-  projectType: String
+  projectType: {
+    type: String,
+    default: '',
+  }
 }))
 const router = useRouter()
 
@@ -369,7 +372,6 @@ const handleCancelImport = () => {
 const handleDone = async () => {
   await importFormRef.value.validate()
   doneLoading.value = true;
-  window.localStorage.setItem("projectActiveKey", props.projectType);
   if (!repositoryVisible.value) {
     importUrl.value = repositoryData.value.find((item: any) => {
       return item.name == importFormData.value.name
@@ -392,7 +394,8 @@ const handleDone = async () => {
     installId: selsectInstallId.value,
   }
   try {
-    const { data } = await apiPostRepository(params)
+    const { data } = await apiPostRepository(params);
+    window.localStorage.setItem("projectActiveKey", props.projectType);
     router.push(`/projects/integrated/${data}?type=repository`)
   } catch (err: any) {
     nameDupErrInfo.value = err.response.data.message
