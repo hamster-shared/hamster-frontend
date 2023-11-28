@@ -5,12 +5,15 @@
         <img src="@/assets/icons/welcome-top.svg" class="h-[28px]" />
       </div>
       <div class="content-div">
-        <div class="content-bg" :class="[isJump === true ? 'content-bg-hidden' : 'content-bg-show', {'hidden' : isShowGX === true}]">
-          <div class="whitespace-pre-wrap">{{ showText }}<label :class="[showText === '' ? 'hidden' : 'visible', {'cursor-css' : isEnd === true}]">|</label></div>
+        <div class="content-bg"
+          :class="[isJump === true ? 'content-bg-hidden' : 'content-bg-show', { 'hidden': isShowGX === true }]">
+          <div class="whitespace-pre-wrap">{{ showText }}<label
+              :class="[showText === '' ? 'hidden' : 'visible', { 'cursor-css': isEnd === true }]">|</label></div>
         </div>
       </div>
-      <div class="welcome-gx-div w-full h-full flex justify-center items-center">
-        <img class="w-[200px] h-[200px]" :class="[isShowGX === true ? 'welcome-gx' : 'hidden']" src="@/assets/icons/welcome-gx.svg" />
+      <div class="flex items-center justify-center w-full h-full welcome-gx-div">
+        <img class="w-[200px] h-[200px]" :class="[isShowGX === true ? 'welcome-gx' : 'hidden']"
+          src="@/assets/icons/welcome-gx.svg" />
       </div>
       <div class="welcome-fd" :class="[isShowGX === true ? 'welcome-fd-hidden' : 'welcome-fd-show']">
         <img class="w-[200px] h-[200px]" src="@/assets/icons/welcome-fd.svg" />
@@ -24,7 +27,7 @@
 </template>
 <script lang='ts' setup>
 import { onMounted, onUnmounted, ref } from 'vue';
-import { apiUpdateFristState, apiGetUser } from "@/apis/login";
+import { apiUpdateFristState, getUserInfo } from "@/apis/login";
 import { useRouter } from "vue-router";
 const router = useRouter()
 
@@ -86,7 +89,7 @@ const changeContentLine = () => {
     setTimeout(() => {
       if (keyValue.value === "1") { //project页面 
         router.push('/projects')
-      } else if (keyValue.value === "2"){ //nodeServer页面
+      } else if (keyValue.value === "2") { //nodeServer页面
         router.push('/node-service/RPCs')
       }
     }, 2000);
@@ -94,28 +97,28 @@ const changeContentLine = () => {
 }
 
 const updateFristState = async () => {
-  
+
   try {
     await apiUpdateFristState();
     window.localStorage.setItem('firstShowProjects', "1");
     window.localStorage.setItem('firstShowNodeService', "1");
   } catch (error: any) {
-    console.log("erro:",error)
+    console.log("erro:", error)
   } finally {
     getUser();
   }
 }
 
 const getUser = async () => {
-  
+
   try {
-    const { data } = await apiGetUser();
-    
+    const { data } = await getUserInfo();
+
     localStorage.setItem('firstState', data.firstState.toString());
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error: any) {
-    console.log("erro:",error)
-  } 
+    console.log("erro:", error)
+  }
 }
 
 const changeContent = (type: string) => {
@@ -143,7 +146,7 @@ const changeContent = (type: string) => {
       setTimeout(() => {
         if (keyValue.value === "1") { //project页面 
           router.push('/projects')
-        } else if (keyValue.value === "2"){ //nodeServer页面
+        } else if (keyValue.value === "2") { //nodeServer页面
           router.push('/node-service/RPCs')
         }
       }, 1500);
@@ -152,85 +155,98 @@ const changeContent = (type: string) => {
 }
 </script>
 <style lang='less' scoped>
-.content-div{
+.content-div {
   width: 655px;
   height: 360px;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%,-50%);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 99;
   position: relative;
-  overflow: hidden; 
+  overflow: hidden;
 }
-.content-bg{
+
+.content-bg {
   width: 100%;
   height: 100%;
   background: url(../../assets/icons/welcom-contentbg.svg);
   background-size: cover;
   padding: 50px;
   color: #FFFFFF;
-  font-size: 16px; 
+  font-size: 16px;
 }
-.welcome-gx-div{
-  
+
+.welcome-gx-div {
+
   width: 100%;
   height: 100%;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%,-50%);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 999;
   position: absolute;
-  overflow: hidden; 
+  overflow: hidden;
 }
-.welcome-gx{
+
+.welcome-gx {
   -webkit-animation: scaleGX 500ms 1;
   animation: scaleGX 500ms 1;
 }
+
 @keyframes scaleGX {
-  
+
   0% {
     opacity: 100;
     transform: scale(0.2, 0.2);
   }
+
   100% {
     opacity: 100;
     transform: scale(20, 20);
     background: #FFFFFF;
   }
 }
-.content-bg-show{
+
+.content-bg-show {
   -webkit-animation: scale 2s 1;
-  animation: scale 2s 1; 
+  animation: scale 2s 1;
 }
+
 @keyframes scale {
-  
+
   0% {
     opacity: 0;
     transform: scale(0.2, 0.2);
   }
+
   100% {
     opacity: 100;
     transform: scale(1, 1);
   }
 }
-.content-bg-hidden{
+
+.content-bg-hidden {
   -webkit-animation: scaleH 1s 1;
-  animation: scaleH 1s 1; 
+  animation: scaleH 1s 1;
 }
+
 @keyframes scaleH {
-  
+
   0% {
     opacity: 100;
     transform: scale(1, 1);
   }
+
   50% {
     transform: scale(1, 0.1);
   }
+
   100% {
     transform: scale(0, 0.1);
   }
 }
-.welcome-fd{
+
+.welcome-fd {
   position: absolute;
   z-index: 99;
   right: 10%;
@@ -238,42 +254,51 @@ const changeContent = (type: string) => {
   -webkit-animation: bounce 6s infinite;
   animation: bounce 6s infinite;
 }
-.welcome-fd-show{
+
+.welcome-fd-show {
   -webkit-animation: bounce 6s infinite;
   animation: bounce 6s infinite;
 }
-.welcome-fd-hidden{
+
+.welcome-fd-hidden {
   -webkit-animation: bounceH 2s 1;
   animation: bounceH 2s 1;
 }
+
 @keyframes bounce {
+
   0%,
   100% {
     transform: translate(0, 0);
     animation-timing-function: ease;
   }
+
   50% {
     transform: translate(-20px, 20px);
     animation-timing-function: ease;
   }
 }
+
 @keyframes bounceH {
   0% {
     opacity: 100;
   }
+
   100% {
     opacity: 0;
     transform: translate(200px, -200px);
     animation-timing-function: ease;
   }
 }
-.welcome-bg{
+
+.welcome-bg {
   width: 100%;
   height: 100%;
   z-index: 9;
   position: relative;
   overflow: hidden;
 }
+
 .welcome-bg::before {
   content: "";
   position: absolute;
@@ -290,14 +315,29 @@ const changeContent = (type: string) => {
   animation: rotate 50s linear infinite;
 }
 
-@keyframes rotate{
-  0%{-webkit-transform:rotate(0deg);}
-  25%{-webkit-transform:rotate(90deg);}
-  50%{-webkit-transform:rotate(180deg);}
-  75%{-webkit-transform:rotate(270deg);}
-  100%{-webkit-transform:rotate(360deg);}
+@keyframes rotate {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  25% {
+    -webkit-transform: rotate(90deg);
+  }
+
+  50% {
+    -webkit-transform: rotate(180deg);
+  }
+
+  75% {
+    -webkit-transform: rotate(270deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
-.welcome-xq{
+
+.welcome-xq {
   width: 300px;
   height: 300px;
   z-index: 9;
@@ -305,6 +345,7 @@ const changeContent = (type: string) => {
   overflow: hidden;
   bottom: 0px;
 }
+
 .welcome-xq::before {
   content: "";
   position: absolute;
@@ -316,34 +357,43 @@ const changeContent = (type: string) => {
   background: url(../../assets/icons/welcome-xq.svg) 100% 100% no-repeat;
   background-size: cover;
 }
-.welcome-xq-show::before{
+
+.welcome-xq-show::before {
   -webkit-animation: rotate 50s linear infinite;
   -moz-animation: rotate 50s linear infinite;
   -o-animation: rotate 50s linear infinite;
   animation: rotate 50s linear infinite;
 }
-.welcome-xq-hidden{
+
+.welcome-xq-hidden {
   -webkit-animation: bouncexqH 2s 1;
   animation: bouncexqH 2s 1;
 }
+
 @keyframes bouncexqH {
   0% {
     opacity: 100;
   }
+
   100% {
     opacity: 0;
     transform: translate(-200px, 200px);
     animation-timing-function: ease;
   }
 }
-.cursor-css{
+
+.cursor-css {
   -webkit-animation: bounceCursor 1s infinite;
   animation: bounceCursor 1s infinite;
 }
+
 @keyframes bounceCursor {
-  0%,100%  {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
