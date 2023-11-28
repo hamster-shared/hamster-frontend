@@ -15,7 +15,7 @@
               <img :src="getImageURL(`${item.logo}`)" class="h-[70px] w-[70px] rounded-full mr-[20px]"/>
               <div class="h-[70px] leading-[70px] text-[21px] font-medium title-w text-ellipsis">{{ item.name }}</div>
             </div>
-            <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line">{{ item.desc1 }}</div>
+            <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.desc1 }}</div>
           </div>
           <div class="border border-solid border-[#E8EBEC] dark:border-[#212121] border-x-0 border-b-0 flex h-[60px] leading-[60px] text-center">
             <div class="w-1/2 border border-solid border-[#E8EBEC] dark:border-[#212121] border-y-0 border-l-0 hover:text-[#E2B578]">View More</div>
@@ -37,7 +37,7 @@ const theme = useThemeStore();
 
 const noData = ref(false);
 const agentList = ref([ 
-  {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'Owned by you'},
+  {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha项目研报 、Alpha,项目研报 、Alpha', desc2:'Owned by you'},
   {id:'2',logo:'testLogo.png', name:'琴心幻影', desc1:'古风创意创作小宅女', desc2:'Owned by you'},
   {id:'3',logo:'testLogo.png', name:'梦幻音符', desc1:'陪伴、聊天、情感支持', desc2:''},
   {id:'4',logo:'testLogo.png', name:'Sophia', desc1:'产品营销、危机公关，产品营销、危机公关', desc2:''},
