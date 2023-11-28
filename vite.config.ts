@@ -6,18 +6,23 @@ import vue from "@vitejs/plugin-vue";
 import viteCompression from 'vite-plugin-compression';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import prismjs from "vite-plugin-prismjs";
+import { polyfillNode } from "esbuild-plugin-polyfill-node";
+import nodePolyfills from "rollup-plugin-node-polyfills";
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv) => defineConfig({
-  // define: {
-  //   'process.env': {}
-  // },
+  define: {
+    "process.env": process.env ?? {},
+  },
   build: {
     outDir: 'dist', // 打包文件的输出目录
     assetsDir: 'static', // 静态资源的存放目录
     assetsInlineLimit: 4096, // 图片转 base64 编码的阈值
     // minify: 'terser', // 混淆器，terser构建后文件体积更小
     target: ['es2020', 'safari14'],
+    rollupOptions: {
+      plugins: [nodePolyfills({ crypto: true })],
+    },
   },
   plugins: [
     vue(),
@@ -41,6 +46,17 @@ export default ({ mode }: ConfigEnv) => defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      stream: "rollup-plugin-node-polyfills/polyfills/stream",
+      events: "rollup-plugin-node-polyfills/polyfills/events",
+      assert: "assert",
+      crypto: "crypto-browserify",
+      util: "util",
+      https: 'rollup-plugin-node-polyfills/polyfills/http',
+      http: 'rollup-plugin-node-polyfills/polyfills/http',
+      url: 'rollup-plugin-node-polyfills/polyfills/url',
+      querystring: 'rollup-plugin-node-polyfills/polyfills/qs',
+      'rpc-websockets/dist/lib/client': 'rpc-websockets/build-ts/lib/client',
+      'near-api-js': 'near-api-js/dist/near-api-js.js',
     },
     // 配置文件扩展名
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
@@ -54,7 +70,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       },
       "/api": {
         target:
-          loadEnv(mode, process.cwd()).VITE_BASE_API,
+        loadEnv(mode, process.cwd()).VITE_BASE_API,
         // "http://34.232.105.81:8088/api", //测试
         // "http://34.232.105.81:8080/api", //生产
         // "http://175.24.179.2:8080/api",
@@ -71,7 +87,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       "/socket.io": {
         // VUE_APP_BASE_RUL = 'ws://172.16.31.68:9898/socket.io'
         target:
-          "http://61.172.179.6:30314/socket.io",
+            "http://61.172.179.6:30314/socket.io",
         changeOrigin: true, //是否跨域
         ws:true,
         rewrite: (path) => path.replace(/^\/socket.io/, ""),
@@ -84,6 +100,9 @@ export default ({ mode }: ConfigEnv) => defineConfig({
     include: ['axios'],
     esbuildOptions: {
       target: ['es2020', 'safari14'],
+      plugins: [
+        polyfillNode({ })
+      ],
     },
   },
 });
