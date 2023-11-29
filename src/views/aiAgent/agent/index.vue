@@ -3,7 +3,7 @@
     <div class="font-bold text-[24px] mb-[30px]">My Agents</div>
     <NoData v-if="noData"></NoData>
     <div v-else class="bg-[#F5F6F8] dark:bg-[#0E0E0E] rounded-[12px] min-h-[825px] overflow-y-auto p-[20px]">
-      <div
+      <div @click="hireMarketplace"
         class="absolute -top-[80px] right-0 w-[300px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]">
         <svg-icon name="add-white" size="26" class="mr-[10px]" />
         Hire Agent from marketplace
@@ -51,6 +51,9 @@ const agentList = ref([
   { id: '4', logo: 'testLogo.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '' },
 ]);
 
+const hireMarketplace = () => {
+  router.push('/aiAgent/work')
+}
 
 const viewMore = (item: any) => {
   router.push(`/aiAgent/marketplace/detail?id=${item.id}`)
@@ -70,7 +73,6 @@ const startWork = (item: any) => {
 
 .title-w {
   max-width: calc(100% - 90px);
-  ;
 }
 
 .text-ellipsis {
