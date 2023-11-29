@@ -27,14 +27,23 @@
         </div>
       </div>
       <div class="w-2/3 bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
-        <div
-          class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">
-          {{ selectedItem.name }}</div>
-        <div
-          class="absolute p-[30px] bottom-0 h-[120px] w-full border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-b-0">
-          <a-input v-model:value="inputValue" placeholder="请输入您的需求……">
+        <div class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">{{ selectedItem.name }}</div>
+        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]" v-if="sendMap.size > 0">
+          <div v-for="(item,key) in sendList" :key="key">
+            <div class="flex" v-if="item.value == 'left'">
+              <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]"/>
+              <div class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
+            </div>
+            <div class="flex justify-end" v-else-if="item.value == 'right'">
+              <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
+              <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]"/>
+            </div>
+          </div>
+        </div>
+        <div class="absolute p-[30px] bottom-0 h-[120px] w-full border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-b-0">
+          <a-input v-model:value="inputValue" placeholder="请输入您的需求……" @keyup.enter="sendInfo">
             <template #suffix>
-              <svg-icon name="Send" size="26" class="mr-[10px]" />
+              <svg-icon name="Send" size="26" class="mr-[10px]" @click="sendInfo" />
             </template>
           </a-input>
         </div>
@@ -43,7 +52,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import { useRouter } from "vue-router";
@@ -54,21 +63,54 @@ const theme = useThemeStore();
 const router = useRouter();
 const noData = ref(false);
 const inputValue = ref('');
-const historyList = ref([
-  { id: '1', logo: 'testLogo.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha', desc2: '比特币还能做更多吗？' },
-  { id: '2', logo: 'testLogo.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: '帮我生成一张汉服写真照片' },
-  { id: '3', logo: 'testLogo.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '心情不好，夸夸我～' },
-  { id: '4', logo: 'testLogo.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '我家爱豆闹绯闻怎么办怎么办怎么办' },
+const sendMap = new Map();
+const sendList = ref<any>([]);
+const historyList = ref([ 
+  {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'比特币还能做更多吗？'},
+  {id:'2',logo:'testLogo.png', name:'琴心幻影', desc1:'古风创意创作小宅女', desc2:'帮我生成一张汉服写真照片'},
+  {id:'3',logo:'testLogo.png', name:'梦幻音符', desc1:'陪伴、聊天、情感支持', desc2:'心情不好，夸夸我～'},
+  {id:'4',logo:'testLogo.png', name:'Sophia', desc1:'产品营销、危机公关，产品营销、危机公关', desc2:'我家爱豆闹绯闻怎么办怎么办怎么办'},
 ]);
-const selectedItem = ref(historyList.value[0]);
-const changeSelect = (item: any) => {
+const selectedItem = ref<any>({});
+const changeSelect = (item:any) => {
   selectedItem.value = item;
+  if (!sendMap.get(item.name)) {
+    sendMap.set(item.name, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
+  }
+  sendList.value = sendMap.get(item.name);
+  setScrollBtm();
 }
-
-const newAiAgent = () => {
-  router.push('/aiAgent/marketplace')
+const sendInfo = () => {
+  setSendList('right', inputValue.value);
+  inputValue.value = '';
+  setTimeout((_) => {
+    replyInfo();
+  }, 80);
+  
 }
-
+const replyInfo = () => {
+  let list = sendMap.get(selectedItem.value.name);
+  setSendList('left', '回复内容：'+ list[list.length - 1].info);
+}
+const setSendList = (value: any, info: any) => {
+  let list = sendMap.get(selectedItem.value.name);
+  list.push({
+    value: value,
+    info: info,
+  });
+  sendList.value = Object.assign([], list);
+  sendMap.set(selectedItem.value.name, list);
+  setScrollBtm();
+}
+const setScrollBtm = () => {
+  setTimeout((_) => {
+    const container = document.getElementById('send-info') as HTMLElement; // 替换为你的容器元素ID
+    container.scrollTop = container.scrollHeight - container.clientHeight;
+  }, 0); 
+}
+onMounted(() => {
+  changeSelect(historyList.value[0]);
+});
 </script>
 <style scoped lang="less">
 .history-left-w {
@@ -95,10 +137,16 @@ const newAiAgent = () => {
   font-size: 18px;
   font-weight: 500;
 }
-
-.dark-css {
-  :deep(.ant-input-affix-wrapper) {
-    border-color: #636363;
+.send-info-div{
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  flex-shrink:0;
+  max-width: calc(100% - 150px);
+}
+.dark-css{
+  :deep(.ant-input-affix-wrapper){
+    border-color: #636363;   
     background: #161616;
   }
 }
