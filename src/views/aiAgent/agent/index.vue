@@ -55,7 +55,7 @@ const agentList = ref([
 ]);
 
 const hireMarketplace = () => {
-  router.push('/aiAgent/work')
+  router.push('/aiAgent/marketplace')
 }
 
 const viewMore = (item: any) => {
