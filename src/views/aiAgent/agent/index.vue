@@ -7,7 +7,7 @@
         <svg-icon name="add-white" size="26" class="mr-[10px]" />
         Hire Agent from marketplace
       </div>
-      <div class="grid grid-cols-3 gap-[20px]">
+      <div class="grid grid-cols-2 gap-[20px]">
         <div v-for="(item,key) in agentList" :key="agentList" class="card-div bg-[#FFFFFF] dark:bg-[#000000] hover:border hover:border-solid hover:!border-[#E2B578] cursor-pointer">
           <div class="p-[30px]">
             <div class="flex mb-[10px]">
