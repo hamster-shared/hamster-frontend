@@ -13,7 +13,7 @@
             <div class="flex mb-[10px]">
               <img v-if="item.desc2" src="@/assets/images/Owned-by-you.png" class="h-[24px] w-[105px] absolute -top-[6px] left-[90px]"/>
               <img :src="getImageURL(`${item.logo}`)" class="h-[70px] w-[70px] rounded-full mr-[20px]"/>
-              <div class="h-[70px] leading-[70px] text-[21px] font-medium title-w text-ellipsis">{{ item.name }}</div>
+              <div class="h-[70px] leading-[70px] text-[18px] font-medium title-w text-ellipsis">{{ item.name }}</div>
             </div>
             <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.desc1 }}</div>
           </div>
