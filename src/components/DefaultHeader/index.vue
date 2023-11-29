@@ -137,7 +137,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import selectNetwork from "./components/selectNetwork.vue";
 import { generateAvatarURL } from '@cfx-kit/wallet-avatar';
-// import { getUserInfoById } from "@/apis/login.ts";
+
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
@@ -152,10 +152,10 @@ const visibleWallet = ref(false);
 const visibleDisconnect = ref(false);
 const isConnectedWallet = ref(false);
 const walletAccount = ref("");
-const isProject = ref(true)
-const isOrder = ref(false)
-const isAgent = ref(false)
-const isTemplate = ref(false);
+// const isProject = ref(true)
+// const isOrder = ref(false)
+// const isAgent = ref(false)
+// const isTemplate = ref(false);
 
 const selectedNavTitle = ref('projects');
 
@@ -185,15 +185,11 @@ const goHome = () => {
 const goPrjects = () => {
   selectedNavTitle.value = 'projects';
   router.push("/projects");
-  isProject.value = true;
-  isAgent.value = false;
-  // isProject.value = true;
 }
 const goAgent = () => {
   selectedNavTitle.value = 'aiAgent';
-  router.push("/aiAgent/work");
-  isProject.value = false;
-  isAgent.value = true;
+  router.push("/aiAgent/marketplace");
+
 }
 // 跳官网文档
 const goDoc = () => {
@@ -209,9 +205,6 @@ const goTemplate = () => {
 const goMiwaspace = () => {
   selectedNavTitle.value = 'miwaspace';
   router.push("/middleware/miwaspace?key=1");
-  isProject.value = false;
-  isAgent.value = false;
-  // isProject.value = false;
 }
 
 
@@ -221,17 +214,12 @@ const githubInstall = () => {
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/connectGithub`;
   const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
   myWindow?.focus();
-  // window.close();
-  // window.opener.location.reload();
 };
 
 
 const goDashboard = () => {
   selectedNavTitle.value = 'dashboard';
   router.push("/middleware/dashboard");
-  isProject.value = false;
-  isAgent.value = false;
-  // isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
@@ -255,14 +243,13 @@ const checkWallet = async (val: string) => {
 const signOut = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('userInfo');
-  router.push('/')
+  router.push('/login')
 };
 
 onMounted(() => {
   console.log('是否加载了头部组件~~~~')
   // 解决middle刷新页面选中在projects tab下问题
   if (window.location.href.indexOf('middleware') != -1) {
-    isProject.value = false
     selectedNavTitle.value = 'dashboard';
   } else if (window.location.href.indexOf('projects') != -1) {
     isProject.value = true
@@ -274,7 +261,6 @@ onMounted(() => {
     } else {
       selectedNavTitle.value = 'projects';
     }
-
   }
   else if (window.location.href.indexOf('orders') != -1) {
     selectedNavTitle.value = 'orders';
@@ -337,7 +323,7 @@ const isDisconnect = () => {
     } else {
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
-      router.push('/')
+      router.push('/login')
     }
   }
 
