@@ -21,10 +21,22 @@
       </div>
       <div class="w-2/3 bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
         <div class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">{{ selectedItem.name }}</div>
+        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
+          <div v-for="(item,key) in sendList" :key="key">
+            <div class="flex" v-if="item.value == 'left'">
+              <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]"/>
+              <div class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
+            </div>
+            <div class="flex justify-end" v-else-if="item.value == 'right'">
+              <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div">{{ item.info }}</div>
+              <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]"/>
+            </div>
+          </div>
+        </div>
         <div class="absolute p-[30px] bottom-0 h-[120px] w-full border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-b-0">
-          <a-input v-model:value="inputValue" placeholder="请输入您的需求……">
+          <a-input v-model:value="inputValue" placeholder="请输入您的需求……" @keyup.enter="sendInfo">
             <template #suffix>
-              <svg-icon name="Send" size="26" class="mr-[10px]" />
+              <svg-icon name="Send" size="26" class="mr-[10px]" @click="sendInfo" />
             </template>
           </a-input>
         </div>
@@ -43,6 +55,7 @@ const theme = useThemeStore();
 
 const noData = ref(false); 
 const inputValue = ref('');
+const sendList = ref<any>([]);
 const historyList = ref([ 
   {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'比特币还能做更多吗？'},
   {id:'2',logo:'testLogo.png', name:'琴心幻影', desc1:'古风创意创作小宅女', desc2:'帮我生成一张汉服写真照片'},
@@ -52,6 +65,31 @@ const historyList = ref([
 const selectedItem = ref(historyList.value[0]);
 const changeSelect = (item:any) => {
   selectedItem.value = item;
+}
+const sendInfo = () => {
+  sendList.value.push({
+    value: 'right',
+    info: inputValue.value,
+  });
+  inputValue.value = '';
+  setScrollDiv();
+  setTimeout((_) => {
+    replyInfo();
+  }, 800);
+  
+}
+const replyInfo = () => {
+  sendList.value.push({
+    value: 'left',
+    info: '回复内容：'+ sendList.value[sendList.value.length - 1].info,
+  });
+  setScrollDiv();
+}
+const setScrollDiv = () => {
+  setTimeout((_) => {
+    const container = document.getElementById('send-info') as HTMLElement; // 替换为你的容器元素ID
+    container.scrollTop = container.scrollHeight - container.clientHeight;
+  }, 0); 
 }
 </script>
 <style scoped lang="less">
@@ -74,6 +112,13 @@ const changeSelect = (item:any) => {
   height: 58px;
   font-size: 18px;
   font-weight: 500;
+}
+.send-info-div{
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  flex-shrink:0;
+  max-width: calc(100% - 150px);
 }
 .dark-css{
   :deep(.ant-input-affix-wrapper){
