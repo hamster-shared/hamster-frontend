@@ -21,7 +21,7 @@
       </div>
       <div class="w-2/3 bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
         <div class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">{{ selectedItem.name }}</div>
-        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
+        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]" v-if="sendMap.size > 0">
           <div v-for="(item,key) in sendList" :key="key">
             <div class="flex" v-if="item.value == 'left'">
               <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]"/>
@@ -45,7 +45,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import NoData from '../home/NoData.vue'
@@ -55,42 +55,54 @@ const theme = useThemeStore();
 
 const noData = ref(false); 
 const inputValue = ref('');
-const sendList = ref<any>([]);
+const sendMap = new Map();
+const sendList = ref([]);
 const historyList = ref([ 
   {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'比特币还能做更多吗？'},
   {id:'2',logo:'testLogo.png', name:'琴心幻影', desc1:'古风创意创作小宅女', desc2:'帮我生成一张汉服写真照片'},
   {id:'3',logo:'testLogo.png', name:'梦幻音符', desc1:'陪伴、聊天、情感支持', desc2:'心情不好，夸夸我～'},
   {id:'4',logo:'testLogo.png', name:'Sophia', desc1:'产品营销、危机公关，产品营销、危机公关', desc2:'我家爱豆闹绯闻怎么办怎么办怎么办'},
 ]);
-const selectedItem = ref(historyList.value[0]);
+const selectedItem = ref<any>({});
 const changeSelect = (item:any) => {
   selectedItem.value = item;
+  if (!sendMap.get(item.name)) {
+    sendMap.set(item.name, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
+  }
+  sendList.value = sendMap.get(item.name);
+  setScrollBtm();
 }
 const sendInfo = () => {
-  sendList.value.push({
-    value: 'right',
-    info: inputValue.value,
-  });
+  setSendList('right', inputValue.value);
   inputValue.value = '';
-  setScrollDiv();
   setTimeout((_) => {
     replyInfo();
-  }, 800);
+  }, 80);
   
 }
 const replyInfo = () => {
-  sendList.value.push({
-    value: 'left',
-    info: '回复内容：'+ sendList.value[sendList.value.length - 1].info,
-  });
-  setScrollDiv();
+  let list = sendMap.get(selectedItem.value.name);
+  setSendList('left', '回复内容：'+ list[list.length - 1].info);
 }
-const setScrollDiv = () => {
+const setSendList = (value: any, info: any) => {
+  let list = sendMap.get(selectedItem.value.name);
+  list.push({
+    value: value,
+    info: info,
+  });
+  sendList.value = Object.assign([], list);
+  sendMap.set(selectedItem.value.name, list);
+  setScrollBtm();
+}
+const setScrollBtm = () => {
   setTimeout((_) => {
     const container = document.getElementById('send-info') as HTMLElement; // 替换为你的容器元素ID
     container.scrollTop = container.scrollHeight - container.clientHeight;
   }, 0); 
 }
+onMounted(() => {
+  changeSelect(historyList.value[0]);
+});
 </script>
 <style scoped lang="less">
 .history-left-w{
