@@ -28,7 +28,7 @@
               <div class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
             </div>
             <div class="flex justify-end" v-else-if="item.value == 'right'">
-              <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div">{{ item.info }}</div>
+              <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
               <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]"/>
             </div>
           </div>
@@ -56,7 +56,7 @@ const theme = useThemeStore();
 const noData = ref(false); 
 const inputValue = ref('');
 const sendMap = new Map();
-const sendList = ref([]);
+const sendList = ref<any>([]);
 const historyList = ref([ 
   {id:'1',logo:'testLogo.png', name:'币圈索罗斯', desc1:'项目研报 、Alpha,项目研报 、Alpha', desc2:'比特币还能做更多吗？'},
   {id:'2',logo:'testLogo.png', name:'琴心幻影', desc1:'古风创意创作小宅女', desc2:'帮我生成一张汉服写真照片'},
