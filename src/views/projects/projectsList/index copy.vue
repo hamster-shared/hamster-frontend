@@ -115,6 +115,10 @@ const onShowSizeChange = (currentVal: number, pageSizeVal: number) => {
   getList(activeKey.value)
 }
 
+const goCreateProject = () => {
+  localStorage.removeItem('createFormData');
+  router.push("/projects/create");
+}
 
 const goAddNewProject = () => {
   localStorage.removeItem('createFormData');
@@ -133,6 +137,7 @@ onMounted(() => {
     activeKey.value = window.localStorage.getItem("projectActiveKey");
   }
   getList(activeKey.value)
+  tokenFrom()
 })
 
 // 获取不同的项目列表
@@ -144,6 +149,15 @@ const getList = (activeKey: string) => {
   } else {
     getProjectsNode(activeKey)
   }
+}
+
+// 判断token是钱包的还是真实
+const tokenFrom = () => {
+  const bool = localStorage.getItem('token')?.startsWith('0x')
+  // if(bool){
+  //   localStorage.removeItem('token')
+  // }
+  console.log('bool', bool)
 }
 
 onBeforeUnmount(() => {

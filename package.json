@@ -47,6 +47,7 @@
     "socket.io-client": "^2.3.1",
     "starknet": "^4.21.0",
     "uuid": "^9.0.1",
+    "vite-plugin-optimize-persist": "^0.1.2",
     "vue": "^3.2.41",
     "vue-fullscreen": "^3.1.1",
     "vue-i18n": "^9.2.2",
