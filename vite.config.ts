@@ -92,6 +92,11 @@ export default ({ mode }: ConfigEnv) => defineConfig({
         ws:true,
         rewrite: (path) => path.replace(/^\/socket.io/, ""),
       },
+      "/agent": {
+        target: "https://gpt.lonic.tech/api/v1/chat/completions",
+        changeOrigin: true, //是否跨域
+        rewrite: (path) => path.replace(/^\/agent/, ""),
+      },
     },
     host: true,//同一局域网可以访问本地服务
   },
