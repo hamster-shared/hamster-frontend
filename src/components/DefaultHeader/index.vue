@@ -8,7 +8,6 @@
       <div @click="goPrjects" :class="{ 'header-menu-line': selectedNavTitle === 'projects' }"
         class="ml-12 mr-8 header-text-css" id="pro">Project</div>
       <a-dropdown>
-        <!-- <div class="header-text-css" :class="{ 'header-menu-line': !isProject && !isAgent }" @click.stop> -->
         <div class="header-text-css"
           :class="{ 'header-menu-line': selectedNavTitle === 'dashboard' || selectedNavTitle === 'miwaspace' }"
           @click.stop>
@@ -137,7 +136,7 @@ import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import selectNetwork from "./components/selectNetwork.vue";
 import { generateAvatarURL } from '@cfx-kit/wallet-avatar';
-// import { getUserInfoById } from "@/apis/login.ts";
+
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
@@ -152,11 +151,6 @@ const visibleWallet = ref(false);
 const visibleDisconnect = ref(false);
 const isConnectedWallet = ref(false);
 const walletAccount = ref("");
-const isProject = ref(true)
-const isOrder = ref(false)
-const isAgent = ref(false)
-const isTemplate = ref(false);
-
 const selectedNavTitle = ref('projects');
 
 const imgVal = ref("");
@@ -165,8 +159,6 @@ const userInfo = localStorage.getItem('userInfo');
 console.log(JSON.parse(userInfo), 'userInfo')
 const githubAvatarUrl = ref('');
 const username = ref('');
-// const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
-// const username = JSON.parse(userInfo)?.username || '';
 const isShowMiddleware = ref(false)
 
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
@@ -179,22 +171,18 @@ const goHome = () => {
     linkVal = "https://hamsternet.io";
   }
   window.open(linkVal)
-  isProject.value = true;
+  selectedNavTitle.value = 'projects';
 };
 
 const goPrjects = () => {
   selectedNavTitle.value = 'projects';
   router.push("/projects");
-  isProject.value = true;
-  isAgent.value = false;
-  // isProject.value = true;
 }
 const goAgent = () => {
   selectedNavTitle.value = 'aiAgent';
-  router.push("/aiAgent/work");
-  isProject.value = false;
-  isAgent.value = true;
+  router.push("/aiAgent/marketplace");
 }
+
 // 跳官网文档
 const goDoc = () => {
   window.open('https://hamsternet.io/docs/')
@@ -203,17 +191,12 @@ const goDoc = () => {
 const goTemplate = () => {
   selectedNavTitle.value = 'template';
   router.push('/projects/create')
-
 }
 
 const goMiwaspace = () => {
   selectedNavTitle.value = 'miwaspace';
   router.push("/middleware/miwaspace?key=1");
-  isProject.value = false;
-  isAgent.value = false;
-  // isProject.value = false;
 }
-
 
 const githubInstall = () => {
   // 关联github
@@ -221,17 +204,11 @@ const githubInstall = () => {
   const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/connectGithub`;
   const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
   myWindow?.focus();
-  // window.close();
-  // window.opener.location.reload();
 };
-
 
 const goDashboard = () => {
   selectedNavTitle.value = 'dashboard';
   router.push("/middleware/dashboard");
-  isProject.value = false;
-  isAgent.value = false;
-  // isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
@@ -255,30 +232,22 @@ const checkWallet = async (val: string) => {
 const signOut = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('userInfo');
-  router.push('/')
+  router.push('/login')
 };
 
 onMounted(() => {
   console.log('是否加载了头部组件~~~~')
   // 解决middle刷新页面选中在projects tab下问题
   if (window.location.href.indexOf('middleware') != -1) {
-    isProject.value = false
     selectedNavTitle.value = 'dashboard';
   } else if (window.location.href.indexOf('projects') != -1) {
-    isProject.value = true
-  } else if (window.location.href.indexOf('orders') != -1) {
-    // selectedNavTitle.value = 'projects';
-    // isProject.value = true
     if (window.location.href.indexOf('create') != -1 || window.location.href.indexOf('template') != -1) {
       selectedNavTitle.value = 'template';
     } else {
       selectedNavTitle.value = 'projects';
     }
-
-  }
-  else if (window.location.href.indexOf('orders') != -1) {
+  } else if (window.location.href.indexOf('orders') != -1) {
     selectedNavTitle.value = 'orders';
-    isOrder.value = true
   } else if (window.location.href.indexOf('aiAgent') != -1) {
     selectedNavTitle.value = 'aiAgent';
   }
@@ -286,13 +255,12 @@ onMounted(() => {
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
-  changeTheme(defaultTheme.value);
 
+  changeTheme(defaultTheme.value);
 
   let token = localStorage.getItem('token') || '';
   if (token) {
     let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-    console.log(loginData, '回调页看登录')
     loginType.value = loginData.loginType;
     if (loginType.value == 2) {
       let walletAccount = window.localStorage.getItem("walletAccount") || ''
@@ -337,24 +305,21 @@ const isDisconnect = () => {
     } else {
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
-      router.push('/')
+      router.push('/login')
     }
   }
-
 }
-
-
 
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
-  const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
-  if (isFakeToken) {
-    localStorage.removeItem('token')
-    // localStorage.removeItem('userInfo')
-    router.push('/login')
-  }
+  // const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
+  // if (isFakeToken) {
+  //   localStorage.removeItem('token')
+  //   // localStorage.removeItem('userInfo')
+  //   router.push('/login')
+  // }
   visibleDisconnect.value = false;
   isConnectedWallet.value = false
 }

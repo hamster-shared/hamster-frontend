@@ -6,7 +6,7 @@
     </template>
     <div class="my-[50px]">
       <a-radio-group v-model:value="roleValue">
-        <a-radio-button v-for="(item,key) in roleList" :key="key" :value="item.value">{{ item.label }}</a-radio-button>
+        <a-radio-button v-for="(item, key) in roleList" :key="key" :value="item.value">{{ item.label }}</a-radio-button>
       </a-radio-group>
     </div>
     <div class="text-center">
@@ -17,6 +17,9 @@
 </template>
 <script setup lang="ts">
 import { ref, toRefs } from 'vue';
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps({
   modalVisible: Boolean,
@@ -25,10 +28,10 @@ const { modalVisible } = toRefs(props);
 const emits = defineEmits(['hiddenModal']);
 
 const roleValue = ref('');
-const roleList = ref([{ label:'御姐之魅', value:'御姐之魅'},{ label:'高贵公主', value:'高贵公主'},{ label:'杠精之道', value:'杠精之道'},{ label:'温柔甜心', value:'温柔甜心'},{ label:'王者气息', value:'王者气息'},{ label:'机智灵狐', value:'机智灵狐'},{ label:'可爱萌物', value:'可爱萌物'},{ label:'冰山美人', value:'冰山美人'},{ label:'热情狂烈', value:'热情狂烈'}]);
+const roleList = ref([{ label: '御姐之魅', value: '御姐之魅' }, { label: '高贵公主', value: '高贵公主' }, { label: '杠精之道', value: '杠精之道' }, { label: '温柔甜心', value: '温柔甜心' }, { label: '王者气息', value: '王者气息' }, { label: '机智灵狐', value: '机智灵狐' }, { label: '可爱萌物', value: '可爱萌物' }, { label: '冰山美人', value: '冰山美人' }, { label: '热情狂烈', value: '热情狂烈' }]);
 
 const handleOk = async () => {
-  
+  router.push('/aiAgent/agent');
   hideVisible();
 }
 const hideVisible = () => {
@@ -36,12 +39,13 @@ const hideVisible = () => {
 }
 </script>
 <style scoped lang="less">
-:deep(.ant-radio-group){
+:deep(.ant-radio-group) {
   display: grid;
   gap: 20px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-:deep(.ant-radio-group .ant-radio-button-wrapper){
+
+:deep(.ant-radio-group .ant-radio-button-wrapper) {
   width: 218px;
   height: 62px;
   line-height: 60px;
@@ -51,11 +55,13 @@ const hideVisible = () => {
   color: #696D71;
   text-align: center;
 }
-:deep(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)){
+
+:deep(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)) {
   border-color: #E2B578;
   color: #000000;
 }
-:deep(.ant-radio-button-wrapper:not(:first-child):before){
+
+:deep(.ant-radio-button-wrapper:not(:first-child):before) {
   display: none;
 }
 </style>

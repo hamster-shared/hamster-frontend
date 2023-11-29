@@ -4,17 +4,24 @@
     <NoData v-if="noData"></NoData>
     <div v-else class="h-[836px] flex rounded-[12px]">
       <div class="w-1/3 bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
-        <div class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">History</div>
-        <div v-for="(item,key) in historyList" :key="key">
-          <div :class="{'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id}" @click="changeSelect(item)" class="p-[20px] flex cursor-pointer">
-            <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px]"/>
+        <div
+          class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
+          History</div>
+        <div v-for="(item, key) in historyList" :key="key">
+          <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id }" @click="changeSelect(item)"
+            class="p-[20px] flex cursor-pointer">
+            <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px]" />
             <div class="text-[14px] text-[#757575] font-semibold history-left-w">
-              <div class="text-ellipsis mb-[10px]"><label class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.name }}</label>{{ item.desc1 }}</div>
+              <div class="text-ellipsis mb-[10px]"><label
+                  class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.name }}</label>{{ item.desc1 }}
+              </div>
               <div class="text-ellipsis">{{ item.desc2 }}</div>
             </div>
           </div>
         </div>
-        <div class="absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]">
+        <div
+          class="absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]"
+          @click="newAiAgent">
           <svg-icon name="add-white" size="26" class="mr-[10px]" />
           New AI Agent
         </div>
@@ -48,12 +55,13 @@
 import { onMounted, ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
+import { useRouter } from "vue-router";
 import NoData from '../home/NoData.vue'
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
-
-const noData = ref(false); 
+const router = useRouter();
+const noData = ref(false);
 const inputValue = ref('');
 const sendMap = new Map();
 const sendList = ref<any>([]);
@@ -105,22 +113,26 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="less">
-.history-left-w{
-  max-width: calc(100% - 71px);;
+.history-left-w {
+  max-width: calc(100% - 71px);
+  ;
 }
+
 .text-ellipsis {
   text-overflow: ellipsis; //文字溢出的部分隐藏并用省略号代替
   white-space: nowrap; //文本不自动换行
   overflow: hidden;
 }
-:deep(.ant-input-affix-wrapper){
+
+:deep(.ant-input-affix-wrapper) {
   height: 60px;
   border-radius: 30px;
   border: 1px solid #E8E8E8;
   background: #FFFFFF;
   padding: 0 30px;
 }
-:deep(.ant-input){
+
+:deep(.ant-input) {
   height: 58px;
   font-size: 18px;
   font-weight: 500;
