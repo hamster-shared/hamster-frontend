@@ -10,7 +10,7 @@
       </a-radio-group>
     </div>
     <div class="text-center">
-      <a-button type="primary" class="w-[240px] !h-[43px] mr-[24px]" ghost @click="hideVisible">Skip</a-button>
+      <a-button type="primary" class="w-[240px] !h-[43px] mr-[24px]" ghost @click="handleOk">Skip</a-button>
       <a-button type="primary" class="w-[240px] !h-[43px]" @click="handleOk">Confirm</a-button>
     </div>
   </a-modal>

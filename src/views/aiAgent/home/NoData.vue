@@ -20,6 +20,6 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const hireMarketplace = () => {
-  router.push('/aiAgent/work')
+  router.push('/aiAgent/marketplace')
 }
 </script>
