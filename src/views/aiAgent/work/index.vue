@@ -20,8 +20,9 @@
           </div>
         </div>
         <div
-          class="absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]">
-          <svg-icon name="add-white" size="26" class="mr-[10px]" @click="newAiAgent" />
+          class="absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]"
+          @click="newAiAgent">
+          <svg-icon name="add-white" size="26" class="mr-[10px]" />
           New AI Agent
         </div>
       </div>
@@ -65,7 +66,7 @@ const changeSelect = (item: any) => {
 }
 
 const newAiAgent = () => {
-  router.push('/aiAgent/work')
+  router.push('/aiAgent/marketplace')
 }
 
 </script>

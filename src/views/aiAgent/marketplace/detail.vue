@@ -15,7 +15,7 @@
         <div>
           <a-button class="mr-[20px]" type="primary" @click="hireAgent">Hire agent and start working</a-button>
           <a-button type="primary" @click="cloneAgent">Clone Agent</a-button>
-          <a-button v-if="false" type="primary" @click="continueWork">Continue Work</a-button>
+          <a-button v-if="false" type="primary" @click="continueWork">Continue Working</a-button>
         </div>
       </div>
       <div
@@ -49,7 +49,8 @@ const detailInfo = {
 };
 
 const continueWork = () => {
-  modalVisible.value = true;
+  router.push('/aiAgent/work')
+  // modalVisible.value = true;
 }
 const cloneAgent = () => {
   modalVisible.value = true;

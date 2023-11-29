@@ -42,8 +42,8 @@ import NoData from '../home/NoData.vue'
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const router = useRouter();
-
 const noData = ref(false);
+
 const agentList = ref([
   { id: '1', logo: 'testLogo.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha项目研报 、Alpha,项目研报 、Alpha', desc2: 'Owned by you' },
   { id: '2', logo: 'testLogo.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: 'Owned by you' },
