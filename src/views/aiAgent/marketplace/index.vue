@@ -19,10 +19,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import TabsContent from './components/TabsContent.vue'
+import { apiGetMarketplaceMockList } from '@/apis/agentMock'
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
@@ -35,6 +36,10 @@ const tabsList = ref([
   {id:'4',logo:'testLogo.png', name:'Sophia', title:'产品营销、危机公关，产品营销、危机公关', desc:'我家爱豆闹绯闻怎么办怎么办怎么办'},
 ]);
 
+onMounted(async()=>{
+  const res = await apiGetMarketplaceMockList()
+  console.log(22222222,res)
+})
 </script>
 <style scoped lang="less">
 :deep(.ant-tabs-tab){

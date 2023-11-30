@@ -71,7 +71,7 @@ watch(() => router.currentRoute.value,
 onMounted(async()=>{
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   let a= {
-    "chatId": "abcd",//用随机数或者uuid
+    "chatId": "abcd",//uuid
     "stream": false,
     "detail": false,
     "variables": {

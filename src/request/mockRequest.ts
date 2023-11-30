@@ -6,10 +6,23 @@ declare module 'axios' {
   }
 }
 
+export interface RequestOptions {
+    /** 当前接口权限, 不需要鉴权的接口请忽略， 格式：sys:user:add */
+    permCode?: string;
+    /** 是否直接获取data，而忽略message等 */
+    isGetDataDirectly?: boolean;
+    /** 请求成功是提示信息 */
+    successMsg?: string;
+    /** 请求失败是提示信息 */
+    errorMsg?: string;
+    /** 是否mock数据请求 */
+    isMock?: boolean;
+}
+
 // 创建一个 axios 实例
-const agentService = axios.create({
+const service = axios.create({
   // baseURL: "/api", // 所有的请求地址前缀部分
-  baseURL: "/",
+  baseURL: "/mock-api",
   timeout: 180000, // 请求超时时间毫秒
   headers: {
     // 设置后端需要的传参类型
@@ -19,12 +32,10 @@ const agentService = axios.create({
 });
 
 // 添加请求拦截器
-agentService.interceptors.request.use(
+service.interceptors.request.use(
   function (config) {
-    // apiKey 根据模型切换
-    const apiKey = "z6cQlh1uMfL1NRctD7ycY1j6vqCfE4mW1"
     // 在发送请求之前做些什么
-    let token = `fastgpt-${apiKey}`
+    let token = localStorage.getItem("token") || '';
     if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
       (config as Recordable).headers['Authorization'] = 'Bearer '+ token;
     }
@@ -39,13 +50,13 @@ agentService.interceptors.request.use(
 );
 
 // 添加响应拦截器
-agentService.interceptors.response.use(
+service.interceptors.response.use(
   function (response: any) {
     // console.log(response);
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
     // dataAxios 是 axios 返回数据中的 data
-    const dataAxios = response.data
+    const dataAxios = response.data;
     // 这个状态码是和后端约定的
     const code = dataAxios.reset;
     return dataAxios;
@@ -62,4 +73,4 @@ agentService.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-export default agentService;
+export default service;

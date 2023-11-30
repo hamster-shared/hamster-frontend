@@ -1,28 +1,15 @@
-import type { MockMethod, MockConfig } from 'vite-plugin-mock'
+import type { MockMethod } from 'vite-plugin-mock'
+import marketplaceList from './json/marketplaceList.json'
 export default [
   {
-    url: '/api/getMarketplaceList',
+    url: '/mock-api/getMarketplaceList',
     method: 'get',
     response: ({ query }) => {
       return {
         code: 200,
-        data: {
-          name: 'vben',
-        },
-        message:'success'
+        data: marketplaceList,
+        message: 'success'
       }
     },
-  },
-  {
-    url: '/api/getMarketDetail',
-    method: 'post',
-    timeout: 2000,
-    response: {
-      code: 200,
-      data: {
-        name: 'vben',
-      },
-      message:'success'
-    },
-  },
+  }
 ] as MockMethod[]
