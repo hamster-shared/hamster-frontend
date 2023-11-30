@@ -2,8 +2,8 @@
   <div>
     <div class="mb-[32px]">
       <div class="text-[24px] font-bold">Let‘s create your project.</div>
-      <div class="dark:text-[#E0DBD2] text-[#73706E]">Ready to start building? Get started with one of our Templates or
-        use an existing repository.</div>
+      <div class="dark:text-[#E0DBD2] text-[#73706E]">Ready to start building? Get started with one of our Templates.
+      </div>
     </div>
     <div class="mt-4 dark:bg-[#1D1C1A] bg-[#FFFFFF] rounded-[16px] py-[24px] px-[32px]">
       <div class="grid grid-cols-2 gap-8">
@@ -26,7 +26,7 @@
               </a-radio>
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Code Repositiory">
+          <!-- <a-form-item class="new-label" label="Code Repositiory">
             <a-radio-group v-model:value="formData.contractCode" name="contractCode">
               <a-radio :style="radioStyle" value="1">Create a new repository by template
                 <div>Implement core standards with our contract template for easily build your app.
@@ -36,10 +36,11 @@
                 <div class="radio-sub">Easily build your app by importing an existing git repository with Hamster</div>
               </a-radio>
             </a-radio-group>
-          </a-form-item>
-          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType" v-show="formData.contractCode == '1' && formData.type != '2' && formData.type != '3'">
+          </a-form-item> -->
+          <a-form-item class="new-label" label="Web3 Ecosystem" name="frameType"
+            v-show="formData.contractCode == '1' && formData.type != '2' && formData.type != '3'">
             <a-radio-group v-model:value="formData.frameType" name="frameType" @change="changRadio">
-              <div v-if="formData.type==1">
+              <div v-if="formData.type == 1">
                 <a-radio :style="radioStyle" value="1">EVM
                   <div class="radio-sub">Build application based on EVM and Solidity language</div>
                 </a-radio>
@@ -53,7 +54,7 @@
                   <div class="radio-sub">Build application based on Starknet and Cairo language</div>
                 </a-radio>
                 <a-radio :style="radioStyle" value="5">Sui
-                  <div class="radio-sub">Build application based on Sui  and Move language</div>
+                  <div class="radio-sub">Build application based on Sui and Move language</div>
                 </a-radio>
                 <a-radio :style="radioStyle" value="6">Filecoin
                   <div class="radio-sub">Build application based on Filecoin using Solidity or Rust language</div>
@@ -61,8 +62,11 @@
                 <a-radio :style="radioStyle" value="7">Internet Computer
                   <div class="radio-sub">Build application based on IC and Motoko language</div>
                 </a-radio>
+                <a-radio :style="radioStyle" value="8">Solana
+                  <div class="radio-sub">Build application based on Solana and Rust language</div>
+                </a-radio>
               </div>
-              <a-radio :style="radioStyle" value="1" v-if="formData.type==3">Polkadot
+              <a-radio :style="radioStyle" value="1" v-if="formData.type == 3">Polkadot
                 <div class="radio-sub">Build application based on Substrate and Rust language</div>
               </a-radio>
               <!-- <a-radio value="2">ink!</a-radio>
@@ -70,16 +74,20 @@
               <a-radio value="8">Angular</a-radio> -->
             </a-radio-group>
           </a-form-item>
-          <a-form-item class="new-label" label="Deployment Method" v-show="formData.type == '2' && formData.contractCode == '1'">
+          <a-form-item class="new-label" label="Deployment Method"
+            v-show="formData.type == '2' && formData.contractCode == '1'">
             <a-radio-group v-model:value="formData.deployType" name="deployType" @change="getTemplatesShow">
               <a-radio :style="radioStyle" value="1">IPFS
-                <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS storage network</div>
+                <div class="radio-sub">Package the front-end code into IPFS format files and upload them to the IPFS
+                  storage network</div>
               </a-radio>
               <a-radio :style="radioStyle" value="2">Container
-                <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service</div>
+                <div class="radio-sub">Package the front-end code into a Docker image and upload it to container service
+                </div>
               </a-radio>
               <a-radio :style="radioStyle" value="3">Internet Computer
-                <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode and execution memory</div>
+                <div class="radio-sub">The Internet Computer runs canister smart contracts bunding WebAssembly bytecode
+                  and execution memory</div>
               </a-radio>
             </a-radio-group>
           </a-form-item>
@@ -93,25 +101,28 @@
               <span class="open-link-css align-middle text-[16px]"> Explore all template</span>
             </div>
           </div>
-          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '1' && formData.frameType != '6'">A collection of our most
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]"
+            v-if="formData.type == '1' && formData.frameType != '6'">A collection of our most
             deployed contracts.</div>
           <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '2'">A collection of our
             most deployed FrontEnd.</div>
-          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '3'">A collection of our most deployed substrate templates.</div>
+          <div class="dark:text-[#E0DBD2] text-[#73706E] mb-[32px]" v-if="formData.type == '3'">A collection of our most
+            deployed substrate templates.</div>
           <!-- filecoin的是上下布局，反之是两栏布局 -->
-          <div v-if="formData.type === '1' || formData.type === '3'" :class="formData.frameType != '6' ? 'grid grid-cols-2 gap-4':''" class="template-height1">
+          <div v-if="formData.type === '1' || formData.type === '3'" :class="(formData.frameType != '6'  && formData.frameType != '8') ? 'grid grid-cols-2 gap-4':''" class="template-height1">
             <div v-if="formData.frameType != '6'" v-for="(item, index) in showList" :key="index" @click="goDetail(item)"
               class="cursor-pointer bg-[#FFFFFF] dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] py-[32px] px-[24px]">
               <div class="flex flex-col h-[100%]">
                 <div class="relative flex-1">
                   <img :src="item.logo" class="h-[40px] w-[40px]" />
                   <div class="text-[16px] mt-4 font-bold text-ellipsis">{{ item.name }}</div>
-                  <div class="text-[#151210] dark:text-[#BBBAB9] max-h-[150px] text-ellipsis-line mb-4">{{ item.description }}</div>
+                  <div class="text-[#151210] dark:text-[#BBBAB9] max-h-[150px] text-ellipsis-line mb-4">{{
+                    item.description }}</div>
                   <img src="@/assets/images/small-star.png" class="absolute h-2 top-[66%] left-[70%]" />
                   <img src="@/assets/images/big-star.png" class="absolute h-4 top-[74%] left-[90%]" />
                 </div>
                 <!-- 按钮 -->
-                <button v-if="item.labelDisplay" class="btn">{{item.labelDisplay}}</button>
+                <button v-if="item.labelDisplay" class="btn">{{ item.labelDisplay }}</button>
                 <div class="flex text-[16px] mt-2">
                   <div class="flex items-center">
                     <img src="@/assets/icons/version-white.svg" class="h-[20px] dark:hidden" />
@@ -189,7 +200,7 @@ import { apiDupProjectName } from "@/apis/projects";
 import { apiTemplatesShow } from "@/apis/templates";
 import { useThemeStore } from "@/stores/useTheme";
 import ImportGitRepository from './components/ImportGitRepository.vue'
-import FilecoinTemplate from './components/FilecoinTemplate.vue'
+import FilecoinTemplate from './components/FilecoinTemplate.vue';
 import { formatDateToLocale } from '../../../utils/dateUtil';
 
 const theme = useThemeStore()
@@ -197,6 +208,17 @@ const theme = useThemeStore()
 const router = useRouter();
 const loading = ref(false);
 const showList = ref([])
+const templateList = ref([    {
+  "id": 57,
+  "templateTypeId": 8,
+  "name": "NFT Collection Contract",
+  "description": "Create collection of unique NFTs.",
+  "audited": true,
+  "lastVersion": "1.0.0",
+  "logo": "https://g.alpha.hamsternet.io/ipfs/QmYCLdgTEmLwVuecuzzXxC9aUhsPAW2cLd6TDi9QBEsQCn",
+  "image": "",
+  "labelDisplay": ""
+}])
 const formRef = ref();
 
 const formData = reactive(JSON.parse(localStorage.getItem('createFormData'))) || reactive({
@@ -243,11 +265,11 @@ const radioStyle = reactive({ display: 'flex', marginBottom: '5px' });
 
 const goNext = async () => {
   // frameType=6 直接跳转详情页
-  if(formData.frameType == '6'){
+  if (formData.frameType == '6') {
     formData.frameType = '1'
     localStorage.setItem("createFormData", JSON.stringify(formData));
     router.push('/projects/templates/details')
-  }else{
+  } else {
     localStorage.setItem("createFormData", JSON.stringify(formData));
     setCreateProjectValue(`/projects/template/${formData.type}`)
   }
@@ -292,13 +314,13 @@ const getInitTemplates = async () => {
     let languageType = '';
     if (formData.type === '1') {
       languageType = formData.frameType
-    } else if (formData.type === '2') {
+    } else if (formData.type === '2' || formData.type === '8') {
       languageType = null;
     } else {
       languageType = '1';
       formData.frameType = languageType;
     }
-    const { data } = await apiTemplatesShow(formData.type, languageType,formData.deployType);
+    const { data } = await apiTemplatesShow(formData.type, languageType, formData.deployType);
     showList.value = data;
     console.log(showList.value)
   } catch (error: any) {
@@ -375,6 +397,7 @@ onMounted(() => {
   /*文本不自动换行*/
   overflow: hidden;
 }
+
 .text-ellipsis-line {
   text-overflow: -o-ellipsis-lastline;
   overflow: hidden;
@@ -383,7 +406,8 @@ onMounted(() => {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 6;
 }
-.btn{
+
+.btn {
   width: 80px;
   height: 20px;
   background: #E2B578;

@@ -29,6 +29,12 @@ const projectsRoute = [
         component: () => import('@/views/projects/projectsCreat/index.vue'),
       },
       {
+        path: "/projects/projectAddNew",
+        name: "ProjectAddNew",
+        component: () => import('@/views/projects/projectAddNew/index.vue'),
+      },
+      
+      {
         path: "/projects/template/:type",
         redirect: "/projects/template/:type",
         children: [
@@ -51,7 +57,7 @@ const projectsRoute = [
             path: "/projects/templates/details",
             name: "FilecoinDetail",
             component: () => import('@/views/projects/FilecoinDetail/index.vue'),
-          },
+          }
         ]
       },
       {
@@ -117,6 +123,38 @@ const projectsRoute = [
         path: '/projects/projectsDeploySeting',
         name: "projectsDeploySeting",
         component: () => import('@/views/projects/projectsDeploySeting/index.vue'),
+      },
+      {
+        path: '/projects/installations',
+        name: "projectsInstallations",
+        component: () => import('@/views/projects/projectsCreat/installations.vue'),
+        meta: {
+          layout: 'null',
+        }
+      },
+      {
+        path: '/projects/adjustPremission',
+        name: "projectsAdjustPremission",
+        component: () => import('@/views/projects/projectsCreat/adjustPremission.vue'),
+        meta: {
+          layout: 'null',
+        }
+      },
+      {
+        path: '/projects/metaMaskAuth',
+        name:'projectsMetaMaskAuth',
+        component: () => import('@/views/projects/projectsCreat/metaMaskAuth.vue'),
+        meta: {
+          layout: 'null',
+        }
+      },
+      {
+        path: '/projects/connectGithub',
+        name:'projectsConnectGithub',
+        component: () => import('@/views/projects/projectsCreat/connectGithub.vue'),
+        meta: {
+          layout: 'null',
+        }
       }
     ]
   }

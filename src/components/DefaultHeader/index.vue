@@ -5,10 +5,11 @@
         <img src="@/assets/icons/logo-dark.svg" class="h-[36px] hidden dark:inline-block" />
         <img src="@/assets/icons/logo-white.svg" class="h-[36px] dark:hidden" />
       </div>
-      <div @click="goPrjects" :class="{ 'header-menu-line': isProject && !isOrder }"
-        class="header-text-css ml-12 mr-8" id="pro">Projects</div>
-      <a-dropdown v-if="!isShowMiddleware">
-        <div class="header-text-css" :class="{ 'header-menu-line': !isProject }"
+      <div @click="goPrjects" :class="{ 'header-menu-line': selectedNavTitle === 'projects' }"
+        class="ml-12 mr-8 header-text-css" id="pro">Project</div>
+      <a-dropdown>
+        <div class="header-text-css"
+          :class="{ 'header-menu-line': selectedNavTitle === 'dashboard' || selectedNavTitle === 'miwaspace' }"
           @click.stop>
           Middleware
           <img src="@/assets/icons/skx.svg" alt="" class="h-[7px] hidden inline-block up-tran">
@@ -25,8 +26,10 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <div @click="goDoc" 
-        class="header-text-css  ml-12 mr-8">Docs</div>
+      <div @click="goTemplate" class="ml-8 mr-8 header-text-css"
+        :class="{ 'header-menu-line': selectedNavTitle === 'template' }">
+        Template</div>
+      <div @click="goDoc" class="mr-8 header-text-css">Docs</div>
     </div>
     <div class="flex items-center">
       <div class="cursor-pointer flex h-[36px]">
@@ -63,14 +66,26 @@
       </div>
       <div class="ml-8">
         <a-dropdown>
-          <img :src="githubAvatarUrl" class="h-[40px] rounded-full" />
+          <img v-if="loginType == 1" :src="githubAvatarUrl" class="h-[40px] rounded-full" />
+          <img v-else class="h-[40px] rounded-full" :src="avatarURL" />
           <template #overlay>
             <a-menu>
-              <div class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
+              <div v-if="loginType == 1" class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
                 <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
                 <span>Signed in as </span>
                 <span class="font-bold">{{ username }}</span>
               </div>
+              <div v-if="loginType == 2 && username" class="px-[12px] py-[4px] h-[40px] text-[#7B7B7B]">
+                <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
+                <span>Signed in as </span>
+                <span class="font-bold">{{ username }}</span>
+              </div>
+              <a-menu-item class="" v-if='loginType == 2 && !username'>
+                <div class="py-[4px]" @click="githubInstall">
+                  <img src="@/assets/icons/User.svg" class="h-[16px] mr-2" />
+                  Connect Github
+                </div>
+              </a-menu-item>
               <div class="w-full h-[1px] border border-solid border-[#F4F4F4]"></div>
               <a-menu-item class="">
                 <div class="py-[4px]" @click="handleOrder">
@@ -88,9 +103,6 @@
             </a-menu>
           </template>
         </a-dropdown>
-
-        <!-- <img src="@/assets/icons/Frame-dark.svg" class="h-[40px] hidden dark:inline-block" />
-        <img src="@/assets/icons/Frame-white.svg" class="h-[40px] dark:hidden" /> -->
       </div>
     </div>
   </div>
@@ -108,7 +120,7 @@
     <div class="text-[24px] text-[#151210] font-bold mb-4">Confirm disconnect wallets?</div>
     <div class="text-center">
       <a-button type="primary" @click="(visibleDisconnect = false)" ghost>No</a-button>
-      <a-button class="ml-4" type="primary" @click="disconnect">Yes</a-button>
+      <a-button class="ml-4" type="primary" @click="isDisconnect">Yes</a-button>
     </div>
   </a-modal>
 </template>
@@ -121,11 +133,16 @@ import Wallets from "../Wallets.vue";
 import { useThemeStore } from "@/stores/useTheme";
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import selectNetwork from "./components/selectNetwork.vue";
+import { generateAvatarURL } from '@cfx-kit/wallet-avatar';
+// import { getUserInfoById } from "@/apis/login.ts";
 const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
 const router = useRouter();
+const avatarURL = ref('')
 
+
+const loginType = ref();
 const defaultTheme = ref("dark");
 const showWallets = ref();
 const visibleWallet = ref(false);
@@ -134,15 +151,25 @@ const isConnectedWallet = ref(false);
 const walletAccount = ref("");
 const isProject = ref(true)
 const isOrder = ref(false)
+const isTemplate = ref(false);
+
+const selectedNavTitle = ref('projects');
+
 const imgVal = ref("");
 const imgList = reactive(["metamask", "connect", "imToken", "math", "trust", "huobi"]);
 const userInfo = localStorage.getItem('userInfo');
-const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl;
-const username = JSON.parse(userInfo)?.username;
+console.log(JSON.parse(userInfo), 'userInfo')
+const githubAvatarUrl = ref('');
+const username = ref('');
+// const githubAvatarUrl = JSON.parse(userInfo)?.avatarUrl || '';
+// const username = JSON.parse(userInfo)?.username || '';
 const isShowMiddleware = ref(false)
+
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
+const clientId = ref(import.meta.env.VITE_APP_CLIENTID);
+const oauthUrl = ref('https://github.com/login/oauth/authorize');
+
 const goHome = () => {
-  // router.push("/node-service/RPCs");
-  // router.push("/projects");
   let linkVal = "https://portal.hamster.newtouch.com"
   if (window.location.href.indexOf('hamsternet.io') !== -1) {
     linkVal = "https://hamsternet.io";
@@ -152,8 +179,9 @@ const goHome = () => {
 };
 
 const goPrjects = () => {
+  selectedNavTitle.value = 'projects';
   router.push("/projects");
-  isProject.value = true;
+  // isProject.value = true;
 }
 
 // 跳官网文档
@@ -161,26 +189,37 @@ const goDoc = () => {
   window.open('https://hamsternet.io/docs/')
 }
 
-const goMiwaspace = () => {
-  router.push("/middleware/miwaspace?key=1");
-  isProject.value = false;
-  // const connectedWallets = window.localStorage.getItem('alreadyConnectedWallets')
-  // // 如果 local storage 里没有保存的钱包，直接返回
-  // if (connectedWallets == null || connectedWallets === '[]') {
-  //   showWallet();
-  // } else {
-  //   router.push("/node-service/Apps");
+const goTemplate = () => {
+  selectedNavTitle.value = 'template';
+  router.push('/projects/create')
 
-  //   isProject.value = false;
-  // }
 }
+
+const goMiwaspace = () => {
+  selectedNavTitle.value = 'miwaspace';
+  router.push("/middleware/miwaspace?key=1");
+  // isProject.value = false;
+}
+
+
+const githubInstall = () => {
+  // 关联github
+  const state = new Date().getTime();
+  const url = `${oauthUrl.value}?client_id=${clientId.value}&scope=read:user&state=${state}&redirect_uri=${apiUrl.value}/projects/connectGithub`;
+  const myWindow = window.open(url, 'login-github', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  myWindow?.focus();
+  // window.close();
+  // window.opener.location.reload();
+};
+
+
 const goDashboard = () => {
+  selectedNavTitle.value = 'dashboard';
   router.push("/middleware/dashboard");
-  isProject.value = false;
+  // isProject.value = false;
 }
 
 const changeTheme = (val: string) => {
-  // theme.setTheme(val)
   let htmlRoot = document.getElementById('htmlRoot') || null;
   if (val === 'white') {
     theme.setTheme('light')
@@ -196,14 +235,6 @@ const changeTheme = (val: string) => {
 
 const checkWallet = async (val: string) => {
   imgVal.value = val;
-  // console.log("window.ethereum:",window.ethereum);
-  // if (typeof window.ethereum !== 'undefined') {
-  //   console.log('MetaMask is installed!');
-  //   const accounts = await ethereum.request( {method: 'eth_requestAccounts'} );
-  //   const account = accounts[0];
-  //   console.log("accounts:",accounts);
-  // }
-  // console.log("wallet end..");
 }
 
 const signOut = () => {
@@ -213,27 +244,48 @@ const signOut = () => {
 };
 
 onMounted(() => {
+  console.log('是否加载了头部组件~~~~')
   // 解决middle刷新页面选中在projects tab下问题
-  if(window.location.href.indexOf('middleware') != -1){
+  if (window.location.href.indexOf('middleware') != -1) {
     isProject.value = false
-  }else if(window.location.href.indexOf('projects') != -1){
-    isProject.value = true
-  }else if(window.location.href.indexOf('orders') != -1){
+    selectedNavTitle.value = 'dashboard';
+  } else if (window.location.href.indexOf('projects') != -1) {
+    // selectedNavTitle.value = 'projects';
+    // isProject.value = true
+    if (window.location.href.indexOf('create') != -1 || window.location.href.indexOf('template') != -1) {
+      selectedNavTitle.value = 'template';
+    } else {
+      selectedNavTitle.value = 'projects';
+    }
+
+  }
+  else if (window.location.href.indexOf('orders') != -1) {
+    selectedNavTitle.value = 'orders';
     isOrder.value = true
   }
+
   if (window.localStorage.getItem("themeValue") != undefined && window.localStorage.getItem("themeValue") != "") {
     defaultTheme.value = window.localStorage.getItem("themeValue");
   }
   changeTheme(defaultTheme.value);
-  // 针对钱包登录的特殊处理
-  if(localStorage.getItem('token')?.startsWith('0x')){
-    // debugger
-    isShowMiddleware.value = true
-    isConnectedWallet.value = true
-    const walletAddr:any  = localStorage.getItem('token')
-    walletAccount.value = walletAddr.substring(0,5)+ "..." +walletAddr.substring(walletAddr.length-4)
+
+
+  let token = localStorage.getItem('token') || '';
+  if (token) {
+    let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
+    console.log(loginData, '回调页看登录')
+    loginType.value = loginData.loginType;
+    if (loginType.value == 2) {
+      let walletAccount = window.localStorage.getItem("walletAccount") || ''
+      username.value = JSON.parse(userInfo)?.username || '';
+      avatarURL.value = generateAvatarURL(walletAccount)
+    } else {
+      githubAvatarUrl.value = JSON.parse(userInfo)?.avatarUrl || '';
+      username.value = JSON.parse(userInfo)?.username || '';
+    }
   }
 });
+
 
 watch(
   () => walletAddress.walletAddress || window.localStorage.getItem("walletAccount"),
@@ -246,13 +298,42 @@ watch(
     }
   }, { deep: true, immediate: true }
 );
+
+watch(
+  () => loginType.value,
+  (oldV, newV) => {
+    if (newV) {
+      loginType.value = newV;
+    }
+  }, { deep: true, immediate: true }
+);
+
+const isDisconnect = () => {
+  if (loginType.value == 1) {
+    disconnect()
+  } else {
+    // metaMask 登录 先判断是否关联github， 已关联则解绑小葫芦 ，没有关联则退出重新登录
+    if (username.value) {
+      disconnect()
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      router.push('/')
+    }
+  }
+
+}
+
+
+
 const disconnect = () => {
   showWallets.value?.onClickDisconnect();
   walletAddress.setWalletAddress('');
   window.localStorage.removeItem("walletAccount");
   const isFakeToken = localStorage.getItem('token')?.startsWith('0x')
-  if(isFakeToken){
+  if (isFakeToken) {
     localStorage.removeItem('token')
+    // localStorage.removeItem('userInfo')
     router.push('/login')
   }
   visibleDisconnect.value = false;
@@ -264,8 +345,6 @@ const showWallet = () => {
 }
 const setWalletBtn = (val: boolean) => {
   isConnectedWallet.value = val;
-  // const account = window.localStorage.getItem("walletAccount");
-  // walletAccount.value = account?.substring(0, 5) + "..." + account?.substring(account.length - 4);
 }
 const handleOrder = () => {
   router.push('/orders')
@@ -275,9 +354,10 @@ const handleOrder = () => {
 <style lang="less" scoped>
 @btnColor: #E2B578;
 
-.header-menu-line{
+.header-menu-line {
   border-bottom: 3px solid #E2B578;
 }
+
 .default-header {
   position: fixed;
   top: 0;
@@ -357,7 +437,8 @@ html[data-theme='dark'] {
 }
 </style>
 <style scoped>
-.header-text-css{
+.header-text-css {
   @apply text-[#E2B578] hover:text-[#E4C08F] active:text-[#CE9C58] text-[16px] cursor-pointer h-[64px] leading-[64px];
 }
 </style>
+

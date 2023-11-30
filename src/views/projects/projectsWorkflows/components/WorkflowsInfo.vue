@@ -9,7 +9,7 @@
             <!-- <img src="@/assets/icons/white-link.svg" class="mr-[8px] h-[16px] dark:hidden" />
             <img src="@/assets/icons/dark-link.svg" class="mr-[8px] h-[16px] hidden dark:inline-block" /> -->
             <svg-icon name="white-link" size="16" class="mr-[8px]" />
-            <span class="align-middle">main</span>
+            <span class="align-middle">{{ workflowsDetailsData.branch }}</span>
           </div>
         </div>
       </a-col>
@@ -20,7 +20,8 @@
             <div v-if="props.checkType != ''">{{ props.checkType }}</div>
             <div v-else>{{ $t(`workFlows.${WorkflowStatusEnum[workflowsDetailsData.status]}`) }}</div>
           </div>
-          <div v-if="workflowsDetailsData.status == 2 && (type == '2' || props.frameType == 7) && deployType == '3'" class="process-detail-info">
+          <div v-if="workflowsDetailsData.status == 2 && (type == '2' || props.frameType == 7) && deployType == '3'"
+            class="process-detail-info">
             Insufficient cycle, <a href="javascript:;" @click="openBuyCycles">buy cycles</a>
           </div>
           <div class="process-detail-info error-info" v-show="title === 'Check' && workflowsDetailsData.status != 1">
@@ -61,6 +62,7 @@ interface WorkflowsDetailsData {
   startTime: string,
   errorNumber: number,
   duration: string,
+  branch: string,
 }
 
 const props = defineProps<{
@@ -77,7 +79,7 @@ const props = defineProps<{
 //   workflowsDetailsData: { type: Object }
 // });
 
-const openBuyCycles = ()=>{
+const openBuyCycles = () => {
   showBuyCycle.value = true
 }
 

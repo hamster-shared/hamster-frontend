@@ -1,4 +1,4 @@
-const chainlinkRoute = [
+const middlewareRoute = [
   {
     path: "/middleware/dashboard",
     redirect: "/middleware/dashboard",
@@ -24,6 +24,7 @@ const chainlinkRoute = [
       {
         path: "/middleware/dashboard/RPC",
         name: "RPC",
+        key: 'RPC',
         redirect: "/middleware/dashboard/RPC",
         meta: {
           isShow: true,
@@ -32,7 +33,72 @@ const chainlinkRoute = [
           {
             path: "/middleware/dashboard/RPC",
             name: "RPC",
-            component: () => import('@/views/chainLink/rpc/index.vue'),
+            component: () => import('@/views/middleware/rpc/index.vue'),
+            meta: {
+              sidebarMap: ['RPC'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/RPC/home",
+            name: "Home",
+            key: 'RPCIndex',
+            component: () => import('@/views/chainLink/rpc/indexNew.vue'),
+            meta: {
+              // sidebarMap: ['RPC'],
+              isShow: true,
+              sidebarMap: ['Home'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/RPC/myapp",
+            name: "Apps",
+            component: () => import('@/views/chainLink/rpc/myApp.vue'),
+            meta: {
+              isShow: true,
+              sidebarMap: ['Apps'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/RPC/Billing",
+            name: "Billing",
+            key: 'RPCBilling',
+            component: () => import('@/views/chainLink/rpc/billing.vue'),
+            meta: {
+              isShow: true,
+              sidebarMap: ['Billing'],
+            },
+          },
+          {
+            path: "/middleware/dashboard/RPC/pricing",
+            name: "Pricing",
+            key: 'RPCVersionPlan',
+            component: () => import('@/views/chainLink/rpc/versionPlan.vue'),
+            meta: {
+              isShow: true,
+              sidebarMap: ['Pricing'],
+            },
+          },
+          {
+            path: "/middleware/dashboard/RPC/myapp/detail",
+            name: "Detail",
+            component: () => import('@/views/chainLink/rpc/appDetail.vue'),
+            meta: {
+              // isShow: true,
+              sidebarMap: ['Apps'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/rpc/zan/auth",
+            name: "zanAuth",
+            component: () => import('@/views/middleware/rpc/zanAuth.vue'),
+            meta: {
+              sidebarMap: ['RPC'],
+            }
+          },
+          {
+            path: "/middleware/dashboard/rpc/zan/apiKeyDetail/:apiKeyId",
+            name: "zanApiKeyDetail",
+            component: () => import('@/views/middleware/rpc/apiKeyDetail.vue'),
             meta: {
               sidebarMap: ['RPC'],
             }
@@ -72,10 +138,10 @@ const chainlinkRoute = [
             }
           },
           {
-            path: "/middleware/dashboard/node/detail",
-            name: "nodeDetail",
-            component: () => import('@/views/chainLink/Node/nodeDetail.vue'),
-          },
+            path: "/middleware/dashboard/node/detail",
+            name: "nodeDetail",
+            component: () => import('@/views/chainLink/Node/nodeDetail.vue'),
+          },
         ]
       },
       {
@@ -202,4 +268,4 @@ const chainlinkRoute = [
     ]
   }
 ]
-export default chainlinkRoute
+export default middlewareRoute

@@ -3,12 +3,18 @@
     <div v-if="templatesCategory !== null">
       <div v-for="item in templatesCategory" :key="item.id">
         <div class="text-[24px] mb-[8px]">
-          <img src="@/assets/icons/hot.svg" class="h-[32px]" />
-          <span class="align-middle ml-[4px] font-bold">{{ item.name }}</span>
+          <!-- <img src="@/assets/icons/hot.svg" class="h-[32px]" /> -->
+          <span v-if="item.id == 5">
+            <div class="align-middle ml-[4px] font-bold">Popular</div>
+            <div class="text-[14px] text-[#73706E] dark:text-[#E0DBD2]">Acollection of our most Popular framworks without
+              additional
+              configuration.</div>
+          </span>
+          <span v-else class="align-middle ml-[4px] font-bold">{{ item.name }}</span>
         </div>
         <div class=" mb-[24px]">{{ item.description }}
         </div>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-4 gap-4">
           <div v-for="val in item.templatesList" :key="val.id" @click="toDetail(val)"
             class="dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid cursor-pointer">
             <img :src="val.image" class="w-full rounded-t-[12px]" />
@@ -62,7 +68,9 @@ const toDetail = (val: any) => {
 </script>
 <style lang='less' scoped>
 .border-box {
-  border-top: 1px solid #EBEBEB;
+  // border-top: 1px solid #EBEBEB;
+  border-top-width: 1px;
+  border-top-style: solid;
   padding: 24px 32px;
 }
 </style>
