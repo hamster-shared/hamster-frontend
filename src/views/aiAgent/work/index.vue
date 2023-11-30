@@ -2,20 +2,20 @@
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <div class="font-bold text-[24px] mb-[30px]">Work</div>
     <NoData v-if="noData"></NoData>
-    <div v-else class="h-[836px] flex rounded-[12px]">
-      <div class="w-1/3 bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
+    <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
+      <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
         <div
           class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
           History</div>
-        <div v-for="(item, key) in historyList" :key="key">
+        <div v-for="(item, key) in historyList" :key="key" class="">
           <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id }" @click="changeSelect(item)"
-            class="p-[20px] flex cursor-pointer">
-            <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px]" />
+            class="p-[20px] flex cursor-pointer w-full">
+            <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px] " />
             <div class="text-[14px] text-[#757575] font-semibold history-left-w">
-              <div class="text-ellipsis mb-[10px]"><label
+              <div class="text-ellipsis mb-[10px] "><label
                   class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.name }}</label>{{ item.desc1 }}
               </div>
-              <div class="text-ellipsis">{{ item.desc2 }}</div>
+              <div class="text-ellipsis ">{{ item.desc2 }}</div>
             </div>
           </div>
         </div>
@@ -26,20 +26,22 @@
           New AI Agent
         </div>
       </div>
-      <div class="w-2/3 bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
+      <div class="flex-1 w-0  bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
         <div
           class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">
           {{ selectedItem.name }}</div>
-        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]" v-if="sendMap.size > 0">
-          <div v-for="(item, key) in sendList" :key="key">
-            <div class="flex justify-end" v-if="item.value == 'right'">
-              <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
-              <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
-            </div>
-            <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.name).isLoading">
-              <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-              <img v-if="key == sendList.length - 1 && chatIdMap.get(item.name).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
-              <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
+        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
+          <div v-if="sendMap.size > 0" class=" ">
+            <div v-for="(item, key) in sendList" :key="key">
+              <div class="flex justify-end" v-if="item.value == 'right'">
+                <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
+                <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
+              </div>
+              <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.name).isLoading">
+                <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
+                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.name).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+                <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -157,8 +159,10 @@ onMounted(() => {
 </script>
 <style scoped lang="less">
 .history-left-w {
-  max-width: calc(100% - 71px);
-  ;
+  // width: calc(100% - 80px);
+  // flex-shrink: 0;
+  flex: 1;
+  overflow: hidden;
 }
 
 .text-ellipsis {
