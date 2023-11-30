@@ -36,9 +36,9 @@
               <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
               <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
             </div>
-            <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && isLoading">
+            <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.name).isLoading">
               <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-              <img v-if="key == sendList.length - 1 && isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+              <img v-if="key == sendList.length - 1 && chatIdMap.get(item.name).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
               <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
             </div>
           </div>
@@ -69,8 +69,6 @@ const theme = useThemeStore();
 const router = useRouter();
 const noData = ref(false);
 const inputValue = ref('');
-const chatId = ref('');
-const isLoading = ref(false);
 const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
@@ -83,10 +81,7 @@ const historyList = ref([
 const selectedItem = ref<any>({});
 const changeSelect = (item: any) => {
   if (!chatIdMap.get(item.name)) {
-    chatId.value = uuidv4();
-    chatIdMap.set(item.name, chatId.value);
-  } else {
-    chatId.value = chatIdMap.get(item.name);
+    chatIdMap.set(item.name, { chatId: uuidv4() ,isLoading: false});
   }
   
   selectedItem.value = item;
@@ -101,10 +96,10 @@ const sendInfo = async () => {
   let curName = JSON.parse(JSON.stringify(selectedItem.value.name));
   try {
     setSendList('right', inputValue.value, curName); //记录发送的信息
-    isLoading.value = true;
+    chatIdMap.get(curName).isLoading = true;
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     let params = {
-      "chatId": chatId.value,//uuid
+      "chatId": chatIdMap.get(curName).chatId,//uuid
       "stream": false,
       "detail": false,
       "variables": {
@@ -122,19 +117,20 @@ const sendInfo = async () => {
     const res = await apiAgentChat(params);
     if (res.choices.length > 0) {
       setSendList('left', res.choices[0].message.content, curName);
-      isLoading.value = false;
+      chatIdMap.get(curName).isLoading = false;
     }
   } catch (e:any) {
     let res = e.response.data;
     if (res.code == 500) {
       setSendList('left', res.message, curName);
-      isLoading.value = false;
+      chatIdMap.get(curName).isLoading = false;
     } 
   }
 }
 const setSendList = (value: any, info: any, curName: any) => {
   let list = sendMap.get(curName);
   list.push({
+    name: curName,
     value: value,
     info: info,
   });
