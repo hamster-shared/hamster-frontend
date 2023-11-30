@@ -10,7 +10,6 @@ import "./design/main.css";
 // import "ant-design-vue/dist/antd.css";
 import 'ant-design-vue/dist/antd.variable.min.css';
 import "./design/app.less";
-
 // console.log('env', import.meta.env)
 // console.log('VITE_BASE_API', import.meta.env.VITE_BASE_API)
 

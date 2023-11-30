@@ -12,7 +12,7 @@ import nodePolyfills from "rollup-plugin-node-polyfills";
 import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vitejs.dev/config/
-export default ({ mode }: ConfigEnv) => defineConfig({
+export default ({ mode ,command }: ConfigEnv) => defineConfig({
   define: {
     "process.env": process.env ?? {},
   },
@@ -48,6 +48,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
     viteMockServe({
       // default
       mockPath: 'mock',
+      localEnabled: command === 'serve',
       enable: true,
     }),
   ],

@@ -1,10 +1,10 @@
-import httpRequest from "@/request/mockRequest";
+import httpMockRequest from "@/request/mockTestRequest";
 
 /**
  * @description 获取marketplace列表
  */
 export function apiGetMarketplaceMockList() {
-    return httpRequest(
+    return httpMockRequest(
         {
             url: `/getMarketplaceList`,
             method: "get",

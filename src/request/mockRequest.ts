@@ -20,9 +20,9 @@ export interface RequestOptions {
 }
 
 // 创建一个 axios 实例
-const service = axios.create({
+const mockService = axios.create({
   // baseURL: "/api", // 所有的请求地址前缀部分
-  baseURL: "/mock-api",
+  baseURL: "/mock",
   timeout: 180000, // 请求超时时间毫秒
   headers: {
     // 设置后端需要的传参类型
@@ -32,7 +32,7 @@ const service = axios.create({
 });
 
 // 添加请求拦截器
-service.interceptors.request.use(
+mockService.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
     let token = localStorage.getItem("token") || '';
@@ -50,7 +50,7 @@ service.interceptors.request.use(
 );
 
 // 添加响应拦截器
-service.interceptors.response.use(
+mockService.interceptors.response.use(
   function (response: any) {
     // console.log(response);
     // 2xx 范围内的状态码都会触发该函数。
@@ -73,4 +73,4 @@ service.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-export default service;
+export default mockService;
