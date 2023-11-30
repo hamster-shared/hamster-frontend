@@ -38,7 +38,7 @@ const tabsList = ref([
 
 onMounted(async()=>{
   const res = await apiGetMarketplaceMockList()
-  console.log(22222222,res)
+  // console.log(22222222,res)
 })
 </script>
 <style scoped lang="less">
