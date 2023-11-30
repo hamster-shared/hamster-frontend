@@ -22,7 +22,7 @@ export interface RequestOptions {
 // 创建一个 axios 实例
 const service = axios.create({
   // baseURL: "/api", // 所有的请求地址前缀部分
-  baseURL: "/mock-api",
+  baseURL: "/mock",
   timeout: 180000, // 请求超时时间毫秒
   headers: {
     // 设置后端需要的传参类型

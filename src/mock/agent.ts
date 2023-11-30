@@ -2,7 +2,7 @@ import type { MockMethod } from 'vite-plugin-mock'
 import marketplaceList from './json/marketplaceList.json'
 export default [
   {
-    url: '/mock-api/getMarketplaceList',
+    url: '/mock/getMarketplaceList',
     method: 'get',
     response: ({ query }) => {
       return {
