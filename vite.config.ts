@@ -47,7 +47,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
     // mock 配置
     viteMockServe({
       // default
-      mockPath: 'mock',
+      mockPath: './src/mock',
       enable: true,
     }),
   ],
