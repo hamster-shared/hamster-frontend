@@ -59,6 +59,8 @@ import { onMounted, ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import { useRouter } from "vue-router";
+import { apiAgentChat } from '@/apis/agent';
+import { v4 as uuidv4 } from 'uuid';
 import NoData from '../home/NoData.vue'
 
 const { getImageURL } = useAssets();
@@ -66,6 +68,8 @@ const theme = useThemeStore();
 const router = useRouter();
 const noData = ref(false);
 const inputValue = ref('');
+const chatId = ref('');
+const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
 const historyList = ref([
@@ -76,33 +80,63 @@ const historyList = ref([
 ]);
 const selectedItem = ref<any>({});
 const changeSelect = (item: any) => {
+  if (!chatIdMap.get(item.name)) {
+    chatId.value = uuidv4();
+    chatIdMap.set(item.name, chatId.value);
+  } else {
+    chatId.value = chatIdMap.get(item.name);
+  }
+  
   selectedItem.value = item;
   if (!sendMap.get(item.name)) {
-    sendMap.set(item.name, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
+    // sendMap.set(item.name, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
+    sendMap.set(item.name, []);
   }
   sendList.value = sendMap.get(item.name);
   setScrollBtm();
 }
-const sendInfo = () => {
-  setSendList('right', inputValue.value);
-  inputValue.value = '';
-  setTimeout((_) => {
-    replyInfo();
-  }, 80);
-
+const sendInfo = async () => {
+  let curName = JSON.parse(JSON.stringify(selectedItem.value.name));
+  try {
+    setSendList('right', inputValue.value, curName); //记录发送的信息
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    let params = {
+      "chatId": chatId.value,//uuid
+      "stream": false,
+      "detail": false,
+      "variables": {
+          "uid": userInfo?.id,
+          "name": userInfo?.username
+      },
+      "messages": [
+          {
+              "content": inputValue.value,//用户界面输入的参数
+              "role": "user"
+          }
+      ]
+    }
+    inputValue.value = '';
+    const res = await apiAgentChat(params);
+    if (res.choices.length > 0) {
+      setSendList('left', res.choices[0].message.content, curName);
+    }
+  } catch (e:any) {
+    let res = e.response.data;
+    if (res.code == 500) {
+      setSendList('left', res.message, curName);
+    } 
+  }
 }
-const replyInfo = () => {
-  let list = sendMap.get(selectedItem.value.name);
-  setSendList('left', '回复内容：' + list[list.length - 1].info);
-}
-const setSendList = (value: any, info: any) => {
-  let list = sendMap.get(selectedItem.value.name);
+const setSendList = (value: any, info: any, curName: any) => {
+  let list = sendMap.get(curName);
   list.push({
     value: value,
     info: info,
   });
-  sendList.value = Object.assign([], list);
-  sendMap.set(selectedItem.value.name, list);
+  if (curName == selectedItem.value.name) {
+    sendList.value = Object.assign([], list);
+  }
+  sendMap.set(curName, list);
   setScrollBtm();
 }
 const setScrollBtm = () => {

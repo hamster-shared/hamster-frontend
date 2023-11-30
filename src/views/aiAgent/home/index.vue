@@ -41,7 +41,6 @@
 import { ref, onBeforeMount, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeStore } from "@/stores/useTheme";
-import { apiAgentChat } from '@/apis/agent'
 const theme = useThemeStore();
 const router = useRouter();
 const menuRouterList = ref<any>([]);
@@ -68,25 +67,7 @@ watch(() => router.currentRoute.value,
   }, { deep: true, immediate: true }
 )
 
-onMounted(async()=>{
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
-  let a= {
-    "chatId": "abcd",//uuid
-    "stream": false,
-    "detail": false,
-    "variables": {
-        "uid": userInfo?.id,
-        "name": userInfo?.username
-    },
-    "messages": [
-        {
-            "content": "请帮我部署一条nft合约",//用户界面输入的参数
-            "role": "user"
-        }
-    ]
-  }
-  const res = await apiAgentChat(a)
-  console.log(111111111,res)
+onMounted(()=>{
 })
 </script>
 <style scoped lang="less">
