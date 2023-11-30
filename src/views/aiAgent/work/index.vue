@@ -32,13 +32,14 @@
           {{ selectedItem.name }}</div>
         <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]" v-if="sendMap.size > 0">
           <div v-for="(item, key) in sendList" :key="key">
-            <div class="flex" v-if="item.value == 'left'">
-              <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-              <div class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
-            </div>
-            <div class="flex justify-end" v-else-if="item.value == 'right'">
+            <div class="flex justify-end" v-if="item.value == 'right'">
               <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
               <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
+            </div>
+            <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && isLoading">
+              <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
+              <img v-if="key == sendList.length - 1 && isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+              <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
             </div>
           </div>
         </div>
@@ -69,6 +70,7 @@ const router = useRouter();
 const noData = ref(false);
 const inputValue = ref('');
 const chatId = ref('');
+const isLoading = ref(false);
 const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
@@ -99,6 +101,7 @@ const sendInfo = async () => {
   let curName = JSON.parse(JSON.stringify(selectedItem.value.name));
   try {
     setSendList('right', inputValue.value, curName); //记录发送的信息
+    isLoading.value = true;
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     let params = {
       "chatId": chatId.value,//uuid
@@ -119,11 +122,13 @@ const sendInfo = async () => {
     const res = await apiAgentChat(params);
     if (res.choices.length > 0) {
       setSendList('left', res.choices[0].message.content, curName);
+      isLoading.value = false;
     }
   } catch (e:any) {
     let res = e.response.data;
     if (res.code == 500) {
       setSendList('left', res.message, curName);
+      isLoading.value = false;
     } 
   }
 }
