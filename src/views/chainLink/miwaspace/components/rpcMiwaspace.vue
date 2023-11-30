@@ -10,9 +10,9 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-[10px]">
+    <div class="grid gap-[10px] " :style="styleVal">
       <div class="ethereum-container" v-for="(item,index) in rpcPageInfo" :key="index">
-        <div class="flex justify-between items-center mb-[100px]">
+        <div class="flex justify-between items-center mb-[50px]">
           <div>
             <img :src="item.ecosystemIcon" class="h-[42px] "/>
             <span class="ml-[10px] text-[18px] font-bold align-middle">{{item.ecosystemName}}</span>
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { toRefs, onMounted,ref } from 'vue';
+  import { toRefs, onMounted,ref,watch } from 'vue';
   import { useRouter } from 'vue-router';
   import { message } from 'ant-design-vue';
   import { apiGetZanUserAuthed, apiGetZanAuthUrl } from "@/apis/middlewareRPC"
@@ -38,6 +38,8 @@
   })
   const { rpcPageInfo } = toRefs(props)
 
+const screenWidth = ref<any>(window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth);
+const styleVal = ref<any>('');
 const openAppModal = async () => {
   const authedData = await apiGetZanUserAuthed()
   if(authedData.data){
@@ -65,7 +67,22 @@ const handleOpenRpcService = async(buyFlag:boolean)=>{
     openAppModal()
   }
 }
-
+const setStyleVal = () => {
+  if (parseInt(screenWidth.value) < 1400) {
+    styleVal.value = "grid-template-columns: repeat(2, minmax(0, 1fr));";
+  } else {
+    styleVal.value = "grid-template-columns: repeat(3, minmax(0, 1fr));";
+  }
+}
+onMounted(() => {
+  setStyleVal();
+  window.onresize = () => {
+    return (() => {
+      screenWidth.value = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      setStyleVal();
+    })()
+  }
+});
 </script>
 
 <style scoped>
