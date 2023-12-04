@@ -1,10 +1,12 @@
 <template>
   <div class="tabs-card grid grid-cols-3 gap-[20px]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <div v-for="(item, key) in tabsList" :key="key" class="tabs-card-div" @click="goDetail(item.id)">
-      <img :src="getImageURL(`${item.logo}`)" class="h-[100px] w-[100px] rounded-full mb-[20px]" />
-      <div class="title">{{ item.title }}</div>
-      <div class="name">{{ item.name }}</div>
-      <div class="desc">{{ item.desc }}</div>
+    <div v-for="(item, key) in tabsList" :key="key" :class="{'hidden' : (tabsType != item.type && tabsType != 'all')}">
+      <div class="tabs-card-div" @click="goDetail(item.id)">
+        <img :src="getImageURL(`${item.logo}`)" class="h-[100px] w-[100px] rounded-full mb-[20px]" />
+        <div class="title">{{ item.title }}</div>
+        <div class="name">{{ item.name }}</div>
+        <div class="desc">{{ item.desc }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -23,8 +25,12 @@ const props = defineProps({
     type: Array as any,
     default: () => [],
   },
+  tabsType: {
+    type: String as any,
+    default: () => '',
+  }
 });
-const { tabsList } = toRefs(props);
+const { tabsList, tabsType } = toRefs(props);
 
 const goDetail = (id: any) => {
   router.push('/aiAgent/marketplace/detail?id=' + id)

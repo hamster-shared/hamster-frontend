@@ -7,15 +7,17 @@
         <div
           class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
           History</div>
-        <div v-for="(item, key) in historyList" :key="key" class="">
-          <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id }" @click="changeSelect(item)"
-            class="p-[20px] flex cursor-pointer w-full">
-            <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px] " />
-            <div class="text-[14px] text-[#757575] font-semibold history-left-w">
-              <div class="text-ellipsis mb-[10px] "><label
-                  class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.name }}</label>{{ item.desc1 }}
+        <div id="history-info" class="h-[656px] overflow-y-auto">
+          <div v-for="(item, key) in historyList" :key="key">
+            <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id }" @click="changeSelect(item)"
+              class="p-[20px] flex cursor-pointer w-full">
+              <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px] " />
+              <div class="text-[14px] text-[#757575] font-semibold history-left-w">
+                <div class="text-ellipsis mb-[10px] "><label
+                    class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.name }}</label>{{ item.title }}
+                </div>
+                <div class="text-ellipsis ">{{ item.desc }}</div>
               </div>
-              <div class="text-ellipsis ">{{ item.desc2 }}</div>
             </div>
           </div>
         </div>
@@ -37,9 +39,9 @@
                 <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
                 <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
               </div>
-              <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.name).isLoading">
+              <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.id).isLoading">
                 <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.name).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.id).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
                 <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
               </div>
             </div>
@@ -65,43 +67,39 @@ import { useRouter } from "vue-router";
 import { apiAgentChat } from '@/apis/agent';
 import { v4 as uuidv4 } from 'uuid';
 import NoData from '../home/NoData.vue'
+import { agentList } from '../home/agentData';
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const router = useRouter();
 const noData = ref(false);
 const inputValue = ref('');
+const historyList = ref<any>([]);
 const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
-const historyList = ref([
-  { id: '1', logo: 'Dapp-Developer.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha', desc2: '比特币还能做更多吗？' },
-  { id: '2', logo: 'NFT-Expert.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: '帮我生成一张汉服写真照片' },
-  { id: '3', logo: 'Dapp-Developer.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '心情不好，夸夸我～' },
-  { id: '4', logo: 'NFT-Expert.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '我家爱豆闹绯闻怎么办怎么办怎么办' },
-]);
 const selectedItem = ref<any>({});
 const changeSelect = (item: any) => {
-  if (!chatIdMap.get(item.name)) {
-    chatIdMap.set(item.name, { chatId: uuidv4() ,isLoading: false});
+  if (!chatIdMap.get(item.id)) {
+    chatIdMap.set(item.id, { chatId: uuidv4() ,isLoading: false});
   }
   
   selectedItem.value = item;
-  if (!sendMap.get(item.name)) {
-    // sendMap.set(item.name, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
-    sendMap.set(item.name, []);
+  if (!sendMap.get(item.id)) {
+    // sendMap.set(item.id, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
+    sendMap.set(item.id, []);
   }
-  sendList.value = sendMap.get(item.name);
+  sendList.value = sendMap.get(item.id);
   setScrollBtm();
 }
 const sendInfo = async () => {
-  let curName = JSON.parse(JSON.stringify(selectedItem.value.name));
+  let curId = JSON.parse(JSON.stringify(selectedItem.value.id));
   try {
-    setSendList('right', inputValue.value, curName); //记录发送的信息
-    chatIdMap.get(curName).isLoading = true;
+    setSendList('right', inputValue.value, curId); //记录发送的信息
+    chatIdMap.get(curId).isLoading = true;
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     let params = {
-      "chatId": chatIdMap.get(curName).chatId,//uuid
+      "chatId": chatIdMap.get(curId).chatId,//uuid
       "stream": false,
       "detail": false,
       "variables": {
@@ -118,42 +116,50 @@ const sendInfo = async () => {
     inputValue.value = '';
     const res = await apiAgentChat(params);
     if (res.choices.length > 0) {
-      setSendList('left', res.choices[0].message.content, curName);
-      chatIdMap.get(curName).isLoading = false;
+      setSendList('left', res.choices[0].message.content, curId);
+      chatIdMap.get(curId).isLoading = false;
     }
-  } catch (e:any) {
+  } catch (e: any) {
+    console.log("e:",e);
     let res = e.response.data;
     if (res.code == 500) {
-      setSendList('left', res.message, curName);
-      chatIdMap.get(curName).isLoading = false;
+      setSendList('left', res.message, curId);
+      chatIdMap.get(curId).isLoading = false;
     } 
   }
 }
-const setSendList = (value: any, info: any, curName: any) => {
-  let list = sendMap.get(curName);
+const setSendList = (value: any, info: any, curId: any) => {
+  let list = sendMap.get(curId);
   list.push({
-    name: curName,
+    id: curId,
     value: value,
     info: info,
   });
-  if (curName == selectedItem.value.name) {
+  if (curId == selectedItem.value.name) {
     sendList.value = Object.assign([], list);
   }
-  sendMap.set(curName, list);
+  sendMap.set(curId, list);
   setScrollBtm();
 }
-const setScrollBtm = () => {
+const setScrollBtm = (eleId = 'send-info') => {
   setTimeout((_) => {
-    const container = document.getElementById('send-info') as HTMLElement; // 替换为你的容器元素ID
+    const container = document.getElementById(eleId) as HTMLElement; // 替换为你的容器元素ID
     container.scrollTop = container.scrollHeight - container.clientHeight;
   }, 0);
 }
 
 const newAiAgent = () => {
-  router.push('/aiAgent/marketplace')
+  // router.push('/aiAgent/marketplace')
+  let list = Object.assign({}, agentList[agentList.length - 1])
+  list.id = historyList.value.length + 1 + '';
+  historyList.value.push(list);
+  changeSelect(historyList.value[historyList.value.length - 1]);
+  console.log("historyList:", historyList.value);
+  setScrollBtm('history-info');
 }
 
 onMounted(() => {
+  historyList.value = Object.assign([], agentList);
   changeSelect(historyList.value[0]);
 });
 </script>

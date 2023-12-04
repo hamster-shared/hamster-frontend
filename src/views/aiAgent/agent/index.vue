@@ -14,12 +14,12 @@
             class="card-div bg-[#FFFFFF] dark:bg-[#000000] hover:border hover:border-solid hover:!border-[#E2B578] cursor-pointer">
             <div class="p-[30px]">
               <div class="flex mb-[10px]">
-                <img v-if="item.desc2" src="@/assets/images/Owned-by-you.png"
+                <img v-if="item.ownedBy" src="@/assets/images/Owned-by-you.png"
                   class="h-[24px] w-[105px] absolute -top-[6px] left-[90px]" />
                 <img :src="getImageURL(`${item.logo}`)" class="h-[70px] w-[70px] rounded-full mr-[20px]" />
                 <div class="h-[70px] leading-[70px] text-[18px] font-medium title-w text-ellipsis">{{ item.name }}</div>
               </div>
-              <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.desc1 }}</div>
+              <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.desc }}</div>
             </div>
             <div
               class="border border-solid border-[#E8EBEC] dark:border-[#212121] border-x-0 border-b-0 flex h-[60px] leading-[60px] text-center">
@@ -41,18 +41,12 @@ import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import { useRouter } from "vue-router";
 import NoData from '../home/NoData.vue'
+import { agentList } from '../home/agentData';
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const router = useRouter();
 const noData = ref(false);
-
-const agentList = ref([
-  { id: '1', logo: 'NFT-Expert.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha项目研报 、Alpha,项目研报 、Alpha', desc2: 'Owned by you' },
-  { id: '2', logo: 'NFT-Expert.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: 'Owned by you' },
-  { id: '3', logo: 'NFT-Expert.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '' },
-  { id: '4', logo: 'NFT-Expert.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '' },
-]);
 
 const hireMarketplace = () => {
   router.push('/aiAgent/marketplace')
