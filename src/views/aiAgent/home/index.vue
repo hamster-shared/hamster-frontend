@@ -2,7 +2,7 @@
   <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
     <div
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
+      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 240px" :theme="theme.themeValue" mode="inline">
         <div v-for="item in menuRouterList">
           <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
             <router-link :to="item.path">
