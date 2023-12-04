@@ -30,10 +30,10 @@ const theme = useThemeStore();
 
 const activeKey = ref('1');
 const tabsList = ref([ 
-  {id:'1',logo:'testLogo.png', name:'币圈索罗斯', title:'投资顾问', desc:'项目研报、Alpha资源、钱包监控、自动min挖掘…项目研报、Alpha资源、钱包监控、自动min挖掘…项目研报、Alpha资源、钱包监控、自动…'},
-  {id:'2',logo:'testLogo.png', name:'琴心幻影', title:'古风创意创作小宅女', desc:'帮我生成一张汉服写真照片'},
-  {id:'3',logo:'testLogo.png', name:'梦幻音符', title:'陪伴、聊天、情感支持', desc:'心情不好，夸夸我～'},
-  {id:'4',logo:'testLogo.png', name:'Sophia', title:'产品营销、危机公关，产品营销、危机公关', desc:'我家爱豆闹绯闻怎么办怎么办怎么办'},
+  {id:'1',logo:'NFT-Expert.png', name:'币圈索罗斯', title:'投资顾问', desc:'项目研报、Alpha资源、钱包监控、自动min挖掘…项目研报、Alpha资源、钱包监控、自动min挖掘…项目研报、Alpha资源、钱包监控、自动…'},
+  {id:'2',logo:'NFT-Expert.png', name:'琴心幻影', title:'古风创意创作小宅女', desc:'帮我生成一张汉服写真照片'},
+  {id:'3',logo:'NFT-Expert.png', name:'梦幻音符', title:'陪伴、聊天、情感支持', desc:'心情不好，夸夸我～'},
+  {id:'4',logo:'NFT-Expert.png', name:'Sophia', title:'产品营销、危机公关，产品营销、危机公关', desc:'我家爱豆闹绯闻怎么办怎么办怎么办'},
 ]);
 
 onMounted(async()=>{

@@ -48,10 +48,10 @@ const router = useRouter();
 const noData = ref(false);
 
 const agentList = ref([
-  { id: '1', logo: 'testLogo.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha项目研报 、Alpha,项目研报 、Alpha', desc2: 'Owned by you' },
-  { id: '2', logo: 'testLogo.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: 'Owned by you' },
-  { id: '3', logo: 'testLogo.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '' },
-  { id: '4', logo: 'testLogo.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '' },
+  { id: '1', logo: 'NFT-Expert.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha项目研报 、Alpha,项目研报 、Alpha', desc2: 'Owned by you' },
+  { id: '2', logo: 'NFT-Expert.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: 'Owned by you' },
+  { id: '3', logo: 'NFT-Expert.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '' },
+  { id: '4', logo: 'NFT-Expert.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '' },
 ]);
 
 const hireMarketplace = () => {

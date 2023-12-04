@@ -75,10 +75,10 @@ const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
 const historyList = ref([
-  { id: '1', logo: 'testLogo.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha', desc2: '比特币还能做更多吗？' },
-  { id: '2', logo: 'testLogo.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: '帮我生成一张汉服写真照片' },
-  { id: '3', logo: 'testLogo.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '心情不好，夸夸我～' },
-  { id: '4', logo: 'testLogo.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '我家爱豆闹绯闻怎么办怎么办怎么办' },
+  { id: '1', logo: 'Dapp-Developer.png', name: '币圈索罗斯', desc1: '项目研报 、Alpha,项目研报 、Alpha', desc2: '比特币还能做更多吗？' },
+  { id: '2', logo: 'NFT-Expert.png', name: '琴心幻影', desc1: '古风创意创作小宅女', desc2: '帮我生成一张汉服写真照片' },
+  { id: '3', logo: 'Dapp-Developer.png', name: '梦幻音符', desc1: '陪伴、聊天、情感支持', desc2: '心情不好，夸夸我～' },
+  { id: '4', logo: 'NFT-Expert.png', name: 'Sophia', desc1: '产品营销、危机公关，产品营销、危机公关', desc2: '我家爱豆闹绯闻怎么办怎么办怎么办' },
 ]);
 const selectedItem = ref<any>({});
 const changeSelect = (item: any) => {
