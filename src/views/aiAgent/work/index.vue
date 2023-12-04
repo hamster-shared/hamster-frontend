@@ -1,6 +1,6 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <div class="font-bold text-[24px] mb-[30px]">Work</div>
+    <!-- <div class="font-bold text-[24px] mb-[30px]">Work</div> -->
     <NoData v-if="noData"></NoData>
     <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
       <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
