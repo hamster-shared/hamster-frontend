@@ -180,7 +180,7 @@ const goPrjects = () => {
 }
 const goAgent = () => {
   selectedNavTitle.value = 'aiAgent';
-  router.push("/aiAgent/marketplace");
+  router.push("/aiAgent/work");
 }
 
 // 跳官网文档
