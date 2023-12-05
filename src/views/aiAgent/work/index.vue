@@ -155,7 +155,7 @@ const newAiAgent = () => {
   historyList.value.push(list);
   changeSelect(historyList.value[historyList.value.length - 1]);
   console.log("historyList:", historyList.value);
-  setScrollBtm('history-info');
+  // setScrollBtm('history-info');
 }
 const getHistoryList = async () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
