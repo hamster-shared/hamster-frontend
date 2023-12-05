@@ -3,7 +3,7 @@
     <!-- <div class="font-bold text-[24px] mb-[30px]">Work</div> -->
     <NoData v-if="!historyList.length"></NoData>
     <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
-      <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
+      <div v-if="false" class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
         <div
           class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
           History</div>
@@ -155,7 +155,7 @@ const newAiAgent = () => {
   historyList.value.push(list);
   changeSelect(historyList.value[historyList.value.length - 1]);
   console.log("historyList:", historyList.value);
-  setScrollBtm('history-info');
+  // setScrollBtm('history-info');
 }
 const getHistoryList = async () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
