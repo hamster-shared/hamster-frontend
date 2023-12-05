@@ -60,7 +60,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import { useRouter, useRoute } from "vue-router";
@@ -73,7 +73,6 @@ const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const router = useRouter();
 const route = useRoute()
-const newWork = route.query.newWork || '';
 const inputValue = ref('');
 const historyList = ref<any>([]);
 const chatIdMap = new Map();
@@ -158,12 +157,16 @@ const newAiAgent = () => {
   console.log("historyList:", historyList.value);
   setScrollBtm('history-info');
 }
-
+watch(() => router.currentRoute.value,
+  (value) => {
+    if (value.query.newWork) {
+      newAiAgent();
+    }
+  }, { deep: true, immediate: true }
+)
 onMounted(() => {
   historyList.value = Object.assign([], agentList);
-  if (newWork) {
-    newAiAgent();
-  } else {
+  if (historyList.value.length > 0) {
     changeSelect(historyList.value[0]);
   }
 });

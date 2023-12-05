@@ -1,5 +1,5 @@
 <template>
-  <NoData v-if="list.length == 0" heightValue="height: 500px;"></NoData>
+  <NoData v-if="list.length == 0" heightValue="height: 500px;" showBtn="false" showInfo="Don't have any Agent yet"></NoData>
   <div v-else class="tabs-card grid grid-cols-3 gap-[20px]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     
     <div v-for="(item, key) in list" :key="key" class="tabs-card-div h-[350px]">
