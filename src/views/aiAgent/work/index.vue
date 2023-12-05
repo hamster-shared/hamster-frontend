@@ -63,7 +63,7 @@
 import { onMounted, ref } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { apiAgentChat } from '@/apis/agent';
 import { v4 as uuidv4 } from 'uuid';
 import NoData from '../home/NoData.vue'
@@ -72,7 +72,8 @@ import { agentList } from '../home/agentData';
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
 const router = useRouter();
-const noData = ref(false);
+const route = useRoute()
+const newWork = route.query.newWork || '';
 const inputValue = ref('');
 const historyList = ref<any>([]);
 const chatIdMap = new Map();
@@ -160,7 +161,11 @@ const newAiAgent = () => {
 
 onMounted(() => {
   historyList.value = Object.assign([], agentList);
-  changeSelect(historyList.value[0]);
+  if (newWork) {
+    newAiAgent();
+  } else {
+    changeSelect(historyList.value[0]);
+  }
 });
 </script>
 <style scoped lang="less">

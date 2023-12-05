@@ -1,6 +1,6 @@
 <template>
-  <div
-    class="bg-[#F3F3F3] dark:bg-[#0E0E0E] rounded-[12px] h-[836px] flex justify-center items-center py-[100px] px-[30px]">
+  <div :style="heightValue"
+    class="bg-[#F3F3F3] dark:bg-[#0E0E0E] rounded-[12px] flex justify-center items-center py-[100px] px-[30px]">
     <div class="text-center">
       <img src="@/assets/images/rpc-nodata.png" class="h-[150px]" />
       <div class="text-[21px] font-medium text-[#656D7A] mt-[30px]">You don`t have any Agent yet, hurry up and go to the
@@ -16,10 +16,19 @@
   </div>
 </template>
 <script setup lang="ts">
+import { toRefs } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
+const props = defineProps({
+  heightValue: {
+    type: String as any,
+    default: () => 'height: 836px',
+  }
+});
+const { heightValue } = toRefs(props);
 
 const hireMarketplace = () => {
-  router.push('/aiAgent/marketplace')
+  // router.push('/aiAgent/marketplace')
+  router.push('/aiAgent/work?newWork=1')
 }
 </script>

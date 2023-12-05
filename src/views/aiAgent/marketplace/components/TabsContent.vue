@@ -1,7 +1,9 @@
 <template>
-  <div class="tabs-card grid grid-cols-3 gap-[20px]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    <div v-for="(item, key) in tabsList" :key="key" :class="{'hidden' : (tabsType != item.type && tabsType != 'all')}">
-      <div class="tabs-card-div" @click="goDetail(item.id)">
+  <NoData v-if="list.length == 0" heightValue="height: 500px;"></NoData>
+  <div v-else class="tabs-card grid grid-cols-3 gap-[20px]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
+    
+    <div v-for="(item, key) in list" :key="key" class="tabs-card-div h-[350px]">
+      <div @click="goDetail(item.id)">
         <img :src="getImageURL(`${item.logo}`)" class="h-[100px] w-[100px] rounded-full mb-[20px]" />
         <div class="title">{{ item.title }}</div>
         <div class="name">{{ item.name }}</div>
@@ -11,10 +13,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { ref, toRefs, watch } from "vue";
 import useAssets from "@/stores/useAssets";
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
+import NoData from "../../home/NoData.vue";
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
@@ -31,10 +34,25 @@ const props = defineProps({
   }
 });
 const { tabsList, tabsType } = toRefs(props);
+const list = ref<any>([]);
 
 const goDetail = (id: any) => {
   router.push('/aiAgent/marketplace/detail?id=' + id)
 }
+
+watch(
+  () => props.tabsList,
+  (value) => {
+    list.value.length = 0;
+    value.forEach((item: any) => {
+      if (tabsType.value == 'all') {
+        list.value = value;
+      } else if(tabsType.value == item.type){
+        list.value.push(item);
+      }
+    });
+  }, { deep: false, immediate: true }
+);
 </script>
 <style scoped lang="less">
 .tabs-card {
