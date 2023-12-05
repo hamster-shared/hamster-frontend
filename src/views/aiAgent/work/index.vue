@@ -1,7 +1,7 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <!-- <div class="font-bold text-[24px] mb-[30px]">Work</div> -->
-    <NoData v-if="noData"></NoData>
+    <NoData v-if="!historyList.length"></NoData>
     <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
       <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
         <div
@@ -49,7 +49,7 @@
         </div>
         <div
           class="absolute p-[30px] bottom-0 h-[120px] w-full border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-b-0">
-          <a-input v-model:value="inputValue" placeholder="请输入您的需求……" @keyup.enter="sendInfo">
+          <a-input v-model:value="inputValue" placeholder="Please enter your requirements" @keyup.enter="sendInfo">
             <template #suffix>
               <svg-icon name="Send" size="26" class="mr-[10px]" @click="sendInfo" />
             </template>
