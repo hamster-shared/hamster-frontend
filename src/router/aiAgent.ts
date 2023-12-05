@@ -9,7 +9,7 @@ const aiAgentRoute = [
         name: "Work",
         component: () => import('@/views/aiAgent/work/index.vue'),
         meta: {
-          isShow: true,
+          isShow: false,
           sidebarMap: ['Work'],
         }
       },
