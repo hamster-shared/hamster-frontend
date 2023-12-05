@@ -124,7 +124,6 @@ const sendInfo = async () => {
     let res = e.response.data;
     if (res.code == 500) {
       setSendList('left', res.message, curId);
-      chatIdMap.get(curId).isLoading = false;
     } 
   }
 }
@@ -158,6 +157,11 @@ const newAiAgent = () => {
   console.log("historyList:", historyList.value);
   setScrollBtm('history-info');
 }
+const getHistoryList = async () => {
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  const res = await apiChatHistory(userInfo.id);
+  console.log("res:",res);
+}
 watch(() => router.currentRoute.value,
   (value) => {
     if (value.query.newWork) {
@@ -168,6 +172,7 @@ watch(() => router.currentRoute.value,
 onMounted(async() => {
   const res = await apiChatDetail('abcd')
   console.log(111111111,res)
+  getHistoryList();
   historyList.value = Object.assign([], agentList);
   if (historyList.value.length > 0) {
     changeSelect(historyList.value[0]);
