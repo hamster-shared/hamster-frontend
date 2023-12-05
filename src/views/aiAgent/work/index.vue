@@ -135,7 +135,7 @@ const setSendList = (value: any, info: any, curId: any) => {
     value: value,
     info: info,
   });
-  if (curId == selectedItem.value.name) {
+  if (curId == selectedItem.value.id) {
     sendList.value = Object.assign([], list);
   }
   sendMap.set(curId, list);
