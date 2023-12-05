@@ -21,12 +21,12 @@
             </div>
           </div>
         </div>
-        <div
+        <!-- <div
           class="absolute bottom-[20px] left-[20px] right-[20px] h-[65px] leading-[65px] cursor-pointer flex justify-center items-center border border-solid border-[#6C6C6C] bg-[#000000] rounded-[10px] text-[16px] text-[#FFFFFF]"
           @click="newAiAgent">
           <svg-icon name="add-white" size="26" class="mr-[10px]" />
           New AI Agent
-        </div>
+        </div> -->
       </div>
       <div class="flex-1 w-0  bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
         <div
@@ -169,7 +169,9 @@ watch(() => router.currentRoute.value,
     }
   }, { deep: true, immediate: true }
 )
-onMounted(() => {
+onMounted(async() => {
+  const res = await apiChatDetail('abcd')
+  console.log(111111111,res)
   getHistoryList();
   historyList.value = Object.assign([], agentList);
   if (historyList.value.length > 0) {
