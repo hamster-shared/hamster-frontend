@@ -4,9 +4,9 @@
     <NoData v-if="!historyList.length"></NoData>
     <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
       <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
-        <div
+        <!-- <div
           class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
-          History</div>
+          History</div> -->
         <div id="history-info" class="h-[656px] overflow-y-auto">
           <div v-for="(item, key) in historyList" :key="key">
             <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id }" @click="changeSelect(item)"
