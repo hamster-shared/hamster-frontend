@@ -68,6 +68,7 @@ import { apiAgentChat } from '@/apis/agent';
 import { v4 as uuidv4 } from 'uuid';
 import NoData from '../home/NoData.vue'
 import { agentList } from '../home/agentData';
+import { apiChatHistory, apiChatDetail, apiChat } from '@/apis/aiAgent'
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
@@ -117,14 +118,12 @@ const sendInfo = async () => {
     const res = await apiAgentChat(params);
     if (res.choices.length > 0) {
       setSendList('left', res.choices[0].message.content, curId);
-      chatIdMap.get(curId).isLoading = false;
     }
   } catch (e: any) {
     console.log("e:",e);
     let res = e.response.data;
     if (res.code == 500) {
       setSendList('left', res.message, curId);
-      chatIdMap.get(curId).isLoading = false;
     } 
   }
 }
@@ -136,6 +135,7 @@ const setSendList = (value: any, info: any, curId: any) => {
     info: info,
   });
   if (curId == selectedItem.value.id) {
+    chatIdMap.get(curId).isLoading = false;
     sendList.value = Object.assign([], list);
   }
   sendMap.set(curId, list);
@@ -157,6 +157,11 @@ const newAiAgent = () => {
   console.log("historyList:", historyList.value);
   setScrollBtm('history-info');
 }
+const getHistoryList = async () => {
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  const res = await apiChatHistory(userInfo.id);
+  console.log("res:",res);
+}
 watch(() => router.currentRoute.value,
   (value) => {
     if (value.query.newWork) {
@@ -165,6 +170,7 @@ watch(() => router.currentRoute.value,
   }, { deep: true, immediate: true }
 )
 onMounted(() => {
+  getHistoryList();
   historyList.value = Object.assign([], agentList);
   if (historyList.value.length > 0) {
     changeSelect(historyList.value[0]);
