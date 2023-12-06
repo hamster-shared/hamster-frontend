@@ -1,7 +1,8 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
     <!-- <div class="font-bold text-[24px] mb-[30px]">Work</div> -->
-    <NoData v-if="!historyList.length"></NoData>
+    <NoData v-if="false"></NoData>
+    <Loading v-if="!historyList.length"></Loading>
     <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
       <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
         <!-- <div
@@ -9,14 +10,14 @@
           History</div> -->
         <div id="history-info" class="h-[656px] overflow-y-auto">
           <div v-for="(item, key) in historyList" :key="key">
-            <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.id == item.id }" @click="changeSelect(item)"
+            <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.chatId == item.chatId }" @click="changeSelect(item)"
               class="p-[20px] flex cursor-pointer w-full">
               <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px] " />
               <div class="text-[14px] text-[#757575] font-semibold history-left-w">
                 <div class="text-ellipsis mb-[10px] "><label
-                    class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.name }}</label>{{ item.title }}
+                    class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.nickname }}</label>{{ item.position }}
                 </div>
-                <div class="text-ellipsis ">{{ item.desc }}</div>
+                <div class="text-ellipsis ">{{ item.description }}</div>
               </div>
             </div>
           </div>
@@ -35,14 +36,14 @@
         <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
           <div v-if="sendMap.size > 0" class=" ">
             <div v-for="(item, key) in sendList" :key="key">
-              <div class="flex justify-end" v-if="item.value == 'right'">
-                <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
+              <div class="flex justify-end" v-if="item.role == 'User'">
+                <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.content }}</div>
                 <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
               </div>
-              <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.id).isLoading">
+              <div class="flex" v-if="item.role == 'System' || key == sendList.length - 1 && chatIdMap.get(item.chatId).isLoading">
                 <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.id).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
-                <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
+                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.chatId).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+                <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.content }}</div>
               </div>
             </div>
           </div>
@@ -65,8 +66,8 @@ import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import { useRouter, useRoute } from "vue-router";
 import { apiAgentChat } from '@/apis/agent';
-import { v4 as uuidv4 } from 'uuid';
-import NoData from '../home/NoData.vue'
+import NoData from '../home/NoData.vue';
+import Loading from '../home/loading.vue';
 import { agentList } from '../home/agentData';
 import { apiChatHistory, apiChatDetail, apiChat, apiCreateChat } from '@/apis/aiAgent'
 
@@ -80,23 +81,22 @@ const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
 const selectedItem = ref<any>({});
-const changeSelect = (item: any) => {
-  if (!chatIdMap.get(item.id)) {
-    chatIdMap.set(item.id, { chatId: uuidv4() ,isLoading: false});
+const changeSelect = async (item: any) => {
+  if (!chatIdMap.get(item.chatId)) {
+    chatIdMap.set(item.chatId, {isLoading: false});
   }
   
   selectedItem.value = item;
-  if (!sendMap.get(item.id)) {
-    // sendMap.set(item.id, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
-    sendMap.set(item.id, []);
+  if (!sendMap.get(item.chatId)) {
+    await getChatDetail(item.chatId); //获取聊天详情
   }
-  sendList.value = sendMap.get(item.id);
+  sendList.value = sendMap.get(item.chatId);
   setScrollBtm();
 }
 const sendInfo = async () => {
-  let curId = JSON.parse(JSON.stringify(selectedItem.value.id));
+  let curId = JSON.parse(JSON.stringify(selectedItem.value.chatId));
   try {
-    setSendList('right', inputValue.value, curId); //记录发送的信息
+    setSendList('User', inputValue.value, curId); //记录发送的信息
     chatIdMap.get(curId).isLoading = true;
     const userInfo = JSON.parse(localStorage.getItem('userInfo'))
     let params = {
@@ -117,24 +117,24 @@ const sendInfo = async () => {
     inputValue.value = '';
     const res = await apiAgentChat(params);
     if (res.choices.length > 0) {
-      setSendList('left', res.choices[0].message.content, curId);
+      setSendList('System', res.choices[0].message.content, curId);
     }
   } catch (e: any) {
     console.log("e:",e);
     let res = e.response.data;
     if (res.code == 500) {
-      setSendList('left', res.message, curId);
+      setSendList('System', res.message, curId);
     } 
   }
 }
-const setSendList = (value: any, info: any, curId: any) => {
+const setSendList = (role: any, info: any, curId: any) => {
   let list = sendMap.get(curId);
   list.push({
-    id: curId,
-    value: value,
-    info: info,
+    chatId: curId,
+    role: role,
+    content: info,
   });
-  if (curId == selectedItem.value.id) {
+  if (curId == selectedItem.value.chatId) {
     chatIdMap.get(curId).isLoading = false;
     sendList.value = Object.assign([], list);
   }
@@ -148,35 +148,55 @@ const setScrollBtm = (eleId = 'send-info') => {
   }, 0);
 }
 
-const newAiAgent = () => {
-  // router.push('/aiAgent/marketplace')
-  let list = Object.assign({}, agentList[agentList.length - 1])
-  list.id = historyList.value.length + 1 + '';
-  historyList.value.push(list);
-  changeSelect(historyList.value[historyList.value.length - 1]);
-  console.log("historyList:", historyList.value);
-  // setScrollBtm('history-info');
-}
+// const newAiAgent = () => {
+//   // router.push('/aiAgent/marketplace')
+//   let list = Object.assign({}, agentList[agentList.length - 1])
+//   list.chatId = historyList.value.length + 1 + '';
+//   historyList.value.push(list);
+//   changeSelect(historyList.value[historyList.value.length - 1]);
+//   console.log("historyList:", historyList.value);
+//   // setScrollBtm('history-info');
+// }
 const getHistoryList = async () => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   const res = await apiChatHistory(userInfo.id);
-  console.log("res:",res);
-}
-watch(() => router.currentRoute.value,
-  (value) => {
-    if (value.query.newWork) {
-      newAiAgent();
+  console.log("res:", res);
+  if (res.code == 200) {
+    if (res.data.length > 0) {
+      historyList.value = res.data;
+      changeSelect(historyList.value[0]);
+    } else {
+      //新增数据
+      await handleCreateChat();
+      // 再次查询数据
+      getHistoryList();
     }
-  }, { deep: true, immediate: true }
-)
-onMounted(async() => {
-  const res = await apiChatDetail('abcd')
-  console.log(111111111,res)
-  getHistoryList();
-  historyList.value = Object.assign([], agentList);
-  if (historyList.value.length > 0) {
-    changeSelect(historyList.value[0]);
   }
+}
+const handleCreateChat = async () => {
+  agentList.forEach(async (item: any) => {
+    const res = await apiCreateChat(item);
+    if (res.code == 200) {
+      
+    }
+  })
+}
+const getChatDetail = async (chatId: any) => { 
+  const res = await apiChatDetail(chatId);
+  console.log("getChatDetail:", res);
+  if (res.code == 200) {
+    sendMap.set(chatId, res.data);
+  }
+}
+// watch(() => router.currentRoute.value,
+//   (value) => {
+//     if (value.query.newWork) {
+//       newAiAgent();
+//     }
+//   }, { deep: true, immediate: true }
+// )
+onMounted(() => {
+  getHistoryList();
 });
 </script>
 <style scoped lang="less">
