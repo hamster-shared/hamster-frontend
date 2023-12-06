@@ -197,9 +197,9 @@ const getChatDetail = async (chatId: any) => {
 //   }, { deep: true, immediate: true }
 // )
 onMounted(() => {
-  // getHistoryList();
-  historyList.value = Object.assign([], agentList);
-  changeSelect(historyList.value[0]);
+  getHistoryList();
+  // historyList.value = Object.assign([], agentList);
+  // changeSelect(historyList.value[0]);
 });
 </script>
 <style scoped lang="less">
