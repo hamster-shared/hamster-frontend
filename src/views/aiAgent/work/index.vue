@@ -90,7 +90,8 @@ const changeSelect = async (item: any) => {
   if (!sendMap.get(item.chatId)) {
     await getChatDetail(item.chatId); //获取聊天详情
   }
-  sendList.value = sendMap.get(item.chatId);
+  sendList.value = Object.assign([], sendMap.get(item.chatId));
+  // sendList.value = sendMap.get(item.chatId);
   setScrollBtm();
 }
 const sendInfo = async () => {
