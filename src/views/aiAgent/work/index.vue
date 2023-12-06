@@ -65,11 +65,29 @@ import { onMounted, ref, watch } from 'vue';
 import useAssets from "@/stores/useAssets";
 import { useThemeStore } from "@/stores/useTheme";
 import { useRouter, useRoute } from "vue-router";
-import { apiAgentChat } from '@/apis/agent';
 import NoData from '../home/NoData.vue';
 import Loading from '../home/loading.vue';
 import { agentList } from '../home/agentData';
 import { apiChatHistory, apiChatDetail, apiChat, apiCreateChat } from '@/apis/aiAgent'
+import { message } from 'ant-design-vue';
+
+const baseUrl = ref(import.meta.env.VITE_WS_API)
+let socket = new WebSocket('ws://172.16.8.29:9898/api/chat')
+socket.addEventListener('open', (event) => {
+  console.log(event);
+  console.log('WebSocket connection opened');
+});
+
+socket.addEventListener('message', (event) => {
+  const result = JSON.parse(event.data);
+  console.log('收到了数据：',result);
+  if(result?.type=="message"){
+    setSendList('System', result.message.choices[0].message.content, selectedItem.value.chatId);
+  }else{
+    message.error(result.message.message)
+    chatIdMap.get(selectedItem.value.chatId).isLoading = false;
+  }
+});
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();
@@ -95,38 +113,21 @@ const changeSelect = async (item: any) => {
   setScrollBtm();
 }
 const sendInfo = async () => {
+  // debugger
   let curId = JSON.parse(JSON.stringify(selectedItem.value.chatId));
-  try {
-    setSendList('User', inputValue.value, curId); //记录发送的信息
-    chatIdMap.get(curId).isLoading = true;
-    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
-    let params = {
-      "chatId": chatIdMap.get(curId).chatId,//uuid
-      "stream": false,
-      "detail": false,
-      "variables": {
-          "uid": userInfo?.id,
-          "name": userInfo?.username
-      },
-      "messages": [
-          {
-              "content": inputValue.value,//用户界面输入的参数
-              "role": "user"
-          }
-      ]
-    }
-    inputValue.value = '';
-    const res = await apiAgentChat(params);
-    if (res.choices.length > 0) {
-      setSendList('System', res.choices[0].message.content, curId);
-    }
-  } catch (e: any) {
-    console.log("e:",e);
-    let res = e.response.data;
-    if (res.code == 500) {
-      setSendList('System', res.message, curId);
-    } 
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  let message = {
+    chatId: curId,
+    userId: userInfo?.id,
+    chatContent: inputValue.value,
+    chatType: selectedItem.value.recordType
   }
+  console.log(11111111111,message)
+  socket.send(JSON.stringify(message))
+  console.log('走到了')
+  setSendList('User', inputValue.value, curId); //记录发送的信息
+  inputValue.value = '';
+  chatIdMap.get(curId).isLoading = true;
 }
 const setSendList = (role: any, info: any, curId: any) => {
   let list = sendMap.get(curId);
@@ -164,7 +165,6 @@ const getHistoryList = async () => {
   console.log("res:", res);
   if (res.code == 200) {
     if (res.data.length > 0) {
-      // historyList.value = res.data;
       historyList.value = Object.assign([], res.data);
       changeSelect(historyList.value[0]);
     } else {
@@ -178,14 +178,11 @@ const getHistoryList = async () => {
 const handleCreateChat = async () => {
   agentList.forEach(async (item: any) => {
     const res = await apiCreateChat(item);
-    if (res.code == 200) {
-      
-    }
   })
 }
 const getChatDetail = async (chatId: any) => { 
   const res = await apiChatDetail(chatId);
-  console.log("getChatDetail:", res);
+  console.log("getChatDetail:", res.data);
   if (res.code == 200) {
     sendMap.set(chatId, res.data);
   }

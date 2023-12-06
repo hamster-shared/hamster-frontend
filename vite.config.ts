@@ -105,15 +105,6 @@ export default ({ mode }: ConfigEnv) => defineConfig({
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/agent/, ""),
       },
-      // ws://localhost:9898/api/chat
-      "/agent.io": {
-        // VUE_APP_BASE_RUL = 'ws://172.16.31.68:9898/socket.io'
-        target:
-            "ws://172.16.8.29:9898/agent.io",
-        changeOrigin: true, //是否跨域
-        ws:true,
-        rewrite: (path) => path.replace(/^\/agent.io/, ""),
-      },
     },
     host: true,//同一局域网可以访问本地服务
   },
