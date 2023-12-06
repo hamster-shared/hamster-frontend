@@ -68,7 +68,7 @@ import { apiAgentChat } from '@/apis/agent';
 import { v4 as uuidv4 } from 'uuid';
 import NoData from '../home/NoData.vue'
 import { agentList } from '../home/agentData';
-import { apiChatHistory, apiChatDetail, apiChat } from '@/apis/aiAgent'
+import { apiChatHistory, apiChatDetail, apiChat, apiCreateChat } from '@/apis/aiAgent'
 
 const { getImageURL } = useAssets();
 const theme = useThemeStore();

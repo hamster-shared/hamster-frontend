@@ -19,8 +19,27 @@ export function apiChatDetail(id: string) {
 
 //聊天接口
 export function apiChat(id: string) {
-    return httpRequest({
-      url: `/api/chat`,
-      method: "get",
-    });
-  }
+  return httpRequest({
+    url: `/api/chat`,
+    method: "get",
+  });
+}
+
+//创建保存recode
+export function apiCreateChat(params: createChatParams) {
+  return httpRequest({
+    url: `/api/chat`,
+    method: "post",
+    data: params
+  });
+}
+
+interface createChatParams {
+  chatId: string,
+  userId: number,
+  nickname: string,
+  position: string,
+  description: string,
+  recordType: number, // 0:NFT；1:Developer
+  logo: string,
+}
