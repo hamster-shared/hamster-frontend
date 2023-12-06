@@ -163,7 +163,8 @@ const getHistoryList = async () => {
   console.log("res:", res);
   if (res.code == 200) {
     if (res.data.length > 0) {
-      historyList.value = res.data;
+      // historyList.value = res.data;
+      historyList.value = Object.assign([], res.data);
       changeSelect(historyList.value[0]);
     } else {
       //新增数据
