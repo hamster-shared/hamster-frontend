@@ -9,9 +9,9 @@
           class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
           History</div> -->
         <div id="history-info" class="h-[656px] overflow-y-auto">
-          <div v-for="(item, key) in historyList" :key="key">
+          <div v-for="(item, key) in historyList" :key="key" class="mx-[10px] mt-[20px]">
             <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.chatId == item.chatId }" @click="changeSelect(item)"
-              class="p-[20px] flex cursor-pointer w-full">
+              class="p-[20px] flex cursor-pointer w-full rounded-[10px]">
               <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px] " />
               <div class="text-[14px] text-[#757575] font-semibold history-left-w">
                 <div class="text-ellipsis mb-[10px] "><label
@@ -32,7 +32,7 @@
       <div class="flex-1 w-0  bg-[#F1F3F4] dark:bg-[#0E0E0E] relative rounded-tr-[12px] rounded-br-[12px]">
         <div
           class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">
-          {{ selectedItem.name }}</div>
+          {{ selectedItem.nickname }}</div>
         <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
           <div v-if="sendMap.size > 0" class=" ">
             <div v-for="(item, key) in sendList" :key="key">
@@ -197,7 +197,9 @@ const getChatDetail = async (chatId: any) => {
 //   }, { deep: true, immediate: true }
 // )
 onMounted(() => {
-  getHistoryList();
+  // getHistoryList();
+  historyList.value = Object.assign([], agentList);
+  changeSelect(historyList.value[0]);
 });
 </script>
 <style scoped lang="less">
