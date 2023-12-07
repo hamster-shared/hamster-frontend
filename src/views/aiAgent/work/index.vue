@@ -68,7 +68,7 @@ import { useRouter, useRoute } from "vue-router";
 import NoData from '../home/NoData.vue';
 import Loading from '../home/loading.vue';
 import { agentList } from '../home/agentData';
-import { apiChatHistory, apiChatDetail, apiChat, apiCreateChat } from '@/apis/aiAgent'
+import { apiChatHistory, apiChatDetail, apiChat, apiCreateChat, apiContractInfo } from '@/apis/aiAgent'
 import { message } from 'ant-design-vue';
 
 const baseUrl = ref(import.meta.env.VITE_WS_API)

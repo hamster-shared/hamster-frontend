@@ -43,3 +43,11 @@ interface createChatParams {
   recordType: number, // 0:NFT；1:Developer
   logo: string,
 }
+
+//获取合约信息
+export function apiContractInfo(id: string) {
+  return httpRequest({
+    url: `/api/contract/info`,
+    method: "get",
+  });
+}
