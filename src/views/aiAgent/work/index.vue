@@ -36,9 +36,11 @@
               <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.info }}</div>
               <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
             </div>
-            <div class="flex" v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.name).isLoading">
+            <div class="flex"
+              v-if="item.value == 'left' || key == sendList.length - 1 && chatIdMap.get(item.name).isLoading">
               <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-              <img v-if="key == sendList.length - 1 && chatIdMap.get(item.name).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+              <img v-if="key == sendList.length - 1 && chatIdMap.get(item.name).isLoading"
+                src="@/assets/images/loading.gif" class="h-[54px]" />
               <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.info }}</div>
             </div>
           </div>
@@ -81,9 +83,9 @@ const historyList = ref([
 const selectedItem = ref<any>({});
 const changeSelect = (item: any) => {
   if (!chatIdMap.get(item.name)) {
-    chatIdMap.set(item.name, { chatId: uuidv4() ,isLoading: false});
+    chatIdMap.set(item.name, { chatId: uuidv4(), isLoading: false });
   }
-  
+
   selectedItem.value = item;
   if (!sendMap.get(item.name)) {
     // sendMap.set(item.name, [{ value: 'right', info: '我想部署NFT合约' }, { value: 'left', info: '需要以下参数NFT名称和符号' }]);
@@ -103,14 +105,14 @@ const sendInfo = async () => {
       "stream": false,
       "detail": false,
       "variables": {
-          "uid": userInfo?.id,
-          "name": userInfo?.username
+        "uid": userInfo?.id,
+        "name": userInfo?.username
       },
       "messages": [
-          {
-              "content": inputValue.value,//用户界面输入的参数
-              "role": "user"
-          }
+        {
+          "content": inputValue.value,//用户界面输入的参数
+          "role": "user"
+        }
       ]
     }
     inputValue.value = '';
@@ -119,12 +121,12 @@ const sendInfo = async () => {
       setSendList('left', res.choices[0].message.content, curName);
       chatIdMap.get(curName).isLoading = false;
     }
-  } catch (e:any) {
+  } catch (e: any) {
     let res = e.response.data;
     if (res.code == 500) {
       setSendList('left', res.message, curName);
       chatIdMap.get(curName).isLoading = false;
-    } 
+    }
   }
 }
 const setSendList = (value: any, info: any, curName: any) => {
