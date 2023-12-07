@@ -116,14 +116,14 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
 
 onBeforeMount(async () => {
   console.log('是否加载了钱包组件~~~~')
-  // 进入页面即要求连接钱包
-  const walletStatesOrNull = await autoConnectSavedWallet()
-  if (walletStatesOrNull !== null) {
-    walletStates = walletStatesOrNull
-  }
-  if (walletStates !== undefined && walletStates[0]) {
-    setWalletAccount(walletStates[0]);
-  }
+  // // 进入页面即要求连接钱包
+  // const walletStatesOrNull = await autoConnectSavedWallet()
+  // if (walletStatesOrNull !== null) {
+  //   walletStates = walletStatesOrNull
+  // }
+  // if (walletStates !== undefined && walletStates[0]) {
+  //   setWalletAccount(walletStates[0]);
+  // }
 });
 
 const onClickConnect = async () => {
