@@ -54,16 +54,6 @@
             </div>
           </div>
 
-          <!-- <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '1' && item.checkTool === 'Move Lint' && val.message" :dataSource="val.message"
-            :columns="MoveLintMoveColumns" :pagination="false" :showHeader="false">
-            <template #bodyCell="{ column, record, index }">
-              <template v-if="column.dataIndex === 'line'">
-                {{ 'line ' + record.line }}
-              </template>
-            </template>
-          </a-table> -->
-
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
             v-if="(projectType === '2' || projectType === '1') && (item.checkTool === 'mythril' || item.checkTool === 'Move Prove') && val.message"
             :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
@@ -154,27 +144,6 @@ const customRender = ({ text }) => {
   }
 }
 
-const MoveLintMoveColumns = [
-  {
-    title: 'line',
-    dataIndex: 'line',
-    align: "center",
-    key: 'line',
-    width: '100px',
-  },
-  {
-    title: 'note',
-    dataIndex: 'note',
-    align: "left",
-    key: 'note',
-  },
-  {
-    title: 'tool',
-    dataIndex: 'tool',
-    align: "center",
-    key: 'tool',
-  },
-]
 
 const SolhintColumns = [
   {
