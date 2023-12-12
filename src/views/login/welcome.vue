@@ -115,7 +115,7 @@ const getUser = async () => {
     const { data } = await getUserInfo();
 
     localStorage.setItem('firstState', data.firstState.toString());
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    // localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error: any) {
     console.log("erro:", error)
   }
