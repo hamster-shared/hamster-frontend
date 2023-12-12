@@ -57,7 +57,7 @@ import Deployment from './components/Deployment.vue';
 import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
-import Canisters from '../projectsListDetails/components/Canisters.vue'
+import Canisters from '../projectsListDetails/components/Canisters.vue';
 
 const { t } = useI18n()
 const { params, query } = useRoute();
