@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "preview": "vite preview --mode staging",
-    "build:staging": "vite build --mode staging",
-    "build:production": "vite build --mode production",
-    "build-only": "vite build",
+    "build:staging": "NODE_OPTIONS=--max-old-space-size=8192 vite build --mode staging",
+    "build:production": "NODE_OPTIONS=--max-old-space-size=8192 vite build --mode production",
+    "build-only": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint frontend --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
