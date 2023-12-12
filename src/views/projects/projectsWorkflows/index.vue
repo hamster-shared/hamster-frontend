@@ -21,8 +21,6 @@
         <ContractList v-if="queryJson.type === '2' && workflowsDetailsData.frameType != 0"
           :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName">
         </ContractList>
-        <!-- <SecurityAnalysis v-if="queryJson.type === '1' && workflowsDetailsData.frameType == 5"
-          :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" /> -->
       </div>
     </div>
     <div v-else>
@@ -60,7 +58,6 @@ import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
 import Canisters from '../projectsListDetails/components/Canisters.vue';
-import SecurityAnalysis from "./components/SecurityAnalysis.vue";
 
 const { t } = useI18n()
 const { params, query } = useRoute();
@@ -178,7 +175,6 @@ const getCheckReport = async () => {
   Object.assign(gasUsageReportData, listGas);
   workflowsDetailsData.errorNumber = issue;
   Object.assign(checkReportData, list);
-  console.log(checkReportData.value, list, 'asdfghjkl')
 }
 
 const yamlData = (list: any[], issue: number, dataType: string) => {
