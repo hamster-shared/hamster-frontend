@@ -11,10 +11,10 @@
     </div> -->
     <div v-for="item in checkReportData" :key="item.id"
       class="dark:bg-[#1D1C1A] bg-[#ffffff] dark:text-white text-[#121211] mt-[24px] p-[32px] rounded-[12px]">
-      <img v-if="frameType!=2" class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" />
+      <!-- <img v-if="frameType != 2" class="align-middle mr-[8px]" :src="getImageUrl(item.checkTool)" /> -->
       <span class="text-[24px] font-bold align-middle">{{ item.name }}</span>
-      
-      <div v-if="item.errorNumber === 0 || item.reportFile=='null'" class="text-center p-[16px]">
+
+      <div v-if="item.errorNumber === 0 || item.reportFile == 'null'" class="text-center p-[16px]">
         <img src="@/assets/images/report-b.png" class="w-[128px] hidden dark:inline-block" />
         <img src="@/assets/images/report-w.png" class="w-[128px] dark:hidden" />
         <div class="dark:text-white text-[#151210] text-[24px] font-bold">Congratulations！</div>
@@ -23,8 +23,8 @@
       <a-collapse v-else v-model:activeKey="activeKey" v-for="val in item.reportFileData" :key="val.name">
         <a-collapse-panel v-if="val.issue > 0" :key="val.name + item.id" :header="val.name" :showArrow="false">
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="(projectType === '2' || projectType==='1') && (item.checkTool === 'ESLint') && val.message" :dataSource="val.message"
-            :columns="ESLintColumns" :pagination="false" :showHeader="false">
+            v-if="(projectType === '2' || projectType === '1') && (item.checkTool === 'ESLint') && val.message"
+            :dataSource="val.message" :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
                 line {{ record.line }},col {{ record.column }},
@@ -32,7 +32,7 @@
             </template>
           </a-table>
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="projectType === '1' && item.checkTool === 'Solhint' &&  val.message" :dataSource="val.message"
+            v-if="projectType === '1' && item.checkTool === 'Solhint' && val.message" :dataSource="val.message"
             :columns="ESLintColumns" :pagination="false" :showHeader="false">
             <template #bodyCell="{ column, record, index }">
               <template v-if="column.dataIndex === 'columnLine'">
@@ -41,8 +41,21 @@
             </template>
           </a-table>
 
+          <div v-if="projectType === '1' && item.checkTool === 'Move Lint' && val.message"
+            class="border border-solid border-[#434343] rounded-[12px]">
+            <div v-for="it in val.message" :key="it"
+              class="flex justify-between text-[#E0DBD2] py-[16px] px-[32px] border-css">
+              <div class="flex">
+                <div class=" min-w-[80px] mr-[10px]">{{ 'Line ' + it?.line }}</div>
+                <div>{{ it?.note }}</div>
+              </div>
+
+              <div class="w-[120px] text-right ml-[20px]">{{ item.checkTool }}</div>
+            </div>
+          </div>
+
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="noHeader-table-css"
-            v-if="(projectType === '2' || projectType==='1') && (item.checkTool === 'mythril' || item.checkTool === 'Move Prove') && val.message"
+            v-if="(projectType === '2' || projectType === '1') && (item.checkTool === 'mythril' || item.checkTool === 'Move Prove') && val.message"
             :dataSource="val.message" :columns="SolhintColumns" :pagination="false" :showHeader="false">
           </a-table>
 
@@ -50,7 +63,7 @@
             v-if="item.checkTool === 'Solhint' && val.message" :dataSource="val.message" :columns="SolhintColumns"
             :pagination="false" :showHeader="false">
           </a-table>-->
-          
+
           <a-table :class="theme.themeValue === 'dark' ? 'dark-table-css' : ''" class="table-css"
             v-if="item.checkTool === 'sol-profiler' && val.message" :dataSource="val.message" :columns="columns"
             :pagination="false">
@@ -66,7 +79,7 @@
 
           <template #extra>
             <div>
-              <span class="mr-[8px]" v-show="item.checkTool !== 'sol-profiler'">
+              <span class="mr-[8px] min-w-[80px]" v-show="item.checkTool !== 'sol-profiler'">
                 {{ val.issue + ' issues' }}
               </span>
               <img class="up-tran w-[12px] hidden dark:inline-block" src="@/assets/icons/up-b.svg" />
@@ -91,7 +104,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 import { toRefs } from 'vue';
 import { useThemeStore } from "@/stores/useTheme";
 const theme = useThemeStore();
-const frameType:any = localStorage.getItem('frameType') || undefined
+const frameType: any = localStorage.getItem('frameType') || undefined
 
 const activeKey = ref(['1']);
 interface ReportFileData {
@@ -106,7 +119,7 @@ interface CheckReportData {
   checkTool: string,
   errorNumber: number,
   reportFileData: ReportFileData[],
-  reportFile:string
+  reportFile: string
 }
 const props = defineProps<{
   projectType: String,
@@ -130,6 +143,7 @@ const customRender = ({ text }) => {
     return text
   }
 }
+
 
 const SolhintColumns = [
   {
@@ -321,5 +335,10 @@ const { checkReportData, projectType, checkStatus } = toRefs(props)
 
 :deep(.ant-table-row:last-child .ant-table-cell:last-child) {
   border-radius: 0 0 12px 0;
+}
+
+.border-css:not(:last-child) {
+  // margin-bottom: 10px;
+  border-bottom: 1px solid #45423D;
 }
 </style>
