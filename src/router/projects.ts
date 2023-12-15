@@ -57,6 +57,11 @@ const projectsRoute = [
             path: "/projects/templates/details",
             name: "FilecoinDetail",
             component: () => import('@/views/projects/FilecoinDetail/index.vue'),
+          },
+          {
+            path: "/projects/templates/integrated/:id",
+            name: "TemplateIntegrated",
+            component: () => import('@/views/projects/projectsTemplateIntegrated/index.vue'),
           }
         ]
       },
@@ -152,6 +157,14 @@ const projectsRoute = [
         path: '/projects/connectGithub',
         name:'projectsConnectGithub',
         component: () => import('@/views/projects/projectsCreat/connectGithub.vue'),
+        meta: {
+          layout: 'null',
+        }
+      },
+      {
+        path: '/projects/installationsRw',
+        name:'projectsInstallationsRw',
+        component: () => import('@/views/projects/projectsTemplatesDetails/installationsRw.vue'),
         meta: {
           layout: 'null',
         }

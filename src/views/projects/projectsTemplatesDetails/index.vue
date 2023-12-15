@@ -10,6 +10,35 @@
           @click="showModal">{{
             createTemplate
           }}</a-button> -->
+        <a-popover title="" class="ml-4 " placement="bottom">
+          <template #content>
+
+            <div v-if="isGithubInstallCheck">
+              <div class="text-[#979797] text-[14px] mb-[10px]">Select a github account to create</div>
+              <div v-for="item in githubUsersInstallationsList" :key="item.id"
+                class="flex text-[16px] mb-[10px] cursor-pointer hover:text-[#E2B578] items-center"
+                @click="showModal(item)">
+                <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+                <div>{{ item.name }}</div>
+              </div>
+              <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
+                <plus-outlined />
+                Add Github Account
+              </div>
+            </div>
+
+            <div v-else class="max-w-[150px] text-center">
+              <p class="text-left">Install the Github application for getting permission to create code repository</p>
+              <a-button type="primary" @click="intsallGithub">Install</a-button>
+            </div>
+
+          </template>
+          <a-button type="primary" :loading="createProjectLoading">
+            {{
+              createTemplate
+            }}
+          </a-button>
+        </a-popover>
       </div>
     </div>
     <a-modal :footer="null" centered="true" class="create-template-modal" v-model:visible="createProjectVisible"
@@ -190,9 +219,10 @@ import { computed, onMounted, ref, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import CodeEditor from "@/components/CodeEditor.vue";
 import NoData from "@/components/NoData.vue"
-import { apiAddProjects, apiDupProjectName, apiNodeTemplateDetail } from "@/apis/projects";
+import { apiAddProjects, apiCreateProjects, apiDupProjectName, apiNodeTemplateDetail, apiGithubInstallCheck, apiGithubUsersInstallations } from "@/apis/projects";
 import { apiTemplatesDetail, apiFrontendTemplatesDetail, apiDownloadTemplate } from "@/apis/templates";
 import { message } from 'ant-design-vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import { useThemeStore } from "@/stores/useTheme";
 import type { AbiInfoDataItem } from "@/views/projects/components/data"
 import FrontendTemplateDeatilVue from "./components/FrontendTemplateDeatil.vue";
@@ -227,17 +257,13 @@ const frontendTemplatesDetail = ref('');
 const showUrl = ref('');
 const extensionsList = ref([]);
 const slectedIndex = ref(0);
-// const checkboxList = ref([
-//   { checked: false, label: 'ERC721' },
-//   { checked: false, label: 'ERC721Supply' },
-//   { checked: false, label: 'ERC721Enumerable' },
-//   { checked: false, label: 'ContractMetadata' },
-//   { checked: false, label: 'Royalty' },
-//   { checked: false, label: 'Permissions' },
-//   { checked: false, label: 'PermissionsEnumerable' },
-//   { checked: false, label: 'Ownable' },
-//   { checked: false, label: 'Gasless' },
-// ]);
+const isGithubInstallCheck = ref(false);
+const githubUsersInstallationsList = ref([])
+const gitUrl = ref('https://github.com/apps/Hamster-RW/installations/new')
+
+const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
+const selectedInstallationsName = ref('');
 const checkboxList = ref([])
 const frameType: any = JSON.parse(localStorage.getItem('createProjectTemp') || '')?.frameType;
 const collapsectiveKey = ref([])
@@ -273,8 +299,10 @@ const breadCrumbInfo = ref<any>([])
 
 onMounted(async () => {
   await getTemplatesDetail();
+  checkInstallGithub()
   tokenFrom()
   judgeOrigin()
+
 })
 
 // 判断跳转来源
@@ -317,6 +345,33 @@ const getTemplatesDetail = async () => {
   }
 
 };
+
+
+const checkInstallGithub = async () => {
+  const { data } = await apiGithubInstallCheck();
+  isGithubInstallCheck.value = data
+  if (data) {
+    getGithubUsersInstallations();
+  }
+}
+
+const getGithubUsersInstallations = async () => {
+  const { data } = await apiGithubUsersInstallations()
+  githubUsersInstallationsList.value = data
+}
+
+const intsallGithub = () => {
+  const state = new Date().getTime();
+  const url = `${gitUrl.value}?state=${state}`;
+  const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  myWindow?.focus()
+}
+
+const addGithubAccount = () => {
+  const state = new Date().getTime();
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
+}
 
 const getNodeTemplateDetail = async () => {
   const { data } = await apiNodeTemplateDetail(templateId.value.toString())
@@ -451,14 +506,15 @@ const getContractTemplatesDetail = async () => {
       })
       const aptosCallList: any = YAML.parse(data.abiInfo)?.structs.map((item: any) => {
         return {
-          name:item.name,
-          inputs:item.fields,
-          type:'function',
-          isAptosCall:true,
-          isAptosSend:false
-      }})
-      ainInfoData.value = [...aptosSendList,...aptosCallList]
-    }else{
+          name: item.name,
+          inputs: item.fields,
+          type: 'function',
+          isAptosCall: true,
+          isAptosSend: false
+        }
+      })
+      ainInfoData.value = [...aptosSendList, ...aptosCallList]
+    } else {
 
       if (Object.prototype.toString.call(YAML.parse(data.abiInfo)) === '[object Object]') {
         ainInfoData.value = YAML.parse(data.abiInfo).abi;
@@ -468,13 +524,13 @@ const getContractTemplatesDetail = async () => {
       }
     }
 
-    if (frameType !== '5' && frameType!=7 && frameType!=8) {
+    if (frameType !== '5' && frameType != 7 && frameType != 8) {
       setAbiInfoData(ainInfoData.value);
-    }else if(frameType == '7'){
-        getContractICPMoveInfo(JSON.parse(icpAbi))
-    }else if(frameType == '8'){
+    } else if (frameType == '7') {
+      getContractICPMoveInfo(JSON.parse(icpAbi))
+    } else if (frameType == '8') {
       ainInfoData.value = YAML.parse(data.abiInfo).instructions;
-      sendList.value=ainInfoData.value;
+      sendList.value = ainInfoData.value;
       functionList.value = sendList.value[0]?.args;
       functionName.value = sendList.value[0]?.name;
 
@@ -483,7 +539,7 @@ const getContractTemplatesDetail = async () => {
       .get(data.codeSources)
       .then(res => {
         if (res.data) {
-          if (frameType === '5' ) {
+          if (frameType === '5') {
             res.data.forEach((ele: any) => {
               axios
                 .get(ele.download_url)
@@ -517,8 +573,8 @@ const setAbiInfoData = (abiInfoData: any) => {
 
     if (item.type === 'function') {
       // aptos 的 abi
-      if(frameType==2){
-        if(item.isAptosSend){
+      if (frameType == 2) {
+        if (item.isAptosSend) {
           sendList.value.push(item)
         } else if (item.isAptosCall) {
           callList.value.push(item)
@@ -588,7 +644,8 @@ const getProjectsContract = async () => {
   // }
 };
 
-const showModal = async () => {
+const showModal = async (item: any) => {
+  selectedInstallationsName.value = item.name;
   createProjectVisible.value = true
 }
 
@@ -631,7 +688,8 @@ const createProject = async () => {
     const params = {
       name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
-      templateOwner: templatesDetail.value.author,
+      // templateOwner: templatesDetail.value.author,
+      templateOwner: selectedInstallationsName.value,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       deployType: JSON.parse(createProjectTemp)?.deployType - 0,
       repoOwner: JSON.parse(userInfo)?.username,
@@ -645,11 +703,11 @@ const createProject = async () => {
     if (projectType.value == '2') {
       params.frameType = templatesDetail.value.templateType - 0;
     }
-    const res = await apiAddProjects(params);
+    const res = await apiCreateProjects(params);
     message.success(res.message);
 
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
-    router.push(`/projects/integrated/${res.data}`);
+    router.push(`/projects/templates/integrated/${res.data}`);
   } catch (error: any) {
     console.log("error:", error)
     message.error(error.response.data.message);

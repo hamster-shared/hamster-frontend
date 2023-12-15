@@ -2,8 +2,36 @@
   <Breadcrumb :routes="breadCrumbInfo" />
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
     class="mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] pt-4">
-    <a-button v-if="tokenMatemaskWallet" type="primary" style="float:right;margin-right: 20px;"
-      @click="downloadInfo">Download</a-button>
+    <div class="flex" style="float:right;margin-right: 20px;" v-if="tokenMatemaskWallet">
+      <a-popover title="" class="ml-4 " placement="bottom">
+        <template #content>
+          <div v-if="isGithubInstallCheck">
+            <div class="text-[#979797] text-[14px] mb-[10px]">Select a github account to create</div>
+            <div v-for="item in githubUsersInstallationsList" :key="item.id"
+              class="flex text-[16px] mb-[10px] cursor-pointer hover:text-[#E2B578] items-center"
+              @click="showCreateCodeVisible(item)">
+              <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+              <div>{{ item.name }}</div>
+            </div>
+            <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
+              <plus-outlined />
+              Add Github Account
+            </div>
+          </div>
+
+          <div v-else class="max-w-[150px] text-center">
+            <p class="text-left">Install the Github application for getting permission to create code repository
+            </p>
+            <a-button type="primary" @click="intsallGithub">Install</a-button>
+          </div>
+        </template>
+        <a-button type="primary" :loading="createProjectLoading">
+          Create
+        </a-button>
+      </a-popover>
+      <a-button type="primary" @click="downloadInfo">Download</a-button>
+    </div>
+
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="ERC20" tab="ERC20">
         <div class="flex">
@@ -15,8 +43,37 @@
             <InfoSection :opts="optsERC20" @showContract="setContract" />
             <!-- <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
               @click="createCodeVisible = true">Download</a-button> -->
-            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
-              @click="downloadInfo">Download</a-button>
+            <div class="flex">
+              <a-popover title="" class="mt-4 mr-4" placement="bottom">
+                <template #content>
+                  <div v-if="isGithubInstallCheck">
+                    <div class="text-[#979797] text-[14px] mb-[10px]">Select a github account to create</div>
+                    <div v-for="item in githubUsersInstallationsList" :key="item.id"
+                      class="flex text-[16px] mb-[10px] cursor-pointer hover:text-[#E2B578] items-center"
+                      @click="showCreateCodeVisible(item)">
+                      <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+                      <div>{{ item.name }}</div>
+                    </div>
+                    <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
+                      <plus-outlined />
+                      Add Github Account
+                    </div>
+                  </div>
+
+                  <div v-else class="max-w-[150px] text-center">
+                    <p class="text-left">Install the Github application for getting permission to create code repository
+                    </p>
+                    <a-button type="primary" @click="intsallGithub">Install</a-button>
+                  </div>
+                </template>
+                <a-button type="primary" :loading="createProjectLoading">
+                  Create
+                </a-button>
+              </a-popover>
+              <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
+                @click="downloadInfo">Download</a-button>
+            </div>
+
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC20"></CodeEditor>
@@ -33,8 +90,37 @@
             <InfoSection :opts="optsERC721" @showContract="setContract" />
             <!-- <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
               @click="createCodeVisible = true">Download</a-button> -->
-            <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
-              @click="downloadInfo">Download</a-button>
+            <div class="flex">
+              <a-popover title="" class="mt-4 mr-4" placement="bottom">
+                <template #content>
+                  <div v-if="isGithubInstallCheck">
+                    <div class="text-[#979797] text-[14px] mb-[10px]">Select a github account to create</div>
+                    <div v-for="item in githubUsersInstallationsList" :key="item.id"
+                      class="flex text-[16px] mb-[10px] cursor-pointer hover:text-[#E2B578] items-center"
+                      @click="showCreateCodeVisible(item)">
+                      <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+                      <div>{{ item.name }}</div>
+                    </div>
+                    <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
+                      <plus-outlined />
+                      Add Github Account
+                    </div>
+                  </div>
+
+                  <div v-else class="max-w-[150px] text-center">
+                    <p class="text-left">Install the Github application for getting permission to create code repository
+                    </p>
+                    <a-button type="primary" @click="intsallGithub">Install</a-button>
+                  </div>
+                </template>
+                <a-button type="primary" :loading="createProjectLoading">
+                  Create
+                </a-button>
+              </a-popover>
+              <a-button v-if="!tokenMatemaskWallet" type="primary" class="mt-4" :loading="loading"
+                @click="downloadInfo">Download</a-button>
+            </div>
+
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC721"></CodeEditor>
@@ -50,7 +136,36 @@
             <Upgradeability :opts="optsERC1155" @showContract="setContract" />
             <InfoSection :opts="optsERC1155" @showContract="setContract" />
             <!-- <a-button type="primary" class="mt-4" :loading="loading" @click="createCodeVisible = true">Download</a-button> -->
-            <a-button type="primary" class="mt-4" :loading="loading" @click="downloadInfo">Download</a-button>
+            <div class="flex">
+              <a-popover title="" class="mt-4 mr-4" placement="bottom">
+                <template #content>
+                  <div v-if="isGithubInstallCheck">
+                    <div class="text-[#979797] text-[14px] mb-[10px]">Select a github account to create</div>
+                    <div v-for="item in githubUsersInstallationsList" :key="item.id"
+                      class="flex text-[16px] mb-[10px] cursor-pointer hover:text-[#E2B578] items-center"
+                      @click="showCreateCodeVisible(item)">
+                      <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+                      <div>{{ item.name }}</div>
+                    </div>
+                    <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
+                      <plus-outlined />
+                      Add Github Account
+                    </div>
+                  </div>
+
+                  <div v-else class="max-w-[150px] text-center">
+                    <p class="text-left">Install the Github application for getting permission to create code repository
+                    </p>
+                    <a-button type="primary" @click="intsallGithub">Install</a-button>
+                  </div>
+                </template>
+                <a-button type="primary" :loading="createProjectLoading">
+                  Create
+                </a-button>
+              </a-popover>
+              <a-button type="primary" class="mt-4" :loading="loading" @click="downloadInfo">Download</a-button>
+            </div>
+
           </div>
           <div class="p-4  w-3/4 h-[700px]">
             <CodeEditor :readOnly="true" :value="contractERC1155"></CodeEditor>
@@ -88,13 +203,17 @@ import SettingsERC721 from './components/SettingsERC721.vue';
 import FeaturesERC1155 from './components/FeaturesERC1155.vue';
 import SettingsERC1155 from './components/SettingsERC1155.vue';
 import CodeEditor from '@/components/CodeEditor.vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import { useThemeStore } from "@/stores/useTheme";
-import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
+import { apiProjectsCode, apiDupProjectName, apiGithubInstallCheck, apiGithubUsersInstallations } from "@/apis/projects";
 import { message } from "ant-design-vue";
 import { downloadRequest } from '@/utils/tool'
 const theme = useThemeStore()
 const router = useRouter();
-
+const gitUrl = ref('https://github.com/apps/Hamster-RW/installations/new')
+const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
+const selectedInstallationsName = ref('');
 const createCodeLoading = ref(false)
 const createCodeVisible = ref(false)
 const codeNameValue = ref('')
@@ -106,6 +225,8 @@ const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
   name: '',
 });
+const isGithubInstallCheck = ref(false);
+const githubUsersInstallationsList = ref([]);
 
 const optsERC20 = ref({
   kind: 'ERC20',
@@ -153,6 +274,7 @@ onMounted(async () => {
   contractERC1155.value = erc1155.print(optsERC1155.value);
   tokenFrom()
   judgeOrigin()
+  checkInstallGithub()
 })
 
 // 判断跳转来源
@@ -171,6 +293,38 @@ const judgeOrigin = () => {
       path: ''
     },
   ]
+}
+
+const checkInstallGithub = async () => {
+  const { data } = await apiGithubInstallCheck();
+  isGithubInstallCheck.value = data
+  if (data) {
+    getGithubUsersInstallations();
+  }
+}
+
+const getGithubUsersInstallations = async () => {
+  const { data } = await apiGithubUsersInstallations()
+  githubUsersInstallationsList.value = data
+}
+
+
+const intsallGithub = () => {
+  const state = new Date().getTime();
+  const url = `${gitUrl.value}?state=${state}`;
+  const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  myWindow?.focus()
+}
+
+const addGithubAccount = () => {
+  const state = new Date().getTime();
+  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
+}
+
+const showCreateCodeVisible = (item: any) => {
+  createCodeVisible.value = true;
+  selectedInstallationsName.value = item.name;
 }
 
 const setContract = async () => {
@@ -209,6 +363,7 @@ const createProject = async () => {
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       fileName: optsERC20.value.name,
       content: contractERC20.value,
+      repoOwner: selectedInstallationsName.value,
       // labelDisplay:
     }
     if (activeKey.value === 'ERC721') {
@@ -221,7 +376,7 @@ const createProject = async () => {
     const res = await apiProjectsCode(params);
     message.success(res.message);
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
-    router.push("/projects");
+    router.push(`/projects/templates/integrated/${res.data}`);
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
@@ -266,7 +421,7 @@ const handleOk = async () => {
   await formRef.value.validate();
   createCodeLoading.value = true;
   createProjectLoading.value = true
-  loading.value = true;
+  // loading.value = true;
   createProject()
 }
 
