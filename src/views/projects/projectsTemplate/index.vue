@@ -1,8 +1,9 @@
 <template>
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'">
-    <bread-crumb :routes="breadCrumbInfo"/>
+    <bread-crumb :routes="breadCrumbInfo" />
 
-    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type" v-if="params.type === '2' || params.type === '3'">
+    <FrontendTemplate :templatesCategory="templatesCategory" :type="params.type"
+      v-if="params.type === '2' || params.type === '3'">
     </FrontendTemplate>
     <div v-if="params.type === '1'">
       <div class="mt-4 bg-[#FFFFFF] dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
@@ -13,7 +14,8 @@
           <div v-if="items.templatesList !== null" class="text-[#73706E] dark:text-[#E0DBD2] mb-[16px]">{{
             items.description
           }}</div>
-          <div v-if="items.templatesList !== null" class="grid grid-cols-3 gap-4" :class="{ 'mb-[32px]': index < templatesCategory.length - 1 }">
+          <div v-if="items.templatesList !== null" class="grid grid-cols-3 gap-4"
+            :class="{ 'mb-[32px]': index < templatesCategory.length - 1 }">
             <div v-for="(item, index2) in items.templatesList" :key="index2"
               class="border-box dark:bg-[#36322D] dark:border-[#434343] border-[#EBEBEB] hover:border-[#E2B578] dark:hover:border-[#E2B578] rounded-[12px] border border-solid p-4 cursor-pointer"
               @click="goDetail(item.id)">
@@ -30,7 +32,7 @@
                   <img src="@/assets/icons/audi-dark.svg" class="h-[20px] hidden dark:inline-block" />
                   Audited
                   <!-- Middleware Button -->
-                  <button class="chainlink" v-if="item.labelDisplay">{{item.labelDisplay}}</button>
+                  <button class="chainlink" v-if="item.labelDisplay">{{ item.labelDisplay }}</button>
                 </div>
               </div>
             </div>
@@ -54,7 +56,7 @@
           </div>
         </div>
       </div>
-    </div> 
+    </div>
   </div>
 </template>
 <script lang='ts' setup>
@@ -86,12 +88,12 @@ onMounted(() => {
   getTemplatesCategory();
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'Create Project',
-      path:'/projects/create'
+      breadcrumbName: 'Template Market',
+      path: '/projects/create'
     },
     {
-      breadcrumbName:'Template',
-      path:''
+      breadcrumbName: 'Templates',
+      path: ''
     },
   ]
 })
@@ -105,7 +107,7 @@ const getTemplatesCategory = async () => {
     const frameType = createFormData.type === '2' ? 0 : createFormData.frameType;
     let deployType = createFormData.type === '1' ? 0 : createFormData.deployType;
     // 特殊处理node的模板
-    if(params.type==='3'){
+    if (params.type === '3') {
       deployType = '2'
     }
     frameTypeInfo.value = frameType
@@ -116,7 +118,7 @@ const getTemplatesCategory = async () => {
     });
   } catch (error: any) {
     console.log("erro:", error)
-    
+
   } finally {
     // loading.value = false;
   }
@@ -150,11 +152,12 @@ const goBack = () => {
   /*文本不自动换行*/
   overflow: hidden;
 }
-.chainlink{
+
+.chainlink {
   margin-left: 10px;
   border: none;
   border-radius: 10px;
-  background:#E2B578;
+  background: #E2B578;
   color: #fff;
 }
 </style>

@@ -54,3 +54,11 @@ export function apiGetrequestLog(appKey:string, params:BaseParams) {
     params: params,
   });
 }
+
+// 查询rpc dashboard数据
+export function apiGetRpc() {
+  return httpRequest({
+      url: `/api/rpc/subscribe`,
+      method: "get",
+  })
+}

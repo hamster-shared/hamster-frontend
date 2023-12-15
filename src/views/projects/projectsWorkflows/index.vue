@@ -4,19 +4,23 @@
       <Breadcrumb :routes="breadCrumbInfo"></Breadcrumb>
       <a-button class="btn" @click="stopBtn">{{ $t('workFlows.stop') }}</a-button>
     </div>
-    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning" :frameType="workflowsDetailsData.frameType"></WorkflowsInfo>
+    <WorkflowsInfo :checkType="''" :workflowsDetailsData="workflowsDetailsData" :title="title" :inRunning="inRunning"
+      :frameType="workflowsDetailsData.frameType"></WorkflowsInfo>
     <WorkflowsProcess :processData="processData" :workflowsId="queryJson.workflowsId"
       :workflowDetailId="queryJson.workflowDetailId">
     </WorkflowsProcess>
     <div v-if="queryJson.projectType === '1'">
       <!-- frameType == '1' && queryJson.type === '1',也就是evm 的 check 走统计表格，其它情况走原来的流水线 -->
-      <CheckResult v-if="workflowsDetailsData.frameType == 1 && queryJson.type === '1'" :currentName="currentName"></CheckResult>
+      <CheckResult v-if="workflowsDetailsData.frameType == 1 && queryJson.type === '1'" :currentName="currentName">
+      </CheckResult>
       <div v-else>
         <CheckReport v-if="queryJson.type === '1' && checkReportData.length" :projectType="queryJson.projectType"
           :checkReportData="checkReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
         <GasUsageReport :gasUsageReportData="gasUsageReportData"
           v-show="queryJson.type === '1' && workflowsDetailsData.frameType === 1"></GasUsageReport>
-        <ContractList v-if="queryJson.type === '2' && workflowsDetailsData.frameType != 0" :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName"></ContractList>
+        <ContractList v-if="queryJson.type === '2' && workflowsDetailsData.frameType != 0"
+          :contractListData="contractListData" :frameType="workflowsDetailsData.frameType" :currentName="currentName">
+        </ContractList>
       </div>
     </div>
     <div v-else>
@@ -24,12 +28,15 @@
         :checkReportData="frontendReportData" :checkStatus="workflowsDetailsData.checkStatus"></CheckReport>
       <ArtifactList v-show="queryJson.type === '2'" :artifactListData="artifactListData"
         :deployType="workflowsDetailsData.deployType"></ArtifactList>
-      <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo" :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type" :projectType="queryJson.projectType">
+      <Deployment v-if="queryJson.type === '3'" :id="id" :packageInfo="packageInfo"
+        :workflowsDetailsData="workflowsDetailsData" :show-bth="true" :nodeType="workflowsDetailsData.type"
+        :projectType="queryJson.projectType">
       </Deployment>
     </div>
     <!-- 只有合约的 icp 才在deploy详情页展示 罐列表 -->
-    <Canisters v-if="queryJson.type === '3' && workflowsDetailsData.frameType == 7" :detailId="id" ></Canisters>
-    <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool" :reportFile="openAiInfo.reportFile" />
+    <Canisters v-if="queryJson.type === '3' && workflowsDetailsData.frameType == 7" :detailId="id"></Canisters>
+    <AiAnalysis v-if="isShowAiAnalysis && workflowsDetailsData.frameType != 1" :checkTool="openAiInfo.checkTool"
+      :reportFile="openAiInfo.reportFile" />
   </div>
 </template>
 <script lang='ts' setup>
@@ -50,10 +57,10 @@ import Deployment from './components/Deployment.vue';
 import GasUsageReport from './components/GasUsageReport.vue';
 import AiAnalysis from './components/AiAnalysis.vue';
 import CheckResult from './components/CheckResult.vue'
-import Canisters from '../projectsListDetails/components/Canisters.vue'
+import Canisters from '../projectsListDetails/components/Canisters.vue';
 
 const { t } = useI18n()
-const { params,query } = useRoute();
+const { params, query } = useRoute();
 const queryJson = reactive({
   id: params.id,
   workflowDetailId: params.workflowDetailId,
@@ -87,12 +94,13 @@ const workflowsDetailsData = reactive({
   frameType: 0,
   deployType: 0,
   checkStatus: 0,
-  name:'',
-  type:0,
-  id:0
+  name: '',
+  type: 0,
+  id: 0,
+  barnch: '',
 });
 const breadCrumbInfo = ref<any>([])
-const id:any = params.id
+const id: any = params.id
 
 const isShowAiAnalysis = computed(() => {
   return [5, 4, 1].includes(workflowsDetailsData.frameType) && openAiInfo.value.checkTool
@@ -150,11 +158,11 @@ const getCheckReport = async () => {
     }
   })
   // evm的错误统计
-  if(workflowsDetailsData.frameType==1 && data?.length){
-    for(let i=0;i<data.length;i++){
+  if (workflowsDetailsData.frameType == 1 && data?.length) {
+    for (let i = 0; i < data.length; i++) {
       issue += data[i].issues
     }
-  }else{
+  } else {
     issue = yamlData(listGas, issue, "gasUsage");
     issue = yamlData(list, issue, "report");
   }
@@ -172,17 +180,17 @@ const getCheckReport = async () => {
 const yamlData = (list: any[], issue: number, dataType: string) => {
   if (list.length > 0) {
     list.map((item: any) => {
-        item.reportFileData = YAML.parse(item.reportFile);
-        item.reportFileData?.map((val: any, index: number) => {
-          if (dataType === "gasUsage") {
-            if (index === 0) {
-              issue += val.issue
-            }
-          } else {
+      item.reportFileData = YAML.parse(item.reportFile);
+      item.reportFileData?.map((val: any, index: number) => {
+        if (dataType === "gasUsage") {
+          if (index === 0) {
             issue += val.issue
           }
-        })
-        item.errorNumber = issue;
+        } else {
+          issue += val.issue
+        }
+      })
+      item.errorNumber = issue;
     })
   }
   return issue;
@@ -221,7 +229,7 @@ const getWorkflowPackage = async () => {
     }
     // debugger
     // 前端和Polkdot都走package接口
-    if ( query.type!='3' && (queryJson.type === '2' || queryJson.projectType === '3')) {
+    if (query.type != '3' && (queryJson.type === '2' || queryJson.projectType === '3')) {
       const { data } = await apiGetPackagesList(params);
       Object.assign(artifactListData, data)
     } else {
@@ -250,8 +258,8 @@ const getProjectsDetailData = async () => {
   try {
     const { data } = await apiGetProjectsDetail(queryJson.id.toString())
     // console.log("data project:", data);
-    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus:data.recentCheck.status,name:data.name,id:data.id,type:data.type })
-    localStorage.setItem('frameType',data.frameType)
+    Object.assign(workflowsDetailsData, { repositoryUrl: data.repositoryUrl, packageId: data.recentDeploy.packageId, frameType: data.frameType, deployType: data.deployType, checkStatus: data.recentCheck.status, name: data.name, id: data.id, type: data.type, branch: data.branch })
+    localStorage.setItem('frameType', data.frameType)
   } catch (err: any) {
     console.info(err)
   }
@@ -278,23 +286,23 @@ const setCurrentName = () => {
   }
 }
 // 判断跳转来源
-const judgeOrigin = ()=>{
+const judgeOrigin = () => {
   breadCrumbInfo.value = [
     {
-      breadcrumbName:'Projects',
-      path:'/projects'
+      breadcrumbName: 'Projects',
+      path: '/projects'
     },
     {
-      breadcrumbName:workflowsDetailsData.name,
-      path:`/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
+      breadcrumbName: workflowsDetailsData.name,
+      path: `/projects/${workflowsDetailsData.id}/details/${workflowsDetailsData.type}`
     },
     {
-      breadcrumbName:currentName.value,
-      path:''
+      breadcrumbName: currentName.value,
+      path: ''
     },
   ]
 }
-onMounted(async() => {
+onMounted(async () => {
   await getWorkflowsDetails();
   await getProjectsDetailData();
   await loadInfo();

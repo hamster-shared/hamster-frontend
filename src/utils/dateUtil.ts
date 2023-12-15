@@ -4,7 +4,7 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import relativeTime from'dayjs/plugin/relativeTime'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import duration from 'dayjs/plugin/duration'
 
 dayjs.extend(utc)
@@ -110,9 +110,27 @@ export function getDuration(start: any, end: any) {
 }
 
 
-export function formatDateToLocale(datetime: any){
+export function formatDateToLocale(datetime: any) {
   return dayjs(datetime).tz(dayjs.tz.guess())
 }
 
 export const formatToDate = formatDate;
 export const dateUtil = dayjs;
+
+export function formatTimeToHM(time: number, format = 'hm') {
+  // time 只有10位，需要 * 1000
+  const date = time.toString().length === 10 ? new Date(time * 1000) : new Date(time);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  let value = `${hours}:${minutes}`;
+  if (format == 'md') {
+    value = `${month}-${day}`;
+  }
+  return value;
+  // return `${year}-${month}-${day} ${hours}:${minutes}`;
+
+}
