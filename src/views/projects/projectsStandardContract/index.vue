@@ -13,6 +13,7 @@
               <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
               <div>{{ item.name }}</div>
             </div>
+            <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
             <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
               <plus-outlined />
               Add Github Account
@@ -54,6 +55,7 @@
                       <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
                       <div>{{ item.name }}</div>
                     </div>
+                    <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
                     <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
                       <plus-outlined />
                       Add Github Account
@@ -101,6 +103,7 @@
                       <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
                       <div>{{ item.name }}</div>
                     </div>
+                    <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
                     <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
                       <plus-outlined />
                       Add Github Account
@@ -147,6 +150,7 @@
                       <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
                       <div>{{ item.name }}</div>
                     </div>
+                    <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
                     <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
                       <plus-outlined />
                       Add Github Account
@@ -207,6 +211,7 @@ import { PlusOutlined } from '@ant-design/icons-vue';
 import { useThemeStore } from "@/stores/useTheme";
 import { apiProjectsCode, apiDupProjectName, apiGithubInstallCheck, apiGithubUsersInstallations } from "@/apis/projects";
 import { message } from "ant-design-vue";
+import NoData from "@/components/NoData.vue";
 import { downloadRequest } from '@/utils/tool'
 const theme = useThemeStore()
 const router = useRouter();
@@ -450,9 +455,6 @@ watch(() => activeKey.value, (old, val) => {
 })
 </script>
 <style lang='less' scoped>
-// :deep(.dark-css .ant-tabs){
-//   color: #E0DBD2;
-// }
 :deep(.dark-css .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn) {
   color: #FFFFFF;
 }

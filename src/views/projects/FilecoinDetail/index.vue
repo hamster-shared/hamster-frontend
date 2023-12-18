@@ -13,6 +13,7 @@
               <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
               <div>{{ item.name }}</div>
             </div>
+            <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
             <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
               <plus-outlined />
               Add Github Account
@@ -99,6 +100,7 @@ import { PlusOutlined } from '@ant-design/icons-vue';
 import { getFileCoinContent } from '@/utils/fileCoinUtil';
 import type { fileCoinContent } from '@/utils/fileCoinUtil';
 import { Item } from "ant-design-vue/lib/menu";
+import NoData from "@/components/NoData.vue";
 
 const theme = useThemeStore()
 const activeKey = ref('Solidity')

@@ -21,6 +21,7 @@
                 <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
                 <div>{{ item.name }}</div>
               </div>
+              <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
               <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
                 <plus-outlined />
                 Add Github Account
@@ -688,11 +689,10 @@ const createProject = async () => {
     const params = {
       name: formData.name,
       type: JSON.parse(createProjectTemp)?.type - 0,
-      // templateOwner: templatesDetail.value.author,
-      templateOwner: selectedInstallationsName.value,
+      templateOwner: templatesDetail.value.author,
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       deployType: JSON.parse(createProjectTemp)?.deployType - 0,
-      repoOwner: JSON.parse(userInfo)?.username,
+      repoOwner: selectedInstallationsName.value,
       templateRepo: templatesDetail.value.repositoryName,
       userId: JSON.parse(userInfo)?.id,
       templateUrl: templatesDetail.value.repositoryUrl,
