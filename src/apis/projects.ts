@@ -461,10 +461,11 @@ export function apiGithubUsersInstallations() {
 
 
 // 读写install app
-export function appGithubInstall() {
+export function appGithubInstall(code:string) {
   return httpRequest({
     url: `/api/github/rw/install`,
     method: "get",
+    data:{code:code}
   });
 }
 

@@ -10,11 +10,12 @@ import { useRouter } from "vue-router";
 import { appGithubInstall } from "@/apis/projects";
 const router = useRouter();
 const setupAction = ref('');
+const code = ref('');
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL)
 
-const checkSetupAction = () => {
+const checkSetupAction = async () => {
   // setupAction === request 组织  install === 个人
-  initAppGithubInstall();
+  await initAppGithubInstall();
   if (setupAction.value == 'request') {
     console.log('进入request')
     router.push('/projects/adjustPremission');
@@ -28,7 +29,8 @@ const checkSetupAction = () => {
 }
 
 const initAppGithubInstall = async () => {
-  const { data } = await appGithubInstall();
+  code.value = router.currentRoute.value.query?.code || ''
+  const { data } = await appGithubInstall(code.value);
 }
 
 onMounted(() => {

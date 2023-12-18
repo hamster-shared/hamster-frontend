@@ -118,8 +118,7 @@ const featuresList = ref([
   { name: 'updateActivationStatus', label: 'updateActivationStatus', checked: false },
   { name: 'balance', label: 'balance', checked: false },
 ]);
-const gitUrl = ref('https://github.com/apps/Hamster-RW/installations/new');
-const selectTargetUrl = ref(import.meta.env.VITE_OAUTH_URL);
+const gitUrl = ref(import.meta.env.VITE_HAMSTER_RW_URL)
 const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
 const makeDealBool = ref(false)
 const getDealBool = ref(false)
@@ -206,7 +205,7 @@ const getGithubUsersInstallations = async () => {
 
 const addGithubAccount = () => {
   const state = new Date().getTime();
-  const url = `${selectTargetUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+  const url = `${gitUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
   const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
 }
 
