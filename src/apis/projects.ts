@@ -464,7 +464,7 @@ export function apiGithubUsersInstallations() {
 export function appGithubInstall(code:string) {
   return httpRequest({
     url: `/api/github/rw/install`,
-    method: "get",
+    method: "post",
     data:{code:code}
   });
 }
