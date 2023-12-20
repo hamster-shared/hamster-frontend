@@ -86,7 +86,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       "/aiAgent":{
-        target:"http://ai-agent.hamster.newtouch.com/aiAgent",
+        target:"https://ai-agent.hamster.newtouch.com/aiAgent",
         changeOrigin: true, //是否跨域
         rewrite: (path) => path.replace(/^\/aiAgent/, ""),
       },
@@ -100,7 +100,7 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       "/socket.io": {
         // VUE_APP_BASE_RUL = 'ws://172.16.31.68:9898/socket.io'
         target:
-        "http://ai-agent.hamster.newtouch.com/socket.io",
+        "https://ai-agent.hamster.newtouch.com/socket.io",
             // "http://61.172.179.6:30314/socket.io",
 
         changeOrigin: true, //是否跨域

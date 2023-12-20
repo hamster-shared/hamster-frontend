@@ -76,7 +76,7 @@ import { message } from 'ant-design-vue';
 
 const baseUrl = ref(import.meta.env.VITE_WS_API)
 // let socket = new WebSocket('ws://172.16.8.29:9898/api/chat') 
-let socket = new WebSocket(`ws://ai-agent.hamster.newtouch.com/aiAgent/chat`)
+let socket = new WebSocket(`wss://ai-agent.hamster.newtouch.com/aiAgent/chat`)
 socket.addEventListener('open', (event) => {
   console.log(event);
   console.log('WebSocket connection opened');

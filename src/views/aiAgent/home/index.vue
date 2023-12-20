@@ -2,13 +2,14 @@
   <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
     <div v-if="false"
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 240px" :theme="theme.themeValue" mode="inline">
+      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 240px" :theme="theme.themeValue"
+        mode="inline">
         <div v-for="item in menuRouterList">
-          <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
+          <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name != 'RPC'">
             <router-link :to="item.path">
               <div>
                 <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px] icon-no" />
-                <svg-icon :name="item.name+'Selected'" size="20" class="ml-[8px] mr-[12px] icon-yes" />
+                <svg-icon :name="item.name + 'Selected'" size="20" class="ml-[8px] mr-[12px] icon-yes" />
                 <span class="text-[16px] mr-[10px]">{{ item.name }}</span>
                 <span class="text-[12px] come-soon" v-if="item.meta.isTag">coming soon</span>
               </div>
@@ -18,12 +19,12 @@
             <template #icon>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
             </template>
-            <template #title><span class="text-[16px]">{{item.name}}</span></template>
+            <template #title><span class="text-[16px]">{{ item.name }}</span></template>
             <template v-for="child in item.children">
               <template v-if="child?.meta?.isShow">
                 <a-menu-item :key="child.name" class="!pl-[76px]">
                   <router-link :to="child.path">
-                  <div>{{child.name}}</div>
+                    <div>{{ child.name }}</div>
                   </router-link>
                 </a-menu-item>
               </template>
@@ -57,8 +58,8 @@ onBeforeMount(() => {
   })
 })
 
-const toChild = ( {key, domEvent })=>{
-  console.log('toChild',key,domEvent)
+const toChild = ({ key, domEvent }) => {
+  console.log('toChild', key, domEvent)
 }
 
 watch(() => router.currentRoute.value,
@@ -67,11 +68,10 @@ watch(() => router.currentRoute.value,
   }, { deep: true, immediate: true }
 )
 
-onMounted(()=>{
+onMounted(() => {
 })
 </script>
 <style scoped lang="less">
-
 .dashboard-index {
   min-height: calc(100% - 114px);
 
@@ -102,7 +102,8 @@ onMounted(()=>{
 :deep(.ant-menu-item) {
   border-radius: 10px;
 }
-:deep(.ant-menu-inline .ant-menu-item){
+
+:deep(.ant-menu-inline .ant-menu-item) {
   height: 50px;
   line-height: 50px;
   margin-bottom: 15px;
@@ -112,7 +113,8 @@ onMounted(()=>{
 :deep(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
   background-color: #1D1C1A;
 }
-:deep(.ant-menu-sub.ant-menu-inline){
+
+:deep(.ant-menu-sub.ant-menu-inline) {
   background-color: #ffffff;
 }
 
@@ -122,30 +124,35 @@ onMounted(()=>{
   margin-bottom: 15px;
 }
 
-:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected){
+:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected) {
   background-color: #FFFAF3;
 }
-:deep(.ant-menu-inline .ant-menu-item-selected:after, .ant-menu-inline .ant-menu-selected:after){
+
+:deep(.ant-menu-inline .ant-menu-item-selected:after, .ant-menu-inline .ant-menu-selected:after) {
   opacity: 0;
 }
-:deep(.ant-menu-inline){
+
+:deep(.ant-menu-inline) {
   border-right: 0;
 }
 
-.icon-yes{
+.icon-yes {
   display: none;
 }
-.icon-no{
+
+.icon-no {
   display: inline-block;
 }
+
 :deep(.ant-menu .ant-menu-item-selected>span>a) {
   color: #E2B578;
   font-weight: bold;
-  .icon-yes{
+
+  .icon-yes {
     display: inline-block;
   }
-  .icon-no{
+
+  .icon-no {
     display: none;
   }
-}
-</style>
+}</style>
