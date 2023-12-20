@@ -4,7 +4,7 @@ import httpRequest from "@/request";
 //获取聊天记录
 export function apiChatHistory(id: string) {
     return httpRequest({
-      url: `/api/user/${id}/chat`,
+      url: `/aiAgent/user/${id}/chat`,
       method: "get",
     });
   }
@@ -12,7 +12,7 @@ export function apiChatHistory(id: string) {
 //获取聊天详情
 export function apiChatDetail(id: string) {
   return httpRequest({
-    url: `/api/chat/${id}/detail`,
+    url: `/aiAgent/chat/${id}/detail`,
     method: "get",
   });
 }
@@ -20,7 +20,7 @@ export function apiChatDetail(id: string) {
 //聊天接口
 export function apiChat(id: string) {
   return httpRequest({
-    url: `/api/chat`,
+    url: `/aiAgent/chat`,
     method: "get",
   });
 }
@@ -28,7 +28,7 @@ export function apiChat(id: string) {
 //创建保存recode
 export function apiCreateChat(params: createChatParams) {
   return httpRequest({
-    url: `/api/chat`,
+    url: `/aiAgent/chat`,
     method: "post",
     data: params
   });
@@ -47,7 +47,7 @@ interface createChatParams {
 //获取合约信息
 export function apiContractInfo(id: string) {
   return httpRequest({
-    url: `/api/contract/info`,
+    url: `/aiAgent/contract/info`,
     method: "get",
   });
 }

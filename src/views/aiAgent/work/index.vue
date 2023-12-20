@@ -10,12 +10,13 @@
           History</div> -->
         <div id="history-info" class="h-[656px] overflow-y-auto">
           <div v-for="(item, key) in historyList" :key="key" class="mx-[10px] mt-[20px]">
-            <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.chatId == item.chatId }" @click="changeSelect(item)"
-              class="p-[20px] flex cursor-pointer w-full rounded-[10px]">
+            <div :class="{ 'bg-[#E6E8EA] dark:bg-[#313131]': selectedItem.chatId == item.chatId }"
+              @click="changeSelect(item)" class="p-[20px] flex cursor-pointer w-full rounded-[10px]">
               <img :src="getImageURL(`${item.logo}`)" class="h-[56px] w-[56px] rounded-full mr-[15px] " />
               <div class="text-[14px] text-[#757575] font-semibold history-left-w">
                 <div class="text-ellipsis mb-[10px] "><label
-                    class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.nickname }}</label>{{ item.position }}
+                    class="text-[18px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ item.nickname }}</label>{{
+                      item.position }}
                 </div>
                 <div class="text-ellipsis ">{{ item.description }}</div>
               </div>
@@ -34,15 +35,17 @@
           class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">
           {{ selectedItem.nickname }}</div>
         <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
-          <div v-if="sendMap.size > 0" class=" ">
+          <div v-if="sendMap.size > 0" class="">
             <div v-for="(item, key) in sendList" :key="key">
               <div class="flex justify-end" v-if="item.role == 'User'">
                 <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.content }}</div>
                 <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
               </div>
-              <div class="flex" v-if="item.role == 'System' || key == sendList.length - 1 && chatIdMap.get(item.chatId).isLoading">
+              <div class="flex"
+                v-if="item.role == 'System' || key == sendList.length - 1 && chatIdMap.get(item.chatId).isLoading">
                 <img :src="getImageURL(`${selectedItem.logo}`)" class="h-[44px] w-[44px] rounded-full mr-[10px]" />
-                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.chatId).isLoading" src="@/assets/images/loading.gif" class="h-[54px]" />
+                <img v-if="key == sendList.length - 1 && chatIdMap.get(item.chatId).isLoading"
+                  src="@/assets/images/loading.gif" class="h-[54px]" />
                 <div v-else class="bg-[#FFFFFF] dark:bg-[#2C2C2C] send-info-div">{{ item.content }}</div>
               </div>
             </div>
@@ -72,7 +75,8 @@ import { apiChatHistory, apiChatDetail, apiChat, apiCreateChat, apiContractInfo 
 import { message } from 'ant-design-vue';
 
 const baseUrl = ref(import.meta.env.VITE_WS_API)
-let socket = new WebSocket('ws://172.16.8.29:9898/api/chat')
+// let socket = new WebSocket('ws://172.16.8.29:9898/api/chat') 
+let socket = new WebSocket(`ws://ai-agent.hamster.newtouch.com/aiAgent/chat`)
 socket.addEventListener('open', (event) => {
   console.log(event);
   console.log('WebSocket connection opened');
@@ -80,10 +84,10 @@ socket.addEventListener('open', (event) => {
 
 socket.addEventListener('message', (event) => {
   const result = JSON.parse(event.data);
-  console.log('收到了数据：',result);
-  if(result?.type=="message"){
+  console.log('收到了数据：', result);
+  if (result?.type == "message") {
     setSendList('System', result.message.choices[0].message.content, selectedItem.value.chatId);
-  }else{
+  } else {
     message.error(result.message.message)
     chatIdMap.get(selectedItem.value.chatId).isLoading = false;
   }
@@ -101,9 +105,9 @@ const sendList = ref<any>([]);
 const selectedItem = ref<any>({});
 const changeSelect = async (item: any) => {
   if (!chatIdMap.get(item.chatId)) {
-    chatIdMap.set(item.chatId, {isLoading: false});
+    chatIdMap.set(item.chatId, { isLoading: false });
   }
-  
+
   selectedItem.value = item;
   if (!sendMap.get(item.chatId)) {
     await getChatDetail(item.chatId); //获取聊天详情
@@ -111,9 +115,10 @@ const changeSelect = async (item: any) => {
   sendList.value = Object.assign([], sendMap.get(item.chatId));
   // sendList.value = sendMap.get(item.chatId);
   setScrollBtm();
+
 }
+
 const sendInfo = async () => {
-  // debugger
   let curId = JSON.parse(JSON.stringify(selectedItem.value.chatId));
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   let message = {
@@ -122,7 +127,7 @@ const sendInfo = async () => {
     chatContent: inputValue.value,
     chatType: selectedItem.value.recordType
   }
-  console.log(11111111111,message)
+  console.log(11111111111, message)
   socket.send(JSON.stringify(message))
   console.log('走到了')
   setSendList('User', inputValue.value, curId); //记录发送的信息
@@ -140,9 +145,11 @@ const setSendList = (role: any, info: any, curId: any) => {
     chatIdMap.get(curId).isLoading = false;
     sendList.value = Object.assign([], list);
   }
+
   sendMap.set(curId, list);
   setScrollBtm();
 }
+
 const setScrollBtm = (eleId = 'send-info') => {
   setTimeout((_) => {
     const container = document.getElementById(eleId) as HTMLElement; // 替换为你的容器元素ID
@@ -180,7 +187,7 @@ const handleCreateChat = async () => {
     const res = await apiCreateChat(item);
   })
 }
-const getChatDetail = async (chatId: any) => { 
+const getChatDetail = async (chatId: any) => {
   const res = await apiChatDetail(chatId);
   console.log("getChatDetail:", res.data);
   if (res.code == 200) {
