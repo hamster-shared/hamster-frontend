@@ -116,7 +116,11 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
 
 onBeforeMount(async () => {
   console.log('是否加载了钱包组件~~~~')
+<<<<<<< HEAD
   // // 进入页面即要求连接钱包
+=======
+  // 进入页面即要求连接钱包
+>>>>>>> origin/agent-develop
   // const walletStatesOrNull = await autoConnectSavedWallet()
   // if (walletStatesOrNull !== null) {
   //   walletStates = walletStatesOrNull

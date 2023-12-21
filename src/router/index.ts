@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import aiAgentRoute from './aiAgent'
 import middlewareRoute from './middleware'
 import projectsRoute from './projects'
 import orderRoute from './order'
@@ -41,6 +42,7 @@ let router = createRouter({
         layout: 'null',
       }
     },
+    ...aiAgentRoute,
     ...middlewareRoute,
     ...projectsRoute,
     ...orderRoute,
