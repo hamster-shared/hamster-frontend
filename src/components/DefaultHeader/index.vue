@@ -126,7 +126,7 @@
 </template>
 <script lang="ts" setup>
 import { watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import useAssets from "@/stores/useAssets";
 import Wallets from "../Wallets.vue";
@@ -139,6 +139,7 @@ const theme = useThemeStore()
 const walletAddress = useWalletAddress()
 const { getImageURL } = useAssets();
 const router = useRouter();
+const route = useRoute();
 const avatarURL = ref('')
 
 
@@ -250,8 +251,6 @@ onMounted(() => {
     isProject.value = false
     selectedNavTitle.value = 'dashboard';
   } else if (window.location.href.indexOf('projects') != -1) {
-    // selectedNavTitle.value = 'projects';
-    // isProject.value = true
     if (window.location.href.indexOf('create') != -1 || window.location.href.indexOf('template') != -1) {
       selectedNavTitle.value = 'template';
     } else {
@@ -304,6 +303,15 @@ watch(
   (oldV, newV) => {
     if (newV) {
       loginType.value = newV;
+    }
+  }, { deep: true, immediate: true }
+);
+
+watch(
+  () => route.path,
+  (newPath, oldPath) => {
+    if (newPath === '/projects') {
+      selectedNavTitle.value = 'projects';
     }
   }, { deep: true, immediate: true }
 );

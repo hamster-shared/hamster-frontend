@@ -67,9 +67,9 @@
       </div>
 
       <div class="mb-6 text-center">
-        <a-pagination v-if="pagination.total" size="small"
-          @change="pagination.onChange" v-model:current="pagination.current"
-          :total="pagination.total" v-model:pageSize="pagination.pageSize" :showSizeChanger="false"/>
+        <a-pagination v-if="pagination.total" size="small" @change="pagination.onChange"
+          v-model:current="pagination.current" :total="pagination.total" v-model:pageSize="pagination.pageSize"
+          :showSizeChanger="false" />
         <div v-else>
           <img src="@/assets/icons/noData--dark.svg" alt="" class="w-[128px] hidden dark:inline-block" />
           <img src="@/assets/icons/noData-white.svg" class="w-[128px] dark:hidden" />
@@ -392,6 +392,8 @@ const handleDone = async () => {
     deployType: importFormData.value.deployType - 0,
     installId: selsectInstallId.value,
   }
+
+  console.log(params, githubAccountList.value, 'ggggggggggggggggg')
   try {
     const { data } = await apiPostRepository(params)
     router.push(`/projects/integrated/${data}?type=repository`)
