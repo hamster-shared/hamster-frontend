@@ -10,16 +10,17 @@
       </div>
       <div class="bg-[#F5F6F8] dark:bg-[#0E0E0E] rounded-[12px] h-[825px] p-[20px] overflow-y-auto">
         <div class="grid grid-cols-2 gap-[20px]">
-          <div v-for="(item, key) in agentList" :key="item.id"
+          <div v-for="(item, key) in agentList" :key="item.chatId"
             class="card-div bg-[#FFFFFF] dark:bg-[#000000] hover:border hover:border-solid hover:!border-[#E2B578] cursor-pointer">
             <div class="p-[30px]">
               <div class="flex mb-[10px]">
                 <img v-if="item.ownedBy" src="@/assets/images/Owned-by-you.png"
                   class="h-[24px] w-[105px] absolute -top-[6px] left-[90px]" />
                 <img :src="getImageURL(`${item.logo}`)" class="h-[70px] w-[70px] rounded-full mr-[20px]" />
-                <div class="h-[70px] leading-[70px] text-[18px] font-medium title-w text-ellipsis">{{ item.name }}</div>
+                <div class="h-[70px] leading-[70px] text-[18px] font-medium title-w text-ellipsis">{{ item.nickname }}
+                </div>
               </div>
-              <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.desc }}</div>
+              <div class="text-[16px] font-medium text-[#656D7A] text-ellipsis-line h-[50px]">{{ item.description }}</div>
             </div>
             <div
               class="border border-solid border-[#E8EBEC] dark:border-[#212121] border-x-0 border-b-0 flex h-[60px] leading-[60px] text-center">
@@ -53,7 +54,7 @@ const hireMarketplace = () => {
 }
 
 const viewMore = (item: any) => {
-  router.push(`/aiAgent/marketplace/detail?id=${item.id}`)
+  router.push(`/aiAgent/marketplace/detail?id=${item.chatId}`)
 }
 
 const startWork = (item: any) => {

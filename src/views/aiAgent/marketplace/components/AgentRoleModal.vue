@@ -39,22 +39,22 @@ const emits = defineEmits(['hiddenModal']);
 
 const roleValue = ref('');
 const roleList = ref([
-  { label: 'Inspector', value: 'Inspector', desc:'A serious and organized worker' },
-  { label: 'Guardian', value: 'Guardian', desc:'A responsible and compassionate person' },
-  { label: 'Guide', value: 'Guide', desc:'An imaginative and insightful person' },
-  { label: 'Expert', value: 'Expert', desc:'An independent thinker and calm analyst' },
-  { label: 'Craftsman', value: 'Craftsman', desc:'A person who likes adventure and challenges' },
-  { label: 'Artist', value: 'Artist', desc:'A creative and sensitive person' },
-  { label: 'Mediator', value: 'Mediator', desc:'An idealist and thinker' },
-  { label: 'Logician', value: 'Logician', desc:'A smart and organized person' },
-  { label: 'Entrepreneur', value: 'Entrepreneur', desc:'A person who likes adventure and excitement' },
-  { label: 'Performer', value: 'Performer', desc:'A passionate and optimistic person' },
-  { label: 'Dreamer', value: 'Dreamer', desc:'A person full of passion and creativit' },
-  { label: 'Inventor', value: 'Inventor', desc:'A creative and adventurous person' },
-  { label: 'General Manager', value: 'General Manager', desc:'A person with strong organizational skills and go' },
-  { label: 'Governor', value: 'Governor', desc:'A person with compassion and concern for others' },
-  { label: 'Educator', value: 'Educator', desc:'A person with empathy and leadership skills' },
-  { label: 'Commander', value: 'Commander', desc:'A person with decision-making and leadership skills' },
+  { label: 'Inspector', value: 'Inspector', desc: 'A serious and organized worker' },
+  { label: 'Guardian', value: 'Guardian', desc: 'A responsible and compassionate person' },
+  { label: 'Guide', value: 'Guide', desc: 'An imaginative and insightful person' },
+  { label: 'Expert', value: 'Expert', desc: 'An independent thinker and calm analyst' },
+  { label: 'Craftsman', value: 'Craftsman', desc: 'A person who likes adventure and challenges' },
+  { label: 'Artist', value: 'Artist', desc: 'A creative and sensitive person' },
+  { label: 'Mediator', value: 'Mediator', desc: 'An idealist and thinker' },
+  { label: 'Logician', value: 'Logician', desc: 'A smart and organized person' },
+  { label: 'Entrepreneur', value: 'Entrepreneur', desc: 'A person who likes adventure and excitement' },
+  { label: 'Performer', value: 'Performer', desc: 'A passionate and optimistic person' },
+  { label: 'Dreamer', value: 'Dreamer', desc: 'A person full of passion and creativit' },
+  { label: 'Inventor', value: 'Inventor', desc: 'A creative and adventurous person' },
+  { label: 'General Manager', value: 'General Manager', desc: 'A person with strong organizational skills and go' },
+  { label: 'Governor', value: 'Governor', desc: 'A person with compassion and concern for others' },
+  { label: 'Educator', value: 'Educator', desc: 'A person with empathy and leadership skills' },
+  { label: 'Commander', value: 'Commander', desc: 'A person with decision-making and leadership skills' },
 ]);
 
 const handleOk = async () => {
@@ -90,12 +90,14 @@ const hideVisible = () => {
 :deep(.ant-radio-button-wrapper:not(:first-child):before) {
   display: none;
 }
-:deep(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):focus-within){
+
+:deep(.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):focus-within) {
   box-shadow: none;
 }
-.bg-box{
+
+.bg-box {
   background: #F4F4F4;
-  box-shadow: 0px 0px 2px 0px rgba(210,210,210,0.5);
+  box-shadow: 0px 0px 2px 0px rgba(210, 210, 210, 0.5);
   border-radius: 10px;
 }
 </style>

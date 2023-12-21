@@ -155,4 +155,5 @@ onMounted(() => {
   .icon-no {
     display: none;
   }
-}</style>
+}
+</style>

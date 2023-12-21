@@ -1,13 +1,14 @@
 <template>
-  <NoData v-if="list.length == 0" heightValue="height: 500px;" showBtn="false" showInfo="Don't have any Agent yet"></NoData>
+  <NoData v-if="list.length == 0" heightValue="height: 500px;" showBtn="false" showInfo="Don't have any Agent yet">
+  </NoData>
   <div v-else class="tabs-card grid grid-cols-3 gap-[20px]" :class="theme.themeValue === 'dark' ? 'dark-css' : ''">
-    
+
     <div v-for="(item, key) in list" :key="key" class="tabs-card-div h-[350px]">
       <div @click="goDetail(item.id)">
         <img :src="getImageURL(`${item.logo}`)" class="h-[100px] w-[100px] rounded-full mb-[20px]" />
         <div class="title">{{ item.title }}</div>
-        <div class="name">{{ item.name }}</div>
-        <div class="desc">{{ item.desc }}</div>
+        <div class="name">{{ item.nickname }}</div>
+        <div class="desc">{{ item.description }}</div>
       </div>
     </div>
   </div>
@@ -47,7 +48,7 @@ watch(
     value.forEach((item: any) => {
       if (tabsType.value == 'all') {
         list.value = value;
-      } else if(tabsType.value == item.type){
+      } else if (tabsType.value == item.type) {
         list.value.push(item);
       }
     });

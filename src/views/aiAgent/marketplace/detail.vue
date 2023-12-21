@@ -8,8 +8,8 @@
           <img :src="getImageURL(`${detailInfo.logo}`)" class="h-[100px] w-[100px] rounded-full mr-[20px]" />
           <div class="font-semibold text-[#656D7A]">
             <div><label class="text-[21px] text-[#000000] dark:text-[#FFFFFF] mr-[10px]">{{ detailInfo.title
-            }}</label><label class="text-[16px]">{{ detailInfo.name }}</label></div>
-            <div class="text-[14px] mt-[7px] text-ellipsis desc-w">{{ detailInfo.desc }}</div>
+            }}</label><label class="text-[16px]">{{ detailInfo.nickname }}</label></div>
+            <div class="text-[14px] mt-[7px] text-ellipsis desc-w">{{ detailInfo.description }}</div>
           </div>
         </div>
         <div>
@@ -54,7 +54,7 @@ const hireAgent = () => {
 }
 onMounted(() => {
   agentList.map((item: any) => {
-    if (item.id == id) {
+    if (item.chatId == id) {
       detailInfo.value = item;
     }
   });

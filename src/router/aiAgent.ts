@@ -9,7 +9,7 @@ const aiAgentRoute = [
         name: "Work",
         component: () => import('@/views/aiAgent/work/index.vue'),
         meta: {
-          isShow: false,
+          isShow: true,
           sidebarMap: ['Work'],
         }
       },
@@ -19,7 +19,7 @@ const aiAgentRoute = [
         key: 'Marketplace',
         redirect: "/aiAgent/marketplace",
         meta: {
-          isShow: false,
+          isShow: true,
         },
         children: [
           {
@@ -45,7 +45,7 @@ const aiAgentRoute = [
         name: "Agent",
         redirect: "/aiAgent/agent",
         meta: {
-          isShow: false,
+          isShow: true,
         },
         children: [
           {
