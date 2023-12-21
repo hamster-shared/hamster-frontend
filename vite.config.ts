@@ -9,7 +9,6 @@ import prismjs from "vite-plugin-prismjs";
 import { polyfillNode } from "esbuild-plugin-polyfill-node";
 import nodePolyfills from "rollup-plugin-node-polyfills";
 
-import { viteMockServe } from 'vite-plugin-mock'
 
 // https://vitejs.dev/config/
 export default ({ mode }: ConfigEnv) => defineConfig({
@@ -43,12 +42,6 @@ export default ({ mode }: ConfigEnv) => defineConfig({
       iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
       // 指定symbolId格式
       symbolId: "icon-[dir]-[name]",
-    }),
-    // mock 配置
-    viteMockServe({
-      // default
-      mockPath: './src/mock',
-      enable: true,
     }),
   ],
   resolve: {
