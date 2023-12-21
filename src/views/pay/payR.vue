@@ -43,13 +43,12 @@ const getOrderDetailInfo = async () => {
 }
 
 const paymentFinished = () => {
-  router.push('middleware/dashboard/node')
+  router.push('/middleware/dashboard/node')
 }
 
 
 // 关闭当前页
 const backClick = () => {
-  console.log('kk')
   router.back()
 }
 
