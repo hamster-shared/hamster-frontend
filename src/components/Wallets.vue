@@ -6,7 +6,7 @@ import { useOnboard } from '@web3-onboard/vue'
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import walletTitle from '@/assets/icons/logo-white.svg'
 import { useContractApi } from '@/stores/chainlink';
-import {saveWallet} from '@/apis/login'
+import { saveWallet } from '@/apis/login'
 
 const walletAddress = useWalletAddress()
 
@@ -116,11 +116,8 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
 
 onBeforeMount(async () => {
   console.log('是否加载了钱包组件~~~~')
-<<<<<<< HEAD
-  // // 进入页面即要求连接钱包
-=======
+
   // 进入页面即要求连接钱包
->>>>>>> origin/agent-develop
   // const walletStatesOrNull = await autoConnectSavedWallet()
   // if (walletStatesOrNull !== null) {
   //   walletStates = walletStatesOrNull
@@ -136,7 +133,7 @@ const onClickConnect = async () => {
   const provider = walletStates[0].provider;
   const network = walletStates[0].chains[0].id;
   const address = walletStates[0].accounts[0].address;
-  console.log('~~~~~~~~',provider,1111,network,2222,address)
+  console.log('~~~~~~~~', provider, 1111, network, 2222, address)
   contractApi.initContractApi(provider, network, address);
   // 进入页面即要求连接钱包
   // const walletStatesOrNull = await autoConnectSavedWallet()
@@ -149,8 +146,8 @@ const onClickConnect = async () => {
     setWalletAccount(walletStates[0]);
     // 后端保存钱包地址
 
-    for(let account of walletStates[0].accounts){
-      saveWallet(account.address).then(() => {})
+    for (let account of walletStates[0].accounts) {
+      saveWallet(account.address).then(() => { })
     }
   }
 }
@@ -167,7 +164,7 @@ const setWalletAccount = async (walletState: { accounts: any; }) => {
   }
 }
 const onClickDisconnect = async () => {
-  console.log('断开了钱包链接',connectedWallet.value)
+  console.log('断开了钱包链接', connectedWallet.value)
   const { provider, label } = connectedWallet.value || {}
   if (provider && label) {
     disconnectWallet({ label })
@@ -181,7 +178,7 @@ watch(() => connectedWallet.value, (newVal, oldVal) => {
     const provider = newVal.provider;
     const network = newVal.chains[0].id;
     const address = newVal.accounts[0].address;
-    console.log('~~~~~~~~',provider,1111,network,2222,address)
+    console.log('~~~~~~~~', provider, 1111, network, 2222, address)
     contractApi.initContractApi(provider, network, address);
   }
 }, { deep: true, immediate: true });
