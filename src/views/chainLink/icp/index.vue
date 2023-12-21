@@ -12,28 +12,28 @@
 
         <div class="ethereum-container flex justify-between">
           <dl>
-            <dt class="number text-[#151210] dark:text-[#FFFFFF]">5</dt>
+            <dt class="number text-[#151210] dark:text-[#FFFFFF]">{{canister_over}}</dt>
             <dd class="dark:text-[#8A8A8A] text-[#73706E]">
               <img src="../../../assets/images/Canisters.png" alt="">
               <span>Canisters</span>
             </dd>
           </dl>
           <dl>
-            <dt class="number text-[#151210] dark:text-[#FFFFFF]">1</dt>
+            <dt class="number text-[#151210] dark:text-[#FFFFFF]">{{pro_over}}</dt>
             <dd class="dark:text-[#8A8A8A] text-[#73706E]">
               <img src="../../../assets/images/Projects.png" alt="">
               <span>Projects</span>
             </dd>
           </dl>
           <dl>
-            <dt class="number text-[#151210] dark:text-[#FFFFFF]">0.30 T</dt>
+            <dt class="number text-[#151210] dark:text-[#FFFFFF]">{{cycles_over}} T</dt>
             <dd class="dark:text-[#8A8A8A] text-[#73706E]">
               <img src="../../../assets/images/Cycles.png" alt="">
               <span>Cycles</span>
             </dd>
           </dl>
           <dl>
-            <dt class="number text-[#151210] dark:text-[#FFFFFF]">0.0001</dt>
+            <dt class="number text-[#151210] dark:text-[#FFFFFF]">{{icp_over}}</dt>
             <dd class="dark:text-[#8A8A8A] text-[#73706E]">
               <img src="../../../assets/images/ICPs.png" alt="">
               <span>ICPs</span>
@@ -50,15 +50,19 @@
         <a-table :dataSource="nodeListData" :columns="nodeColumns" :pagination="pagination" style="width:100%">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'action'">
-              <a-button type="link" @click="goNodeDetail(record.id)">Detail</a-button>
+              <a-button type="link" @click="goDetail(record.canisterId)">Detail</a-button>
+              <a-button type="link" @click="addCycles(record.canisterId,record.cycles)">Add Cycles</a-button>
             </template>
           </template>
         </a-table>
       </div>
 
+      <CustomMsg v-if="showMsg" :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
+
+      <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister" ></AddCycles>
       <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
       <AddCanister v-if="showAdd" :visible="showAdd" @handleCancel="showAdd = false"></AddCanister>
-      <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="id" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
+      <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="accountId" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
     </div>
 </template>
 <script setup lang="ts">
@@ -69,50 +73,67 @@ import { apiGetNodeList } from "@/apis/node";
 import BuyCycles from "@/views/projects/projectsListDetails/components/BuyCycles.vue";
 import AddCanister from "@/views/chainLink/icp/addCanister.vue";
 import DeployIC from "@/views/projects/projectsList/components/DeployIC.vue";
-import {apiIcpAccount} from "@/apis/canister";
+import {apiCreateICPIdentity, apiIcpAccount} from "@/apis/canister";
+import {getCanisterList, getCanisterOverview} from "@/apis/icp";
+import AddCycles from "@/views/projects/projectsListDetails/components/AddCycles.vue";
+import CustomMsg from "@/components/CustomMsg.vue";
+import {getUserInfo} from "@/apis/login";
+import {message} from "ant-design-vue";
 
+
+const canister_over = ref(0);
+const pro_over = ref(0);
+const cycles_over = ref('');
+const icp_over = ref('');
 
 const showBuyCycle = ref(false);
 const showAdd = ref(false);
 const showDeployIC = ref(false);
 const accountIdFlag = ref()
+const walletIdFlag = ref()
+const showAddCycle = ref(false);
+const showMsg = ref(false);
+const canisterId = ref("");
+const cycles = ref("");
+const msgType = ref('byCycles');
+const msgParam = ref({});
+const showDFX = ref(false);
+const accountId = ref("");
 
 const router = useRouter();
 const route = useRoute()
 const nodeListData = ref([])
 const nodeColumns = reactive([
   {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    customRender: ({ index }:any) => index+1,
+    title: 'Canister ID',
+    dataIndex: 'canisterId',
+    key: 'canisterId',
   },
   {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
+    title: 'Canister Name',
+    dataIndex: 'canisterName',
+    key: 'canisterName',
   },
   {
-    title: 'Chain',
-    dataIndex: 'chainProtocol',
-    key: 'chainProtocol',
-    align: 'chainProtocol',
+    title: 'Cycles',
+    dataIndex: 'cycles',
+    key: 'cycles',
+    align: 'cycles',
   },
   {
-    title: 'Node Status',
+    title: 'Status',
     dataIndex: 'status',
-    key: 'status',
-    customRender: ({ text }) => `${NodeStatusEnum[text]}`,
+    key: 'status'
   },
   {
-    title: 'Public IP',
-    dataIndex: 'publicIp',
-    key: 'publicIp',
+    title: 'Project',
+    dataIndex: 'project',
+    key: 'project',
   },
   {
-    title: 'Region',
-    dataIndex: 'region',
-    key: 'region',
+    title: 'Updated At',
+    dataIndex: 'updateAt',
+    key: 'updateAt',
   },
   {
     title: 'Action',
@@ -146,7 +167,7 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
 
 
   try {
-    const { data } = await apiGetNodeList({ page, size })
+    const {data} = await getCanisterList({ page, size })
 
     pagination.total = data.total
     pagination.current = data.page
@@ -157,8 +178,8 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
     console.log('tableDataErr:', err)
   }
 }
-const goNodeDetail = (id:number)=>{
-  router.push(`/middleware/dashboard/node/detail?id=${id}`)
+const goDetail = (id:number)=>{
+  router.push(`/middleware/dashboard/icp/detail?id=${id}`)
 }
 
 const handleBuy = () =>{
@@ -171,14 +192,70 @@ const CancelDeployIC = () =>{
   showDeployIC.value = false;
 }
 const getAccount = async() =>{
-  let id = "fdasfsaf"
-  const res = await apiIcpAccount(id)
-  accountIdFlag.value = res.data.accountIdFlag
+
+
+  try {
+    const { data } = await getUserInfo();
+    const {id} = data;
+    accountId.value = id;
+    const res = await apiIcpAccount(id)
+    accountIdFlag.value = res.data.accountIdFlag;
+    walletIdFlag.value = res.data.walletIdFlag;
+
+
+    if (!res.data.accountIdFlag || !res.data.walletIdFlag) {
+      showDeployIC.value = true
+    }
+
+  } catch (err: any) {
+    console.error(err)
+  }
+
+}
+const showDfxFn = () => {
+  showDFX.value = true;
 }
 
+const refreshCanister = () =>{
+  getTableData()
+}
+
+
+const addCycles = (id:string,cy:string) =>{
+  showAddCycle.value = true;
+  canisterId.value = id;
+  cycles.value = cy
+}
+const cancelAddCycle = () =>{
+  showAddCycle.value = false;
+  canisterId.value = '';
+  cycles.value = ''
+}
+
+const showBuyCycleMsg = ()=>{
+  showAddCycle.value = false
+  showMsg.value = true
+}
+
+const getOverView = async() =>{
+  let rt = await getCanisterOverview();
+
+  const {canisters,projects,cycles,icps } = rt.data;
+  console.log(canisters,projects,cycles,icps)
+  canister_over.value = canisters;
+  pro_over.value = projects;
+  cycles_over.value = Number(cycles).toFixed(2);
+  icp_over.value = Number(icps).toFixed(4);
+
+}
+
+
+
 onMounted(() => {
-  getTableData();
   getAccount()
+  getTableData();
+  getOverView()
+
 })
 </script>
 <style lang="less">

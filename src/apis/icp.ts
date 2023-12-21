@@ -1,0 +1,29 @@
+import httpRequest from "@/request";
+
+
+export function getCanisterList(params:any) {
+    return httpRequest({
+        url: "/api/icp/account/canisters",
+        method: "get",
+        params: params,
+    });
+}
+
+export function getCanisterOverview() {
+    return httpRequest({
+        url: "/api/icp/account/overview",
+        method: "get",
+    });
+}
+export function getIcpDetail(id:string) {
+    return httpRequest({
+        url: `/api/icp/canister/${id}/overview`,
+        method: "get",
+    });
+}
+export function getICpStatistics() {
+    return httpRequest({
+        url: `/api/icp/account/brief`,
+        method: "get",
+    });
+}

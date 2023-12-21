@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="mt-[10px] text-[14px] text-[#73706E]">
-        When executing a deployment on the Internet Computer for the first time, you need to create a developer identity and acquire cycles. 
+        When executing a deployment on the Internet Computer for the first time, you need to create a developer identity and acquire cycles.
       </div>
       <div class="mt-[20px]">
         <a-steps :current="currStep" direction="vertical">
@@ -21,7 +21,7 @@
           <a-step title="Get your cycles">
             <template v-slot:description>
               <div class="mb-[20px]">On the Internet Computer, a cycle is the unit of measurement for resources consumed in the form of processing, memory, storage, and network bandwidth.The Internet Computer’s utility token (ICP) can be converted to cycles.</div>
-              
+
               <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
                 <a-form-item name="cyclesType">
                   <a-radio-group class="!pl-[1px] modal-radio" v-model:value="formData.cyclesType">
@@ -41,7 +41,7 @@
                     <div class="mt-[10px] leading-[24px]">Balance(ic): </div>
                   </div>
                   <div class="ml-[10px] text-[#000000]">
-                    <div> 
+                    <div>
                       {{ accountId?.substring(0,10)+ "..." +accountId?.substring(accountId.length-10) }}
                       <img @click="copyToClipboard(accountId)" src="@/assets/icons/copy.svg" class="h-[19px] ml-[10px] cursor-pointer" />
                     </div>
@@ -205,7 +205,7 @@ const handleNext = async () => {
   //   if(res.code==200){
   //     currStep.value = 1
   //   }
-  // }else 
+  // }else
   if(currStep.value == 1){
     loading.value = true
     if(formData.cyclesType === '1'){
@@ -236,6 +236,8 @@ const getAccountInfo = async()=>{
   accountId.value = res.data.accountId
   icpBalance.value = res.data.icpBalance;
   reloadLoading.value = false;
+
+  console.error("======getAccountInfo====",res.data)
 }
 onMounted(async()=>{
   // 如果没有icp身份，先创建

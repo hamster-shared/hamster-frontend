@@ -88,6 +88,7 @@ import BuyCycles from "@/views/projects/projectsListDetails/components/BuyCycles
 import Install from "@/views/chainLink/icp/Install.vue";
 import AddControllers from "@/views/chainLink/icp/addControllers.vue";
 import DeleteTips from "@/views/chainLink/icp/deleteTips.vue";
+import {getIcpDetail} from "@/apis/icp";
 
 const showBuyCycle = ref(false);
 const showAddCycle = ref(false);
@@ -178,12 +179,12 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
 
 
   try {
-    const { data } = await apiGetNodeList({ page, size })
+    const { data } = await getIcpDetail(route.query.id)
 
-    pagination.total = data.total
-    pagination.current = data.page
-    pagination.pageSize = data.pageSize
-    nodeListData.value = data.data
+    // pagination.total = data.total
+    // pagination.current = data.page
+    // pagination.pageSize = data.pageSize
+    // nodeListData.value = data.data
 
   } catch(err:any) {
     console.log('tableDataErr:', err)

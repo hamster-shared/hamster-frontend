@@ -47,7 +47,7 @@
   import storageMiwaspace from "./components/storageMiwaspace.vue";
   import zkpMiwaspace from "./components/zkpMiwaspace.vue";
   import nodeService from "./components/nodeService.vue";
-  import Icp from "./components/icp.vue";
+  import Icp from "../icp/icp.vue";
 
   const router = useRouter()
   const theme = useThemeStore();
