@@ -66,7 +66,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref,watchEffect } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { NodeStatusEnum } from "@/enums/statusEnum";
 import { apiGetNodeList } from "@/apis/node";
@@ -179,7 +179,7 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
   }
 }
 const goDetail = (id:number)=>{
-  router.push(`/middleware/dashboard/icp/detail?id=${id}`)
+  router.push(`/middleware/dashboard/icp/detail?canisterId=${id}&id=${accountId.value}`)
 }
 
 const handleBuy = () =>{
@@ -191,6 +191,20 @@ const handleAdd = () =>{
 const CancelDeployIC = () =>{
   showDeployIC.value = false;
 }
+
+
+const addIdToCurrentUrl = (id:string) => {
+  const url = new URL(window.location.href);
+  const searchParams = new URLSearchParams(url.search);
+
+  searchParams.set('id', id);
+
+  url.search = searchParams.toString();
+  window.history.replaceState(null, '', url.toString());
+};
+
+
+
 const getAccount = async() =>{
 
 
@@ -201,8 +215,7 @@ const getAccount = async() =>{
     const res = await apiIcpAccount(id)
     accountIdFlag.value = res.data.accountIdFlag;
     walletIdFlag.value = res.data.walletIdFlag;
-
-
+    addIdToCurrentUrl(id);
     if (!res.data.accountIdFlag || !res.data.walletIdFlag) {
       showDeployIC.value = true
     }

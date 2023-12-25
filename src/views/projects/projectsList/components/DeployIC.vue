@@ -237,7 +237,6 @@ const getAccountInfo = async()=>{
   icpBalance.value = res.data.icpBalance;
   reloadLoading.value = false;
 
-  console.error("======getAccountInfo====",res.data)
 }
 onMounted(async()=>{
   // 如果没有icp身份，先创建

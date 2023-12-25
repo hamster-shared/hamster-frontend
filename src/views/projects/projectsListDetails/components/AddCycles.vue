@@ -47,7 +47,7 @@ import { message } from "ant-design-vue";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
-  
+
 const props = defineProps({
   visible:{
     type:Boolean,
@@ -63,7 +63,7 @@ const props = defineProps({
   }
 });
 const route = useRoute()
-const id:any = route.params.id
+const id:any = route.query.id || route.params.id
 const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
@@ -102,7 +102,7 @@ const handleTopUp = async() => {
     if(error.response.data.message.indexOf('out of cycles')!=-1){
       emit('showBuyCycleMsg')
     }else{
-      message.error(error.response.data.message) 
+      message.error(error.response.data.message)
     }
     topLoading.value = false
   }

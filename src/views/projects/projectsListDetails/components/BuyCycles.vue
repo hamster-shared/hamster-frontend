@@ -77,7 +77,8 @@ import { apiAccountInfo, apiWalletInfo, apiRechargeWallet } from '@/apis/caniste
 import { message } from 'ant-design-vue';
 
 const route = useRoute()
-const id:any = route.params.id
+const id:any = route.query.id || route.params.id ;
+
 const props = defineProps({
   visible:{
       type:Boolean,

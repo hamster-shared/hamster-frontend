@@ -27,3 +27,35 @@ export function getICpStatistics() {
         method: "get",
     });
 }
+export function addCanister(params:any) {
+    return httpRequest({
+        url: `/api/icp/account/add-canister`,
+        method: "post",
+        params: params,
+    });
+}
+export function getControllers (params:any,id:string){
+
+    return httpRequest({
+        url: `/api/icp/canister/${id}/controllers`,
+        method: "get",
+        params,
+    });
+}
+export function getCs (params:any,id:string){
+
+    return httpRequest({
+        url: `/api/icp/canister/${id}/consumption`,
+        method: "get",
+        params,
+    });
+}
+
+export function handleStatus (params:any){
+
+    return httpRequest({
+        url: `/api/icp/canister/change-status`,
+        method: "post",
+        params,
+    });
+}

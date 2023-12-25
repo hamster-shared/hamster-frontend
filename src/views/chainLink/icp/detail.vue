@@ -11,39 +11,39 @@
           <div class="infoBox">
               <dl>
                 <dt>Canister ID:</dt>
-                <dd>r3dpl-2yaaa-aaaam-ab</dd>
+                <dd>{{InfoData?.canisterId}}</dd>
               </dl>
               <dl>
                 <dt>Canister Name:</dt>
-                <dd>Hello_ICP_Front</dd>
+                <dd>{{InfoData?.canisterName}}</dd>
               </dl>
               <dl>
                 <dt>Project:</dt>
-                <dd>Demo_Hamster</dd>
+                <dd>{{InfoData?.project}}</dd>
               </dl>
               <dl>
                 <dt>Cycles:</dt>
-                <dd>~ 0.30 T</dd>
+                <dd>{{InfoData?.cycles}} T</dd>
               </dl>
               <dl>
                 <dt>Status:</dt>
                 <dd>
                   <img src="@/assets/icons/Running-1.svg" alt="">
-                  <span>Running</span>
+                  <span @click="changeStatus(status)">{{status}}</span>
                   <span class="linkBox">Stop</span>
                 </dd>
               </dl>
               <dl>
                 <dt>Memory Size:</dt>
-                <dd>0.00 MB</dd>
+                <dd>{{InfoData?.moduleSize}} MB</dd>
               </dl>
             <dl>
                 <dt>Module Hash:</dt>
-                <dd>0xa047686c…a12cdb240</dd>
+                <dd>{{AddressFormate(InfoData?.moduleHash)}}</dd>
               </dl>
               <dl>
                 <dt>Last updated at:</dt>
-                <dd>04 Aug 2023, 09:08</dd>
+                <dd>{{InfoData?.updateAt}}</dd>
               </dl>
           </div>
         </div>
@@ -65,75 +65,94 @@
       <a-table :dataSource="nodeListData" :columns="nodeColumns" :pagination="pagination" style="width:100%">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link" @click="goNodeDetail(record.id)">Detail</a-button>
+            <a-button type="link" @click="goDelete(record.id)">Delete</a-button>
           </template>
         </template>
+      </a-table>
+
+    </div>
+
+    <div class="border border-solid border-[#EBEBEB] rounded-[12px] dark:border-[#434343] box30">
+      <div class="flex justify-between mt30">
+        <div class="titleLft">Daily Consumption</div>
+      </div>
+      <a-table :dataSource="csList" :columns="csColumns" :pagination="paginationCs" style="width:100%">
+        <template #bodyCell="{ column, record }"></template>
       </a-table>
     </div>
     <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister"></AddCycles>
     <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
     <Install v-if="showInstall" :visible="showInstall" @handleCancel="showInstall = false"></Install>
     <AddControllers v-if="showAddControllers" :visible="showAddControllers" @handleCancel="showAddControllers = false"></AddControllers>
-    <DeleteTips v-if="deleteTips" :visible="deleteTips" @handleCancel="deleteTips = false"></DeleteTips>
+    <DeleteTips v-if="deleteTips" :visible="deleteTips" @handleCancel="deleteTips = false" :type="type"></DeleteTips>
 
   </div>
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter, useRoute } from "vue-router";
-import { NodeStatusEnum } from "@/enums/statusEnum";
-import { apiGetNodeList } from "@/apis/node";
+
 import AddCycles from "@/views/projects/projectsListDetails/components/AddCycles.vue";
 import BuyCycles from "@/views/projects/projectsListDetails/components/BuyCycles.vue";
 import Install from "@/views/chainLink/icp/Install.vue";
 import AddControllers from "@/views/chainLink/icp/addControllers.vue";
 import DeleteTips from "@/views/chainLink/icp/deleteTips.vue";
-import {getIcpDetail} from "@/apis/icp";
+import {getControllers, getCs, getIcpDetail, handleStatus} from "@/apis/icp";
 
 const showBuyCycle = ref(false);
 const showAddCycle = ref(false);
 const showInstall = ref(false);
 const deleteTips = ref(false);
+const InfoData = ref({});
+const status = ref("")
+const type = ref("")
 
 const showAddControllers = ref(false);
 
 const router = useRouter();
 const route = useRoute()
 const nodeListData = ref([])
+const csList = ref([])
+const csColumns = reactive([
+  {
+    title: 'Cycles',
+    dataIndex: 'cycles',
+    key: 'cycles',
+  },
+])
 const nodeColumns = reactive([
   {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    customRender: ({ index }:any) => index+1,
+    title: 'Canister ID',
+    dataIndex: 'canisterId',
+    key: 'canisterId',
   },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Chain',
-    dataIndex: 'chainProtocol',
-    key: 'chainProtocol',
-    align: 'chainProtocol',
-  },
-  {
-    title: 'Node Status',
-    dataIndex: 'status',
-    key: 'status',
-    customRender: ({ text }) => `${NodeStatusEnum[text]}`,
-  },
-  {
-    title: 'Public IP',
-    dataIndex: 'publicIp',
-    key: 'publicIp',
-  },
-  {
-    title: 'Region',
-    dataIndex: 'region',
-    key: 'region',
-  },
+  // {
+  //   title: 'Name',
+  //   dataIndex: 'name',
+  //   key: 'name',
+  // },
+  // {
+  //   title: 'Chain',
+  //   dataIndex: 'chainProtocol',
+  //   key: 'chainProtocol',
+  //   align: 'chainProtocol',
+  // },
+  // {
+  //   title: 'Node Status',
+  //   dataIndex: 'status',
+  //   key: 'status',
+  //   customRender: ({ text }) => `${NodeStatusEnum[text]}`,
+  // },
+  // {
+  //   title: 'Public IP',
+  //   dataIndex: 'publicIp',
+  //   key: 'publicIp',
+  // },
+  // {
+  //   title: 'Region',
+  //   dataIndex: 'region',
+  //   key: 'region',
+  // },
   {
     title: 'Action',
     key: 'action',
@@ -163,6 +182,61 @@ const pagination = reactive({
   },
 });
 
+const paginationCs = reactive({
+  // 分页配置器
+  pageSize: 10, // 一页的数据限制
+  current: 1, // 当前页
+  total: 10, // 总数
+  size: 'small',
+  position: ['bottomCenter'], //指定分页显示的位置
+  hideOnSinglePage: false, // 只有一页时是否隐藏分页器
+  showQuickJumper: false, // 是否可以快速跳转至某页
+  showSizeChanger: false, // 是否可以改变 pageSize
+  pageSizeOptions: ['10', '20', '30'], // 指定每页可以显示多少条
+  onShowSizeChange: (current: number, pagesize: number) => {
+    // 改变 pageSize时的回调
+    paginationCs.current = current;
+    paginationCs.pageSize = pagesize;
+    getCsData(current, pagesize)
+  },
+  onChange: (current: number) => {
+    // 切换分页时的回调，
+    paginationCs.current = current;
+    getCsData(current, paginationCs.pageSize)
+  },
+});
+
+const getCsData = async(page:number = pagination.current, size:number = pagination.pageSize) => {
+
+
+  try {
+    const { data } = await getCs({ page, size },route.query.canisterId)
+    console.log(data)
+
+    pagination.total = data.total
+    pagination.current = data.page
+    pagination.pageSize = data.pageSize
+    nodeListData.value = data.data
+
+  } catch(err:any) {
+    console.log('tableDataErr:', err)
+  }
+}
+
+const changeStatus = async(status:string) =>{
+  console.log("====",status)
+
+  // 1: running,2: stopped
+  try {
+    const { data } = await handleStatus({Status:1,CanisterId:route.query.canisterId})
+    console.log(data)
+
+
+  } catch(err:any) {
+    console.error('changeStatus:', err)
+  }
+}
+
 const handleAdd = () =>{
   showAddCycle.value = true;
 }
@@ -175,26 +249,52 @@ const handleInstallShow = () =>{
 const handleController = () =>{
   showAddControllers.value = true;
 }
+
+const getOverview = async () =>{
+  try {
+    const { data } = await getIcpDetail(route.query.canisterId)
+    InfoData.value = data;
+    status.value = data.status;
+
+  } catch(err:any) {
+    console.log('InfoData:', err)
+  }
+}
+
+const AddressFormate = (address: string, ) => {
+  if (!address) return '';
+
+  const frontStr = address.substring(0, 10);
+
+  const afterStr = address.substring(address.length -10, address.length);
+
+  return `${frontStr}...${afterStr}`;
+};
+
 const getTableData = async(page:number = pagination.current, size:number = pagination.pageSize) => {
 
 
   try {
-    const { data } = await getIcpDetail(route.query.id)
+    const { data } = await getControllers({ page, size },route.query.canisterId)
+    console.log(data)
 
-    // pagination.total = data.total
-    // pagination.current = data.page
-    // pagination.pageSize = data.pageSize
-    // nodeListData.value = data.data
+    pagination.total = data.total
+    pagination.current = data.page
+    pagination.pageSize = data.pageSize
+    nodeListData.value = data.data
 
   } catch(err:any) {
     console.log('tableDataErr:', err)
   }
 }
-const goNodeDetail = (id:number)=>{
-  router.push(`/middleware/dashboard/node/detail?id=${id}`)
+const goDelete = (id:string)=>{
+
+
 }
 onMounted(() => {
   getTableData();
+  getCsData();
+  getOverview();
 })
 </script>
 <style lang="less">

@@ -19,23 +19,33 @@
           </a-form-item>
           <a-form-item name="file" label="Upload file">
 
-            <a-upload
-                v-model:file-list="fileList"
-                class="uploader"
-                :show-upload-list="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                @change="handleChange"
-            >
-              <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-              <div v-else>
-<!--                <loading-outlined v-if="loading"></loading-outlined>-->
+            <label for="uploadFile" @change="uploadFileList">
+            <input type="file" id="uploadFile" hidden />
 
-                <div class="ant-upload-text">
-                  <plus-outlined />
-                  <span>Please drag and drop files here to upload</span>
-                </div>
+              <div class="ant-upload-text" v-if="fileUrl == null">
+                <plus-outlined />
+                <span>Please drag and drop files here to upload</span>
               </div>
-            </a-upload>
+              <div class="ant-upload-text" v-if="fileUrl != null">
+                  {{fileUrl}}
+              </div>
+            </label>
+<!--            <a-upload-->
+<!--                :before-upload="handleBeforeUpload"-->
+<!--                :on-success="handleUploadSuccess"-->
+<!--                :on-error="handleUploadError"-->
+<!--                :show-upload-list="false"-->
+<!--            >-->
+<!--             <div>{{}}</div>-->
+<!--              <div >-->
+<!--&lt;!&ndash;                <loading-outlined v-if="loading"></loading-outlined>&ndash;&gt;-->
+
+<!--                <div class="ant-upload-text">-->
+<!--                  <plus-outlined />-->
+<!--                  <span>Please drag and drop files here to upload</span>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </a-upload>-->
 
           </a-form-item>
           <a-form-item name="mode" label="Install mode">
@@ -52,7 +62,7 @@
     </div>
   </a-modal>
 </template>
-<script setup lang="ts">
+<script setup >
 import { PlusOutlined } from '@ant-design/icons-vue';
 import { message } from "ant-design-vue";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
@@ -74,7 +84,7 @@ const props = defineProps({
   }
 });
 const route = useRoute()
-const id:any = route.params.id
+const id = route.params.id
 const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
@@ -85,10 +95,13 @@ const formData = reactive({
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
 const topLoading = ref(false)
+const fileUrl = ref(null);
+
+
 
 const formRules = computed(() => {
 
-  const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
+  const requiredRule = (message) => ({ required: true, trigger: 'change', message });
 
   return {
     amount: [requiredRule('Please enter Amount')],
@@ -108,7 +121,7 @@ const handleTopUp = async() => {
     message.success(res.message)
     emit('handleCancel')
     emit('refreshCanister')
-  } catch (error:any) {
+  } catch (error) {
     console.log('error:',error)
     if(error.response.data.message.indexOf('out of cycles')!=-1){
       emit('showBuyCycleMsg')
@@ -127,9 +140,14 @@ const showBuyCycles = () => {
 const handleCancel = ()=>{
   emit('handleCancel')
 }
+// 0: install 1: upgrade, 2: reinstall
+const onChange = (newVal) => {
 
-const onChange = (newVal:string) => {
+}
 
+const uploadFileList = (e) =>{
+  const { files } = e.target ;
+  console.log(files)
 }
 
 const getWalletInfo = async()=>{

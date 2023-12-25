@@ -15,14 +15,14 @@
       <div class="mt-[30px]">
         <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
           <a-form-item name="canisterName" label="Canister Name">
-            <a-input class="modal-input" v-model:value="formData.canisterId" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+            <a-input class="modal-input" v-model:value="formData.canisterName" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
           </a-form-item>
 
         </a-form>
 
       </div>
       <div class="text-center mt-[32px]">
-        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Add</a-button>
+        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleAdd">Add</a-button>
       </div>
     </div>
   </a-modal>
@@ -32,6 +32,7 @@ import { message } from "ant-design-vue";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
+import {addCanister} from "@/apis/icp";
 
 const props = defineProps({
   visible:{
@@ -53,11 +54,9 @@ const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
 const formData = reactive({
-  canisterId: '',
-  amount: 0.1,
+  canisterName: ''
 });
-const walletCanisterId = ref()
-const walletCyclesBalance = ref()
+
 const topLoading = ref(false)
 
 const formRules = computed(() => {
@@ -65,54 +64,39 @@ const formRules = computed(() => {
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
   return {
-    amount: [requiredRule('Please enter Amount')],
+    canisterName: [requiredRule('Please enter Canister Name')],
   };
 });
-//
-// const handleTopUp = async() => {
-//   console.log('handleTopUp',formData)
-//   try {
-//     topLoading.value = true
-//     const params = {
-//       canisterId: formData.canisterId,
-//       amount: formData.amount + ''
-//     }
-//     const res = await apiRechargeCanister(id,params)
-//     topLoading.value = false
-//     message.success(res.message)
-//     emit('handleCancel')
-//     emit('refreshCanister')
-//   } catch (error:any) {
-//     console.log('error:',error)
-//     if(error.response.data.message.indexOf('out of cycles')!=-1){
-//       emit('showBuyCycleMsg')
-//     }else{
-//       message.error(error.response.data.message)
-//     }
-//     topLoading.value = false
-//   }
-// }
-//
-// const showBuyCycles = () => {
-//   emit('handleCancel')
-//   emit('showBuyCycles')
-// }
+
 
 const handleCancel = ()=>{
   emit('handleCancel')
 }
 
-// const getWalletInfo = async()=>{
-//   const res = await apiWalletInfo(id)
-//   walletCanisterId.value = res.data.canisterId
-//   walletCyclesBalance.value = res.data.cyclesBalance
-// }
-//
-// onMounted(async()=>{
-//   formData.canisterId = canisterId.value
-//   // formData.amount = cycles.value
-//   await getWalletInfo()
-// })
+const handleAdd = async() =>{
+  console.log('handleAdd',formData)
+  try {
+    topLoading.value = true
+    const params = {
+      canisterName: formData.canisterName
+    }
+    const res = await addCanister(params)
+    topLoading.value = false
+    message.success(res.message)
+    emit('handleCancel')
+    // emit('refreshCanister')
+  } catch (error:any) {
+    console.log('error:',error)
+    // if(error.response.data.message.indexOf('out of cycles')!=-1){
+    //   emit('showBuyCycleMsg')
+    // }else{
+    //   message.error(error.response.data.message)
+    // }
+    topLoading.value = false
+  }
+}
+
+
 </script>
 <style scoped lang="less">
 :deep(.ant-form-item-label > label){

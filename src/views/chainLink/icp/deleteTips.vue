@@ -15,18 +15,22 @@
         <div>
           <img src="@/assets/images/ICPTips.png" alt="">
         </div>
-        <div class="desc">
+        <div class="desc" v-if="type==='confirm'">
           If the controller managed on the Hamster platform is deleted, the Hamster platform will lose the ability to control the container. Please operate carefully!
         </div>
-<!--        <div class="desc">-->
-<!--          At least 1 controller needs to be retained for container operations!-->
-<!--        </div>-->
+        <div class="desc" v-else>
+          At least 1 controller needs to be retained for container operations!
+        </div>
 
       </div>
-      <div class="text-center mt-[32px]">
+      <div class="text-center mt-[32px]" v-if="type==='confirm'">
         <a-button class="!w-[240px] !h-[43px]" ghost @click="handleCancel">Cancel</a-button>
         <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Delete</a-button>
       </div>
+      <div class="text-center mt-[32px]" v-else>
+        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]"  @cancel="handleCancel">Done</a-button>
+      </div>
+
     </div>
   </a-modal>
 </template>
@@ -45,6 +49,10 @@ const props = defineProps({
   canisterId:{
     type:String,
     default:''
+  },
+  type:{
+    type:String,
+    default:'confirm'
   },
   cycles:{
     type:String,
