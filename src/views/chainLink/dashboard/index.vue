@@ -2,9 +2,10 @@
   <div class="flex dashboard-index dark:bg-[#1D1C1A] bg-[#FFFFFF]  rounded-[12px]">
     <div
       class="dashboard-index-left px-[12px] pt-[30px] border-t-0 border-b-0 border-l-0 border-r-2 border-solid dark:border-[#434343] border-[#EBEBEB]">
-      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue" mode="inline">
+      <a-menu :openKeys="openKeys" v-model:selectedKeys="selectedKeys" style="width: 260px" :theme="theme.themeValue"
+        mode="inline">
         <div v-for="item in menuRouterList">
-          <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name!='RPC'">
+          <a-menu-item :key="item.name" :disabled="item.meta.isTag" v-if="item.name != 'RPC'">
             <router-link
               :to="((item.name === 'Oracle' && !isOracleDefault)) ? '/middleware/dashboard/default/' + item.name : item.path">
               <div>
@@ -18,12 +19,12 @@
             <template #icon>
               <svg-icon :name="item.name" size="20" class="ml-[8px] mr-[12px]" />
             </template>
-            <template #title><span class="text-[16px]">{{item.name}}</span></template>
+            <template #title><span class="text-[16px]">{{ item.name }}</span></template>
             <template v-for="child in item.children">
               <template v-if="child?.meta?.isShow">
                 <a-menu-item :key="child.name" class="!pl-[76px]">
                   <router-link :to="child.path">
-                  <div>{{child.name}}</div>
+                    <div>{{ child.name }}</div>
                   </router-link>
                 </a-menu-item>
               </template>
@@ -63,11 +64,11 @@ onBeforeMount(() => {
   // console.log(11111111111,menuRouterList.value)
 })
 
-const toChild = ( {key, domEvent })=>{
-  console.log('toChild',key,domEvent)
+const toChild = ({ key, domEvent }) => {
+  console.log('toChild', key, domEvent)
 }
 
-onMounted(async()=>{
+onMounted(async () => {
   const rpcRes = await apiGetIfOpenService('rpc');
   isRpcDefault.value = rpcRes.data.isActive
   const oracleRes = await apiGetIfOpenService('oracle')
@@ -118,17 +119,23 @@ watch(() => router.currentRoute.value,
 :deep(.ant-menu-item) {
   border-radius: 10px;
 }
-:deep(.ant-menu-inline .ant-menu-item){
+
+:deep(.ant-menu-inline .ant-menu-item) {
   height: 50px;
   line-height: 50px;
   margin-bottom: 15px;
+}
+
+:deep(.ant-menu-submenu-title .ant-menu-item-icon+span) {
+  margin-left: 0px;
 }
 
 :deep(.ant-menu.ant-menu-dark),
 :deep(.ant-menu-dark .ant-menu-inline.ant-menu-sub) {
   background-color: #1D1C1A;
 }
-:deep(.ant-menu-sub.ant-menu-inline){
+
+:deep(.ant-menu-sub.ant-menu-inline) {
   background-color: #ffffff;
 }
 
@@ -138,13 +145,15 @@ watch(() => router.currentRoute.value,
   margin-bottom: 15px;
 }
 
-:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected){
+:deep(.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected) {
   background-color: #FFFAF3;
 }
-:deep(.ant-menu-inline .ant-menu-item-selected:after, .ant-menu-inline .ant-menu-selected:after){
+
+:deep(.ant-menu-inline .ant-menu-item-selected:after, .ant-menu-inline .ant-menu-selected:after) {
   opacity: 0;
 }
-:deep(.ant-menu-inline){
+
+:deep(.ant-menu-inline) {
   border-right: 0;
 }
 

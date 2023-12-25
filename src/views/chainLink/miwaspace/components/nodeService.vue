@@ -124,13 +124,13 @@
       <div>
         <div v-for="item in paymentMetodList" :key="item.id" @click="changePayMethod(item)"
           :class="selectedPaymentMethodId === item.id ? 'selectPayMethod-css' : ''"
-          class="flex items-cente payment-method-css mt-[32px] mb-[20px]">
+          class="flex items-cente payment-method-css mt-[32px] mb-[20px] ">
           <img :src="getImageURL(`${item.imgName}.png`)" class="w-[30px]" />
           <div class="text-[16px] font-bold text-[#000000] ml-[10px]">{{ item.name }}</div>
         </div>
       </div>
       <div class="text-center">
-        <a-button type="primary" class='mt-[32px] w-[240px]' @click="confirmPayment">Confirm</a-button>
+        <a-button type="primary" class='mt-[32px] w-[240px]' :loading="loading" @click="confirmPayment">Confirm</a-button>
       </div>
 
     </div>
@@ -153,7 +153,7 @@ const props = defineProps({
 });
 const { getImageURL } = useAssets();
 const { pageType } = toRefs(props);
-
+const loading = ref(false);
 const showPayFailedModal = ref(false)
 const showPayProgressModal = ref(false)
 const visiblePaymentMethod = ref(false)
@@ -265,6 +265,7 @@ const formRules = computed(() => {
 });
 
 const confirmPayment = async () => {
+  loading.value = true;
   try {
     formData.nodeResource = resourceInfo.value.cpu + 'C' + resourceInfo.value.memory + 'GB ' + resourceInfo.value.disk + 'GB';
     formData.resourceType = formData.protocol + ' | ' + formData.region + ' | ' + formData.nodeResource;
@@ -273,6 +274,7 @@ const confirmPayment = async () => {
     const res = await apiAddProjects(formData)
     if (res.code === 200) {
       visiblePaymentMethod.value = false;
+      loading.value = false
       if (selectedPaymentMethodId.value == 1) {
         window.open('/middleware/pay?id=' + res.data)
         socket.emit('order_status_model', res.data)
@@ -357,6 +359,11 @@ hr {
   border: 2px solid #EDEDED;
   border-radius: 8px;
   padding: 16px 0 16px 30px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #E2B578;
+  }
 }
 
 .selectPayMethod-css {

@@ -3,7 +3,7 @@
     <!-- <div class="font-bold text-[24px] mb-[30px]">Work</div> -->
     <NoData v-if="false"></NoData>
     <Loading v-if="!historyList.length"></Loading>
-    <div v-else class="h-[836px] min-w-[560px] flex rounded-[12px]">
+    <div v-else class=" min-w-[560px] flex rounded-[12px]">
       <div class="w-1/3  bg-[#F9F9F9] dark:bg-[#212121] relative rounded-tl-[12px] rounded-bl-[12px]">
         <!-- <div
           class="h-[60px] leading-[60px] pl-[30px] bg-[#EBEBEC] dark:bg-[#161616] text-[21px] font-semibold w-full rounded-tl-[12px]">
@@ -34,9 +34,10 @@
         <div
           class="absolute top-0 h-[60px] w-full leading-[60px] pl-[30px] text-[16px] font-semibold border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-t-0">
           {{ selectedItem.nickname }}</div>
-        <div id="send-info" class="h-[656px] mt-[60px] overflow-y-auto p-[30px]">
+        <div id="send-info" class="min-h-[300px] mt-[60px] overflow-y-auto p-[30px]"
+          :style="{ 'height': sendInfoHeight }">
           <div v-if="sendMap.size > 0" class="">
-            <div v-for="(item, key) in sendList" :key="key">
+            <div v-for="( item, key ) in  sendList " :key="key">
               <div class="flex justify-end" v-if="item.role == 'User'">
                 <div class="bg-[#EDF0FF] dark:bg-[#EDF0FF] send-info-div dark:text-[#3F3F3F]">{{ item.content }}</div>
                 <img src="@/assets/images/agent-user.png" class="h-[44px] w-[44px] rounded-full ml-[10px]" />
@@ -52,7 +53,7 @@
           </div>
         </div>
         <div
-          class="absolute p-[30px] bottom-0 h-[120px] w-full border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-b-0">
+          class=" p-[30px] bottom-0 h-[120px] w-full border border-solid border-[#E6E6E6] dark:border-[#212121] border-x-0 border-b-0">
           <a-input v-model:value="inputValue" placeholder="Please enter your requirements" @keyup.enter="sendInfo">
             <template #suffix>
               <svg-icon name="Send" size="26" class="mr-[10px]" @click="sendInfo" />
@@ -103,6 +104,8 @@ const chatIdMap = new Map();
 const sendMap = new Map();
 const sendList = ref<any>([]);
 const selectedItem = ref<any>({});
+const sendInfoHeight = ref('');
+
 const changeSelect = async (item: any) => {
   if (!chatIdMap.get(item.chatId)) {
     chatIdMap.set(item.chatId, { isLoading: false });
@@ -202,6 +205,8 @@ const getChatDetail = async (chatId: any) => {
 //   }, { deep: true, immediate: true }
 // )
 onMounted(() => {
+  sendInfoHeight.value = document.documentElement.clientHeight - 420 + 'px';
+  // console.log(clientHeight, document.documentElement.clientHeight, 'clientHeight');
   getHistoryList();
   // historyList.value = Object.assign([], agentList);
   // changeSelect(historyList.value[0]);
