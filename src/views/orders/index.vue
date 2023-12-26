@@ -47,6 +47,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref, onUnmounted } from 'vue';
+import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { copyToClipboard } from '@/utils/tool'
 import { OrderStatusEnum, OrderTypeEnum } from "@/enums/statusEnum";
@@ -55,6 +56,7 @@ import { apiCloseOrder } from "@/apis/chainlink";
 import { message } from 'ant-design-vue';
 import io from "socket.io-client";
 
+const router = useRouter();
 const cancelModal = ref(false);
 const loading = ref(false);
 const cancelId = ref();
@@ -178,7 +180,8 @@ const orderPay = (id: number, payType: any) => {
   if (payType == 1) {
     window.open('/middleware/pay?id=' + id)
   } else {
-    window.open('/middleware/payR?id=' + id)
+    router.push(`/middleware/payR?id=${id}`)
+    // window.open('/middleware/payR?id=' + id)
   }
 
 }
