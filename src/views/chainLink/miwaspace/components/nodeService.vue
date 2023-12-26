@@ -116,7 +116,7 @@
   </a-modal>
   <a-modal v-model:visible="visiblePaymentMethod" :footer="null">
     <template #closeIcon>
-      <img src="@/assets/icons/closeIcon.svg" @click="visiblePaymentMethod = false" />
+      <img src="@/assets/icons/closeIcon.svg" @click="visiblePaymentMethod = false, loading = false" />
     </template>
     <div class="text-[24px] font-bold text-[#151210] mb-[32px]">Payment Method</div>
     <div>
