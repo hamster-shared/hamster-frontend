@@ -26,7 +26,7 @@
           </template>
           <template v-if="column.key === 'action'">
             <label v-if="record.status === 1">
-              <label class="cursor-pointer open-link-css" @click="orderPay(record.id)">Pay</label>
+              <label class="cursor-pointer open-link-css" @click="orderPay(record.id, record.payType)">Pay</label>
               <label class="ml-4 cursor-pointer open-link-css" @click="orderCancel(record.id)">Cancel</label>
             </label>
             <label v-else>-</label>
@@ -173,9 +173,14 @@ const handleSearchDate = (value: any, dateString: any[]) => {
   searchData.value['X-End'] = dateString[1];
   getTableData()
 }
-const orderPay = (id: number) => {
+const orderPay = (id: number, payType: any) => {
   socket.emit('order_status_list', id)
-  window.open('/middleware/pay?id=' + id)
+  if (payType == 1) {
+    window.open('/middleware/pay?id=' + id)
+  } else {
+    window.open('/middleware/payR?id=' + id)
+  }
+
 }
 const orderCancel = (id: number) => {
   cancelId.value = id;

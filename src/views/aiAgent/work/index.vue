@@ -205,7 +205,7 @@ const getChatDetail = async (chatId: any) => {
 //   }, { deep: true, immediate: true }
 // )
 onMounted(() => {
-  sendInfoHeight.value = document.documentElement.clientHeight - 420 + 'px';
+  sendInfoHeight.value = document.documentElement.clientHeight - 360 + 'px';
   // console.log(clientHeight, document.documentElement.clientHeight, 'clientHeight');
   getHistoryList();
   // historyList.value = Object.assign([], agentList);
