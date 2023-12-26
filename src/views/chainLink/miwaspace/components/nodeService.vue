@@ -284,6 +284,7 @@ const confirmPayment = async () => {
       }
     }
   } catch (err: any) {
+    loading.value = false;
     message.error(err.response.data.message);
   }
 }
