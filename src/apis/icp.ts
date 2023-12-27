@@ -31,7 +31,7 @@ export function addCanister(params:any) {
     return httpRequest({
         url: `/api/icp/account/add-canister`,
         method: "post",
-        params: params,
+        data: params,
     });
 }
 export function getControllers (params:any,id:string){
@@ -56,6 +56,6 @@ export function handleStatus (params:any){
     return httpRequest({
         url: `/api/icp/canister/change-status`,
         method: "post",
-        params,
+        data:params,
     });
 }
