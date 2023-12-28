@@ -26,8 +26,8 @@
           </a-menu>
         </template>
       </a-dropdown>
-      <!-- <div @click="goAgent" :class="{ 'header-menu-line': selectedNavTitle == 'aiAgent' }" class="ml-8 header-text-css"
-        id="pro">AI Agent</div> -->
+      <div @click="goAgent" :class="{ 'header-menu-line': selectedNavTitle == 'aiAgent' }" class="ml-8 header-text-css"
+        id="pro">AI Agent</div>
       <div @click="goTemplate" class="ml-8 mr-8 header-text-css"
         :class="{ 'header-menu-line': selectedNavTitle === 'template' }">
         Template</div>
