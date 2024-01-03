@@ -60,7 +60,7 @@
       <CustomMsg v-if="showMsg" :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
 
       <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister" ></AddCycles>
-      <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
+      <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false" :key="Math.random()"></BuyCycles>
       <AddCanister v-if="showAdd" :visible="showAdd" @handleCancel="showAdd = false"></AddCanister>
       <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="accountId" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
     </div>
@@ -73,7 +73,7 @@ import { apiGetNodeList } from "@/apis/node";
 import BuyCycles from "@/views/projects/projectsListDetails/components/BuyCycles.vue";
 import AddCanister from "@/views/chainLink/icp/addCanister.vue";
 import DeployIC from "@/views/projects/projectsList/components/DeployIC.vue";
-import {apiCreateICPIdentity, apiIcpAccount} from "@/apis/canister";
+import {apiCheckDfx, apiCreateICPIdentity, apiIcpAccount} from "@/apis/canister";
 import {getCanisterList, getCanisterOverview} from "@/apis/icp";
 import AddCycles from "@/views/projects/projectsListDetails/components/AddCycles.vue";
 import CustomMsg from "@/components/CustomMsg.vue";
@@ -215,10 +215,16 @@ const getAccount = async() =>{
     const res = await apiIcpAccount(id)
     accountIdFlag.value = res.data.accountIdFlag;
     walletIdFlag.value = res.data.walletIdFlag;
-    addIdToCurrentUrl(id);
+
+
+
     if (!res.data.accountIdFlag || !res.data.walletIdFlag) {
+      if (!res.data.accountIdFlag) {
+        const res = await apiCreateICPIdentity(id)
+      }
       showDeployIC.value = true
     }
+    addIdToCurrentUrl(id);
 
   } catch (err: any) {
     console.error(err)
