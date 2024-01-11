@@ -29,8 +29,8 @@
                 <dt>Status:</dt>
                 <dd>
                   <img src="@/assets/icons/Running-1.svg" alt="">
-                  <span @click="changeStatus(status)">{{status}}</span>
-                  <span class="linkBox">Stop</span>
+                  <span>{{status}}</span>
+                  <span @click="changeStatus(status)" class="linkBox">{{status ==="Running"?"Stop":"Running" }}</span>
                 </dd>
               </dl>
               <dl>
@@ -65,7 +65,7 @@
       <a-table :dataSource="nodeListData" :columns="nodeColumns" :pagination="pagination" style="width:100%">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
-            <a-button type="link" @click="goDelete(record.id)">Delete</a-button>
+            <a-button type="link" @click="goDelete(record)">Delete</a-button>
           </template>
         </template>
       </a-table>
@@ -80,11 +80,11 @@
         <template #bodyCell="{ column, record }"></template>
       </a-table>
     </div>
-    <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister"></AddCycles>
+    <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="InfoData?.cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister"></AddCycles>
     <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
-    <Install v-if="showInstall" :visible="showInstall" @handleCancel="showInstall = false"></Install>
-    <AddControllers v-if="showAddControllers" :visible="showAddControllers" @handleCancel="showAddControllers = false"></AddControllers>
-    <DeleteTips v-if="deleteTips" :visible="deleteTips" @handleCancel="deleteTips = false" :type="type"></DeleteTips>
+    <Install v-if="showInstall" :visible="showInstall" @handleCancel="showInstall = false" :canisterId="canisterId"></Install>
+    <AddControllers v-if="showAddControllers" :canisterId="canisterId" :visible="showAddControllers" @handleCancel="showAddControllers = false" @refreshCanister="refreshCanister"></AddControllers>
+    <DeleteTips v-if="deleteTips" :visible="deleteTips" @handleCancel="deleteTips = false" :type="type" :canisterId="canisterId" :controllerId="controllerId" @refreshCanister="refreshCanister"></DeleteTips>
 
   </div>
 </template>
@@ -108,8 +108,11 @@ const status = ref("")
 const type = ref("")
 
 const showAddControllers = ref(false);
+const canisterId = ref();
+const controllerId = ref();
 
 const router = useRouter();
+const showMsg = ref(false);
 const route = useRoute()
 const nodeListData = ref([])
 const csList = ref([])
@@ -123,8 +126,8 @@ const csColumns = reactive([
 const nodeColumns = reactive([
   {
     title: 'Canister ID',
-    dataIndex: 'canisterId',
-    key: 'canisterId',
+    dataIndex: 'principalId',
+    key: 'principalId',
   },
   // {
   //   title: 'Name',
@@ -223,17 +226,24 @@ const getCsData = async(page:number = pagination.current, size:number = paginati
   }
 }
 
+const showBuyCycleMsg = ()=>{
+  showAddCycle.value = false
+  showMsg.value = true
+}
+
 const changeStatus = async(status:string) =>{
-  console.log("====",status)
+  const st = status !=="Running"? 1:2
 
   // 1: running,2: stopped
   try {
-    const { data } = await handleStatus({Status:1,CanisterId:route.query.canisterId})
+    const { data } = await handleStatus({Status:st,CanisterId:route.query.canisterId})
     console.log(data)
 
 
   } catch(err:any) {
     console.error('changeStatus:', err)
+  }finally {
+    getOverview()
   }
 }
 
@@ -287,14 +297,26 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
     console.log('tableDataErr:', err)
   }
 }
-const goDelete = (id:string)=>{
-
+const goDelete = (item:any)=>{
+  deleteTips.value = true;
+  type.value = pagination.total >1 ? "confirm":"del"
+  controllerId.value = item.principalId;
 
 }
+
+
+const refreshCanister = ()=>{
+  getTableData()
+  getOverview();
+  getCsData();
+}
 onMounted(() => {
+  canisterId.value = route.query.canisterId;
   getTableData();
   getCsData();
   getOverview();
+
+
 })
 </script>
 <style lang="less">

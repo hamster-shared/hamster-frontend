@@ -83,8 +83,8 @@ import {message} from "ant-design-vue";
 
 const canister_over = ref(0);
 const pro_over = ref(0);
-const cycles_over = ref('');
-const icp_over = ref('');
+const cycles_over = ref(0);
+const icp_over = ref(0);
 
 const showBuyCycle = ref(false);
 const showAdd = ref(false);

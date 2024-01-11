@@ -25,10 +25,10 @@
             </div>
 
 <!--            <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The node has not been created yet</div>-->
-            <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Add Canister</div>
+            <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goICP()">Add Canister</div>
           </div>
           <div v-else>
-            <span class="open-link-css cursor-pointer node-view" @click="goICP()">View</span>
+<!--            <span class="open-link-css cursor-pointer node-view" @click="goICP()">View</span>-->
             <div class="text-center">
               <div class="text-[60px] text-[#E2B578]">{{ icpInfo.canisters }}</div>
               <div class="text-[16px] mb-[16px]">Canisters</div>
@@ -43,7 +43,7 @@
                 <span class="text-[18px]">{{ icpInfo.stopped }}</span>
               </div>
             </div>
-            <div class="text-center mt-[18px] open-link-css cursor-pointer" @click="goMiwaspaceTab(item)">Add Canister</div>
+            <div class="text-center mt-[18px] open-link-css cursor-pointer" @click="goICP()">Add Canister</div>
           </div>
         </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">

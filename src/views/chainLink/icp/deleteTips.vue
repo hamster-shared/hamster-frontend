@@ -25,7 +25,7 @@
       </div>
       <div class="text-center mt-[32px]" v-if="type==='confirm'">
         <a-button class="!w-[240px] !h-[43px]" ghost @click="handleCancel">Cancel</a-button>
-        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Delete</a-button>
+        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleConfirm">Delete</a-button>
       </div>
       <div class="text-center mt-[32px]" v-else>
         <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]"  @cancel="handleCancel">Done</a-button>
@@ -40,6 +40,7 @@ import { message } from "ant-design-vue";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
+import {deleteController} from "@/apis/icp";
 
 const props = defineProps({
   visible:{
@@ -50,23 +51,23 @@ const props = defineProps({
     type:String,
     default:''
   },
+  controllerId:{
+    type:String,
+    default:''
+  },
   type:{
     type:String,
     default:'confirm'
   },
-  cycles:{
-    type:String,
-    default:''
-  }
 });
 const route = useRoute()
 const id:any = route.params.id
-const { visible, canisterId, cycles } = toRefs(props)
+const { visible, canisterId,controllerId,type } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
 const formData = reactive({
-  canisterId: '',
-  amount: 0.1,
+  canisterId: canisterId.value,
+  controllerId: controllerId.value,
 });
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
@@ -81,15 +82,15 @@ const formRules = computed(() => {
   };
 });
 
-const handleTopUp = async() => {
-  console.log('handleTopUp',formData)
+const handleConfirm = async() => {
+  console.log('handleConfirm',formData)
   try {
     topLoading.value = true
     const params = {
       canisterId: formData.canisterId,
-      amount: formData.amount + ''
+      Controller: formData.controllerId
     }
-    const res = await apiRechargeCanister(id,params)
+    const res = await deleteController(params)
     topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
@@ -105,29 +106,12 @@ const handleTopUp = async() => {
   }
 }
 
-const showBuyCycles = () => {
-  emit('handleCancel')
-  emit('showBuyCycles')
-}
-
 const handleCancel = ()=>{
   emit('handleCancel')
 }
 
-const onChange = (newVal:string) => {
-
-}
-
-const getWalletInfo = async()=>{
-  const res = await apiWalletInfo(id)
-  walletCanisterId.value = res.data.canisterId
-  walletCyclesBalance.value = res.data.cyclesBalance
-}
-
 onMounted(async()=>{
   formData.canisterId = canisterId.value
-  // formData.amount = cycles.value
-  await getWalletInfo()
 })
 </script>
 <style scoped lang="less">

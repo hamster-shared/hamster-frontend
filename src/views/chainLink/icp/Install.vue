@@ -14,8 +14,12 @@
       </div>
       <div class="mt-[30px]">
         <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
-          <a-form-item name="Type" label="Type">
-            <a-input class="modal-input" v-model:value="formData.canisterId" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+          <a-form-item name="WasmType" label="WasmType" class="bgBox">
+            <a-select @change="onChange"  v-model:value="formData.WasmType">
+              <a-select-option value="contract">contract</a-select-option>
+              <a-select-option value="frontend">frontend</a-select-option>
+            </a-select>
+
           </a-form-item>
           <a-form-item name="file" label="Upload file">
 
@@ -26,32 +30,23 @@
                 <plus-outlined />
                 <span>Please drag and drop files here to upload</span>
               </div>
+
               <div class="ant-upload-text" v-if="fileUrl != null">
-                  {{fileUrl}}
+                <div>
+                  <div>{{fileUrl}}</div>
+                  <div class="loader" v-if="loading" />
+                </div>
+
+
               </div>
             </label>
-<!--            <a-upload-->
-<!--                :before-upload="handleBeforeUpload"-->
-<!--                :on-success="handleUploadSuccess"-->
-<!--                :on-error="handleUploadError"-->
-<!--                :show-upload-list="false"-->
-<!--            >-->
-<!--             <div>{{}}</div>-->
-<!--              <div >-->
-<!--&lt;!&ndash;                <loading-outlined v-if="loading"></loading-outlined>&ndash;&gt;-->
 
-<!--                <div class="ant-upload-text">-->
-<!--                  <plus-outlined />-->
-<!--                  <span>Please drag and drop files here to upload</span>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </a-upload>-->
 
           </a-form-item>
-          <a-form-item name="mode" label="Install mode">
-            <a-select @change="onChange">
-<!--              <a-select-option v-for="network in ecosystemDetailInfo.networkDetailInfoList" :key="network.code" :value="network.code">{{network.code}}</a-select-option> -->
-              <a-select-option value="">Upgrade</a-select-option>
+          <a-form-item name="mode" label="Install mode" class="bgBox">
+            <a-select @change="onChange"  v-model:value="formData.mode">
+              <a-select-option :value="1">Upgrade</a-select-option>
+              <a-select-option :value="2">Reinstall</a-select-option>
             </a-select>
           </a-form-item>
         </a-form>
@@ -68,6 +63,7 @@ import { message } from "ant-design-vue";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
+import {postInstall, uploadWasm} from "@/apis/icp";
 
 const props = defineProps({
   visible:{
@@ -78,10 +74,6 @@ const props = defineProps({
     type:String,
     default:''
   },
-  cycles:{
-    type:String,
-    default:''
-  }
 });
 const route = useRoute()
 const id = route.params.id
@@ -89,23 +81,25 @@ const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
 const formData = reactive({
-  canisterId: '',
-  amount: 0.1,
+  canisterId: canisterId.value,
+  WasmType: 'contract',
+  mode: 1,
 });
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
 const topLoading = ref(false)
+const loading = ref(false)
 const fileUrl = ref(null);
 
 
 
 const formRules = computed(() => {
 
-  const requiredRule = (message) => ({ required: true, trigger: 'change', message });
-
-  return {
-    amount: [requiredRule('Please enter Amount')],
-  };
+  // const requiredRule = (message) => ({ required: true, trigger: 'change', message });
+  //
+  // return {
+  //   amount: [requiredRule('Please enter Amount')],
+  // };
 });
 
 const handleTopUp = async() => {
@@ -114,9 +108,10 @@ const handleTopUp = async() => {
     topLoading.value = true
     const params = {
       canisterId: formData.canisterId,
-      amount: formData.amount + ''
+      WasmType: formData.WasmType,
+      mode: formData.mode
     }
-    const res = await apiRechargeCanister(id,params)
+    const res = await postInstall(params)
     topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
@@ -147,19 +142,38 @@ const onChange = (newVal) => {
 
 const uploadFileList = (e) =>{
   const { files } = e.target ;
-  console.log(files)
+  fileUrl.value = files[0].name
+
+  handleUpload(files[0])
 }
 
-const getWalletInfo = async()=>{
-  const res = await apiWalletInfo(id)
-  walletCanisterId.value = res.data.canisterId
-  walletCyclesBalance.value = res.data.cyclesBalance
+const handleUpload = async(file) =>{
+  loading.value = true;
+  try{
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    let rt = await uploadWasm (formData,canisterId.value);
+    console.log(rt)
+
+  }catch (e) {
+    console.error(e)
+  }finally {
+    loading.value = false;
+  }
 }
+
+// const getWalletInfo = async()=>{
+//   const res = await apiWalletInfo(id)
+//   walletCanisterId.value = res.data.canisterId
+//   walletCyclesBalance.value = res.data.cyclesBalance
+// }
 
 onMounted(async()=>{
   formData.canisterId = canisterId.value
   // formData.amount = cycles.value
-  await getWalletInfo()
+  // await getWalletInfo()
 })
 </script>
 <style scoped lang="less">
@@ -196,4 +210,25 @@ onMounted(async()=>{
   width: 100%;
 }
 
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: calc(80px / cos(45deg));
+  height: 6px;
+  background: repeating-linear-gradient(-45deg,#E2B578 0 15px,#E2B57800 0 20px) left/200% 100%;
+  animation: l3 2s infinite linear;
+  margin:10px auto 0;
+}
+@keyframes l3 {
+  100% {background-position:right}
+}
+
+</style>
+<style>
+.bgBox .ant-select-selection-item{
+  color: #000!important;
+
+}
+.bgBox .ant-select-single .ant-select-selector{
+  border-color: #EBEBEB!important;
+}
 </style>

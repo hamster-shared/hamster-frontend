@@ -15,19 +15,20 @@
       <div class="mt-[30px]">
         <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef" :rules="formRules">
           <a-form-item name="Controller ID" label="Controller ID">
-            <a-input class="modal-input" v-model:value="formData.canisterId" placeholder="Please enter Canister Name" allow-clear autocomplete="off" />
+            <a-input class="modal-input" v-model:value="formData.controllerId" placeholder="Please enter Controller Id" allow-clear autocomplete="off" />
           </a-form-item>
-
-          <a-form-item name="Scope" label="Scope">
-            <a-select @change="onChange">
-<!--              <a-select-option v-for="network in ecosystemDetailInfo.networkDetailInfoList" :key="network.code" :value="network.code">{{network.code}}</a-select-option> -->
-              <a-select-option value="">Read-Write</a-select-option>
+          <a-form-item name="Scope" label="Scope" class="bgBox">
+            <a-select v-model:value="scope">
+              <!--              <a-select-option v-for="network in ecosystemDetailInfo.networkDetailInfoList" :key="network.code" :value="network.code">{{network.code}}</a-select-option> -->
+              <a-select-option value="1">Read-Write</a-select-option>
             </a-select>
           </a-form-item>
+
         </a-form>
+
       </div>
       <div class="text-center mt-[32px]">
-        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Install</a-button>
+        <a-button :loading="topLoading" class="!w-[240px] !h-[43px] ml-[24px]" @click="handleTopUp">Add</a-button>
       </div>
     </div>
   </a-modal>
@@ -38,6 +39,7 @@ import { message } from "ant-design-vue";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { apiWalletInfo, apiRechargeCanister } from '@/apis/canister'
+import {addController} from "@/apis/icp";
 
 const props = defineProps({
   visible:{
@@ -59,10 +61,11 @@ const { visible, canisterId, cycles } = toRefs(props)
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
 const formData = reactive({
-  canisterId: '',
-  amount: 0.1,
+  controllerId: '',
+  scope: "1",
 });
 const walletCanisterId = ref()
+const scope = ref("1");
 const walletCyclesBalance = ref()
 const topLoading = ref(false)
 
@@ -70,31 +73,32 @@ const formRules = computed(() => {
 
   const requiredRule = (message: string) => ({ required: true, trigger: 'change', message });
 
-  return {
-    amount: [requiredRule('Please enter Amount')],
-  };
+  // return {
+  //   amount: [requiredRule('Please enter Amount')],
+  // };
 });
 
 const handleTopUp = async() => {
-  console.log('handleTopUp',formData)
+  console.log('handleTopUp',formData.controllerId,canisterId.value)
+
   try {
     topLoading.value = true
     const params = {
-      canisterId: formData.canisterId,
-      amount: formData.amount + ''
+      controller: formData.controllerId,
+      canisterId: canisterId.value
     }
-    const res = await apiRechargeCanister(id,params)
+    const res = await addController(params)
     topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
     emit('refreshCanister')
   } catch (error:any) {
     console.log('error:',error)
-    if(error.response.data.message.indexOf('out of cycles')!=-1){
-      emit('showBuyCycleMsg')
-    }else{
-      message.error(error.response.data.message)
-    }
+    // if(error.response.data.message.indexOf('out of cycles')!=-1){
+    //   emit('showBuyCycleMsg')
+    // }else{
+    //   message.error(error.response.data.message)
+    // }
     topLoading.value = false
   }
 }
@@ -108,20 +112,20 @@ const handleCancel = ()=>{
   emit('handleCancel')
 }
 
-const onChange = (newVal:string) => {
-
+const onChange = (e:any) => {
+    console.log(e)
 }
 
-const getWalletInfo = async()=>{
-  const res = await apiWalletInfo(id)
-  walletCanisterId.value = res.data.canisterId
-  walletCyclesBalance.value = res.data.cyclesBalance
-}
+// const getWalletInfo = async()=>{
+//   const res = await apiWalletInfo(id)
+//   walletCanisterId.value = res.data.canisterId
+//   walletCyclesBalance.value = res.data.cyclesBalance
+// }
 
 onMounted(async()=>{
-  formData.canisterId = canisterId.value
+
   // formData.amount = cycles.value
-  await getWalletInfo()
+  // await getWalletInfo()
 })
 </script>
 <style scoped lang="less">
@@ -158,4 +162,14 @@ onMounted(async()=>{
   width: 100%;
 }
 
+
+</style>
+<style>
+.bgBox .ant-select-selection-item{
+  color: #000!important;
+
+}
+.bgBox .ant-select-single .ant-select-selector{
+  border-color: #EBEBEB!important;
+}
 </style>

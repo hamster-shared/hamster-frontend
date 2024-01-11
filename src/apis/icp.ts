@@ -59,3 +59,49 @@ export function handleStatus (params:any){
         data:params,
     });
 }
+
+export function addController (params:any) {
+    return httpRequest({
+        url: `/api/icp/canister/add-controller`,
+        method: "post",
+        data:params,
+    });
+
+}
+export function addCycles (params:any) {
+    return httpRequest({
+        url: `/api/icp/canister/add-cycles`,
+        method: "post",
+        data:params,
+    });
+
+}
+
+export function postInstall (params:any) {
+    return httpRequest({
+        url: `/api/icp/canister/install`,
+        method: "post",
+        data:params,
+    });
+
+}
+
+export function uploadWasm (file:any,id:string) {
+    return httpRequest({
+        url: `/api/icp/canister/${id}/upload`,
+        method: "post",
+        data:file,
+        headers:{
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}
+
+export function deleteController (params:any) {
+    return httpRequest({
+        url: `/api/icp/canister/del-controller`,
+        method: "post",
+        data:params,
+    });
+
+}
