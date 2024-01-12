@@ -119,11 +119,7 @@ const handleTopUp = async() => {
     emit('refreshCanister')
   } catch (error) {
     console.log('error:',error)
-    if(error.response.data.message.indexOf('out of cycles')!=-1){
-      emit('showBuyCycleMsg')
-    }else{
-      message.error(error.response.data.message)
-    }
+    message.error(error.response.data.message)
     topLoading.value = false
   }
 }
