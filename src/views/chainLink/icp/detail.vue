@@ -7,7 +7,7 @@
     <div class="border border-solid border-[#EBEBEB] rounded-[12px] dark:border-[#434343] box30">
       <div class="flex justify-between">
         <div>
-          <div class="titleLft">Overview</div>
+          <div class="titleLft">Overview <span><a-spin :indicator="indicator" v-if="loadingAll" /></span></div>
           <div class="infoBox">
               <dl>
                 <dt>Canister ID:</dt>
@@ -30,7 +30,7 @@
                 <dd>
                   <img src="@/assets/icons/Running-1.svg" alt="">
                   <span>{{status}}</span>
-                  <span @click="changeStatus(status)" class="linkBox">{{status ==="Running"?"Stop":"Running" }}</span>
+                  <span v-if="!loading" @click="changeStatus(status)" class="linkBox">{{status ==="Running"?"Stop":"Running" }}</span>
                   <span class="loading" v-if="loading"><a-spin :indicator="indicator" /></span>
                 </dd>
               </dl>
@@ -81,8 +81,8 @@
         <template #bodyCell="{ column, record }"></template>
       </a-table>
     </div>
-    <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="InfoData?.cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister"></AddCycles>
-    <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false"></BuyCycles>
+    <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="InfoData?.cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister" :userId="$route.query.id"></AddCycles>
+    <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false" :userId="$route.query.id"></BuyCycles>
     <Install v-if="showInstall" :visible="showInstall" @handleCancel="showInstall = false" :canisterId="canisterId"></Install>
     <AddControllers v-if="showAddControllers" :canisterId="canisterId" :visible="showAddControllers" @handleCancel="showAddControllers = false" @refreshCanister="refreshCanister"></AddControllers>
     <DeleteTips v-if="deleteTips" :visible="deleteTips" @handleCancel="deleteTips = false" :type="type" :canisterId="canisterId" :controllerId="controllerId" @refreshCanister="refreshCanister"></DeleteTips>
@@ -109,6 +109,7 @@ const InfoData = ref({});
 const status = ref("")
 const type = ref("");
 const loading = ref(false);
+const loadingAll = ref(false);
 
 import { h } from 'vue';
 const indicator = h(LoadingOutlined, {
@@ -278,12 +279,13 @@ const handleController = () =>{
 }
 
 const getOverview = async () =>{
+  loadingAll.value = true;
   try {
     const { data } = await getIcpDetail(route.query.canisterId)
     InfoData.value = data;
     status.value = data.status;
     loading.value = false;
-
+    loadingAll.value = false;
   } catch(err:any) {
     console.log('InfoData:', err)
   }

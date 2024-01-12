@@ -61,8 +61,8 @@
 
       <CustomMsg v-if="showMsg" :showMsg="showMsg" :msgType="msgType" :msgParam="msgParam" @handleCancel="showMsg = false" @showBuyCycle="showBuyCycle = true"></CustomMsg>
 
-      <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister" ></AddCycles>
-      <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false" :key="Math.random()"></BuyCycles>
+      <AddCycles v-if="showAddCycle" :visible="showAddCycle" :canisterId="canisterId" :cycles="cycles" @handleCancel="cancelAddCycle" @showBuyCycles="showBuyCycle=true" @showBuyCycleMsg="showBuyCycleMsg" @refreshCanister="refreshCanister"  :userId="accountId"></AddCycles>
+      <BuyCycles v-if="showBuyCycle" :visible="showBuyCycle" @handleCancel="showBuyCycle = false" :key="Math.random()" :userId="accountId"></BuyCycles>
       <AddCanister v-if="showAdd" :visible="showAdd" @handleCancel="showAdd = false"></AddCanister>
       <DeployIC v-if="accountIdFlag" :visible="showDeployIC" @CancelDeployIC="CancelDeployIC" @showDfxFn="showDfxFn" :detailId="accountId" :accountIdFlag="accountIdFlag" :walletIdFlag="walletIdFlag"/>
     </div>
@@ -204,19 +204,6 @@ const CancelDeployIC = () =>{
   showDeployIC.value = false;
 }
 
-
-const addIdToCurrentUrl = (id:string) => {
-  const url = new URL(window.location.href);
-  const searchParams = new URLSearchParams(url.search);
-
-  searchParams.set('id', id);
-
-  url.search = searchParams.toString();
-  window.history.replaceState(null, '', url.toString());
-};
-
-
-
 const getAccount = async() =>{
 
 
@@ -236,7 +223,6 @@ const getAccount = async() =>{
       }
       showDeployIC.value = true
     }
-    addIdToCurrentUrl(id);
 
   } catch (err: any) {
     console.error(err)

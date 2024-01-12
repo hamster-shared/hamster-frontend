@@ -84,9 +84,10 @@ const handleAdd = async() =>{
     topLoading.value = false
     message.success(res.message)
     emit('handleCancel')
-    // emit('refreshCanister')
+    emit('refreshCanister')
   } catch (error:any) {
     console.log('error:',error)
+      message.error(error.response.data.message)
     // if(error.response.data.message.indexOf('out of cycles')!=-1){
     //   emit('showBuyCycleMsg')
     // }else{

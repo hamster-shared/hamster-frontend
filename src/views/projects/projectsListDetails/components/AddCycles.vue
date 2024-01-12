@@ -60,11 +60,17 @@ const props = defineProps({
   cycles:{
     type:String,
     default:''
+  },
+  userId:{
+    type:String,
+    default:''
   }
 });
+const { visible, canisterId, cycles,userId } = toRefs(props);
+
 const route = useRoute()
-const id:any = route.query.id || route.params.id
-const { visible, canisterId, cycles } = toRefs(props)
+const id:any = route.params.id || userId.value
+
 const emit = defineEmits(["handleCancel", 'showBuyCycles', 'showBuyCycleMsg', 'refreshCanister'])
 const formRef = ref();
 const formData = reactive({

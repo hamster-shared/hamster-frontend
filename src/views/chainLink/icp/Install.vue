@@ -36,18 +36,14 @@
                   <div>{{fileUrl}}</div>
                   <div class="loader" v-if="loading" />
                 </div>
-
-
               </div>
             </label>
-
-
           </a-form-item>
           <a-form-item name="mode" label="Install mode" class="bgBox">
             <a-select @change="onChange"  v-model:value="formData.mode">
-              <a-select-option :value="0">Install</a-select-option>
-              <a-select-option :value="1">Upgrade</a-select-option>
-              <a-select-option :value="2">Reinstall</a-select-option>
+              <a-select-option :value="1">Install</a-select-option>
+              <a-select-option :value="2">Upgrade</a-select-option>
+              <a-select-option :value="3">Reinstall</a-select-option>
             </a-select>
           </a-form-item>
         </a-form>
@@ -84,8 +80,10 @@ const formRef = ref();
 const formData = reactive({
   canisterId: canisterId.value,
   WasmType: 'contract',
-  mode: 0,
+  mode: 1,
 });
+
+
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
 const topLoading = ref(false)
@@ -104,7 +102,9 @@ const formRules = computed(() => {
 });
 
 const handleTopUp = async() => {
-  console.log('handleTopUp',formData)
+
+  // 1: install 2: upgrade, 3: reinstall
+
   try {
     topLoading.value = true
     const params = {
