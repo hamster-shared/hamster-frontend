@@ -31,6 +31,7 @@
                   <img src="@/assets/icons/Running-1.svg" alt="">
                   <span>{{status}}</span>
                   <span @click="changeStatus(status)" class="linkBox">{{status ==="Running"?"Stop":"Running" }}</span>
+                  <span class="loading" v-if="loading"><a-spin :indicator="indicator" /></span>
                 </dd>
               </dl>
               <dl>
@@ -98,6 +99,7 @@ import Install from "@/views/chainLink/icp/Install.vue";
 import AddControllers from "@/views/chainLink/icp/addControllers.vue";
 import DeleteTips from "@/views/chainLink/icp/deleteTips.vue";
 import {getControllers, getCs, getIcpDetail, handleStatus} from "@/apis/icp";
+import { LoadingOutlined } from '@ant-design/icons-vue';
 
 const showBuyCycle = ref(false);
 const showAddCycle = ref(false);
@@ -105,7 +107,16 @@ const showInstall = ref(false);
 const deleteTips = ref(false);
 const InfoData = ref({});
 const status = ref("")
-const type = ref("")
+const type = ref("");
+const loading = ref(false);
+
+import { h } from 'vue';
+const indicator = h(LoadingOutlined, {
+  style: {
+    fontSize: '16px',
+  },
+  spin: true,
+});
 
 const showAddControllers = ref(false);
 const canisterId = ref();
@@ -121,6 +132,11 @@ const csColumns = reactive([
     title: 'Cycles',
     dataIndex: 'cycles',
     key: 'cycles',
+  },
+  {
+    title: 'Updated At',
+    dataIndex: 'updateAt',
+    key: 'updateAt',
   },
 ])
 const nodeColumns = reactive([
@@ -216,10 +232,10 @@ const getCsData = async(page:number = pagination.current, size:number = paginati
     const { data } = await getCs({ page, size },route.query.canisterId)
     console.log(data)
 
-    pagination.total = data.total
-    pagination.current = data.page
-    pagination.pageSize = data.pageSize
-    nodeListData.value = data.data
+    paginationCs.total = data.total
+    paginationCs.current = data.page
+    paginationCs.pageSize = data.pageSize
+    csList.value = data.data
 
   } catch(err:any) {
     console.log('tableDataErr:', err)
@@ -232,7 +248,8 @@ const showBuyCycleMsg = ()=>{
 }
 
 const changeStatus = async(status:string) =>{
-  const st = status !=="Running"? 1:2
+  const st = status !=="Running"? 1:2;
+  loading.value = true;
 
   // 1: running,2: stopped
   try {
@@ -265,6 +282,7 @@ const getOverview = async () =>{
     const { data } = await getIcpDetail(route.query.canisterId)
     InfoData.value = data;
     status.value = data.status;
+    loading.value = false;
 
   } catch(err:any) {
     console.log('InfoData:', err)
@@ -321,6 +339,7 @@ onMounted(() => {
 </script>
 <style lang="less">
 .ethereum-container {
+
 @apply dark:bg-[#36322D];
   /* display: inline-block; */
   /* // height: 326px; */
@@ -348,6 +367,9 @@ onMounted(() => {
       padding-left: 5px;
     }
   }
+}
+.loading{
+  margin-left: 10px;
 }
 .titleLft{
   font-size: 24px;

@@ -6,7 +6,9 @@
       </div>
       <div class="border border-solid border-[#EBEBEB] rounded-[12px] dark:border-[#434343] box30">
         <div class="flex justify-between">
-          <div class="titleLft">Overview</div>
+          <div class="titleLft">Overview
+            <span class="loading" v-if="loading"><a-spin :indicator="indicator" /></span>
+          </div>
           <a-button type="primary" @click="handleBuy" class="rhtBtn">Buy Cycles</a-button>
         </div>
 
@@ -78,7 +80,17 @@ import {getCanisterList, getCanisterOverview} from "@/apis/icp";
 import AddCycles from "@/views/projects/projectsListDetails/components/AddCycles.vue";
 import CustomMsg from "@/components/CustomMsg.vue";
 import {getUserInfo} from "@/apis/login";
-import {message} from "ant-design-vue";
+import { LoadingOutlined } from '@ant-design/icons-vue';
+
+const loading = ref(false);
+
+import { h } from 'vue';
+const indicator = h(LoadingOutlined, {
+  style: {
+    fontSize: '20px',
+  },
+  spin: true,
+});
 
 
 const canister_over = ref(0);
@@ -257,14 +269,22 @@ const showBuyCycleMsg = ()=>{
 }
 
 const getOverView = async() =>{
-  let rt = await getCanisterOverview();
+  loading.value = true;
+  try{
+    let rt = await getCanisterOverview();
 
-  const {canisters,projects,cycles,icps } = rt.data;
-  console.log(canisters,projects,cycles,icps)
-  canister_over.value = canisters;
-  pro_over.value = projects;
-  cycles_over.value = Number(cycles).toFixed(2);
-  icp_over.value = Number(icps).toFixed(4);
+    const {canisters,projects,cycles,icps } = rt.data;
+    console.log(canisters,projects,cycles,icps)
+    canister_over.value = canisters;
+    pro_over.value = projects;
+    cycles_over.value = Number(cycles).toFixed(2);
+    icp_over.value = Number(icps).toFixed(4);
+    loading.value = false;
+
+  }catch (e) {
+    console.error("getOverView",e)
+  }
+
 
 }
 

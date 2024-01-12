@@ -45,6 +45,7 @@
           </a-form-item>
           <a-form-item name="mode" label="Install mode" class="bgBox">
             <a-select @change="onChange"  v-model:value="formData.mode">
+              <a-select-option :value="0">Install</a-select-option>
               <a-select-option :value="1">Upgrade</a-select-option>
               <a-select-option :value="2">Reinstall</a-select-option>
             </a-select>
@@ -83,7 +84,7 @@ const formRef = ref();
 const formData = reactive({
   canisterId: canisterId.value,
   WasmType: 'contract',
-  mode: 1,
+  mode: 0,
 });
 const walletCanisterId = ref()
 const walletCyclesBalance = ref()
