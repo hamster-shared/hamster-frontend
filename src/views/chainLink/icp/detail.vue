@@ -135,6 +135,11 @@ const csColumns = reactive([
     key: 'cycles',
   },
   {
+    title: 'Module Hash',
+    dataIndex: 'moduleHash',
+    key: 'moduleHash',
+  },
+  {
     title: 'Updated At',
     dataIndex: 'updateAt',
     key: 'updateAt',
