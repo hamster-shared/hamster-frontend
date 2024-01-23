@@ -134,7 +134,10 @@ const onClickConnect = async () => {
   const network = walletStates[0].chains[0].id;
   const address = walletStates[0].accounts[0].address;
   console.log('~~~~~~~~', provider, 1111, network, 2222, address)
-  contractApi.initContractApi(provider, network, address);
+  if (Object.keys(provider).length > 0) {
+    contractApi.initContractApi(provider, network, address);
+  }
+  
   // 进入页面即要求连接钱包
   // const walletStatesOrNull = await autoConnectSavedWallet()
   // if (walletStatesOrNull == null) {
