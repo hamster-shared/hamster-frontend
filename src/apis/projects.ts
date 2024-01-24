@@ -6,8 +6,11 @@ interface AddProjectsParams {
   type: number;
   templateOwner: string;
   frameType: string;
+  deployType: string,
   repoOwner: string;
   templateRepo: string;
+  templateUrl: string,
+  labelDisplay: string,
   userId: number;
   gistId: string;
   defaultFile: string
@@ -437,5 +440,40 @@ export function apiNodeTemplateDetail(id:string) {
   return httpRequest({
     url: `/api/chain-templates/${id}`,
     method: "get",
+  });
+}
+
+// 检查是否按转读写install
+export function apiGithubInstallCheck() {
+  return httpRequest({
+    url: `/api/github/rw/install/check`,
+    method: "get",
+  });
+}
+
+// 读写app的安装用户列表
+export function apiGithubUsersInstallations() {
+  return httpRequest({
+    url: `/api/github/rw/users/installations`,
+    method: "get",
+  });
+}
+
+
+// 读写install app
+export function appGithubInstall(code:string) {
+  return httpRequest({
+    url: `/api/github/rw/install`,
+    method: "post",
+    data:{code:code}
+  });
+}
+
+// 创建项目
+export function apiCreateProjects(params: AddProjectsParams) {
+  return httpRequest({
+    url: "/api/v2/projects",
+    method: "post",
+    data: params,
   });
 }

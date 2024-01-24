@@ -20,7 +20,6 @@ const getUserInfoData = async () => {
   console.log(data, 'data')
   if (data) {
     getMetaMaskUserInfo(data.userId)
-
   }
 }
 
@@ -32,7 +31,6 @@ const getMetaMaskUserInfo = async (id: string) => {
     console.log(data, 'connect gIthub后更新的userInfo， 有username吗？')
     window.close();
     window.opener.location.reload();
-
   }
 }
 
@@ -57,7 +55,6 @@ onMounted(() => {
   let token = localStorage.getItem('token') || '';
   if (token) {
     let loginData = JSON.parse(decodeURIComponent(escape(window.atob(token.split('.')[1]))));
-    console.log(loginData, 'connectGithub回调页')
     loginType.value = loginData.loginType;
     if (loginType.value == 2) {
       initGithubInstallAuth()

@@ -2,7 +2,36 @@
   <bread-crumb :routes="breadCrumbInfo" />
   <div :class="theme.themeValue === 'dark' ? 'dark-css' : 'white-css'"
     class="filecoin-detail mt-4 rounded-[12px] dark:bg-[#1D1C1A] bg-[#FFFFFF] p-4 mt-[32px]">
-    <a-button type="primary" class="download-btn" @click="showCreateEvm">Download</a-button>
+    <div class="download-btn">
+      <a-popover title="" class="mt-4 mr-4" placement="bottom">
+        <template #content>
+          <div v-if="isGithubInstallCheck">
+            <div class="text-[#979797] text-[14px] mb-[10px]">Select a github account to create</div>
+            <div v-for="item in githubUsersInstallationsList" :key="item.id"
+              class="flex text-[16px] mb-[10px] cursor-pointer hover:text-[#E2B578] items-center"
+              @click="showCreateEvm(item)">
+              <img :src="item.avatarUrl" class="w-[38px] h-[38px] rounded-[50%] mr-[10px]" />
+              <div>{{ item.name }}</div>
+            </div>
+            <NoData v-if="githubUsersInstallationsList.length === 0"></NoData>
+            <div class="cursor-pointer hover:text-[#E2B578]" @click="addGithubAccount">
+              <plus-outlined />
+              Add Github Account
+            </div>
+          </div>
+
+          <div v-else class="max-w-[150px] text-center">
+            <p class="text-left">Install the Github application for getting permission to create code repository
+            </p>
+            <a-button type="primary" @click="intsallGithub">Install</a-button>
+          </div>
+        </template>
+        <a-button type="primary w-[120px]" :loading="createProjectLoading">
+          Create
+        </a-button>
+      </a-popover>
+      <!-- <a-button type="primary" class="" @click="showCreateEvm">Download</a-button> -->
+    </div>
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="Solidity" tab="Solidity">
         <div class="flex">
@@ -65,10 +94,14 @@ import { ref, computed, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router';
 import { useThemeStore } from "@/stores/useTheme";
 import CodeEditor from '@/components/CodeEditor.vue';
-import { apiProjectsCode, apiDupProjectName } from "@/apis/projects";
-import { message } from 'ant-design-vue'
+import { apiProjectsCode, apiDupProjectName, apiGithubInstallCheck, apiGithubUsersInstallations } from "@/apis/projects";
+import { message } from 'ant-design-vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
 import { getFileCoinContent } from '@/utils/fileCoinUtil';
 import type { fileCoinContent } from '@/utils/fileCoinUtil';
+import { Item } from "ant-design-vue/lib/menu";
+import NoData from "@/components/NoData.vue";
+
 const theme = useThemeStore()
 const activeKey = ref('Solidity')
 const createCodeVisible = ref(false)
@@ -85,6 +118,8 @@ const featuresList = ref([
   { name: 'updateActivationStatus', label: 'updateActivationStatus', checked: false },
   { name: 'balance', label: 'balance', checked: false },
 ]);
+const gitUrl = ref(import.meta.env.VITE_HAMSTER_RW_URL)
+const apiUrl = ref(import.meta.env.VITE_HAMSTER_URL);
 const makeDealBool = ref(false)
 const getDealBool = ref(false)
 const handleFileCoinBool = ref(false)
@@ -96,16 +131,22 @@ const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
   name: '',
 });
+const selectedInstallationsName = ref('');
 const breadCrumbInfo = ref<any>([])
+const isGithubInstallCheck = ref(false);
+const githubUsersInstallationsList = ref([]);
 
 // 弹出创建evm框
-const showCreateEvm = () => {
+const showCreateEvm = (item: any) => {
+  selectedInstallationsName.value = item.name;
   if (!name.value.trim()) {
     message.error('Please input the Contract Name!')
     return
   }
   createCodeVisible.value = true
 }
+
+
 let reg = /^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/
 const formRules = computed(() => {
 
@@ -137,6 +178,7 @@ const formRules = computed(() => {
     name: [requiredRule('Please enter name!'), { validator: checkDupName, trigger: "change" }],
   };
 });
+
 // 表单数据校验
 const handleOk = async () => {
   await formRef.value.validate();
@@ -146,6 +188,33 @@ const handleOk = async () => {
 const handleCancel = () => {
   createProjectLoading.value = false
   formRef.value.resetFields()
+}
+
+const checkInstallGithub = async () => {
+  const { data } = await apiGithubInstallCheck();
+  isGithubInstallCheck.value = data
+  if (data) {
+    getGithubUsersInstallations();
+  }
+}
+
+const getGithubUsersInstallations = async () => {
+  const { data } = await apiGithubUsersInstallations()
+  githubUsersInstallationsList.value = data
+}
+
+const addGithubAccount = () => {
+  const state = new Date().getTime();
+  const url = `${gitUrl.value}?state=${state}&redirect_uri=${apiUrl.value}/projects/installations`;
+  const myWindow = window.open(url, 'select_target', 'modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700s')
+}
+
+
+const intsallGithub = () => {
+  const state = new Date().getTime();
+  const url = `${gitUrl.value}?state=${state}`;
+  const myWindow = window.open(url, 'select_target', `modal=yes,toolbar=no,titlebar=no,menuba=no,location=no,top=100,left=500,width=800,height=700`)
+  myWindow?.focus()
 }
 
 // 创建evm合约
@@ -160,11 +229,12 @@ const createProject = async () => {
       frameType: JSON.parse(createProjectTemp)?.frameType - 0,
       fileName: name.value,
       content: content.value,
+      repoOwner: selectedInstallationsName.value,
     }
     const res = await apiProjectsCode(params);
     message.success(res.message);
     window.localStorage.setItem("projectActiveKey", JSON.parse(createProjectTemp)?.type);
-    router.push("/projects");
+    router.push(`/projects/templates/integrated/${res.data}`);
   } catch (error: any) {
     console.log("erro:", error)
     message.error(error.response.data.message);
@@ -212,6 +282,7 @@ const balanceFn = async (bool: boolean) => {
 }
 onMounted(async () => {
   await getContent()
+  checkInstallGithub()
   breadCrumbInfo.value = [
     {
       breadcrumbName: 'Template Market',
@@ -232,7 +303,7 @@ onMounted(async () => {
 .download-btn {
   position: absolute;
   right: 20px;
-  top: 24px;
+  top: 0px;
   z-index: 99;
 }
 

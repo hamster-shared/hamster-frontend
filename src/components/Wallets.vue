@@ -6,7 +6,7 @@ import { useOnboard } from '@web3-onboard/vue'
 import { useWalletAddress } from "@/stores/useWalletAddress";
 import walletTitle from '@/assets/icons/logo-white.svg'
 import { useContractApi } from '@/stores/chainlink';
-import {saveWallet} from '@/apis/login'
+import { saveWallet } from '@/apis/login'
 
 const walletAddress = useWalletAddress()
 
@@ -116,7 +116,8 @@ async function autoConnectSavedWallet(): Promise<WalletState[] | null> {
 
 onBeforeMount(async () => {
   console.log('是否加载了钱包组件~~~~')
-  // // 进入页面即要求连接钱包
+
+  // 进入页面即要求连接钱包
   // const walletStatesOrNull = await autoConnectSavedWallet()
   // if (walletStatesOrNull !== null) {
   //   walletStates = walletStatesOrNull
@@ -147,8 +148,8 @@ const onClickConnect = async () => {
     setWalletAccount(walletStates[0]);
     // 后端保存钱包地址
 
-    for(let account of walletStates[0].accounts){
-      saveWallet(account.address).then(() => {})
+    for (let account of walletStates[0].accounts) {
+      saveWallet(account.address).then(() => { })
     }
   }
 }
@@ -165,7 +166,7 @@ const setWalletAccount = async (walletState: { accounts: any; }) => {
   }
 }
 const onClickDisconnect = async () => {
-  console.log('断开了钱包链接',connectedWallet.value)
+  console.log('断开了钱包链接', connectedWallet.value)
   const { provider, label } = connectedWallet.value || {}
   if (provider && label) {
     disconnectWallet({ label })

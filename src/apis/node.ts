@@ -9,6 +9,7 @@ interface AddParams {
   buyTime: number;
   nodeName: string;
   amount: number;
+  payType: number,
 }
 
 interface GetNodeParams {
