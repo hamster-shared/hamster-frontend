@@ -604,12 +604,13 @@ const closeDeployContractsNumberModal = ()=>{
 // 执行部署引擎
 const goDeploy = ()=>{
   // deployArrange.value 引擎需要用到的大JSON字符串
-
+  closeDeployContractsNumberModal();
   // 引擎执行完成后进行跳转
   router.push(`/projects/projectsDeploymentDetail?id=${contractInfo.value.id}&version=${baseInfo.value.selectedVersion}&executeId=${executeId.value}`)
 }
 
 const deployManyContract = async () => {
+  const walletAccount = window.localStorage.getItem("walletAccount");
   // 先获取当前小狐狸的chainId，与选中的进行对比
   const nowChainId = await web3.eth.getChainId();
   // 点击部署之前需要判断改动的表单的数据是否保存
@@ -618,6 +619,8 @@ const deployManyContract = async () => {
     return false;
   } else if(chainId.value != `0x${nowChainId.toString(16)}`) {
     changeNetwork()
+  } else if (walletAccount === undefined || walletAccount === null) {
+    connectWallet();
   } else {
     // 获取可编排的合约
     await getProjectsContractName();
