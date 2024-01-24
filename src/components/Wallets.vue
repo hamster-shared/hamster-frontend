@@ -133,11 +133,10 @@ const onClickConnect = async () => {
   const provider = walletStates[0].provider;
   const network = walletStates[0].chains[0].id;
   const address = walletStates[0].accounts[0].address;
-  console.log('~~~~~~~~', provider, 1111, network, 2222, address)
+  console.log('~~~~~~~~',provider,1111,network,2222,address)
   if (Object.keys(provider).length > 0) {
     contractApi.initContractApi(provider, network, address);
   }
-  
   // 进入页面即要求连接钱包
   // const walletStatesOrNull = await autoConnectSavedWallet()
   // if (walletStatesOrNull == null) {
@@ -181,8 +180,10 @@ watch(() => connectedWallet.value, (newVal, oldVal) => {
     const provider = newVal.provider;
     const network = newVal.chains[0].id;
     const address = newVal.accounts[0].address;
-    console.log('~~~~~~~~', provider, 1111, network, 2222, address)
-    contractApi.initContractApi(provider, network, address);
+    console.log('~~~~~~~~',provider,1111,network,2222,address)
+    if (Object.keys(provider).length > 0) {
+      contractApi.initContractApi(provider, network, address);
+    }
   }
 }, { deep: true, immediate: true });
 //暴露子组件的方法或者数据
