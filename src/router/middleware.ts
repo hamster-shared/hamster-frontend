@@ -114,6 +114,37 @@ const middlewareRoute = [
         ]
       },
       {
+        path: "/middleware/dashboard/icp",
+        name: "Internet Computer",
+        redirect: "/middleware/dashboard/icp",
+        meta: {
+          isShow: true,
+        },
+        children: [
+          {
+            path: "/middleware/dashboard/icp",
+            name: "Internet Computer",
+            component: () => import('@/views/chainLink/icp/index.vue'),
+            meta: {
+              sidebarMap: ['Internet Computer'],
+            }
+          },
+        //   {
+        //     path: "/middleware/dashboard/node/create",
+        //     name: "createNode",
+        //     component: () => import('@/views/chainLink/Node/createNode.vue'),
+        //     meta: {
+        //       sidebarMap: ['Node'],
+        //     }
+        //   },
+          {
+            path: "/middleware/dashboard/icp/detail",
+            name: "InternetComputerdetail",
+            component: () => import('@/views/chainLink/icp/detail.vue'),
+          },
+        ]
+      },
+      {
         path: "/middleware/dashboard/node",
         name: "Node",
         redirect: "/middleware/dashboard/node",
