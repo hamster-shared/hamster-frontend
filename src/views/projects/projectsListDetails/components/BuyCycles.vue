@@ -70,20 +70,27 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, toRefs} from 'vue';
 import { useRoute } from 'vue-router';
 import { copyToClipboard } from "@/utils/tool";
 import { apiAccountInfo, apiWalletInfo, apiRechargeWallet } from '@/apis/canister'
 import { message } from 'ant-design-vue';
 
-const route = useRoute()
-const id:any = route.params.id
+
+
 const props = defineProps({
   visible:{
       type:Boolean,
       default:false
+  },
+  userId:{
+    type:Number,
+    default: null
   }
 });
+const { userId } = toRefs(props)
+const route = useRoute()
+const id:any =  route.params.id || userId.value ;
 const emit = defineEmits(["handleCancel"])
 const currStep = ref(0);
 const accountId = ref()

@@ -3,25 +3,31 @@
     <div class="text-[24px] font-bold mb-[25px]">Your Orders</div>
     <div class="dark:bg-[#1D1C1A] rounded-[12px] p-[32px]">
       <div class="mb-[25px] flex">
-        <a-range-picker format="YYYY-MM-DD" @change="handleSearchDate" class="w-1/2" v-model:value="searchData.orderDate" />
-        <a-input-search @search="getTableData()" class="ml-[30px]" v-model:value="searchData.query" autocomplete="off" placeholder="Search here..."></a-input-search>
+        <a-range-picker format="YYYY-MM-DD" @change="handleSearchDate" class="w-1/2"
+          v-model:value="searchData.orderDate" />
+        <a-input-search @search="getTableData()" class="ml-[30px]" v-model:value="searchData.query" autocomplete="off"
+          placeholder="Search here..."></a-input-search>
       </div>
       <a-table :dataSource="orderListData" :columns="orderColumns" :pagination="pagination" style="width:100%">
-        <template #bodyCell="{ column, record }">
+        <template #bodyCell="{ column, record, text }">
           <template v-if="column.dataIndex === 'orderId'">
-            <label>{{record.orderId}} <svg-icon name="copy" size="18" @click="copyToClipboard(record.orderId)" /></label>
+            <label>{{ record.orderId }} <svg-icon name="copy" size="18"
+                @click="copyToClipboard(record.orderId)" /></label>
           </template>
           <template v-if="column.dataIndex === 'resourceType'">
-            <label>{{record.nodeName}} | {{record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))}}<br/>
-              {{record.resourceType.substring(record.resourceType.lastIndexOf("|")+1)}} | {{record.buyTime}} Month</label>
+            <label>{{ record.nodeName }} | {{ record.resourceType.substring(0, record.resourceType.lastIndexOf("|"))
+            }}<br />
+              {{ record.resourceType.substring(record.resourceType.lastIndexOf("|") + 1) }} | {{ record.buyTime }}
+              Month</label>
           </template>
           <template v-if="column.dataIndex === 'amount'">
-            <label>{{record.amount}} USDT <br/>= ${{record.amount}}</label>
+            <label v-if="record.payType == 1">{{ record.amount }} USDT <br />= ${{ record.amount }}</label>
+            <label v-else>{{ (record.amount * 7).toFixed(2) }} RMB <br />= ${{ record.amount }}</label>
           </template>
           <template v-if="column.key === 'action'">
             <label v-if="record.status === 1">
-              <label class="cursor-pointer open-link-css" @click="orderPay(record.id)">Pay</label>
-              <label class="cursor-pointer open-link-css ml-4" @click="orderCancel(record.id)">Cancel</label>
+              <label class="cursor-pointer open-link-css" @click="orderPay(record.id, record.payType)">Pay</label>
+              <label class="ml-4 cursor-pointer open-link-css" @click="orderCancel(record.id)">Cancel</label>
             </label>
             <label v-else>-</label>
           </template>
@@ -29,7 +35,7 @@
       </a-table>
     </div>
   </div>
-    
+
   <a-modal v-model:visible="cancelModal" :footer="null">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Cancel</div>
     <div>Are you sure cancel this order?</div>
@@ -41,14 +47,16 @@
 </template>
 <script setup lang="ts">
 import { onMounted, reactive, ref, onUnmounted } from 'vue';
+import { useRouter } from "vue-router";
 import { formatDateToLocale } from '@/utils/dateUtil';
 import { copyToClipboard } from '@/utils/tool'
-import { OrderStatusEnum ,OrderTypeEnum } from "@/enums/statusEnum";
+import { OrderStatusEnum, OrderTypeEnum } from "@/enums/statusEnum";
 import { apiGetOrderList } from "@/apis/node";
 import { apiCloseOrder } from "@/apis/chainlink";
 import { message } from 'ant-design-vue';
 import io from "socket.io-client";
 
+const router = useRouter();
 const cancelModal = ref(false);
 const loading = ref(false);
 const cancelId = ref();
@@ -63,23 +71,23 @@ const socket = io('/list');
 socket.on("connect", () => {
   console.log('connect success');
 });
-socket.on("connect_error", (err:any) => {
-  console.log('pay connect failed ',err);
+socket.on("connect_error", (err: any) => {
+  console.log('pay connect failed ', err);
 });
-socket.on('order_result', (data:any)=>{
-    console.log(data);
-    // 无论成功失败都需要刷新订单列表
-    if(data==2 || data==3){
-      // 支付成功
-      getTableData()
-    }
+socket.on('order_result', (data: any) => {
+  console.log(data);
+  // 无论成功失败都需要刷新订单列表
+  if (data == 2 || data == 3) {
+    // 支付成功
+    getTableData()
+  }
 });
 const orderColumns = reactive([
   {
     title: 'Order Time',
     dataIndex: 'orderTime',
     key: 'orderTime',
-    customRender: ({ text: date }:any) => formatDateToLocale(date.Time).format("YYYY/MM/DD HH:mm:ss"),
+    customRender: ({ text: date }: any) => formatDateToLocale(date.Time).format("YYYY/MM/DD HH:mm:ss"),
   },
   {
     title: 'Order ID',
@@ -90,7 +98,7 @@ const orderColumns = reactive([
     title: 'Order Type',
     dataIndex: 'orderType',
     key: 'orderType',
-    customRender: ({text}:any) => `${OrderTypeEnum[text]}`,
+    customRender: ({ text }: any) => `${OrderTypeEnum[text]}`,
   },
   {
     title: 'Resource Type',
@@ -101,7 +109,7 @@ const orderColumns = reactive([
     title: 'Order Status',
     dataIndex: 'status',
     key: 'status',
-    customRender: ({text}:any) => `${OrderStatusEnum[text]}`,
+    customRender: ({ text }: any) => `${OrderStatusEnum[text]}`,
   },
   {
     title: 'Chain',
@@ -141,7 +149,7 @@ const pagination = reactive({
     getTableData(current, pagination.pageSize)
   },
 });
-const getTableData = async(page:number = pagination.current, size:number = pagination.pageSize) => {
+const getTableData = async (page: number = pagination.current, size: number = pagination.pageSize) => {
 
   const params = {
     page: page,
@@ -152,13 +160,13 @@ const getTableData = async(page:number = pagination.current, size:number = pagin
   }
   try {
     const { data } = await apiGetOrderList(params)
-    
+
     pagination.total = data.total
     pagination.current = data.page
     pagination.pageSize = data.pageSize
     orderListData.value = data.data
-    
-  } catch(err:any) {
+
+  } catch (err: any) {
     console.log('tableDataErr:', err)
   }
 }
@@ -167,9 +175,15 @@ const handleSearchDate = (value: any, dateString: any[]) => {
   searchData.value['X-End'] = dateString[1];
   getTableData()
 }
-const orderPay = (id: number) => {
-  socket.emit('order_status_list',id)
-  window.open('/middleware/pay?id='+ id)
+const orderPay = (id: number, payType: any) => {
+  socket.emit('order_status_list', id)
+  if (payType == 1) {
+    window.open('/middleware/pay?id=' + id)
+  } else {
+    router.push(`/middleware/payR?id=${id}`)
+    // window.open('/middleware/payR?id=' + id)
+  }
+
 }
 const orderCancel = (id: number) => {
   cancelId.value = id;
@@ -183,20 +197,19 @@ const orderCancelContent = async () => {
       getTableData();
       message.success(res.message);
     }
-  } catch(err:any) {
+  } catch (err: any) {
     message.error(err.response.data.message);
   }
 }
 onMounted(() => {
   getTableData();
 })
-onUnmounted(()=>{
+onUnmounted(() => {
   socket.close()
 })
 </script>
 <style lang="less">
-
-.svg-icon{
+.svg-icon {
   color: #E2B578;
 }
 </style>

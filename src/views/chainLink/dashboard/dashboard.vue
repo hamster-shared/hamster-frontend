@@ -16,6 +16,36 @@
             <span @click="goRPC">View more</span>
           </div>
         </div>
+
+        <div v-else-if="item === 'Internet Computer'">
+          <div v-if="JSON.stringify(icpInfo)=='{}'">
+            <div class="text-center">
+              <img src="@/assets/images/cl-noData-block.png" class="w-[128px] h-[128px] hidden dark:inline-block" />
+              <img src="@/assets/images/cl-noData-white.jpg" class="w-[128px] h-[128px] dark:hidden" />
+            </div>
+
+<!--            <div class="text-center mt-[12px] dark:text-[#8A8A8A] text-[#73706E]">The node has not been created yet</div>-->
+            <div class="text-center mt-[10px] open-link-css cursor-pointer" @click="goICP()">Add Canister</div>
+          </div>
+          <div v-else>
+<!--            <span class="open-link-css cursor-pointer node-view" @click="goICP()">View</span>-->
+            <div class="text-center">
+              <div class="text-[60px] text-[#E2B578]">{{ icpInfo.canisters }}</div>
+              <div class="text-[16px] mb-[16px]">Canisters</div>
+            </div>
+            <div class="flex justify-between border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6]">
+              <div>
+                <span class="mr-[10px] font-light">Running</span>
+                <span class="text-[18px]">{{ icpInfo.running }}</span>
+              </div>
+              <div>
+                <span class="mr-[10px] font-light">Stopped</span>
+                <span class="text-[18px]">{{ icpInfo.stopped }}</span>
+              </div>
+            </div>
+            <div class="text-center mt-[18px] open-link-css cursor-pointer" @click="goICP()">Add Canister</div>
+          </div>
+        </div>
         <div v-else-if="isShowOracle && item === 'Oracle'">
           <div v-for="val in oracleList"
             class="flex justify-between pt-[6px] border-t-0 border-r-0 border-l-0 border-b border-solid dark:border-[#434343] border-[#F6F6F6] pb-[14px]">
@@ -76,9 +106,11 @@ import { apiGetRpc } from '@/apis/rpcs'
 import { apiGetNodeStatistics } from '@/apis/node'
 import { apiGetIfOpenService } from '@/apis/middleWare'
 import { message } from "ant-design-vue";
-const dashboardList = ref(['RPC','Node', 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
+import {getICpStatistics} from "@/apis/icp";
+const dashboardList = ref(['RPC','Node',"Internet Computer", 'Oracle', 'Storage', 'Graph', 'ZKP', 'Others'])
 const RPCList = ref<any>([]);
 const nodeInfo = ref<any>({});
+const icpInfo = ref<any>({});
 const router = useRouter();
 // 用来记录跳转的具体页面
 const index = ref()
@@ -87,6 +119,8 @@ const isShowOracle = ref(false)
 const oracleList = ref<any>([])
 // 已经开通 rpc 信息
 const rpcSer = ref('')
+
+
 
 const networkClick = (val: any) => {
   console.log('networkClick',val)
@@ -157,16 +191,28 @@ const openService = async()=>{
 const goNode = (item:any)=>{
   router.push('/middleware/dashboard/node')
 }
+const goICP = ()=>{
+  router.push('/middleware/dashboard/icp')
+}
 const getNodeStatistics = async()=>{
   const { data } = await apiGetNodeStatistics()
   if (data.halted > 0 || data.nodes > 0 || data.synced > 0) {
     nodeInfo.value = data;
   }
 }
+
+const getIcpInfo = async()=>{
+  const { data } = await getICpStatistics()
+  icpInfo.value = data;
+
+}
+
+
 onMounted(()=>{
   getRpc()
   openService()
   getNodeStatistics();
+  getIcpInfo();
 })
 </script>
 <style scoped lang="less">
@@ -195,7 +241,7 @@ onMounted(()=>{
   width: 50px;
   height: 40px;
   cursor: pointer;
-  // color:#E2B578; 
+  // color:#E2B578;
   text-align: right;
   float: right;
   top: -40px;

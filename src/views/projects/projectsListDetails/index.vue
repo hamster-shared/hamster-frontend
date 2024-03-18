@@ -18,7 +18,7 @@
             class="ml-4 text-[14px] rounded-[32px] py-1 px-4 border border-solid dark:border-[#434343] border-[#EBEBEB]">
             <label>{{ projectsDetail.labelDisplay }}</label>
           </div>
-        
+
 
       </div>
       <div>
@@ -31,6 +31,9 @@
             <a-menu>
               <a-menu-item @click="visibleModal = true">
                 <a href="javascript:;" style="color:#151210">General</a>
+              </a-menu-item>
+              <a-menu-item @click="changeBranchModal = true">
+                  <a href="javascript:;" style="color:#151210">Change Branch</a>
               </a-menu-item>
               <!-- Check Setting -->
               <a-menu-item v-if="frameType === 1 && projectType=='1'" @click="GetCheck" :visible="visible">
@@ -96,6 +99,19 @@
       <a-button class="ml-4" type="primary" :loading="loading" @click="updateName">Done</a-button>
     </div>
   </a-modal>
+  <a-modal v-model:visible="changeBranchModal" :footer="null" @cancel="formRef.resetFields()">
+      <div class="text-[24px] text-[#151210] font-bold mb-4">Edit Branch</div>
+      <a-form class="modal-form" :model="formData" layout="vertical" ref="formRef">
+          <a-form-item label="Project Name" name="name">
+              <a-select class="modal-input" v-model:value="formData.branch" placeholder="Please select branch">
+                  <a-select-option :value="item" v-for="item in repoBranch" :key="item">{{ item }}</a-select-option>
+              </a-select>
+          </a-form-item>
+      </a-form>
+      <div class="mt-4 text-center">
+          <a-button class="ml-4" type="primary" :loading="loading" @click="updateBranch">Done</a-button>
+      </div>
+  </a-modal>
   <a-modal v-model:visible="deleteModal" :footer="null">
     <div class="text-[24px] text-[#151210] font-bold mb-4">Delete</div>
     <div>Are you sure delete this projects?</div>
@@ -128,15 +144,16 @@ import ContainerParam from '../projectsList/components/ContainerParam.vue';
 import AptosBuildParams from "../projectsList/components/AptosBuildParams.vue";
 import { ContractFrameTypeEnum, FrontEndDeployTypeEnum } from "@/enums/frameTypeEnum";
 import {
-  apiGetProjectsDetail,
-  apiUpdateProjectsName,
-  apiDeleteProjects,
-  apiDupProjectName,
-  apiPostContainer,
-  apiGetContainer,
-  apiGetAptosBuildParams,
-  apiAptosBuild,
-  apiProjectsCheck
+    apiGetProjectsDetail,
+    apiUpdateProjectsName,
+    apiDeleteProjects,
+    apiDupProjectName,
+    apiPostContainer,
+    apiGetContainer,
+    apiGetAptosBuildParams,
+    apiAptosBuild,
+    apiGetProjectBranch,
+    apiUpdateProjectsBranch,
 } from "@/apis/projects";
 import Configure from '@/views/projects/projectsList/components/Configure.vue'
 import  { apiPostPopover } from "@/apis/workFlows";
@@ -162,14 +179,17 @@ const detailId = ref(params.id);
 console.log('detailId::::',detailId.value)
 const viewType = ref("detail");
 const visibleModal = ref(false);
+const changeBranchModal = ref(false)
 const deleteModal = ref(false);
 const contractRef = ref();
 const reportRef = ref();
 const packageRef = ref();
 const formRef = ref();
+const repoBranch = ref([]);
 const userInfo = localStorage.getItem('userInfo');
 const formData = reactive({
   name: '',
+  branch: '',
   userId: JSON.parse(userInfo)?.id,
 });
 const projectsDetail = ref<any>({});
@@ -255,7 +275,7 @@ const getDoneData =async (myArray:string[]) => {
     if (myArray.length > 0) {
       const res = await apiPostPopover(detailId.value,params)
       console.log(res,'done按钮接口数据');
-      visible.value=false 
+      visible.value=false
     } else {
       message.warning('Please choose tools');
     }
@@ -300,6 +320,10 @@ onMounted(async() => {
   }else{
     activeKey.value = params.type
   }
+
+  const branchResp = await apiGetProjectBranch(detailId.value.toString())
+  repoBranch.value = branchResp.data
+
   // 导航栏
   breadCrumbInfo.value = [
     {
@@ -342,6 +366,8 @@ const getProjectsDetail = async () => {
     projectsDetail.value = data;
     frameType.value = data.frameType;
     // console.log(data, frameType.value, 'projectsDetail.frameType')
+
+    formData.branch = projectsDetail.value.branch
 
     const recentStatusOld = localStorage.getItem('recentStatus' + data.name);
     if (recentStatusOld !== null && recentStatusOld !== undefined) {
@@ -402,6 +428,20 @@ const updateName = async () => {
   }
 };
 
+const updateBranch = async () => {
+    try {
+        loading.value = true;
+        const data = await apiUpdateProjectsBranch(detailId.value.toString(), formData.branch);
+        message.success(data.message);
+        projectsDetail.value.branch = formData.branch;
+    } catch (error: any) {
+        console.log("erro:", error)
+        message.error(error.response.data.message);
+    } finally {
+        changeBranchModal.value = false;
+        loading.value = false;
+    }
+}
 const deleteProjects = async () => {
   try {
     loading.value = true;
@@ -450,7 +490,7 @@ const SaveDFXCon = async(params:string) => {
     } else {
       showDFX.value = false
     }
-    
+
   }else{
     message.error(res.message)
   }
@@ -477,10 +517,10 @@ const showDfxModal = async () => {
   if (frameType.value === 7) { //contract ic
     showContractDFX.value = true;
   } else {
-    
+
     showDFX.value = true;
   }
-  
+
 }
 
 const hideAptosBuildVisible = () => {
