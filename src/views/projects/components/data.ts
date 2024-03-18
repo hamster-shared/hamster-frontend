@@ -34,7 +34,8 @@ export interface ViewInfoItem {
   recentBuild: RecentBuildItem,
   recentCheck: RecentCheckItem,
   recentDeploy:RecentDeployItem,
-  labelDisplay:string | undefined
+  labelDisplay:string | undefined,
+  allBranch: string[],
 }
 
 interface AbiInfoDataInputsItem {

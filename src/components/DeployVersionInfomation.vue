@@ -19,7 +19,7 @@
     <div class="mt-[10px] text-[14px]">
       <img src="@/assets/images/info.png" class="h-[17px] mr-[10px] hidden dark:inline-block" />
       <img src="@/assets/images/info-white.png" class="h-[17px] mr-[10px] dark:hidden" />
-      {{info.codeInfo}}
+      {{info.branch}} | {{info.commitId}} | {{info.commitInfo}}
     </div>
 
   </div>

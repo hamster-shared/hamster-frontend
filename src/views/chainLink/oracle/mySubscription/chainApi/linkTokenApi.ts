@@ -13,11 +13,13 @@ export class LinkTokenApi {
 
     const contractABI = abis.linkToken;
 
-    const contractAddress = this.getLinkToken(network)
+    if(networkConfig[network]){
+      const contractAddress = this.getLinkToken(network)
 
-    this.contractApi = createContractApi(contractAddress, contractABI, provider);
+      this.contractApi = createContractApi(contractAddress, contractABI, provider);
 
-    this.contract = this.contractApi.getContract();
+      this.contract = this.contractApi.getContract();
+    }
   }
 
   private getLinkToken(network: string): string {

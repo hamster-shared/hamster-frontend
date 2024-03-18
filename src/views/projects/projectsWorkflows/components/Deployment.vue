@@ -45,9 +45,9 @@
             <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px] flex items-center">
               <img src="@/assets/icons/master-white.svg" class="h-[20px] mr-1 dark:hidden" />
               <img src="@/assets/icons/master-dark.svg" class="h-[20px] mr-1 hidden dark:inline-block" />
-              {{ packageInfo.branch }}
+              {{ packageInfo.branch }} | {{ packageInfo.commitId}}
             </div>
-            <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">Update README.md</div>
+            <div class="text-[#73706E] dark:text-[#E0DBD2] mt-[8px]">{{packageInfo.commitInfo}}</div>
           </div>
           <div class="w-1/2">
             <div class="title-text title-m">Created</div>
@@ -78,6 +78,8 @@ interface PackageInfo {
   name: string,
   branch: string,
   version: string,
+  commitId: string,
+  commitInfo: string,
 }
 
 interface WorkflowsDetailsData {

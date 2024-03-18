@@ -23,67 +23,62 @@
           </div>
         </div>
         <!-- </div> -->
-
-        <div class="label-button">
-          <!-- <label class="cursor-pointer group text-center w-[50px] action-button-item" v-for="(item, index) in actionButtonList" @click="projectsAction(viewInfo, item.name, $event)"> -->
-          <!-- <label v-if="index !== 0">
-            <svg-icon name="line-slash" size="15" />
-          </label> -->
-          <!-- </label> -->
-          <div>
-
-            <label class="text-center w-[100px] " v-for="(item, index) in actionButtonList">
-              <!-- 按钮 -->
-              <label v-if="index !== 0">
-                <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;" />
-              </label>
-              <!-- <label v-if="projectType === '1' && (viewInfo.frameType === 4 || viewInfo.frameType === 2) && item.name === 'Check'" class="mx-[4px]">
-            <svg-icon name="check" size="13" />
-          </label> -->
-              <label
-                :class="[checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'action-button-disabled' : 'action-button-item']">
-                <label class="action-icon mx-[8px]">
-                  <svg-icon :name="item.url" size="15"
-                    :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }" />
+          <div class="label-button">
+            <div>
+                <label class="text-center w-[100px] ">
+                    <a target="_blank" :href="viewInfo.repositoryUrl" >View Repository</a>
+                    <label v-if="projectType === '1'"> / </label>
+                    <a href="javascript: void(0)"  v-if="projectType === '1'" @click="openInChainIDE(viewInfo)">Open with ChainIDE</a>
                 </label>
-                <!-- 按钮 -->
-                <!-- <label class="group-hover:text-[#E2B578] ml-1 align-middle" @click="check"></label> -->
-                <!-- <label class="ml-1 align-middle cursor-pointer" @click="projectsAction(viewInfo, item.name, $event)" :class="projectType === '1' && viewInfo.frameType === 4 && item.name === 'Check' ? 'disabledCheckCss' : ''"> -->
-                <label
-                  :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }"
-                  class="ml-1 align-middle cursor-pointer hover:open-link-css"
-                  @click="projectsAction(viewInfo, item.name, $event)">
-                  {{ item.name }}
-                </label>
-              </label>
-            </label>
+            </div>
           </div>
-        </div>
-
       </div>
       <div class="center dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343]">
+        <div>
+
+          <div class="label-button">
+              <div>
+                  <a-select class="modal-input"  v-model:value="viewInfo.branch"  placeholder="Please select branch" @change="branchChange">
+                        <a-select-option :value="item" v-for="item in viewInfo.allBranch" :key="item">{{ item }}</a-select-option>
+                  </a-select>
+              </div>
+              <div>`
+
+                  <label class="text-center w-[100px] " v-for="(item, index) in actionButtonList">
+                      <!-- 按钮 -->
+                      <label v-if="index !== 0">
+                          <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;" />
+                      </label>
+                      <label
+                              :class="[checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'action-button-disabled' : 'action-button-item']">
+                          <label class="action-icon mx-[1px]">
+                              <svg-icon :name="item.url" size="15"
+                                        :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }" />
+                          </label>
+                          <label
+                                  :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }"
+                                  class="ml-1 align-middle cursor-pointer hover:open-link-css"
+                                  @click="projectsAction(viewInfo, item.name, $event)">
+                              {{ item.name }}
+                          </label>
+                      </label>
+                  </label>
+              </div>
+          </div>
+        </div>
         <div class="grid grid-cols-4 gap-4">
           <div>
             <div class="text-[16px] font-bold">Code Repository</div>
-
             <div class="my-2">
               <a target="_blank" :href="viewInfo.repositoryUrl" class="flex">
                 <div class="text-over-css">{{ showViewInfoRepositoryUrlStart }}</div>
-                <div>{{ showViewInfoRepositoryUrl + '/' + viewInfo.branch }}</div>
+                <div>{{ showViewInfoRepositoryUrl }}</div>
               </a>
             </div>
-            <div v-if="projectType === '1'">
-              <div>
-                <div class="inline-block cursor-pointer open-link-css" @click="openInChainIDE(viewInfo)">
-                  <svg-icon name="external-link" size="18" class="mr-2" />
-                  <span>Open with ChainIDE</span>
-                </div>
-              </div>
-            </div>
-            <div v-else>
+            <div >
               <div>
                 <svg-icon name="white-link" size="16" />
-                main
+                  {{ viewInfo.branch }}
               </div>
             </div>
           </div>
@@ -274,7 +269,17 @@ import { ref, toRefs, computed, reactive, defineComponent, type Ref } from 'vue'
 import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
-import { apiProjectsCheck, apiProjectsBuild, apiProjectsDeploy, apiContainerCheck, apiProjectsContainerDeploy, apiCheckSetAptosBuildParams, apiGetAptosBuildParams, apiAptosBuild } from "@/apis/projects";
+import {
+    apiProjectsCheck,
+    apiProjectsBuild,
+    apiProjectsDeploy,
+    apiContainerCheck,
+    apiProjectsContainerDeploy,
+    apiCheckSetAptosBuildParams,
+    apiGetAptosBuildParams,
+    apiAptosBuild,
+    apiUpdateProjectsBranch
+} from "@/apis/projects";
 //弹出层页面
 import Configure from './Configure.vue'
 import DeployIC from './DeployIC.vue';
@@ -898,6 +903,19 @@ const SaveDFXCon = async (params: string) => {
   } else {
     message.error(res.message)
   }
+}
+
+const branchChange = async (value:string) => {
+    console.log(value)
+    try {
+        const data = await apiUpdateProjectsBranch(viewInfo.value.id, value);
+        loadView().then()
+        message.success(data.message);
+    } catch (error: any) {
+        console.log("erro:", error)
+        message.error(error.response.data.message);
+    } finally {
+    }
 }
 </script>
 <style lang='less' scoped>
