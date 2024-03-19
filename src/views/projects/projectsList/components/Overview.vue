@@ -25,10 +25,12 @@
         <!-- </div> -->
         <div class="label-button">
           <div class="flex items-center justify-between">
-            <label class="text-center w-[100px] mr-[12px]">
-              <a target="_blank" :href="viewInfo.repositoryUrl" v-if="viewType !== 'detail'">View Repository</a>
-              <label v-if="projectType === '1'"> / </label>
-              <a href="javascript: void(0)" v-if="projectType === '1'" @click="openInChainIDE(viewInfo)">Open with
+            <label class="text-center mr-[12px] flex">
+              <a target="_blank" :href="viewInfo.repositoryUrl"> View
+                Repository</a>
+              <label v-if="projectType === '1' && projectType === '1'" class="px-[4px]"> /
+              </label>
+              <a href="javascript: void(0)" v-if="projectType === '1'" @click="openInChainIDE(viewInfo)"> Open with
                 ChainIDE</a>
             </label>
             <!-- <div>
@@ -971,6 +973,12 @@ const branchChange = async (value: string) => {
 
 :deep(.ant-select) {
   vertical-align: middle;
+}
+
+.label-button {
+  a:hover {
+    color: #E2B578 !important;
+  }
 }
 
 html[data-theme='dark'] {
