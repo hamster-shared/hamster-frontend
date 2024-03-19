@@ -23,47 +23,57 @@
           </div>
         </div>
         <!-- </div> -->
-          <div class="label-button">
-            <div>
-                <label class="text-center w-[100px] ">
-                    <a target="_blank" :href="viewInfo.repositoryUrl" >View Repository</a>
-                    <label v-if="projectType === '1'"> / </label>
-                    <a href="javascript: void(0)"  v-if="projectType === '1'" @click="openInChainIDE(viewInfo)">Open with ChainIDE</a>
-                </label>
-            </div>
+        <div class="label-button">
+          <div class="flex items-center justify-between">
+            <label class="text-center w-[100px] mr-[12px]">
+              <a target="_blank" :href="viewInfo.repositoryUrl" v-if="viewType !== 'detail'">View Repository</a>
+              <label v-if="projectType === '1'"> / </label>
+              <a href="javascript: void(0)" v-if="projectType === '1'" @click="openInChainIDE(viewInfo)">Open with
+                ChainIDE</a>
+            </label>
+            <!-- <div>
+              <a-select v-model:value="viewInfo.branch" placeholder="Please select branch" @change="branchChange">
+                <a-select-option :value="item" v-for="item in viewInfo.allBranch" :key="item">{{ item
+                  }}</a-select-option>
+              </a-select>
+            </div> -->
           </div>
+        </div>
       </div>
       <div class="center dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343]">
         <div>
 
-          <div class="label-button">
-              <div>
-                  <a-select class="modal-input"  v-model:value="viewInfo.branch"  placeholder="Please select branch" @change="branchChange">
-                        <a-select-option :value="item" v-for="item in viewInfo.allBranch" :key="item">{{ item }}</a-select-option>
-                  </a-select>
-              </div>
-              <div>`
+          <div class="flex items-center justify-between label-button mb-[24px] leabel-top-css pb-[24px]">
+            <div class="border border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[8px]">
+              <img src="@/assets/svg/branch.svg" class="h-[12px] pl-[6px] align-center" />
+              <a-select v-model:value="viewInfo.branch" placeholder="Please select branch" @change="branchChange"
+                class="align-center" :bordered="false">
+                <a-select-option :value="item" v-for="item in viewInfo.allBranch" :key="item">{{ item
+                  }}</a-select-option>
+              </a-select>
+            </div>
+            <div>
 
-                  <label class="text-center w-[100px] " v-for="(item, index) in actionButtonList">
-                      <!-- 按钮 -->
-                      <label v-if="index !== 0">
-                          <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;" />
-                      </label>
-                      <label
-                              :class="[checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'action-button-disabled' : 'action-button-item']">
-                          <label class="action-icon mx-[1px]">
-                              <svg-icon :name="item.url" size="15"
-                                        :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }" />
-                          </label>
-                          <label
-                                  :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }"
-                                  class="ml-1 align-middle cursor-pointer hover:open-link-css"
-                                  @click="projectsAction(viewInfo, item.name, $event)">
-                              {{ item.name }}
-                          </label>
-                      </label>
+              <label class="text-center w-[100px] " v-for="(item, index) in actionButtonList">
+                <!-- 按钮 -->
+                <label v-if="index !== 0">
+                  <svg-icon name="line-slash" size="16" class="mx-4" style="cursor: default;" />
+                </label>
+                <label
+                  :class="[checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'action-button-disabled' : 'action-button-item']">
+                  <label class="action-icon mx-[1px]">
+                    <svg-icon :name="item.url" size="15"
+                      :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }" />
                   </label>
-              </div>
+                  <label
+                    :style="{ cursor: checkCondition() && item.name == 'Check' || opsCondition() && item.name === 'Ops' ? 'default' : 'cursor' }"
+                    class="ml-1 align-middle cursor-pointer hover:open-link-css"
+                    @click="projectsAction(viewInfo, item.name, $event)">
+                    {{ item.name }}
+                  </label>
+                </label>
+              </label>
+            </div>
           </div>
         </div>
         <div class="grid grid-cols-4 gap-4">
@@ -75,10 +85,10 @@
                 <div>{{ showViewInfoRepositoryUrl }}</div>
               </a>
             </div>
-            <div >
+            <div>
               <div>
                 <svg-icon name="white-link" size="16" />
-                  {{ viewInfo.branch }}
+                {{ viewInfo.branch }}
               </div>
             </div>
           </div>
@@ -87,13 +97,13 @@
           <div>
             <div class="text-[16px] font-bold">Recent Check</div>
             <div class="my-2" v-if="viewInfo.recentCheck.status === 0">{{ RecentStatusEnums[viewInfo.recentCheck.status]
-            }}
+              }}
             </div>
             <div v-else class="flex items-center my-2 ">
               <img :src="getImageUrl(viewInfo.recentCheck.status)" class="h-[16px] mr-1" />
               <div class="text-ellipsis">
                 {{ RecentStatusEnums[viewInfo.recentCheck.status] }}｜{{
-                  fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
+    fromNowexecutionTime(viewInfo.recentCheck.startTime, "noThing") }}
               </div>
             </div>
 
@@ -123,12 +133,12 @@
           <div>
             <div class="text-[16px] font-bold">Recent Build</div>
             <div class="my-2" v-if="viewInfo.recentBuild.status === 0">{{ RecentStatusEnums[viewInfo.recentBuild.status]
-            }}</div>
+              }}</div>
             <div v-else class="flex items-center my-2 ">
               <img :src="getImageUrl(viewInfo.recentBuild.status)" class="h-[16px] mr-1" />
               <div class="text-ellipsis">
                 {{ RecentStatusEnums[viewInfo.recentBuild.status] }}｜{{
-                  fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
+    fromNowexecutionTime(viewInfo.recentBuild.startTime, "noThing") }}
               </div>
             </div>
 
@@ -184,7 +194,7 @@
                       <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
                       <div class="text-ellipsis">
                         {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
-                          fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
+    fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
                       </div>
                     </div>
                   </div>
@@ -199,45 +209,45 @@
                 </div>
               </div>
 
-            <div class="text-[#D3C9BC]"
-                 v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">
+              <div class="text-[#D3C9BC]"
+                v-if="viewInfo.recentDeploy.version === '' && viewInfo.frameType != 7 || viewInfo.frameType === 7 && viewInfo.recentDeploy.status === 0">
                 Explorer</div>
-            <div v-else class="inline-block cursor-pointer open-link-css">
-              <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
-              <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
-            </div>
-          </div>
-          <div v-else>
-            <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">{{
-                RecentStatusEnums[viewInfo.recentDeploy.status]
-            }}</div>
-            <div v-else class="flex items-center my-2 ">
-              <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
-              <div class="text-ellipsis">
-                {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
-                  fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
+              <div v-else class="inline-block cursor-pointer open-link-css">
+                <div v-if="deployTxHash && deployTxHash !== ''" @click="starknetVisible = true">View Process</div>
+                <div v-else @click="goContractDetail(viewInfo.id, viewInfo.recentDeploy.version)">View Dashboard</div>
               </div>
             </div>
-
-            <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
             <div v-else>
-              <div v-if="projectType === '2'">
-                <div class="inline-block cursor-pointer open-link-css"
-                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
-                  View FrontEnd
+              <div class="my-2" v-if="viewInfo.recentDeploy.status === 0">{{
+    RecentStatusEnums[viewInfo.recentDeploy.status]
+  }}</div>
+              <div v-else class="flex items-center my-2 ">
+                <img :src="getImageUrl(viewInfo.recentDeploy.status)" class="h-[16px] mr-1" />
+                <div class="text-ellipsis">
+                  {{ RecentStatusEnums[viewInfo.recentDeploy.status] }}｜{{
+    fromNowexecutionTime(viewInfo.recentDeploy.startTime, "noThing") }}
                 </div>
               </div>
-              <div v-else-if="projectType === '3'">
-                <div class="inline-block cursor-pointer open-link-css"
-                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
-                  v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
-                  View Process
+
+              <div class="text-[#D3C9BC]" v-if="viewInfo.recentDeploy.status === 0">Explorer</div>
+              <div v-else>
+                <div v-if="projectType === '2'">
+                  <div class="inline-block cursor-pointer open-link-css"
+                    @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)">
+                    View FrontEnd
+                  </div>
                 </div>
-                <!-- polkdot -->
-                <div class="inline-block cursor-pointer open-link-css"
-                  @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
-                  v-else>
-                  View Result
+                <div v-else-if="projectType === '3'">
+                  <div class="inline-block cursor-pointer open-link-css"
+                    @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)"
+                    v-if="viewInfo.recentDeploy.status === 1 || viewInfo.recentDeploy.status === 4">
+                    View Process
+                  </div>
+                  <!-- polkdot -->
+                  <div class="inline-block cursor-pointer open-link-css"
+                    @click="goFrontEndDetail(viewInfo.id, viewInfo.recentDeploy)" v-else>
+                    View Result
+                  </div>
                 </div>
               </div>
             </div>
@@ -245,7 +255,6 @@
         </div>
       </div>
     </div>
-  </div>
   </div>
   <ContainerParam :containerVisible="containerVisible" :detailId="viewInfo?.id" @hideContainerParam="hideContainerParam"
     @frontendContainerDeploy="frontendContainerDeploy"></ContainerParam>
@@ -270,15 +279,15 @@ import { useRouter } from "vue-router";
 import { message } from 'ant-design-vue';
 import { fromNowexecutionTime } from "@/utils/time/dateUtils.js";
 import {
-    apiProjectsCheck,
-    apiProjectsBuild,
-    apiProjectsDeploy,
-    apiContainerCheck,
-    apiProjectsContainerDeploy,
-    apiCheckSetAptosBuildParams,
-    apiGetAptosBuildParams,
-    apiAptosBuild,
-    apiUpdateProjectsBranch
+  apiProjectsCheck,
+  apiProjectsBuild,
+  apiProjectsDeploy,
+  apiContainerCheck,
+  apiProjectsContainerDeploy,
+  apiCheckSetAptosBuildParams,
+  apiGetAptosBuildParams,
+  apiAptosBuild,
+  apiUpdateProjectsBranch
 } from "@/apis/projects";
 //弹出层页面
 import Configure from './Configure.vue'
@@ -364,7 +373,7 @@ const deployTxHash = starknetHashData[props.viewInfo.id]?.deployTxHash || '';
 // console.log('deployTxHash', props.viewInfo.id, deployTxHash)
 
 const checkCondition = () => {
-  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType==3 || (viewInfo.value.type == '1' && viewInfo.value.frameType == 8) ) {
+  if (viewInfo.value.type == '3' || (viewInfo.value.type == '1' && viewInfo.value.frameType == 7) || viewInfo.value.type == '2' && viewInfo.value.deployType == 3 || (viewInfo.value.type == '1' && viewInfo.value.frameType == 8)) {
     return true;
   } else {
     return false;
@@ -463,51 +472,51 @@ const projectsCheck = async (id: string, checkData: any, e: Event) => {
   // if (props.projectType === '1' && props.viewInfo.frameType === 4) {
   //   e.stopPropagation()
   // } else {
-    disabled.value = false;
-    try {
-      //判断是否为EVM 显示弹框 并且 ipfs不弹
-      if(props.viewInfo.frameType=== 1 && projectType.value==='1'){
-        projectId.value = id
-        const res= await apiIsCheck(id)
-        // message.destroy()
-        if(res.code===200){
-          // 如果没有数据就弹，有数据不弹
-          if(JSON.stringify(res.data) === "{}"){
-            evmCheckVisible.value=true
-          } else {
-            const { data } = await apiProjectsCheck(id);
-            if (checkData.status !== 1) {
-              setMsgShow(data.workflowId, data.detailId, 'check', 1);
-            }
-            loadView();
-          }
-        }
-      }
-      if (checkData.status === 1) {
-        // 点击check按钮，提示
-        message.info(t('project.pipeline_executing_now'));
-      } else {
-        //判断是否为EVM 显示弹框
-        if (props.viewInfo.frameType === 1 && projectType.value === '1') {
-          // evm 没有数据时，弹框唤起不吐丝
-          // if (!evmCheckVisible.value) {
-          //   setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
-          //   // message.info("The workflow of checking is running, view now.")
-          // }
+  disabled.value = false;
+  try {
+    //判断是否为EVM 显示弹框 并且 ipfs不弹
+    if (props.viewInfo.frameType === 1 && projectType.value === '1') {
+      projectId.value = id
+      const res = await apiIsCheck(id)
+      // message.destroy()
+      if (res.code === 200) {
+        // 如果没有数据就弹，有数据不弹
+        if (JSON.stringify(res.data) === "{}") {
+          evmCheckVisible.value = true
         } else {
           const { data } = await apiProjectsCheck(id);
-
-          setMsgShow(data.workflowId, data.detailId, 'check', 1);
-          // message.success(res.message);
+          if (checkData.status !== 1) {
+            setMsgShow(data.workflowId, data.detailId, 'check', 1);
+          }
           loadView();
         }
       }
-    } catch (error: any) {
-      console.log("erro:", error)
-      message.error('Failed ',error);
-    } finally {
-      // loading.value = false;
     }
+    if (checkData.status === 1) {
+      // 点击check按钮，提示
+      message.info(t('project.pipeline_executing_now'));
+    } else {
+      //判断是否为EVM 显示弹框
+      if (props.viewInfo.frameType === 1 && projectType.value === '1') {
+        // evm 没有数据时，弹框唤起不吐丝
+        // if (!evmCheckVisible.value) {
+        //   setMsgShow(checkData.workflowId, checkData.id, 'check', 1);
+        //   // message.info("The workflow of checking is running, view now.")
+        // }
+      } else {
+        const { data } = await apiProjectsCheck(id);
+
+        setMsgShow(data.workflowId, data.detailId, 'check', 1);
+        // message.success(res.message);
+        loadView();
+      }
+    }
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error('Failed ', error);
+  } finally {
+    // loading.value = false;
+  }
   // }
 };
 
@@ -522,7 +531,7 @@ const buildStatusAction = async (id: string, buildData: any) => {
 }
 
 const aptosBuildParams = ref([])
-const goAptosBuild = async (id: string, buildData: any, frameType: string,type:any) => {
+const goAptosBuild = async (id: string, buildData: any, frameType: string, type: any) => {
   let needsParams = false
   const res = await apiCheckSetAptosBuildParams(id)
   needsParams = res.data.needsParams
@@ -905,23 +914,23 @@ const SaveDFXCon = async (params: string) => {
   }
 }
 
-const branchChange = async (value:string) => {
-    console.log(value)
-    try {
-        const data = await apiUpdateProjectsBranch(viewInfo.value.id, value);
-        loadView().then()
-        message.success(data.message);
-    } catch (error: any) {
-        console.log("erro:", error)
-        message.error(error.response.data.message);
-    } finally {
-    }
+const branchChange = async (value: string) => {
+  console.log(value)
+  try {
+    const data = await apiUpdateProjectsBranch(viewInfo.value.id, value);
+    loadView().then()
+    message.success(data.message);
+  } catch (error: any) {
+    console.log("erro:", error)
+    message.error(error.response.data.message);
+  } finally {
+  }
 }
 </script>
 <style lang='less' scoped>
 .center {
   width: 100%;
-  padding: 32px;
+  padding: 32px 32px;
   border-radius: 12px;
   margin-top: 60px;
 }
@@ -952,6 +961,16 @@ const branchChange = async (value:string) => {
   }
 
   ;
+}
+
+:deep(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+  width: 142px;
+  padding: 0px 11px 0px 4px;
+
+}
+
+:deep(.ant-select) {
+  vertical-align: middle;
 }
 
 html[data-theme='dark'] {
@@ -1059,5 +1078,9 @@ html[data-theme='light'] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.leabel-top-css {
+  border-bottom: 1px solid #434343;
 }
 </style>
