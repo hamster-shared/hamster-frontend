@@ -479,12 +479,12 @@ export function apiCreateProjects(params: AddProjectsParams) {
 }
 
 // 创建获取项目分支信息
-export function apiGetProjectBranch(id: string) {
-  return httpRequest({
-    url: `/api/projects/${id}/branch`,
-    method: "get",
-  });
-}
+// export function apiGetProjectBranch(id: string) {
+//   return httpRequest({
+//     url: `/api/projects/${id}/branch`,
+//     method: "get",
+//   });
+// }
 
 export function apiUpdateProjectsBranch(id: string, branch: string) {
   return httpRequest({

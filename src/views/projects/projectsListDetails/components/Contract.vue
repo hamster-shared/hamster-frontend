@@ -1,5 +1,6 @@
 <template>
   <div class="flex" v-if="frameType != 7">
+
     <div>
       <a-select @change="changeContract" v-model:value="contract"
         :options="contractList.map(item => ({ value: item }))">
@@ -20,6 +21,12 @@
       <template v-if="column.dataIndex === 'version'">
         <label class="text-[#E2B578]">{{ '#'+record.version }}</label>
       </template>
+        <template v-if="column.dataIndex === 'commitId'">
+            <label> {{ record.branch }} | {{ record.commitId }}</label>
+            <div>
+                {{record.commitInfo}}
+            </div>
+        </template>
       <template v-if="column.dataIndex === 'network'">
         <label v-if="record.network.String !== ''" v-for="(item, indexF) in record.network.String.split(',')"
           :key="indexF" :class="{ 'ml-2': indexF !== 0 }"
@@ -118,10 +125,10 @@ const contractTableColumns = ref( [
   },
   {
     title: 'Branch',
-    dataIndex: 'branch',
+    dataIndex: 'commitId',
     align: 'center',
     ellipsis: 'fixed',
-    key: 'branch',
+    key: 'commitId',
   },
   {
     title: 'Network',
@@ -172,7 +179,7 @@ const contractPagination = reactive({
 });
 
 onMounted(() => {
-  
+
   if (frameType?.value === 7) {
     contractTableColumns.value = contractTableColumns.value.filter(item => item.dataIndex !== 'network')
   } else {
@@ -202,6 +209,7 @@ const getProjectsContract = async () => {
     //   item.networkString = item.network.String ? item.network.String.split('/')[1] : '';
     // })
     contractTableList.value = data.data;
+    console.log(contractTableList.value)
     contractPagination.total = data.total
 
   } catch (error: any) {
@@ -216,7 +224,7 @@ const getProjectsVersion = async () => {
   try {
     const { data } = await apiProjectsVersion(detailId.value.toString());
     const items = data.filter(function (val: any) {
-        return val && val.trim(); 
+        return val && val.trim();
     })
     versionList.value.length = 1;
     versionList.value = versionList.value.concat(items);
@@ -231,7 +239,7 @@ const getProjectsContractNetwork = async () => {
   try {
     const { data } = await apiProjectsContractNetwork(detailId.value.toString());
     const items = data.filter(function (val: any) {
-        return val && val.trim(); 
+        return val && val.trim();
     })
     networkList.value.length = 1;
     networkList.value = networkList.value.concat(items);
@@ -246,7 +254,7 @@ const getProjectsContractName = async () => {
   try {
     const { data } = await apiProjectsContractName(detailId.value.toString());
     const items = data.filter(function (val: any) {
-        return val && val.trim(); 
+        return val && val.trim();
     })
     contractList.value.length = 1;
     contractList.value = contractList.value.concat(items);
@@ -281,7 +289,7 @@ const goContractDetail = async (version: String, lastContractDeployId:string) =>
 };
 
 const goContractDeploy = async (contractData: any) => {
-  if (frameType?.value === 7) { 
+  if (frameType?.value === 7) {
     frontendDeploying(contractData)
   } else if(frameType?.value === 1){
     // 如果是evm生态走多链部署，其它生态保持原来
@@ -299,7 +307,7 @@ const frontendDeploying = async (contractData: any) => {
       workflowDetailId: contractData.workflowDetailId,
     });
     const { data } = await apiProjectsDeploy(params.value);
-    
+
     setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     // loadView();

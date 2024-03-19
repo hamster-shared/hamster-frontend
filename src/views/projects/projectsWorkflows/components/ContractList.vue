@@ -154,7 +154,7 @@ const msgParam = ref({
 });
 
 const toDeployUrl = (val: any) => {
-  if (frameType?.value === 7) { 
+  if (frameType?.value === 7) {
     frontendDeploying(val)
   } else if(frameType?.value === 1){
     // evm 走多部署
@@ -174,7 +174,7 @@ const frontendDeploying = async (contractData: any) => {
       workflowDetailId: contractData.workflowDetailId,
     });
     const { data } = await apiProjectsDeploy(params.value);
-    
+
     setMsgShow(data.workflowId, data.detailId, 'deploy', 3);
 
     // loadView();

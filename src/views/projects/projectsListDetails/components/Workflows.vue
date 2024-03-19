@@ -30,7 +30,7 @@
         </template>
         <template v-if="column.dataIndex === 'triggerMode'">
           <div v-if="record.triggerMode === 1">manual trigger</div>
-          <div>{{ record.codeInfo }}</div>
+          <div>{{ record.branch }} | {{record.commitId}}</div>
         </template>
         <template v-if="column.key === 'stageInfo'">
           <StageVue v-if="record.stageInfo !== ''" :stages="JSON.parse(record.stageInfo)" />

@@ -152,7 +152,6 @@ import {
     apiGetContainer,
     apiGetAptosBuildParams,
     apiAptosBuild,
-    apiGetProjectBranch,
     apiUpdateProjectsBranch,
 } from "@/apis/projects";
 import Configure from '@/views/projects/projectsList/components/Configure.vue'
@@ -320,9 +319,6 @@ onMounted(async() => {
   }else{
     activeKey.value = params.type
   }
-
-  const branchResp = await apiGetProjectBranch(detailId.value.toString())
-  repoBranch.value = branchResp.data
 
   // 导航栏
   breadCrumbInfo.value = [

@@ -1,6 +1,14 @@
 <template>
   <a-table class="my-4" :columns="tableColumns" :dataSource="tableList" :pagination="pagination">
     <template #bodyCell="{ column, record, index }">
+        <template v-if="column.dataIndex === 'branch'">
+           <div>
+               <label>{{record.branch}}</label> | <label>{{record.commitId}}</label>
+               <p>
+                   {{ record.commitInfo }}
+               </p>
+           </div>
+        </template>
       <template v-if="column.dataIndex === 'action'">
         <label class="open-link-css cursor-pointer" v-if="record.domain === ''"
           @click="goDeploy(record.projectId ,record.workflowId, record.workflowDetailId)">Deploy</label>
@@ -66,7 +74,7 @@ const WorkflowDetailId = ref()
 
 const firstTitle = ref('')
 const checkImageOrPackage = () => {
-  
+
   if(props.deployType == '1'){
     firstTitle.value = 'Package Name'
   }else{
@@ -232,7 +240,7 @@ const commonFn = async(projectId:string, workflowId: string, workflowDetailId: s
     if (props.deployType == '2') {
       frontendContainerCheck();
     } else {
-      const { data } = await apiProjectsDeploy(deployParams.value); 
+      const { data } = await apiProjectsDeploy(deployParams.value);
       setMsgShow(data);
     }
   } catch (error: any) {

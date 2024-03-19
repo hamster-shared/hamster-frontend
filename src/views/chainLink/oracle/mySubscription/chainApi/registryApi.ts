@@ -13,11 +13,12 @@ export class RegistryApi {
 
     const contractABI = abis.functionsBillingRegistryProxy;
 
-    const contractAddress = this.getRegistry(network)
+    if(networkConfig[network]){
+      const contractAddress = this.getRegistry(network)
 
-    this.contractApi = createContractApi(contractAddress, contractABI, provider);
-
-    this.contract = this.contractApi.getContract();
+      this.contractApi = createContractApi(contractAddress, contractABI, provider);
+      this.contract = this.contractApi.getContract();
+    }
   }
 
   private getRegistry(network: string): string {
