@@ -45,9 +45,11 @@
       <div class="center dark:bg-[#36322D] border border-solid border-[#EBEBEB] dark:border-[#434343]">
         <div>
 
-          <div class="flex items-center justify-between label-button mb-[24px] leabel-top-css pb-[24px]">
+          <div
+            class="flex items-center justify-between label-button mb-[24px] border-b border-solid border-t-0 border-l-0 border-r-0 pb-[24px] border-[#EBEBEB] dark:border-[#434343]">
             <div class="border border-solid border-[#EBEBEB] dark:border-[#434343] rounded-[8px]">
-              <img src="@/assets/svg/branch.svg" class="h-[12px] pl-[6px] align-center" />
+              <img src="@/assets/svg/branch.svg" class="h-[12px] pl-[6px] align-center hidden dark:inline-block" />
+              <img src="@/assets/svg/branch-b.svg" class="h-[12px] pl-[6px] align-center inline-block dark:hidden" />
               <a-select v-model:value="viewInfo.branch" placeholder="Please select branch" @change="branchChange"
                 class="align-center" :bordered="false">
                 <a-select-option :value="item" v-for="item in viewInfo.allBranch" :key="item">{{ item
@@ -1089,6 +1091,6 @@ html[data-theme='light'] {
 }
 
 .leabel-top-css {
-  border-bottom: 1px solid #434343;
+  border-bottom: 1px solid;
 }
 </style>
